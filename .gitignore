@@ -1,0 +1,8 @@
+.classpath
+bin/
+gen/
+.project
+lint.xml
+*~
+*.DS*
+cocos2d.bak

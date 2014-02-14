@@ -1,0 +1,10 @@
+.classpath
+bin/
+gen/
+obj/
+libs/
+.project
+.cproject
+lint.xml
+*~
+*.DS*
