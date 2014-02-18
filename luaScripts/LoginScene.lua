@@ -57,14 +57,22 @@ function LoginScene:init()
   rootLayer:addChild(snow)
   
   local function touchEvent(sender, eventType)
+    local buttonName = sender:getName()
     if eventType == ccui.TouchEventType.ended then
-      print('button clicked')
-      cc.Director:getInstance():replaceScene(require('HallScene')())
+      if buttonName == 'ButtonS' then
+        print('button clicked')
+        cc.Director:getInstance():replaceScene(require('HallScene')())
+      elseif buttonName == 'buttonHolder' then
+        print('button holder clicked!')
+      end
     end
   end
   
   local buttonS = ccui.Helper:seekWidgetByName(ui, 'ButtonS')
   buttonS:addTouchEventListener(touchEvent)
+  
+  local buttonHolder = ccui.Helper:seekWidgetByName(ui, 'buttonHolder')
+  buttonHolder:addTouchEventListener(touchEvent)
   
   
 --  local snow2 = cc.ParticleSnow:createWithTotalParticles(300)

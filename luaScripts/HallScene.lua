@@ -58,10 +58,14 @@ function HallScene:init()
   
   for i=1, #(items) do
     local item = items[i]
+    local n = i % 5
+    if n == 0 then
+      n = 5
+    end
     local roomTitle = item:getChildByName('roomTitle_Image')
     local roomIcon = item:getChildByName('roomIcon_Image')
-    local roomTitleFilename = string.format("images/room1%d.png", i)
-    local roomIconFilename = string.format('images/room%d.png', i)
+    local roomTitleFilename = string.format("images/room1%d.png", n)
+    local roomIconFilename = string.format('images/room%d.png', n)
     roomTitle:loadTexture(roomTitleFilename)
     roomIcon:loadTexture(roomIconFilename)
   end
