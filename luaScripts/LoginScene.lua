@@ -61,9 +61,12 @@ function LoginScene:init()
     if eventType == ccui.TouchEventType.ended then
       if buttonName == 'ButtonS' then
         print('button clicked')
-        cc.Director:getInstance():replaceScene(require('HallScene')())
-      elseif buttonName == 'buttonHolder' then
+        local scene = require('HallScene')()
+        cc.Director:getInstance():pushScene(scene)
+      elseif buttonName == 'buttonStart' then
         print('button holder clicked!')
+        local scene = require('GameScene')()
+        cc.Director:getInstance():pushScene(scene)
       end
     end
   end
@@ -71,7 +74,7 @@ function LoginScene:init()
   local buttonS = ccui.Helper:seekWidgetByName(ui, 'ButtonS')
   buttonS:addTouchEventListener(touchEvent)
   
-  local buttonHolder = ccui.Helper:seekWidgetByName(ui, 'buttonHolder')
+  local buttonHolder = ccui.Helper:seekWidgetByName(ui, 'buttonStart')
   buttonHolder:addTouchEventListener(touchEvent)
   
   

@@ -17,10 +17,17 @@ function HallScene.extend(target, ...)
 end
 
 function HallScene:ctor(...)
-  self:init()
+  self:registerScriptHandler(function(event)
+    print('event => ', event)
+    if event == "enterTransitionFinish" then
+      self:init()
+    elseif event == 'exit' then
+     end
+  end)
 end
 
 function HallScene:init()
+  self:initKeypadHandler()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
   
@@ -79,6 +86,23 @@ function HallScene:init()
   rootLayer:addChild(snow)
   
   
+end
+
+function HallScene:initKeypadHandler()
+  local function onKeyReleased(keyCode, event)
+    if keyCode == cc.KeyCode.KEY_BACKSPACE then
+--      if type(self.onMainMenu) == 'function' then
+--        self.onMainMenu()
+--      end
+      cc.Director:getInstance():popScene() 
+    elseif keyCode == cc.KeyCode.KEY_MENU  then
+      --label:setString("MENU clicked!")
+    end
+  end
+
+  local listener = cc.EventListenerKeyboard:create()
+  listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
+  self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
 local function createScene()
