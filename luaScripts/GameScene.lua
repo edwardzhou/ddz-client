@@ -1,4 +1,5 @@
 require 'GuiConstants'
+require 'PokeCard'
 
 local GameScene = class('GameScene')
 
@@ -17,6 +18,7 @@ function GameScene.extend(target, ...)
 end
 
 function GameScene:ctor(...)
+  cc.SpriteFrameCache:getInstance():addSpriteFramesWithFile('poke_cards.plist')
 
   self:registerScriptHandler(function(event)
     print('event => ', event)
@@ -25,6 +27,7 @@ function GameScene:ctor(...)
     elseif event == 'exit' then
      end
   end)
+  
 end
 
 function GameScene:init()
@@ -37,7 +40,27 @@ function GameScene:init()
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
-    
+  
+  local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
+  local pokeCardsLayer = cc.Layer:create()
+  pokeCardsPanel:addNode(pokeCardsLayer)
+  
+  local poke = cc.Sprite:createWithSpriteFrameName('a03.png')
+  poke:setPosition(400, 130)
+  pokeCardsLayer:addChild(poke)
+
+  PokeCard.resetAll(pokeCardsLayer)
+  
+  for i=1, 17 do
+    local c = PokeCard.getCard(i*3)
+    c.card_sprite:setPosition(i * 40, 0)
+    c.card_sprite:setVisible(true)
+    if i % 4 == 0 then
+      --c.card_sprite:setOpacity(255 * 0.9)
+      c.card_sprite:setColor(cc.c3b(187, 187, 187))
+    end
+  end
+  
   
 end
 
