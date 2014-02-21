@@ -29,6 +29,8 @@ PokeCardValue = {
 
 local g_PokeCardMap = {}
 local PokeCardString = {}
+local g_PokeCharMap = {}
+
 PokeCardString[PokeCardValue.NONE] = " "
 PokeCardString[PokeCardValue.THREE] = "3"
 PokeCardString[PokeCardValue.FOUR] = "4"
@@ -272,7 +274,8 @@ PokeCard.sharedPokeCard = function(container)
 			poke_card.poke_value = tonumber(card_index) + 2
 			poke_card.poke_card_type = PokeCardTypeId[ card_type ]
 			poke_card.poke_id = card_name
-			
+			poke_card.poke_char = string.char(poke_card.index + 64)
+			g_PokeCharMap[poke_card.poke_char] = poke_card
 			table.insert(g_shared_cards, poke_card)
 			g_PokeCardMap[card_name] = poke_card
 		end
@@ -287,6 +290,8 @@ PokeCard.sharedPokeCard = function(container)
 	poke_card.poke_id = card_name
 	poke_card.index = ci
 	ci = ci + 1
+  poke_card.poke_char = string.char(poke_card.index + 64)
+  g_PokeCharMap[poke_card.poke_char] = poke_card
 	table.insert(g_shared_cards, poke_card)
 	g_PokeCardMap[card_name] = poke_card
 	card_name = "w02"
@@ -298,6 +303,8 @@ PokeCard.sharedPokeCard = function(container)
 	poke_card.index = ci
 	ci = ci + 1
 		
+  poke_card.poke_char = string.char(poke_card.index + 64)
+  g_PokeCharMap[poke_card.poke_char] = poke_card
 	table.insert(g_shared_cards, poke_card)
 	g_PokeCardMap[card_name] = poke_card
 	cclog("g_shared_cards.length => %d" , #g_shared_cards)
@@ -310,3 +317,19 @@ end
 PokeCard.getCardById = function(card_id)
 	return g_PokeCardMap[card_id]
 end
+
+PokeCard.getByChar = function(char)
+  return g_PokeCharMap[char]
+end
+
+PokeCard.pokeCardsFromChars = function(chars)
+  local pokeCards = {}
+  for i=1, #chars do
+    local char = string.sub(chars, i, i)
+    table.insert(pokeCards, g_PokeCharMap[char])
+  end
+  
+  return pokeCards
+end
+
+PokeCard.getByPokeChars = PokeCard.getByChars
