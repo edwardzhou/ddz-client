@@ -2,10 +2,6 @@
 #include "CCLuaEngine.h"
 #include "SimpleAudioEngine.h"
 #include "lua_extensions.h"
-#include "string"
-#include "wchar.h"
-#include "locale"
-#include "bits/codecvt.h"
 
 using namespace CocosDenshion;
 
@@ -43,7 +39,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
     luaopen_cjson_extensions(engine->getLuaStack()->getLuaState());
 
-//    std::string sstr = "ÖÐÎÄ²âÊÔ1234";
+//    std::string sstr = "ä¸­æ–‡æµ‹è¯•1234";
 //    CCLOG("sstr: length %d", sstr.length());
 //    int size = sstr.length()*2 + 10;
 //    mbstate_t mbs;
@@ -83,3 +79,4 @@ void AppDelegate::applicationWillEnterForeground()
 
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
+
