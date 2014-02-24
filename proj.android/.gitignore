@@ -3,6 +3,7 @@ bin/
 gen/
 obj/
 libs/
+assets/
 .project
 .cproject
 lint.xml
