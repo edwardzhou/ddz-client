@@ -49,7 +49,8 @@ function GameScene:init()
   poke:setPosition(400, 130)
   pokeCardsLayer:addChild(poke)
 
-  PokeCard.resetAll(pokeCardsLayer)
+  PokeCard.sharedPokeCard(pokeCardsLayer)
+  PokeCard.reloadAllCardSprites(pokeCardsLayer)
 
   local pokeCards = PokeCard.getByPokeChars('AcjmDrEekRTWCVNXp')
 

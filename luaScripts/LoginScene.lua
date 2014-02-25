@@ -1,5 +1,6 @@
 require 'CCBReaderLoad'
 require 'GuiConstants'
+require 'PokeCard'
 
 local LoginScene = class('LoginScene')
 
@@ -25,15 +26,15 @@ function LoginScene:init()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
   
-  local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing/Landing.json')
---  ui:setAnchorPoint(0, 0)
---  ui:setPosition(0, 0)
-  rootLayer:addChild(ui)
-  local buttonHolder = ccui.Helper:seekWidgetByName(ui, 'buttonHolder')
-  local loadingBar = ccui.Helper:seekWidgetByName(ui, 'loadingBar')
+  local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing/Landing.json')
+--  uiRoot:setAnchorPoint(0, 0)
+--  uiRoot:setPosition(0, 0)
+  rootLayer:addChild(uiRoot)
+  local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonHolder')
+  local loadingBar = ccui.Helper:seekWidgetByName(uiRoot, 'loadingBar')
   loadingBar = tolua.cast(loadingBar, 'ccui.LoadingBar')
   local percent = 0
-  ui:runAction( cc.Sequence:create(
+  uiRoot:runAction( cc.Sequence:create(
     cc.Repeat:create(
       cc.Sequence:create(
         cc.DelayTime:create(0.02),
@@ -71,10 +72,10 @@ function LoginScene:init()
     end
   end
   
-  local buttonS = ccui.Helper:seekWidgetByName(ui, 'ButtonS')
+  local buttonS = ccui.Helper:seekWidgetByName(uiRoot, 'ButtonS')
   buttonS:addTouchEventListener(touchEvent)
   
-  local buttonHolder = ccui.Helper:seekWidgetByName(ui, 'buttonStart')
+  local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonStart')
   buttonHolder:addTouchEventListener(touchEvent)
   
   
@@ -92,10 +93,19 @@ function LoginScene:init()
   
   local editName = cc.EditBox:create(cc.size(120, 40), cc.Scale9Sprite:create('green_edit.png'))
   editName:setPosition(150, 50)
-  ui:addNode(editName, 1000)
+  uiRoot:addNode(editName, 1000)
 
 --  local proxy = cc.CCBReader
+  local cjson = require('cjson.safe')
+  local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
+  AllCardTypes = cjson.decode(jsonStr)
   
+  dump(AllCardTypes["3333"])
+  
+  local c = Card.new(AllCardTypes["3333"])
+  dump(c)
+  print('c.isBomb? ', c:isBomb(), '\n', c:toString())
+  dump(c:getPokeValues(true))
   
 end
 

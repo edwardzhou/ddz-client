@@ -1,4 +1,7 @@
 require "Cocos2d"
+require 'framework.functions'
+require 'framework.debug'
+
 -- cclog
 cclog = function(...)
     print(string.format(...))

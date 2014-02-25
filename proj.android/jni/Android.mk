@@ -15,8 +15,9 @@ LOCAL_SRC_FILES := hellolua/main.cpp \
                    ../../Classes/struct/struct.c \
                    ../../Classes/crypto/base64/libbase64.c \
                    ../../Classes/crypto/xxtea/xxtea.c \
-                   ../../Classes/crypto/CCCrypto.cpp \
-                   ../../Classes/crypto/CCCryptoAndroid.cpp \
+
+#                   ../../Classes/crypto/CCCrypto.cpp \
+#                   ../../Classes/crypto/CCCryptoAndroid.cpp \
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \

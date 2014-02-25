@@ -18,7 +18,7 @@ extern "C" {
 
 static luaL_Reg luax_exts[] = {
     {"cjson", luaopen_cjson},
-
+    {"cjson.safe", luaopen_cjson_safe},
     {NULL, NULL}
 };
 

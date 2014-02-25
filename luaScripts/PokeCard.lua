@@ -1,5 +1,7 @@
 g_shared_cards = {}
 
+
+
 PokeCardState = {
 	["NONE"] = 0,
 	["NORMAL"] = 1,
@@ -137,10 +139,10 @@ end
 function PokeCard:ctor(container, filename, scaleFactor)
 	
 	self.image_filename = filename
-	self.poke_card_type = PokeCardType.NONE
-	self.poke_value = 0
-	self.poke_index = 0
-	self.poke_id = ""
+	self.pokeType = PokeCardType.NONE
+	self.value = 0
+	self.pokeIndex = 0
+	self.id = ""
 	self.scaleFactor = 1.0
 	self.state = PokeCardState.NORMAL
 	self.picked = false
@@ -149,65 +151,92 @@ function PokeCard:ctor(container, filename, scaleFactor)
 		self.scaleFactor = scaleFactor
 	end
 	
-	self.card_sprite = cc.Sprite:createWithSpriteFrameName(self.image_filename)
-	self.card_sprite:setAnchorPoint(cc.p(0,0))
-	self.card_sprite:setPosition(cc.p(-150, -150))
-	self.card_sprite:setVisible(false)
-	--self.card_sprite:retain()
-	container:addChild(self.card_sprite)
-	
+--	self.card_sprite = cc.Sprite:createWithSpriteFrameName(self.image_filename)
+--	self.card_sprite:setAnchorPoint(cc.p(0,0))
+--	self.card_sprite:setPosition(cc.p(-150, -150))
+--	self.card_sprite:setVisible(false)
+--	--self.card_sprite:retain()
+--	container:addChild(self.card_sprite)
+end
+
+function PokeCard:loadCardSprite(container)
+  self.card_sprite = cc.Sprite:createWithSpriteFrameName(self.image_filename)
+  self.card_sprite:setAnchorPoint(cc.p(0,0))
+  self.card_sprite:setPosition(cc.p(-150, -150))
+  self.card_sprite:setVisible(false)
+  --self.card_sprite:retain()
+  container:addChild(self.card_sprite)
 end
 
 function PokeCard:reset()
     self.state = PokeCardState.NORMAL
     self.picked = false
-    self.card_sprite:setVisible(false)
-    self.card_sprite:setPosition(cc.p(-150, -150))
-    self.card_sprite:setScale(self.scaleFactor)
+    if self.card_sprite then
+      self.card_sprite:setVisible(false)
+      self.card_sprite:setPosition(cc.p(-150, -150))
+      self.card_sprite:setScale(self.scaleFactor)
+    end
 end
 
 function PokeCard:getPokeString()
-    return PokeCardString[self.poke_value]
+    return PokeCardString[self.value]
 end
 
 function PokeCard:toString()
-    return "PokeCard[" + PokeCardTypeString[self.poke_card_type] ..
-    		PokeCardString[self.poke_value] .. "]"
+    return "PokeCard[" + PokeCardTypeString[self.pokeType] ..
+    		PokeCardString[self.value] .. "]"
 end
 
 Card = class("Card")
 
 -- 出牌
-function Card:ctor()
-	self.card_type = CardType.NONE
-	self.poke_cards = nil
-	self.max_poke_value = 0
-	self.card_length = 0
+function Card:ctor(opts)
+  opts = opts or {}
+	self.cardType = opts.cardType or CardType.NONE
+	self.pokeCards = opts.pokeCards or {}
+	self.maxPokeValue = opts.maxPokeValue or 0
+	self.cardLength = opts.cardLength or 0
 	self.owner = nil
 end
 
+function Card:isBomb()
+  return self.cardType == CardType.BOMB
+end
+
+function Card:isRocket()
+  return self.cardType == CardType.ROCKET
+end
+
 function Card:getPokeValues(wantsValue)
-	local poke_values = {}
-	for  _, value in pairs(self.poke_cards) do
+	local pokeValues = {}
+	for  _, pokeCard in pairs(self.pokeCards) do
 		local v
 		if (wantsValue) then
-			v = value.poke_value
+			v = pokeCard.value
 		else
-			v = value:getPokeString()
+			v = pokeCard:getPokeString()
 		end
-		table.insert(poke_values, v)
+		table.insert(pokeValues, v)
 	end
 		
-	return poke_values
+	return pokeValues
 end
 
 function Card:getPokeIds()
 	local poke_ids = {}
-	for  _, value in pairs(self.poke_cards) do
-		table.insert(poke_ids, value.poke_id)
+	for  _, value in pairs(self.pokeCards) do
+		table.insert(poke_ids, value.id)
 	end
 		
 	return poke_ids
+end
+
+function Card:getPokeChars()
+  local pokeChars = {}
+  for _, pokeCard in pairs(self.pokeCards) do
+    table.insert(pokeChars, pokeCard.idChar)
+  end
+  return table.concat(pokeChars)
 end
 
 function Card:dumpPokeValues()
@@ -219,37 +248,46 @@ function Card:dumpPokeStrings()
 end
 
 function Card:toString()
-	return "Card[ " .. table.toString(self.getPokeValues(true)) .. 
-				" , card_type: " .. CardTypeString[self.card_type] ..
-				" , poke_length: " .. #self.poke_cards ..
-				" , max_poke_value: " .. self.max_poke_value ..
+	return "Card[ " .. table.concat(self:getPokeValues(true), ', ') .. 
+				" , cardType: " .. CardTypeString[self.cardType] ..
+        " , cardLength: " .. self.cardLength ..
+				" , pokeLength: " .. #self.pokeCards ..
+				" , maxPokeValue: " .. self.maxPokeValue ..
 				" ]"
 end
 
 
 PokeCard.releaseAllCards = function() 
 	for _, value in pairs(g_shared_cards) do
-		local poke_card = value.card_sprite
-		if poke_card:getParent() then
-			poke_card:removeFromParentAndCleanup(true)
+--	  dump(value, 'poke card')
+--	  print(value.card_sprite.cname)
+		local pokeSprite = value.card_sprite
+		if pokeSprite:getParent() then
+			pokeSprite:removeFromParentAndCleanup(true)
 		end
-		poke_card = nil
+		pokeSprite = nil
 	end
 	
-	g_shared_cards = {}
-	g_PokeCardMap = {}	
+--	g_shared_cards = {}
+--	g_PokeCardMap = {}	
+end
+
+PokeCard.reloadAllCardSprites = function(container)
+  for _, pokeCard in pairs(g_shared_cards) do
+    pokeCard:loadCardSprite(container)
+  end  
 end
 
 PokeCard.resetAll = function(container)
-	PokeCard.releaseAllCards()
-	PokeCard.sharedPokeCard(container)
+--	PokeCard.releaseAllCards()
+--	PokeCard.sharedPokeCard(container)
 end
 
 PokeCard.sharedPokeCard = function(container) 
 	
 	if #g_shared_cards > 0 then
-		-- return
-		g_shared_cards = {}
+		return
+		--g_shared_cards = {}
 	end
 	
 	--CCSpriteFrameCache:sharedSpriteFrameCache():addSpriteFramesWithFile(Res.s_cards_plist)
@@ -259,54 +297,55 @@ PokeCard.sharedPokeCard = function(container)
 	for card_index, index in pairs(card_indexes) do
 		for _, t in pairs(types) do
 			local card_type = t
-			local card_name = t
-			--card_name = string.format('%s%2d', card_name, index)
-			if index < 10 then
-				card_name = card_name .. "0" .. index
-			else
-				card_name = card_name .. index
-			end
-			local card_image_file_name = card_name .. ".png"
+			local pokeId = t
+			pokeId = string.format('%s%02d', t, index)
+			print('pokeId => ' , pokeId)
+--			if index < 10 then
+--				pokeId = pokeId .. "0" .. index
+--			else
+--				pokeId = pokeId .. index
+--			end
+			local card_image_file_name = pokeId .. ".png"
 			
-			local poke_card = PokeCard.new(container, card_image_file_name)
-			poke_card.index = ci
+			local pokeCard = PokeCard.new(container, card_image_file_name)
+			pokeCard.index = ci
 			ci = ci + 1
-			poke_card.poke_value = tonumber(card_index) + 2
-			poke_card.poke_card_type = PokeCardTypeId[ card_type ]
-			poke_card.poke_id = card_name
-			poke_card.poke_char = string.char(poke_card.index + 64)
-			g_PokeCharMap[poke_card.poke_char] = poke_card
-			table.insert(g_shared_cards, poke_card)
-			g_PokeCardMap[card_name] = poke_card
+			pokeCard.value = tonumber(card_index) + 2
+			pokeCard.pokeType = PokeCardTypeId[ card_type ]
+			pokeCard.id = pokeId
+			pokeCard.idChar = string.char(pokeCard.index + 64)
+			g_PokeCharMap[pokeCard.idChar] = pokeCard
+			table.insert(g_shared_cards, pokeCard)
+			g_PokeCardMap[pokeId] = pokeCard
 		end
 	end
 	
-	local card_name = "w01"
-	local card_image_file_name = card_name .. ".png"
-	local poke_card =  PokeCard.new(container, card_image_file_name)
-	poke_card.image_filename = card_image_file_name
-	poke_card.poke_card_type = PokeCardType.SMALL_JOKER
-	poke_card.poke_value = 16
-	poke_card.poke_id = card_name
-	poke_card.index = ci
+	local pokeId = "w01"
+	local card_image_file_name = pokeId .. ".png"
+	local pokeCard =  PokeCard.new(container, card_image_file_name)
+	pokeCard.image_filename = card_image_file_name
+	pokeCard.pokeType = PokeCardType.SMALL_JOKER
+	pokeCard.value = 16
+	pokeCard.id = pokeId
+	pokeCard.index = ci
 	ci = ci + 1
-  poke_card.poke_char = string.char(poke_card.index + 64)
-  g_PokeCharMap[poke_card.poke_char] = poke_card
-	table.insert(g_shared_cards, poke_card)
-	g_PokeCardMap[card_name] = poke_card
-	card_name = "w02"
-	card_image_file_name = card_name .. ".png"
-	local poke_card = PokeCard.new(container, card_image_file_name)
-	poke_card.poke_card_type = PokeCardType.BIG_JOKER
-	poke_card.poke_value = 17
-	poke_card.poke_id = card_name
-	poke_card.index = ci
+  pokeCard.idChar = string.char(pokeCard.index + 64)
+  g_PokeCharMap[pokeCard.idChar] = pokeCard
+	table.insert(g_shared_cards, pokeCard)
+	g_PokeCardMap[pokeId] = pokeCard
+	pokeId = "w02"
+	card_image_file_name = pokeId .. ".png"
+	local pokeCard = PokeCard.new(container, card_image_file_name)
+	pokeCard.pokeType = PokeCardType.BIG_JOKER
+	pokeCard.value = 17
+	pokeCard.id = pokeId
+	pokeCard.index = ci
 	ci = ci + 1
 		
-  poke_card.poke_char = string.char(poke_card.index + 64)
-  g_PokeCharMap[poke_card.poke_char] = poke_card
-	table.insert(g_shared_cards, poke_card)
-	g_PokeCardMap[card_name] = poke_card
+  pokeCard.idChar = string.char(pokeCard.index + 64)
+  g_PokeCharMap[pokeCard.idChar] = pokeCard
+	table.insert(g_shared_cards, pokeCard)
+	g_PokeCardMap[pokeId] = pokeCard
 	cclog("g_shared_cards.length => %d" , #g_shared_cards)
 end
 
@@ -332,4 +371,4 @@ PokeCard.pokeCardsFromChars = function(chars)
   return pokeCards
 end
 
-PokeCard.getByPokeChars = PokeCard.getByChars
+PokeCard.getByPokeChars = PokeCard.pokeCardsFromChars
