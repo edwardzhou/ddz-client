@@ -2,6 +2,13 @@
 #include "CCLuaEngine.h"
 #include "SimpleAudioEngine.h"
 #include "lua_extensions.h"
+#include "editor-support/cocostudio/CCSGUIReader.h"
+
+#ifdef __cplusplus
+extern "C" {
+LUALIB_API int luaopen_struct (lua_State *L);
+}
+#endif
 
 using namespace CocosDenshion;
 
@@ -36,8 +43,10 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     // register lua engine
     auto engine = LuaEngine::getInstance();
+    auto luaState = engine->getLuaStack()->getLuaState();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
-    luaopen_cjson_extensions(engine->getLuaStack()->getLuaState());
+    luaopen_cjson_extensions(luaState);
+    luaopen_struct(luaState);
 
 //    std::string sstr = "中文测试1234";
 //    CCLOG("sstr: length %d", sstr.length());
@@ -59,6 +68,9 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     //The call was commented because it will lead to ZeroBrane Studio can't find correct context when debugging
     //engine->executeScriptFile("hello.lua");
+    cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
+
+
     engine->executeString("require 'boot.lua'");
     
     return true;
