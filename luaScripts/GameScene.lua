@@ -53,6 +53,7 @@ function GameScene:init()
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
 
   local pokeCards = PokeCard.getByPokeChars('AcjmDrEekRTWCVNXp')
+  table.sort(pokeCards, function(a, b) return a.index > b.index end)
 
   for i=1, 17 do
     local c = pokeCards[i]
@@ -111,10 +112,9 @@ function GameScene:initPokeCardsLayerTouchHandler()
       -- return
     end
     
-    local s = end_p
-    if start < end_p then s = start end
-    local e = start
-    if start < end_p then e = end_p end
+    local s = math.min(start, end_p)
+    local e = math.max(start, end_p)
+
     local white = cc.c3b(255,255,255)
     local red = cc.c3b(187,187,187)
     for index = #self.pokeCards, 1, -1 do
@@ -147,26 +147,67 @@ function GameScene:initPokeCardsLayerTouchHandler()
   local function onTouchMoved(touch, event)
     local locationInNode = self:convertToNodeSpace(touch:getLocation())
     local cur_index = getCardIndex(locationInNode)
-    if cur_index < 0 or cur_index == self.lastIndex then
+    if cur_index < 0 or cur_index == self.cardIndexEnd then
       return
     end
     
+    self.cardIndexEnd = cur_index
+
     if self.cardIndexBegin < 0 then
       self.cardIndexBegin = cur_index
     end
     
-    move_check(self.cardIndexBegin , cur_index)
-    
+    move_check(self.cardIndexBegin , self.cardIndexEnd)
   end
 
   local  function onTouchEnded(touch, event)
     --self:setColor(cc.c3b(255, 255, 255))
-    local locationInNode = self:convertToNodeSpace(touch:getLocation())
-    self.cardIndex = getCardIndex(locationInNode)
-    local poke = nil
-    if self.cardIndex > 0 then
-      poke = self.pokeCards[self.cardIndex]
-      poke.card_sprite:runAction(cc.MoveBy:create(0.08, cc.p(0, 30)))
+--    local locationInNode = self:convertToNodeSpace(touch:getLocation())
+--    self.cardIndex = getCardIndex(locationInNode)
+--    local poke = nil
+--    if self.cardIndex > 0 then
+--      poke = self.pokeCards[self.cardIndex]
+--      poke.card_sprite:runAction(cc.MoveBy:create(0.08, cc.p(0, 30)))
+--    end
+
+    local indexBegin, indexEnd = self.cardIndexBegin, self.cardIndexEnd
+    self.cardIndexBegin, self.cardIndexEnd = nil, nil
+
+    if (indexBegin == nil or indexBegin < 0) then
+      return
+    end
+    if indexEnd == nil or indexEnd < 0 then
+      indexEnd = indexBegin
+    end
+    
+    for _, pokeCard in pairs(self.pokeCards) do
+      if pokeCard.picked then
+        pokeCard.picked = false
+        pokeCard.card_sprite:setPositionY(0)
+      end
+    end
+    
+    if indexBegin > indexEnd then
+      indexBegin, indexEnd = indexEnd, indexBegin
+    end
+    
+    if indexBegin == indexEnd then
+      local pokeCard = self.pokeCards[indexBegin]
+      if pokeCard.picked then
+        pokeCard.picked = false
+        pokeCard.card_sprite:setTag(1000)
+        pokeCard.card_sprite:setColor(cc.c3b(225,255,225))
+        pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
+        return
+      end
+    end
+    
+    for i = indexBegin, indexEnd do
+      local pokeCard = self.pokeCards[i]
+      pokeCard.picked = true
+      pokeCard.card_sprite:setTag(1000)
+      pokeCard.card_sprite:setColor(cc.c3b(255,255,255))
+      pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
     end
   end
 
