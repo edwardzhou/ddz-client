@@ -5,6 +5,7 @@ function PokeCardInfo:ctor(...)
   local pokeCards = {...}
   self.pokeCards = pokeCards
   self.pokeValue = pokeCards[1].value
+  self.pokeValueChar = pokeCards[1].valueChar
   self.pokeCount = #pokeCards
   
   return self

@@ -41,7 +41,7 @@ PokeCardString[PokeCardValue.SIX] = "6"
 PokeCardString[PokeCardValue.SEVEN] = "7"
 PokeCardString[PokeCardValue.EIGHT] = "8"
 PokeCardString[PokeCardValue.NINE] = "9"
-PokeCardString[PokeCardValue.TEN] = "10"
+PokeCardString[PokeCardValue.TEN] = "0"
 PokeCardString[PokeCardValue.JACK] = "J"
 PokeCardString[PokeCardValue.QUEEN] = "Q"
 PokeCardString[PokeCardValue.KING] = "K"
@@ -299,12 +299,6 @@ PokeCard.sharedPokeCard = function(container)
 			local card_type = t
 			local pokeId = t
 			pokeId = string.format('%s%02d', t, index)
-			print('pokeId => ' , pokeId)
---			if index < 10 then
---				pokeId = pokeId .. "0" .. index
---			else
---				pokeId = pokeId .. index
---			end
 			local card_image_file_name = pokeId .. ".png"
 			
 			local pokeCard = PokeCard.new(container, card_image_file_name)
@@ -314,6 +308,7 @@ PokeCard.sharedPokeCard = function(container)
 			pokeCard.pokeType = PokeCardTypeId[ card_type ]
 			pokeCard.id = pokeId
 			pokeCard.idChar = string.char(pokeCard.index + 64)
+			pokeCard.valueChar = PokeCardString[pokeCard.value]
 			g_PokeCharMap[pokeCard.idChar] = pokeCard
 			table.insert(g_shared_cards, pokeCard)
 			g_PokeCardMap[pokeId] = pokeCard
@@ -330,9 +325,11 @@ PokeCard.sharedPokeCard = function(container)
 	pokeCard.index = ci
 	ci = ci + 1
   pokeCard.idChar = string.char(pokeCard.index + 64)
+  pokeCard.valueChar = PokeCardString[pokeCard.value]
   g_PokeCharMap[pokeCard.idChar] = pokeCard
 	table.insert(g_shared_cards, pokeCard)
 	g_PokeCardMap[pokeId] = pokeCard
+	
 	pokeId = "w02"
 	card_image_file_name = pokeId .. ".png"
 	local pokeCard = PokeCard.new(container, card_image_file_name)
@@ -340,10 +337,10 @@ PokeCard.sharedPokeCard = function(container)
 	pokeCard.value = 17
 	pokeCard.id = pokeId
 	pokeCard.index = ci
-	ci = ci + 1
-		
+	ci = ci + 1	
   pokeCard.idChar = string.char(pokeCard.index + 64)
   g_PokeCharMap[pokeCard.idChar] = pokeCard
+  pokeCard.valueChar = PokeCardString[pokeCard.value]
 	table.insert(g_shared_cards, pokeCard)
 	g_PokeCardMap[pokeId] = pokeCard
 	cclog("g_shared_cards.length => %d" , #g_shared_cards)
