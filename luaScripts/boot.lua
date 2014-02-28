@@ -1,6 +1,7 @@
 require "Cocos2d"
 require 'framework.functions'
 require 'framework.debug'
+require 'GlobalFunctions'
 
 -- cclog
 cclog = function(...)
@@ -19,6 +20,8 @@ local function main()
     -- avoid memory leak
     collectgarbage("setpause", 100)
     collectgarbage("setstepmul", 5000)
+    
+    math.randomseed(os.time())
 
     --support debug
     local targetPlatform = cc.Application:getInstance():getTargetPlatform()

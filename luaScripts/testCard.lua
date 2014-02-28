@@ -1,8 +1,10 @@
 require('framework.functions')
 require('framework.debug')
+require('GlobalFunctions')
 require('extern')
 require('PokeCard')
 require('CardUtility')
+require('CardAnalyzer')
 
 
 -- cclog
@@ -20,15 +22,8 @@ end
 
 PokeCard.sharedPokeCard(pokeCardsLayer)
 
-pokeCards = PokeCard.getByPokeChars('AcjmDrEekRTWCVNXp')
+pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
 table.sort(pokeCards, function(a, b) return a.index > b.index end)
 
-cardInfos = CardUtility.getPokeCardsInfo(pokeCards)
-
-dump(cardInfos, 'cardInfo', false, 2)
-
-dump(CardUtility.getBombsInfos(cardInfos), 'getBombsInfos', false, 2)
-dump(CardUtility.getThreeInfos(cardInfos), 'getThreeInfos', false, 3)
-dump(CardUtility.getPairInfos(cardInfos), 'getPairInfos', false, 3)
-dump(CardUtility.getPairInfos(cardInfos)[2].pokeCards[2], 'getPairInfos=>2', false, 3)
---dump(CardUtility.getBombsInfos(cardInfos), 'cardInfo', false, 2)
+analyzer = CardAnalyzer.new(pokeCards)
+analyzer:dump()

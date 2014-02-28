@@ -17,6 +17,11 @@ function PokeCardInfo:push(pokeCard)
   return self
 end
 
+function PokeCardInfo:clone()
+  local newObj = PokeCardInfo.new(unpack(self.pokeCards))
+  return newObj
+end
+
 local function sortIndexAsc(a, b)
   return a.index < b.index
 end
@@ -54,7 +59,7 @@ function CardUtility.getBombsInfos(pokeInfos)
   return infos
 end
 
-function CardUtility.getThreeInfos(pokeInfos, exclude4)
+function CardUtility.getThreesInfos(pokeInfos, exclude4)
   local infos = {}
   for _, pokeInfo in pairs(pokeInfos) do
     if not exclude4 and pokeInfo.pokeCount >= 3 then
@@ -67,7 +72,7 @@ function CardUtility.getThreeInfos(pokeInfos, exclude4)
   return infos
 end
 
-function CardUtility.getPairInfos(pokeInfos, exclude3_4)
+function CardUtility.getPairsInfos(pokeInfos, exclude3_4)
   local infos = {}
   for _, pokeInfo in pairs(pokeInfos) do
     if not exclude4 and pokeInfo.pokeCount >= 2 then
@@ -78,4 +83,28 @@ function CardUtility.getPairInfos(pokeInfos, exclude3_4)
   end
   
   return infos  
+end
+
+function CardUtility.getSinglesInfos(pokeInfos, excludeWw)
+  local infos = {}
+  for _, pokeInfo in pairs(pokeInfos) do
+    if pokeInfo.pokeCount == 1 then
+      table.insert(infos, pokeInfo)
+    end
+  end
+  
+  return infos  
+end
+
+function CardUtility.getRocketInfos(pokeInfos)
+  local infos = {}
+  local count = #pokeInfos
+  if count > 2 and pokeInfos[count].pokeValue == PokeCardValue.BIG_JOKER and
+      pokeInfos[count-1].pokeValue == PokeCardValue.SMALL_JOKER then
+    local newInfo = pokeInfos[count]:clone()
+    newInfo:push(pokeInfos[count-1].pokeCards[1])
+    table.insert(infos, newInfo)
+  end
+  
+  return infos
 end

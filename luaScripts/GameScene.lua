@@ -33,6 +33,7 @@ function GameScene:ctor(...)
 end
 
 function GameScene:init()
+  local this = self
   self:initKeypadHandler()
 
   local rootLayer = cc.Layer:create()
@@ -44,6 +45,27 @@ function GameScene:init()
   local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
   local pokeCardsLayer = cc.Layer:create()
   pokeCardsPanel:addNode(pokeCardsLayer)
+  
+  local winSize = cc.Director:getInstance():getWinSize()
+  
+  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
+  readyButton:addTouchEventListener(function(sender, eventType)
+    local buttonName = sender:getName()
+    print('button clicked: ', buttonName, eventType)
+    if eventType == ccui.TouchEventType.ended then
+--      local renderTexture = cc.RenderTexture:create(winSize.width, winSize.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+--      --this:addChild(renderTexture)
+--      renderTexture:begin()
+--      this:visit()
+--      renderTexture:endToLua()
+--      renderTexture:saveToFile('/screenshot.png', cc.IMAGE_FORMAT_PNG)
+--      local image = renderTexture:newImage(true)
+--      image:saveToFile('/sdcard/tms/screenshot.png', true)
+--      image:release()
+--      --renderTexture:saveToFile('screenshot.png', cc.IMAGE_FORMAT_PNG)
+--      removeChild(renderTexture)
+    end
+  end)
 
 --  local poke = cc.Sprite:createWithSpriteFrameName('a03.png')
 --  poke:setPosition(400, 130)
@@ -52,7 +74,7 @@ function GameScene:init()
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
 
-  local pokeCards = PokeCard.getByPokeChars('AcjmDrEekRTWCVNXp')
+  local pokeCards = PokeCard.getByPokeChars('AcjmDrEekRuvCVNXp')
   table.sort(pokeCards, function(a, b) return a.index > b.index end)
 
   for i=1, 17 do

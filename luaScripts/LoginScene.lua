@@ -27,8 +27,6 @@ function LoginScene:init()
   self:addChild(rootLayer)
   
   local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing/Landing.json')
---  uiRoot:setAnchorPoint(0, 0)
---  uiRoot:setPosition(0, 0)
   rootLayer:addChild(uiRoot)
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonHolder')
   local loadingBar = ccui.Helper:seekWidgetByName(uiRoot, 'loadingBar')
@@ -78,23 +76,10 @@ function LoginScene:init()
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonStart')
   buttonHolder:addTouchEventListener(touchEvent)
   
+  self:initKeypadHandler()
   
---  local snow2 = cc.ParticleSnow:createWithTotalParticles(300)
---  --snow2:setPosition(400, 480)
---  snow2:setSpeed(40)
---  snow2:setSpeedVar(30)
---  snow2:setStartSize(18)
---  snow2:setStartSizeVar(14)
---  
---  -- Gravity Mode: radial
---  snow2:setRadialAccel(10);
---  snow2:setRadialAccelVar(1);
---  rootLayer:addChild(snow2)
   
-  local editName = cc.EditBox:create(cc.size(120, 40), cc.Scale9Sprite:create('green_edit.png'))
-  editName:setPosition(150, 50)
-  uiRoot:addNode(editName, 1000)
-
+  
 --  local proxy = cc.CCBReader
   local cjson = require('cjson.safe')
   local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
@@ -109,8 +94,25 @@ function LoginScene:init()
   
 end
 
+function LoginScene:initKeypadHandler()
+  local function onKeyReleased(keyCode, event)
+    if keyCode == cc.KeyCode.KEY_BACKSPACE then
+      --      if type(self.onMainMenu) == 'function' then
+      --        self.onMainMenu()
+      --      end
+      cc.Director:getInstance():endToLua()
+    elseif keyCode == cc.KeyCode.KEY_MENU  then
+    end
+  end
+
+  local listener = cc.EventListenerKeyboard:create()
+  listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
+  self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+
 local function createScene()
-  local scene = cc.Scene:createWithPhysics()
+  local scene = cc.Scene:create()
   return LoginScene.extend(scene)
 end
 

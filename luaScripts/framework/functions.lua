@@ -231,18 +231,6 @@ function table.merge(dest, src)
     end
 end
 
-function table.deepCopy(src)
-  local newTable = {}
-  for k, v in pairs(src) do
-    if type(v) ~= 'table' then
-      newTable[k] = v
-    else
-      newTable[k] = table.deepCopy(v)
-    end
-  end
-  return newTable
-end
-
 --[[--
 
 insert list.
