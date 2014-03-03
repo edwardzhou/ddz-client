@@ -38,6 +38,9 @@ function table.tableFromField(src, field, from, to)
   local newTable = {}
   from = from or 1
   to = to or #src
+  if to > #src then
+    to = #src
+  end
   for i=from, to do
     table.insert(newTable, src[i][field])
   end
