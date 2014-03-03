@@ -34,6 +34,28 @@ function table.removeItems(src, items)
   end
 end
 
+function table.tableFromField(src, field, from, to)
+  local newTable = {}
+  from = from or 1
+  to = to or #src
+  for i=from, to do
+    table.insert(newTable, src[i][field])
+  end
+--  for _, item in pairs(src) do
+--    table.insert(newTable, item[field])
+--  end
+  
+  return newTable
+end
+
+function table.partial(src, from, to)
+  local newTable = {}
+  for i=from, to do
+    table.insert(newTable, src[i])
+  end
+  return newTable
+end
+
 function shuffleArray(array)
     local arrayCount = #array
     for i = arrayCount, 2, -1 do

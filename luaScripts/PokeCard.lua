@@ -203,6 +203,17 @@ function Card:ctor(opts)
 	self.owner = nil
 end
 
+function Card:equals(other)
+  if other == nil 
+    or self.cardType ~= other.cardType 
+    or self.cardLength ~= other.cardLength 
+    or self.maxPokeValue ~= other.maxPokeValue then
+    return false
+  end
+  
+  return true
+end
+
 function Card.create(pokeCards)
   local opts = {}
   opts.pokeCards = table.dup(pokeCards)

@@ -52,16 +52,17 @@ function CardUtility.getPokeCardsInfo(pokeCards)
   for _, pokeInfo in pairs(infos) do
     table.insert(tmp, pokeInfo)
   end
+  table.sort(tmp, sortAscBy('pokeValue'))
   
   local cardInfo = CardInfo.new({pokeCards = tmpPokeCards})
   cardInfo.valuedPokeCards = infos
   cardInfo.indexedPokeCards = tmp
   
-  cardInfo.bombsInfos = CardUtility.getBombsInfos(infos)
-  cardInfo.threesInfos = CardUtility.getThreesInfos(infos)
-  cardInfo.pairsInfos = CardUtility.getPairsInfos(infos)
-  cardInfo.singlesInfos = CardUtility.getSinglesInfos(infos)
-  cardInfo.rocketInfos = CardUtility.getRocketInfos(infos)
+  cardInfo.bombsInfos = CardUtility.getBombsInfos(tmp)
+  cardInfo.threesInfos = CardUtility.getThreesInfos(tmp)
+  cardInfo.pairsInfos = CardUtility.getPairsInfos(tmp)
+  cardInfo.singlesInfos = CardUtility.getSinglesInfos(tmp)
+  cardInfo.rocketInfos = CardUtility.getRocketInfos(tmp)
   
   return cardInfo
 end
@@ -123,6 +124,10 @@ function CardUtility.getRocketInfos(pokeInfos)
     newInfo:push(pokeInfos[count-1].pokeCards[1])
     table.insert(infos, newInfo)
   end
+--  dump(pokeInfos, ' CardUtility.getRocketInfos')
+--  dump(count, ' CardUtility.getRocketInfos')
+--  dump(pokeInfos[count], ' CardUtility.getRocketInfos')
+--  dump(pokeInfos[count-1], ' CardUtility.getRocketInfos')
   
   return infos
 end

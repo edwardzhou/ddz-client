@@ -25,20 +25,21 @@ PokeCard.sharedPokeCard(pokeCardsLayer)
 pokeIds = {
   'c04',
   'b04',
+  'a04',
+  'b05',
+  'c05',
   'd05',
-  'a06',
-  'd06',
+  'a05',
+  'b06',
   'd07',
-  'c08',
+  'a07',
+  'b08',
+  'd08',
+  'a09',
   'c09',
-  'd10',
-  'd11',
-  'd12',
-  'b12',
-  'a12',
-  'c01',
-  'a01',
-  'd02',
+  'c10',
+  'a10',
+  'a11',
   'c02',
   'b02',
   'w01',
@@ -49,8 +50,8 @@ pokeIds = {
 pokeCards = PokeCard.pokeCardsFromIds(pokeIds)
 table.sort(pokeCards, sortAscBy('index'))
 
-card = Card.create({pokeCards[1], pokeCards[2]})
-dump(card)
+--card = Card.create({pokeCards[1], pokeCards[2]})
+--dump(card)
 
 analyzer = CardAnalyzer.new(pokeCards)
 analyzer:analyze()
