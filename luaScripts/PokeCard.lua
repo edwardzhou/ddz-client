@@ -193,10 +193,51 @@ Card = class("Card")
 function Card:ctor(opts)
   opts = opts or {}
 	self.cardType = opts.cardType or CardType.NONE
-	self.pokeCards = opts.pokeCards or {}
-	self.maxPokeValue = opts.maxPokeValue or 0
+	local pokeCards = {}
+	table.merge(pokeCards, opts.pokeCards or {})
+	self.pokeCards = pokeCards
+	self.maxPokeValue = opts.maxPokeValue or (pokeCards[#pokeCards] and pokeCards[#pokeCards].value) or 0  
+  self.minPokeValue = opts.minPokeValue or (pokeCards[1] and pokeCards[1].value) or 0  
 	self.cardLength = opts.cardLength or 0
+	self.weight = opts.weight or 0
 	self.owner = nil
+end
+
+function Card.create(pokeCards)
+  local opts = {}
+  opts.pokeCards = table.dup(pokeCards)
+  table.sort(opts.pokeCards, sortAscBy('index'))
+  local valueChars = PokeCard.getPokeValuesChars(opts.pokeCards, true)
+  local cardDef = allCardTypes[valueChars]
+  if cardDef ~= nil then
+    opts.cardType = cardDef.cardType
+    opts.cardLength = cardDef.cardLength
+    opts.maxPokeValue = cardDef.maxPokeValue
+  end
+  
+  return Card.new(opts)
+end
+
+function Card:calcWeight()
+  if self.CardType == CardType.NONE then
+    return 0
+  end
+  
+  if self.cardType == CardType.SINGLE then
+    return 1
+  elseif self.cardType == CardType.PAIRS then
+    return 2
+  elseif self.cardType == CardType.THREE or
+          self.cardType == CardType.THREE_WITH_ONE or
+          self.cardType == CardType.THREE_WITH_PAIRS then
+    return 3
+  elseif self.cardType == CardType.STRAIGHT then
+    return 4 + #self.pokeCards - 5
+  elseif self.cardType == CardType.PAIRS_STRAIGHT then
+    return 5 + #self.pokeCards - 6
+  elseif self.cardType == CardType.BOMB or self.cardType == CardType.ROCKET then
+    return 7
+  end
 end
 
 function Card:isBomb()
@@ -249,10 +290,11 @@ end
 
 function Card:toString()
 	return "Card[ " .. table.concat(self:getPokeValues(true), ', ') .. 
-				" , cardType: " .. CardTypeString[self.cardType] ..
-        " , cardLength: " .. self.cardLength ..
-				" , pokeLength: " .. #self.pokeCards ..
-				" , maxPokeValue: " .. self.maxPokeValue ..
+				", cardType: " .. CardTypeString[self.cardType] ..
+        ", cardLen: " .. self.cardLength ..
+				", pokeLen: " .. #self.pokeCards ..
+				", maxVal: " .. self.maxPokeValue ..
+        ", minVal: " .. self.minPokeValue ..
 				" ]"
 end
 
@@ -358,6 +400,22 @@ PokeCard.getByChar = function(char)
   return g_PokeCharMap[char]
 end
 
+PokeCard.pokeCardsFromIds = function(pokeIds)
+  if type(pokeIds) == 'string' then
+    pokeIds = string.split(pokeIds, ',')
+    for i=1, #pokeIds do
+      pokeIds[i] = string.trim(pokeIds[i])
+    end
+  end
+  
+  local pokeCards = {}
+  for i=1, #pokeIds do
+    table.insert(pokeCards, g_PokeCardMap[pokeIds[i]])
+  end
+
+  return pokeCards  
+end
+
 PokeCard.pokeCardsFromChars = function(chars)
   local pokeCards = {}
   for i=1, #chars do
@@ -367,5 +425,22 @@ PokeCard.pokeCardsFromChars = function(chars)
   
   return pokeCards
 end
+
+PokeCard.getPokeValuesChars = function(pokeCards, sorted)
+  local tmpPokeCards = pokeCards
+  if not sorted then
+    tmpPokeCards = table.dup(pokeCards)
+    table.sort(tmpPokeCards, sortAscBy('index'))
+  end
+  
+  local s = ''
+  for _, poke in pairs(tmpPokeCards) do
+    s = s .. poke.valueChar
+  end
+  
+  return s
+end
+
+allCardTypes = require('cjson.safe').decode(getContent('allCardTypes.json'))
 
 PokeCard.getByPokeChars = PokeCard.pokeCardsFromChars

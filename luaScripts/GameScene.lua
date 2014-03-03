@@ -2,7 +2,7 @@ require 'GuiConstants'
 require 'PokeCard'
 
 local GameScene = class('GameScene', function()
-  return cc.Scene:create() 
+  return cc.Scene:create()
 end)
 
 function GameScene.extend(target, ...)
@@ -45,46 +45,69 @@ function GameScene:init()
   local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
   local pokeCardsLayer = cc.Layer:create()
   pokeCardsPanel:addNode(pokeCardsLayer)
-  
+
   local winSize = cc.Director:getInstance():getWinSize()
-  
+
   local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
   readyButton:addTouchEventListener(function(sender, eventType)
     local buttonName = sender:getName()
     print('button clicked: ', buttonName, eventType)
     if eventType == ccui.TouchEventType.ended then
---      local renderTexture = cc.RenderTexture:create(winSize.width, winSize.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
---      --this:addChild(renderTexture)
---      renderTexture:begin()
---      this:visit()
---      renderTexture:endToLua()
---      renderTexture:saveToFile('/screenshot.png', cc.IMAGE_FORMAT_PNG)
---      local image = renderTexture:newImage(true)
---      image:saveToFile('/sdcard/tms/screenshot.png', true)
---      image:release()
---      --renderTexture:saveToFile('screenshot.png', cc.IMAGE_FORMAT_PNG)
---      removeChild(renderTexture)
+    --      local renderTexture = cc.RenderTexture:create(winSize.width, winSize.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+    --      --this:addChild(renderTexture)
+    --      renderTexture:begin()
+    --      this:visit()
+    --      renderTexture:endToLua()
+    --      renderTexture:saveToFile('/screenshot.png', cc.IMAGE_FORMAT_PNG)
+    --      local image = renderTexture:newImage(true)
+    --      image:saveToFile('/sdcard/tms/screenshot.png', true)
+    --      image:release()
+    --      --renderTexture:saveToFile('screenshot.png', cc.IMAGE_FORMAT_PNG)
+    --      removeChild(renderTexture)
     end
   end)
 
---  local poke = cc.Sprite:createWithSpriteFrameName('a03.png')
---  poke:setPosition(400, 130)
---  pokeCardsLayer:addChild(poke)
---
+  --  local poke = cc.Sprite:createWithSpriteFrameName('a03.png')
+  --  poke:setPosition(400, 130)
+  --  pokeCardsLayer:addChild(poke)
+  --
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
 
-  local pokeCards = PokeCard.getByPokeChars('AcjmDrEekRuvCVNXp')
-  table.sort(pokeCards, function(a, b) return a.index > b.index end)
+  local pokeIds = {
+    'c04',
+    'b04',
+    'd05',
+    'a06',
+    'd06',
+    'd07',
+    'c08',
+    'c09',
+    'd10',
+    'd11',
+    'd12',
+    'b12',
+    'a12',
+    'c01',
+    'a01',
+    'd02',
+    'c02',
+    'b02',
+    'w01'
+  }
 
-  for i=1, 17 do
+  --local pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
+  local pokeCards = PokeCard.pokeCardsFromIds(pokeIds)
+  table.sort(pokeCards, sortDescBy('index'))
+
+  for i=1, #(pokeCards) do
     local c = pokeCards[i]
     c.card_sprite:setPosition(i * 40, 0)
     c.card_sprite:setVisible(true)
     c.card_sprite:setLocalZOrder(i)
     if i % 4 == 0 then
-      --c.card_sprite:setOpacity(255 * 0.9)
-      --c.card_sprite:setColor(cc.c3b(187, 187, 187))
+    --c.card_sprite:setOpacity(255 * 0.9)
+    --c.card_sprite:setColor(cc.c3b(187, 187, 187))
     end
   end
   self.pokeCards = pokeCards
@@ -123,17 +146,17 @@ function GameScene:initPokeCardsLayerTouchHandler()
         result = index
         break
       else
-        --cclog("not in rect")
+      --cclog("not in rect")
       end
     end
     return result
   end
-  
-  local function move_check(start, end_p) 
+
+  local function move_check(start, end_p)
     if start == end_p then
-      -- return
+    -- return
     end
-    
+
     local s = math.min(start, end_p)
     local e = math.max(start, end_p)
 
@@ -146,7 +169,7 @@ function GameScene:initPokeCardsLayerTouchHandler()
           poke_card.card_sprite:setColor(white)
           poke_card.card_sprite:setTag(1000)
         end
-      else 
+      else
         if poke_card.card_sprite:getTag() ~= 1003 then
           poke_card.card_sprite:setColor(red)
           poke_card.card_sprite:setTag(1003)
@@ -154,7 +177,7 @@ function GameScene:initPokeCardsLayerTouchHandler()
       end
     end
   end
-  
+
 
   local function onTouchBegan(touch, event)
     local locationInNode = self:convertToNodeSpace(touch:getLocation())
@@ -162,7 +185,7 @@ function GameScene:initPokeCardsLayerTouchHandler()
     if self.cardIndexBegin > 0 then
       move_check(self.cardIndexBegin, self.cardIndexBegin)
     end
-    
+
     return self.cardIndexBegin > 0
   end
 
@@ -172,25 +195,25 @@ function GameScene:initPokeCardsLayerTouchHandler()
     if cur_index < 0 or cur_index == self.cardIndexEnd then
       return
     end
-    
+
     self.cardIndexEnd = cur_index
 
     if self.cardIndexBegin < 0 then
       self.cardIndexBegin = cur_index
     end
-    
+
     move_check(self.cardIndexBegin , self.cardIndexEnd)
   end
 
   local  function onTouchEnded(touch, event)
     --self:setColor(cc.c3b(255, 255, 255))
---    local locationInNode = self:convertToNodeSpace(touch:getLocation())
---    self.cardIndex = getCardIndex(locationInNode)
---    local poke = nil
---    if self.cardIndex > 0 then
---      poke = self.pokeCards[self.cardIndex]
---      poke.card_sprite:runAction(cc.MoveBy:create(0.08, cc.p(0, 30)))
---    end
+    --    local locationInNode = self:convertToNodeSpace(touch:getLocation())
+    --    self.cardIndex = getCardIndex(locationInNode)
+    --    local poke = nil
+    --    if self.cardIndex > 0 then
+    --      poke = self.pokeCards[self.cardIndex]
+    --      poke.card_sprite:runAction(cc.MoveBy:create(0.08, cc.p(0, 30)))
+    --    end
 
     local indexBegin, indexEnd = self.cardIndexBegin, self.cardIndexEnd
     self.cardIndexBegin, self.cardIndexEnd = nil, nil
@@ -201,18 +224,18 @@ function GameScene:initPokeCardsLayerTouchHandler()
     if indexEnd == nil or indexEnd < 0 then
       indexEnd = indexBegin
     end
-    
+
     for _, pokeCard in pairs(self.pokeCards) do
       if pokeCard.picked then
         pokeCard.picked = false
         pokeCard.card_sprite:setPositionY(0)
       end
     end
-    
+
     if indexBegin > indexEnd then
       indexBegin, indexEnd = indexEnd, indexBegin
     end
-    
+
     if indexBegin == indexEnd then
       local pokeCard = self.pokeCards[indexBegin]
       if pokeCard.picked then
@@ -223,7 +246,7 @@ function GameScene:initPokeCardsLayerTouchHandler()
         return
       end
     end
-    
+
     for i = indexBegin, indexEnd do
       local pokeCard = self.pokeCards[i]
       pokeCard.picked = true

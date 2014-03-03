@@ -22,14 +22,22 @@ function PokeCardInfo:clone()
   return newObj
 end
 
-local function sortIndexAsc(a, b)
-  return a.index < b.index
+CardInfo = class('CardInfo')
+
+function CardInfo:ctor(opts)
+  local pokeCards = {}
+  table.merge(pokeCards, opts.pokeCards)
+  --table.sort(pokeCards, sortAscBy('index'))
+  self.pokeCards = pokeCards
+  self.valuedPokeInfo = nil
+  self.indexedPokeInfo = nil
 end
+
 
 function CardUtility.getPokeCardsInfo(pokeCards)
   local tmpPokeCards = {}
   table.merge(tmpPokeCards, pokeCards)
-  table.sort(tmpPokeCards, sortIndexAsc)
+  table.sort(tmpPokeCards, sortAscBy('index'))
   
   local infos = {}
   for _, pokeCard in pairs(tmpPokeCards) do
@@ -45,7 +53,17 @@ function CardUtility.getPokeCardsInfo(pokeCards)
     table.insert(tmp, pokeInfo)
   end
   
-  return tmp
+  local cardInfo = CardInfo.new({pokeCards = tmpPokeCards})
+  cardInfo.valuedPokeCards = infos
+  cardInfo.indexedPokeCards = tmp
+  
+  cardInfo.bombsInfos = CardUtility.getBombsInfos(infos)
+  cardInfo.threesInfos = CardUtility.getThreesInfos(infos)
+  cardInfo.pairsInfos = CardUtility.getPairsInfos(infos)
+  cardInfo.singlesInfos = CardUtility.getSinglesInfos(infos)
+  cardInfo.rocketInfos = CardUtility.getRocketInfos(infos)
+  
+  return cardInfo
 end
 
 function CardUtility.getBombsInfos(pokeInfos)
