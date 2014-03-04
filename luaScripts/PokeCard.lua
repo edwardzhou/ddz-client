@@ -300,7 +300,9 @@ function Card:dumpPokeStrings()
 end
 
 function Card:toString()
-	return "Card[ " .. table.concat(self:getPokeValues(true), ', ') .. 
+
+--	return "Card[ " .. table.concat(self:getPokeValues(true), ', ') .. 
+  return "Card[ " .. PokeCard.getPokeValuesChars(self.pokeCards, true) .. 
 				", cardType: " .. CardTypeString[self.cardType] ..
         ", cardLen: " .. self.cardLength ..
 				", pokeLen: " .. #self.pokeCards ..

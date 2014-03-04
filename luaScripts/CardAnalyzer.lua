@@ -15,35 +15,40 @@ end
 function CardAnalyzer:analyze()
   self.availCards = {}
   self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+  self.orgCardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
   
   self:extractRocket()
   self:extractBombs()
   self:extractThreesStraights()
   self:extractThrees()
   self:extractStraights()
+  self:extractPairsStraights()
   self:extractPairs()
   self:extractSingles()
 end
 
 function CardAnalyzer:extractRocket()
   local found = false
+  local rocketCards = {}
   --dump(self.cardInfos.rocketInfos, 'self.cardInfos.rocketInfos')
   if #(self.cardInfos.rocketInfos) > 0 then
-    table.insert(self.availCards, Card.create(self.cardInfos.rocketInfos[1].pokeCards))
+    local rocketCard = Card.create(self.cardInfos.rocketInfos[1].pokeCards)
+    table.insert(self.availCards, rocketCard)
     found = true
   end
   
   if found then
     table.removeItems(self.pokeCards, self.cardInfos.rocketInfos[1].pokeCards)
     self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  end  
+  end
 end
 
 function CardAnalyzer:extractBombs()
   local bombsInfos = self.cardInfos.bombsInfos
   local found = false
   for _, pokeInfo in pairs(bombsInfos) do
-    table.insert(self.availCards, Card.create(pokeInfo.pokeCards))
+    local bombCard = Card.create(pokeInfo.pokeCards)
+    table.insert(self.availCards, bombCard)
     table.removeItems(self.pokeCards, pokeInfo.pokeCards)
     found = true
   end
@@ -182,7 +187,19 @@ function CardAnalyzer:extractStraights()
     if found then
       self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
     end
-  end  
+  end
+  
+  -- 合并单顺
+  for i=#straights, 2, -1 do
+    local card1 = straights[i]
+    local card2 = straights[i-1]
+    if card1.minPokeValue - 1 == card2.maxPokeValue then
+      local tmpPokeCards = table.dup(card2.pokeCards)
+      table.append(tmpPokeCards, card1.pokeCards)
+      straights[i-1] = Card.create(tmpPokeCards)
+      table.remove(straights, i)
+    end
+  end
   
   -- 合并双顺
   local i = #straights
@@ -205,6 +222,53 @@ function CardAnalyzer:extractStraights()
   if #straights > 0 then
     table.append(self.availCards, straights)
   end
+end
+
+function CardAnalyzer:extractPairsStraights()
+ local pairsInfos = self.cardInfos.pairsInfos
+  local pairsCount = #pairsInfos
+  if pairsCount < 2 then
+    return
+  end
+  
+  local startIndex = 1
+  local endIndex
+  local found = false
+  while startIndex <= pairsCount - 2 do
+    endIndex = startIndex + 2
+    local lastIndex = 0
+    while endIndex <= pairsCount do
+      local valueChars = ''
+      local card
+      for i = startIndex, endIndex do
+        valueChars = valueChars .. PokeCard.getPokeValuesChars(pairsInfos[i].pokeCards)
+      end
+      card = allCardTypes[valueChars]
+      if card == nil or card.cardType ~= CardType.PAIRS_STRAIGHT then
+        break
+      end
+      
+      lastIndex = endIndex
+      endIndex = endIndex + 1
+    end
+    
+    if lastIndex > 0 then
+      local tmpPokeCards = {}
+      for i = startIndex, lastIndex do
+        table.append(tmpPokeCards, pairsInfos[i].pokeCards)
+      end
+      table.insert(self.availCards, Card.create(tmpPokeCards))
+      table.removeItems(self.pokeCards, tmpPokeCards)
+      startIndex = lastIndex + 1
+      found = true
+    else
+      startIndex = startIndex + 1      
+    end    
+  end
+  
+  if found then
+    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+  end  
 end
 
 function CardAnalyzer:extractPairs()

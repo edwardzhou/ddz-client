@@ -41,6 +41,7 @@ function GameScene:init()
 
   local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Gaming/Gaming.json')
   rootLayer:addChild(ui)
+  self.uiWidget = ui
 
   local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
   local pokeCardsLayer = cc.Layer:create()
@@ -73,6 +74,10 @@ function GameScene:init()
   --
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
+  
+  local lordCard1 = ccui.Helper:seekWidgetByName(ui, 'LoardCard1_Image')
+  lordCard1 = tolua.cast(lordCard1, 'ccui.ImageView')
+  lordCard1:loadTexture('a03.png', ccui.TextureResType.plistType)
 
   local pokeIds = {
     'c04',
