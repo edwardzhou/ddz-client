@@ -21,15 +21,21 @@ end
 
 function GameScene:ctor(...)
   cc.SpriteFrameCache:getInstance():addSpriteFramesWithFile('poke_cards.plist')
+  
+  self.visibleSize = cc.Director:getInstance():getVisibleSize()
+  self.origin = cc.Director:getInstance():getVisibleOrigin()
 
   self:registerScriptHandler(function(event)
     print('event => ', event)
     if event == "enterTransitionFinish" then
       self:init()
     elseif event == 'exit' then
+      self:cleanup()
     end
   end)
+end
 
+function GameScene:cleanup()
 end
 
 function GameScene:init()
@@ -46,81 +52,23 @@ function GameScene:init()
   local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
   local pokeCardsLayer = cc.Layer:create()
   pokeCardsPanel:addNode(pokeCardsLayer)
+  self.pokeCardsLayer = pokeCardsLayer
+  
+  self:assignControlsVariables()
+  
 
-  local winSize = cc.Director:getInstance():getWinSize()
+--  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
+--  readyButton:addTouchEventListener(function(sender, eventType)
+--    local buttonName = sender:getName()
+--    print('button clicked: ', buttonName, eventType)
+--    if eventType == ccui.TouchEventType.ended then
+--    end
+--  end)
 
-  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
-  readyButton:addTouchEventListener(function(sender, eventType)
-    local buttonName = sender:getName()
-    print('button clicked: ', buttonName, eventType)
-    if eventType == ccui.TouchEventType.ended then
-    --      local renderTexture = cc.RenderTexture:create(winSize.width, winSize.height, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
-    --      --this:addChild(renderTexture)
-    --      renderTexture:begin()
-    --      this:visit()
-    --      renderTexture:endToLua()
-    --      renderTexture:saveToFile('/screenshot.png', cc.IMAGE_FORMAT_PNG)
-    --      local image = renderTexture:newImage(true)
-    --      image:saveToFile('/sdcard/tms/screenshot.png', true)
-    --      image:release()
-    --      --renderTexture:saveToFile('screenshot.png', cc.IMAGE_FORMAT_PNG)
-    --      removeChild(renderTexture)
-    end
-  end)
-
-  --  local poke = cc.Sprite:createWithSpriteFrameName('a03.png')
-  --  poke:setPosition(400, 130)
-  --  pokeCardsLayer:addChild(poke)
-  --
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
   
-  local lordCard1 = ccui.Helper:seekWidgetByName(ui, 'LoardCard1_Image')
-  lordCard1 = tolua.cast(lordCard1, 'ccui.ImageView')
-  lordCard1:loadTexture('a03.png', ccui.TextureResType.plistType)
-
-  local pokeIds = {
-    'c04',
-    'b04',
-    'd05',
-    'a06',
-    'd06',
-    'd07',
-    'c08',
-    'c09',
-    'd10',
-    'd11',
-    'd12',
-    'b12',
-    'a12',
-    'c01',
-    'a01',
-    'd02',
-    'c02',
-    'b02',
-    'w01'
-  }
-
-  --local pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
-  local pokeCards = PokeCard.pokeCardsFromIds(pokeIds)
-  table.sort(pokeCards, sortDescBy('index'))
-
-  for i=1, #(pokeCards) do
-    local c = pokeCards[i]
-    c.card_sprite:setPosition(i * 40, 0)
-    c.card_sprite:setVisible(true)
-    c.card_sprite:setLocalZOrder(i)
-    if i % 4 == 0 then
-    --c.card_sprite:setOpacity(255 * 0.9)
-    --c.card_sprite:setColor(cc.c3b(187, 187, 187))
-    end
-  end
-  self.pokeCards = pokeCards
-
-  self.pokeCardsLayer = pokeCardsLayer
-
   self:initPokeCardsLayerTouchHandler()
-
 end
 
 function GameScene:initKeypadHandler()
@@ -273,6 +221,36 @@ function GameScene:initPokeCardsLayerTouchHandler()
   eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self.pokeCardsLayer)
 end
 
+function GameScene:assignControlsVariables()
+  local uiRoot = self.uiWidget
+  
+  local function widgetByName(root, name, typeName)
+    local widget = ccui.Helper:seekWidgetByName(root, name)
+    if widget == nil then
+      return nil
+    end
+    return tolua.cast(widget, typeName) 
+  end
+  
+  local function assignUserPanel(userTag)
+    local ctrlPrefix = userPrefix
+    local userPanel = ccui.Helper:seekWidgetByName(uiRoot, userTag .. '_Panel')
+    local userAttr = {}
+    userAttr.Name = widgetByName(userPanel, userTag .. 'Name_Label', 'ccui.Text')
+    userAttr.Role = widgetByName(userPanel, userTag .. 'Role_Image', 'ccui.ImageView')
+    userAttr.Head = widgetByName(userPanel, userTag .. 'Head_Image', 'ccui.ImageView')
+    userAttr.Status = widgetByName(userPanel, userTag .. 'Status_Image', 'ccui.ImageView')
+    self[userTag] = userAttr
+  end
+  
+  -- 上家
+  assignUserPanel('PrevUser')
+  -- 下家
+  assignUserPanel('NextUser')
+  -- 自己
+  assignUserPanel('SelfUser')
+  
+end
 
 local function createScene()
   --local scene = cc.Scene:create()

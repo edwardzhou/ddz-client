@@ -135,7 +135,7 @@ def compile_lua(src, dst):
         # Android can not package the file that ends with ".gz"
         if not item.startswith('.') and not item.endswith('.gz') and os.path.isfile(path) and item.endswith('.lua'):
             dst_file = os.path.join(dst, item)
-            cmd = '/usr/local/bin/luajit -bg %s %s' % (path, dst_file)
+            cmd = '/usr/local/bin/luajit -bg -t raw %s %s' % (path, dst_file)
             print cmd
             os.system(cmd)
         if os.path.isdir(path):

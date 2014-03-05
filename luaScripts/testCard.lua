@@ -23,24 +23,25 @@ end
 PokeCard.sharedPokeCard(pokeCardsLayer)
 
 pokeIds = {
-  'c04',
-  'b04',
-  'd05',
-  'a05',
-  'b06',
-  'a06',
-  'd08',
-  'c09',
-  'c10',
-  'a11',
-  'c12',
-  'c13',
-  'a01',
-  'a03',
-  'c02',
-  'b02',
-  'w01',
-  'w02'
+    'c04',
+    'b04',
+    'd05',
+    'a06',
+    'd06',
+    'd07',
+    'c08',
+    'c09',
+    'd10',
+    'd11',
+    'd12',
+    'b12',
+    'a12',
+    'c01',
+    'a01',
+    'd02',
+    'c02',
+    'b02',
+    'w01'
 }
 
 --pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
