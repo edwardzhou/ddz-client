@@ -75,9 +75,9 @@ def do_build(cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,and
     # windows should use ";" to seperate module paths
     platform = sys.platform
     if platform == 'win32':
-        ndk_module_path = 'NDK_MODULE_PATH=%s;%s/external;%s/cocos' % (cocos_root, cocos_root, cocos_root)
+        ndk_module_path = 'NDK_MODULE_PATH=%s/..;%s/../external;%s;%s/external;%s/cocos' % (cocos_root, cocos_root, cocos_root, cocos_root, cocos_root)
     else:
-        ndk_module_path = 'NDK_MODULE_PATH=%s:%s/external:%s/cocos' % (cocos_root, cocos_root, cocos_root)
+        ndk_module_path = 'NDK_MODULE_PATH=%s/..:%s/../external:%s:%s/external:%s/cocos' % (cocos_root, cocos_root, cocos_root, cocos_root, cocos_root)
 
     num_of_cpu = get_num_of_cpu()
 	
@@ -126,7 +126,7 @@ def copy_resources(app_android_root):
         copy_files(resources_dir, assets_dir)
 
     # lua project should copy lua script
-    resources_dir = os.path.join(app_android_root, "../cocos2d/cocos/scripting/lua/script")
+    resources_dir = os.path.join(app_android_root, "../cocos2d/frameworks/lua-bindings/bindings/script")
     copy_files(resources_dir, assets_dir)
 
 def compile_lua(src, dst):
@@ -136,7 +136,7 @@ def compile_lua(src, dst):
         if not item.startswith('.') and not item.endswith('.gz') and os.path.isfile(path) and item.endswith('.lua'):
             dst_file = os.path.join(dst, item)
             cmd = '/usr/local/bin/luajit -bg -t raw %s %s' % (path, dst_file)
-            print cmd
+            #print cmd
             os.system(cmd)
         if os.path.isdir(path):
             new_dst = os.path.join(dst, item)
@@ -155,7 +155,7 @@ def build(ndk_build_param,android_platform,build_mode):
     select_toolchain_version()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    cocos_root = os.path.join(current_dir, "../cocos2d")
+    cocos_root = os.path.join(current_dir, "../cocos2d/frameworks/lua-bindings/cocos2d-x")
 
     app_android_root = current_dir
     copy_resources(app_android_root)

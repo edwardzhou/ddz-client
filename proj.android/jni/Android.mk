@@ -34,10 +34,10 @@ LOCAL_WHOLE_STATIC_LIBRARIES := cocos_lua_static
 
 include $(BUILD_SHARED_LIBRARY)
 
-COCOS2DX_PATH := /Users/edwardzhou/develop/cocos2d-x-3.0
+#COCOS2DX_PATH := /Users/edwardzhou/develop/cocos2d-x-3.0
 
-$(call import-add-path,$(COCOS2DX_PATH))
-$(call import-add-path,$(COCOS2DX_PATH)/cocos)
-$(call import-add-path,$(COCOS2DX_PATH)/external)
+#$(call import-add-path,$(COCOS2DX_PATH))
+#$(call import-add-path,$(COCOS2DX_PATH)/cocos)
+#$(call import-add-path,$(COCOS2DX_PATH)/external)
 
-$(call import-module,scripting/lua/bindings)
+$(call import-module, bindings)
