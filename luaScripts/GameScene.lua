@@ -55,15 +55,31 @@ function GameScene:init()
   self.pokeCardsLayer = pokeCardsLayer
   
   self:assignControlsVariables()
-  
+  self.selfUserId = 1
 
---  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
---  readyButton:addTouchEventListener(function(sender, eventType)
---    local buttonName = sender:getName()
---    print('button clicked: ', buttonName, eventType)
---    if eventType == ccui.TouchEventType.ended then
---    end
---  end)
+  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
+  readyButton:addTouchEventListener(function(sender, eventType)
+    local buttonName = sender:getName()
+    print('button clicked: ', buttonName, eventType)
+    if eventType == ccui.TouchEventType.ended then
+      --this:updatePlayerUI(this.PrevUserUI, {name= '张无忌'})
+      local Heads = {nil, 'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
+      local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
+      local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
+      table.shuffle(Roles)
+      local playersInfo = {
+        {userId=1, name='我自己', role=Roles[1]},
+ --       {userId=2, name='张无忌', role=Roles[2]},
+        {userId=3, name='东方不败', role=Roles[3]}
+      }
+      for _, playerInfo in pairs(playersInfo) do
+        playerInfo.headIcon = Heads[ math.random(#Heads) ]
+        playerInfo.status = Status[ math.random(#Status) ]
+      end
+      table.shuffle(playersInfo)
+      this:doPlayerJoin(playersInfo)
+    end
+  end)
 
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
@@ -232,15 +248,16 @@ function GameScene:assignControlsVariables()
     return tolua.cast(widget, typeName) 
   end
   
-  local function assignUserPanel(userTag)
+  local function assignUserPanel(userTag, userUISurffix)
+    local userUISurffix = userUISurffix or 'UI'
     local ctrlPrefix = userPrefix
     local userPanel = ccui.Helper:seekWidgetByName(uiRoot, userTag .. '_Panel')
-    local userAttr = {}
+    local userAttr = userPanel
     userAttr.Name = widgetByName(userPanel, userTag .. 'Name_Label', 'ccui.Text')
     userAttr.Role = widgetByName(userPanel, userTag .. 'Role_Image', 'ccui.ImageView')
     userAttr.Head = widgetByName(userPanel, userTag .. 'Head_Image', 'ccui.ImageView')
     userAttr.Status = widgetByName(userPanel, userTag .. 'Status_Image', 'ccui.ImageView')
-    self[userTag] = userAttr
+    self[userTag .. userUISurffix] = userAttr
   end
   
   -- 上家
@@ -256,5 +273,8 @@ local function createScene()
   --local scene = cc.Scene:create()
   return GameScene.new()
 end
+
+require('plugins.UIPlayerUpdatePlugin').bind(GameScene)
+require('plugins.SPlayerJoinPlugin').bind(GameScene)
 
 return createScene

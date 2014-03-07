@@ -85,12 +85,12 @@ function LoginScene:init()
   local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
   AllCardTypes = cjson.decode(jsonStr)
   
-  dump(AllCardTypes["3333"])
-  
-  local c = Card.new(AllCardTypes["3333"])
-  dump(c)
-  print('c.isBomb? ', c:isBomb(), '\n', c:toString())
-  dump(c:getPokeValues(true))
+--  dump(AllCardTypes["3333"])
+--  
+--  local c = Card.new(AllCardTypes["3333"])
+--  dump(c)
+--  print('c.isBomb? ', c:isBomb(), '\n', c:toString())
+--  dump(c:getPokeValues(true))
   
 end
 

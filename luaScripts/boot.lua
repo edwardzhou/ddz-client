@@ -2,6 +2,7 @@ require "Cocos2d"
 require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
+require 'consts'
 
 -- cclog
 cclog = function(...)

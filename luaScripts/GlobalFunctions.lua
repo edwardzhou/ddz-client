@@ -68,6 +68,8 @@ function shuffleArray(array)
     return array
 end
 
+table.shuffle = shuffleArray
+
 function sortAscBy(field)
   return function(a, b)
     return a[field] < b[field]
