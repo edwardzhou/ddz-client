@@ -77,7 +77,7 @@ def do_build(cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,and
     if platform == 'win32':
         ndk_module_path = 'NDK_MODULE_PATH=%s/..;%s/../external;%s;%s/external;%s/cocos' % (cocos_root, cocos_root, cocos_root, cocos_root, cocos_root)
     else:
-        ndk_module_path = 'NDK_MODULE_PATH=%s/..:%s/../external:%s:%s/external:%s/cocos' % (cocos_root, cocos_root, cocos_root, cocos_root, cocos_root)
+        ndk_module_path = 'NDK_MODULE_PATH=%s:%s/cocos/scripting/lua-bindings:%s/external:%s/cocos' % (cocos_root, cocos_root, cocos_root, cocos_root)
 
     num_of_cpu = get_num_of_cpu()
 	
@@ -126,7 +126,7 @@ def copy_resources(app_android_root):
         copy_files(resources_dir, assets_dir)
 
     # lua project should copy lua script
-    resources_dir = os.path.join(app_android_root, "../cocos2d/frameworks/lua-bindings/bindings/script")
+    resources_dir = os.path.join(app_android_root, "../cocos2d/cocos/scripting/lua-bindings/script")
     copy_files(resources_dir, assets_dir)
 
 def compile_lua(src, dst):
@@ -155,7 +155,7 @@ def build(ndk_build_param,android_platform,build_mode):
     select_toolchain_version()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    cocos_root = os.path.join(current_dir, "../cocos2d/frameworks/lua-bindings/cocos2d-x")
+    cocos_root = os.path.join(current_dir, "../cocos2d")
 
     app_android_root = current_dir
     copy_resources(app_android_root)
@@ -166,7 +166,7 @@ def build(ndk_build_param,android_platform,build_mode):
 				if android_platform.isdigit():
 						android_platform = 'android-'+android_platform
 				else:
-						print 'please use vaild android platform'
+						print 'please use valid android platform'
 						exit(1)
 		
     if build_mode is None:

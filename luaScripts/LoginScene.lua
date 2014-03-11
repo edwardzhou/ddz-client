@@ -64,7 +64,7 @@ function LoginScene:init()
         cc.Director:getInstance():pushScene(scene)
       elseif buttonName == 'buttonStart' then
         print('button holder clicked!')
-        local scene = require('GameScene')()
+        local scene = require('gaming.GameScene')()
         cc.Director:getInstance():pushScene(scene)
       end
     end

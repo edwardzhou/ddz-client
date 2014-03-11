@@ -40,4 +40,4 @@ include $(BUILD_SHARED_LIBRARY)
 #$(call import-add-path,$(COCOS2DX_PATH)/cocos)
 #$(call import-add-path,$(COCOS2DX_PATH)/external)
 
-$(call import-module, bindings)
+$(call import-module, scripting/lua-bindings)
