@@ -78,8 +78,6 @@ function LoginScene:init()
   
   self:initKeypadHandler()
   
-  
-  
 --  local proxy = cc.CCBReader
   local cjson = require('cjson.safe')
   local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
