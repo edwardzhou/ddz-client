@@ -48,17 +48,16 @@ function GameScene:init()
   local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Gaming/Gaming.json')
   rootLayer:addChild(ui)
   self.uiWidget = ui
+  self:bindControlsVariables()
 
-  local pokeCardsPanel = ccui.Helper:seekWidgetByName(ui, 'SelfPokeCards_Panel')
   local pokeCardsLayer = cc.Layer:create()
-  pokeCardsPanel:addNode(pokeCardsLayer)
+  self.SelfPokeCards:addNode(pokeCardsLayer)
   self.pokeCardsLayer = pokeCardsLayer
   
-  self:assignControlsVariables()
   self.selfUserId = 1
 
-  local readyButton = ccui.Helper:seekWidgetByName(ui, 'Ready_Button')
-  readyButton:addTouchEventListener(function(sender, eventType)
+  --local readyButton = ccui.Helper:seekWidgetByName(ui, 'vReady_Button')
+  self.Ready:addTouchEventListener(function(sender, eventType)
     local buttonName = sender:getName()
     print('button clicked: ', buttonName, eventType)
     if eventType == ccui.TouchEventType.ended then
@@ -91,6 +90,15 @@ function GameScene:init()
   self:showCards()
   
   self:initPokeCardsLayerTouchHandler()
+  
+  self:runAction(cc.RepeatForever:create(cc.Sequence:create(
+    cc.CallFunc:create(function()
+      local tm = os.date("*t")
+      self.SysTime:setText( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
+    end),
+    cc.DelayTime:create(1.0)
+  )))
+  
 end
 
 function GameScene:initKeypadHandler()
@@ -109,36 +117,9 @@ function GameScene:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
-function GameScene:assignControlsVariables()
-  local uiRoot = self.uiWidget
-  
-  local function widgetByName(root, name, typeName)
-    local widget = ccui.Helper:seekWidgetByName(root, name)
-    if widget == nil then
-      return nil
-    end
-    return tolua.cast(widget, typeName) 
-  end
-  
-  local function assignUserPanel(userTag, userUISurffix)
-    local userUISurffix = userUISurffix or 'UI'
-    local ctrlPrefix = userPrefix
-    local userPanel = ccui.Helper:seekWidgetByName(uiRoot, userTag .. '_Panel')
-    local userAttr = userPanel
-    userAttr.Name = widgetByName(userPanel, userTag .. 'Name_Label', 'ccui.Text')
-    userAttr.Role = widgetByName(userPanel, userTag .. 'Role_Image', 'ccui.ImageView')
-    userAttr.Head = widgetByName(userPanel, userTag .. 'Head_Image', 'ccui.ImageView')
-    userAttr.Status = widgetByName(userPanel, userTag .. 'Status_Image', 'ccui.ImageView')
-    self[userTag .. userUISurffix] = userAttr
-  end
-  
-  -- 上家
-  assignUserPanel('PrevUser')
-  -- 下家
-  assignUserPanel('NextUser')
-  -- 自己
-  assignUserPanel('SelfUser')
-  
+function GameScene:bindControlsVariables()
+  local VarBinding = require('utils.UIVariableBinding')
+  VarBinding.bind(self.uiWidget, self, self)
 end
 
 local function createScene()

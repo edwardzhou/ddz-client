@@ -22,9 +22,12 @@ function SPlayerJoinPlugin.bind(theClass)
     end
 
     if this.updatePlayerUI then
-      this:updatePlayerUI(this.SelfUserUI, this.selfPlayerInfo)
-      this:updatePlayerUI(this.PrevUserUI, this.prevPlayerInfo)
-      this:updatePlayerUI(this.NextUserUI, this.nextPlayerInfo)
+--      this:updatePlayerUI(this.SelfUserUI, this.selfPlayerInfo)
+--      this:updatePlayerUI(this.PrevUserUI, this.prevPlayerInfo)
+--      this:updatePlayerUI(this.NextUserUI, this.nextPlayerInfo)
+      this:updateSelfPlayerUI(this.selfPlayerInfo)
+      this:updatePrevPlayerUI(this.prevPlayerInfo)
+      this:updateNextPlayerUI(this.nextPlayerInfo)
     end
   end
 end

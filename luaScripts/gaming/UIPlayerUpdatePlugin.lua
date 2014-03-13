@@ -4,9 +4,46 @@ local Res = require('Resources')
 local UIPlayerUpdatePlugin = {}
 
 function UIPlayerUpdatePlugin.bind(theClass)
+
+  function theClass:updateSelfPlayerUI(userInfo)
+    local userUI = {
+      Panel = self.SelfUser,
+      Name = self.SelfUserName,
+      Head = self.SelfUserHead,
+      Status = self.SelfUserStatus,
+      Role = self.SelfUserRole
+    }
+    
+    self:updatePlayerUI(userUI, userInfo)
+  end
+
+  function theClass:updatePrevPlayerUI(userInfo)
+    local userUI = {
+      Panel = self.PrevUser,
+      Name = self.PrevUserName,
+      Head = self.PrevUserHead,
+      Status = self.PrevUserStatus,
+      Role = self.PrevUserRole
+    }
+    
+    self:updatePlayerUI(userUI, userInfo)
+  end
+
+  function theClass:updateNextPlayerUI(userInfo)
+    local userUI = {
+      Panel = self.NextUser,
+      Name = self.NextUserName,
+      Head = self.NextUserHead,
+      Status = self.NextUserStatus,
+      Role = self.NextUserRole
+    }
+    
+    self:updatePlayerUI(userUI, userInfo)
+  end
+
   function theClass:updatePlayerUI(userUI, userInfo)
 
-    userUI:setVisible(userInfo ~= nil)
+    userUI.Panel:setVisible(userInfo ~= nil)
     if userInfo == nil then
       return
     end
