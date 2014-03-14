@@ -57,28 +57,28 @@ function GameScene:init()
   self.selfUserId = 1
 
   --local readyButton = ccui.Helper:seekWidgetByName(ui, 'vReady_Button')
-  self.Ready:addTouchEventListener(function(sender, eventType)
-    local buttonName = sender:getName()
-    print('button clicked: ', buttonName, eventType)
-    if eventType == ccui.TouchEventType.ended then
-      --this:updatePlayerUI(this.PrevUserUI, {name= '张无忌'})
-      local Heads = {nil, 'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
-      local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
-      local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
-      table.shuffle(Roles)
-      local playersInfo = {
-        {userId=1, name='我自己', role=Roles[1]},
- --       {userId=2, name='张无忌', role=Roles[2]},
-        {userId=3, name='东方不败', role=Roles[3]}
-      }
-      for _, playerInfo in pairs(playersInfo) do
-        playerInfo.headIcon = Heads[ math.random(#Heads) ]
-        playerInfo.status = Status[ math.random(#Status) ]
-      end
-      table.shuffle(playersInfo)
-      this:doPlayerJoin(playersInfo)
-    end
-  end)
+--  self.Ready:addTouchEventListener(function(sender, eventType)
+--    local buttonName = sender:getName()
+--    print('button clicked: ', buttonName, eventType)
+--    if eventType == ccui.TouchEventType.ended then
+--      --this:updatePlayerUI(this.PrevUserUI, {name= '张无忌'})
+--      local Heads = {nil, 'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
+--      local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
+--      local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
+--      table.shuffle(Roles)
+--      local playersInfo = {
+--        {userId=1, name='我自己', role=Roles[1]},
+-- --       {userId=2, name='张无忌', role=Roles[2]},
+--        {userId=3, name='东方不败', role=Roles[3]}
+--      }
+--      for _, playerInfo in pairs(playersInfo) do
+--        playerInfo.headIcon = Heads[ math.random(#Heads) ]
+--        playerInfo.status = Status[ math.random(#Status) ]
+--      end
+--      table.shuffle(playersInfo)
+--      this:doPlayerJoin(playersInfo)
+--    end
+--  end)
 
   PokeCard.sharedPokeCard(pokeCardsLayer)
   PokeCard.reloadAllCardSprites(pokeCardsLayer)
@@ -99,6 +99,27 @@ function GameScene:init()
     cc.DelayTime:create(1.0)
   )))
   
+end
+
+function GameScene:Ready_onClicked(sender, event)
+  if event == ccui.TouchEventType.ended then 
+    local this = self
+    local Heads = {nil, 'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
+    local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
+    local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
+    table.shuffle(Roles)
+    local playersInfo = {
+      {userId=1, name='我自己', role=Roles[1]},
+     --       {userId=2, name='张无忌', role=Roles[2]},
+      {userId=3, name='东方不败', role=Roles[3]}
+    }
+    for _, playerInfo in pairs(playersInfo) do
+      playerInfo.headIcon = Heads[ math.random(#Heads) ]
+      playerInfo.status = Status[ math.random(#Status) ]
+    end
+    table.shuffle(playersInfo)
+    this:doPlayerJoin(playersInfo)
+  end
 end
 
 function GameScene:initKeypadHandler()

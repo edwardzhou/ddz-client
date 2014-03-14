@@ -79,7 +79,7 @@
             "options": {
               "__type": "ComGUIButtonSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Button",
-              "name": "vBack_Button",
+              "name": "Back_vButton",
               "ZOrder": 4,
               "actiontag": 289,
               "anchorPointX": 0.5,
@@ -217,7 +217,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vLordCard3_Image",
+              "name": "LordCard3_vImage",
               "ZOrder": 4,
               "actiontag": 287,
               "anchorPointX": 0.5,
@@ -270,7 +270,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vLordCard2_Image",
+              "name": "LordCard2_vImage",
               "ZOrder": 4,
               "actiontag": 286,
               "anchorPointX": 0.5,
@@ -436,7 +436,7 @@
             "options": {
               "__type": "ComGUIButtonSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Button",
-              "name": "vConfig_Button",
+              "name": "Config_vButton",
               "ZOrder": 2,
               "actiontag": 284,
               "anchorPointX": 0.5,
@@ -508,7 +508,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vLoardCard1_Image",
+              "name": "LordCard1_vImage",
               "ZOrder": 2,
               "actiontag": 285,
               "anchorPointX": 0.5,
@@ -558,7 +558,7 @@
         "options": {
           "__type": "ComGUIPanelSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Panel",
-          "name": "vTopBar_Panel",
+          "name": "TopBar_vPanel",
           "ZOrder": 1,
           "actiontag": 281,
           "anchorPointX": 0,
@@ -628,7 +628,7 @@
                 "options": {
                   "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
                   "classname": "ImageView",
-                  "name": "vSelfUserHead_Image",
+                  "name": "SelfUserHead_vImage",
                   "ZOrder": 1,
                   "actiontag": 352,
                   "anchorPointX": 0.5,
@@ -744,7 +744,7 @@
             "options": {
               "__type": "ComGUILabelSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Label",
-              "name": "vSelfUserName_Label",
+              "name": "SelfUserName_vLabel",
               "ZOrder": 2,
               "actiontag": 353,
               "anchorPointX": 0.5,
@@ -793,7 +793,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vSelfUserRole_Image",
+              "name": "SelfUserRole_vImage",
               "ZOrder": 2,
               "actiontag": 354,
               "anchorPointX": 0.5,
@@ -846,7 +846,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vSelfUserStatus_Image",
+              "name": "SelfUserStatus_vImage",
               "ZOrder": 2,
               "actiontag": 355,
               "anchorPointX": 0.5,
@@ -896,7 +896,7 @@
         "options": {
           "__type": "ComGUIPanelSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Panel",
-          "name": "vSelfUser_Panel",
+          "name": "SelfUser_vPanel",
           "ZOrder": 4,
           "actiontag": 350,
           "anchorPointX": 0,
@@ -966,7 +966,7 @@
                 "options": {
                   "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
                   "classname": "ImageView",
-                  "name": "vPrevUserHead_Image",
+                  "name": "PrevUserHead_vImage",
                   "ZOrder": 1,
                   "actiontag": 340,
                   "anchorPointX": 0.5,
@@ -1082,7 +1082,7 @@
             "options": {
               "__type": "ComGUILabelSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Label",
-              "name": "vPrevUserName_Label",
+              "name": "PrevUserName_vLabel",
               "ZOrder": 2,
               "actiontag": 341,
               "anchorPointX": 0.5,
@@ -1131,7 +1131,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vPrevUserRole_Image",
+              "name": "PrevUserRole_vImage",
               "ZOrder": 2,
               "actiontag": 342,
               "anchorPointX": 0.5,
@@ -1184,7 +1184,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vPrevUserStatus_Image",
+              "name": "PrevUserStatus_vImage",
               "ZOrder": 2,
               "actiontag": 343,
               "anchorPointX": 0.5,
@@ -1234,7 +1234,7 @@
         "options": {
           "__type": "ComGUIPanelSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Panel",
-          "name": "vPrevUser_Panel",
+          "name": "PrevUser_vPanel",
           "ZOrder": 2,
           "actiontag": 338,
           "anchorPointX": 0,
@@ -1304,7 +1304,7 @@
                 "options": {
                   "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
                   "classname": "ImageView",
-                  "name": "vNextUserHead_Image",
+                  "name": "NextUserHead_vImage",
                   "ZOrder": 1,
                   "actiontag": 346,
                   "anchorPointX": 0.5,
@@ -1420,7 +1420,7 @@
             "options": {
               "__type": "ComGUILabelSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Label",
-              "name": "vNextUserName_Label",
+              "name": "NextUserName_vLabel",
               "ZOrder": 2,
               "actiontag": 347,
               "anchorPointX": 0.5,
@@ -1469,7 +1469,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vNextUserRole_Image",
+              "name": "NextUserRole_vImage",
               "ZOrder": 2,
               "actiontag": 348,
               "anchorPointX": 0.5,
@@ -1522,7 +1522,7 @@
             "options": {
               "__type": "ComGUIImageViewSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "ImageView",
-              "name": "vNextUserStatus_Image",
+              "name": "NextUserStatus_vImage",
               "ZOrder": 2,
               "actiontag": 349,
               "anchorPointX": 0.5,
@@ -1572,7 +1572,7 @@
         "options": {
           "__type": "ComGUIPanelSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Panel",
-          "name": "vNextUser_Panel",
+          "name": "NextUser_vPanel",
           "ZOrder": 4,
           "actiontag": 344,
           "anchorPointX": 0,
@@ -1638,7 +1638,7 @@
             "options": {
               "__type": "ComGUILabelSurrogate:#EditorCommon.JsonModel.Component.GUI",
               "classname": "Label",
-              "name": "vSysTime_Label",
+              "name": "SysTime_vLabel",
               "ZOrder": 0,
               "actiontag": 674,
               "anchorPointX": 1,
@@ -1800,7 +1800,7 @@
         "options": {
           "__type": "ComGUIButtonSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Button",
-          "name": "vReady_Button",
+          "name": "Ready_vButton",
           "ZOrder": 5,
           "actiontag": 518,
           "anchorPointX": 0.5,
@@ -1872,7 +1872,7 @@
         "options": {
           "__type": "ComGUIPanelSurrogate:#EditorCommon.JsonModel.Component.GUI",
           "classname": "Panel",
-          "name": "vSelfPokeCards_Panel",
+          "name": "SelfPokeCards_vPanel",
           "ZOrder": 0,
           "actiontag": 520,
           "anchorPointX": 0,
