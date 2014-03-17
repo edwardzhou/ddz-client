@@ -58,51 +58,35 @@ function GameScene:init()
   self.selfUserId = 1
 
   PokeCard.sharedPokeCard(pokeCardsLayer)
-  PokeCard.reloadAllCardSprites(pokeCardsLayer)
-  self.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
-  dump(self.visibleSize, 'visibleSize')
---pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
-  self.pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXpWSY')
-  table.sort(self.pokeCards, sortDescBy('index'))
-  self:showCards()
+--   PokeCard.reloadAllCardSprites(pokeCardsLayer)
+--   self.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
+--   dump(self.visibleSize, 'visibleSize')
+-- --pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
+--   self.pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXpWSY')
+--   table.sort(self.pokeCards, sortDescBy('index'))
+--   self:showCards()
   
   self:initPokeCardsLayerTouchHandler()
-  
-  self:runAction(cc.RepeatForever:create(cc.Sequence:create(
-    cc.CallFunc:create(function()
-      local tm = os.date("*t")
-      self.SysTime:setText( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
-    end),
-    cc.DelayTime:create(1.0)
-  )))
+
+  self:showSysTime()
+  self:initPlayers()
   
 end
 
 function GameScene:Ready_onClicked(sender, event)
+  local this = self
   if event == ccui.TouchEventType.ended then
-
     PokeCard.releaseAllCards()
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
+    this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
 
     local p1, p2, p3, lordPokeCards = PokeCard.slicePokeCards()
     self.pokeCards = p1
-
-    local this = self
-    local Heads = {nil, 'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
-    local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
-    local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
-    table.shuffle(Roles)
-    local playersInfo = {
-      GamePlayer.new({userId=1, name='我自己', role=Roles[1], pokeCards = self.pokeCards}),
-      GamePlayer.new({userId=2, name='张无忌', role=Roles[2], pokeCards = p2}),
-      GamePlayer.new({userId=3, name='东方不败', role=Roles[3], pokeCards = p3})
-    }
-    for _, playerInfo in pairs(playersInfo) do
-      playerInfo.headIcon = Heads[ math.random(#Heads) ]
-      playerInfo.status = Status[ math.random(#Status) ]
-    end
-    table.shuffle(playersInfo)
-    this:doPlayerJoin(playersInfo)
+    self.selfPlayerInfo.pokeCards = p1
+    self.nextPlayerInfo.pokeCards = p2
+    self.prevPlayerInfo.pokeCards = p3
+    self.lordPokeCards = lordPokeCards
+    self:doUpdatePlayersUI()
     this:showCards()
   end
 end
@@ -127,6 +111,39 @@ function GameScene:bindControlsVariables()
   local VarBinding = require('utils.UIVariableBinding')
   VarBinding.bind(self.uiWidget, self, self)
 end
+
+function GameScene:showSysTime()
+  self:runAction(cc.RepeatForever:create(cc.Sequence:create(
+    cc.CallFunc:create(function()
+      local tm = os.date("*t")
+      self.SysTime:setText( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
+    end),
+    cc.DelayTime:create(1.0)
+  )))  
+end
+
+function GameScene:initPlayers()
+  self.selfUserId = 1
+  local this = self
+  local Heads = {'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
+  local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
+  local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
+  table.shuffle(Roles)
+  local playersInfo = {
+    GamePlayer.new({userId=1, name='我自己', role=Roles[1], status=ddz.PlayerStatus.None}),
+    GamePlayer.new({userId=2, name='张无忌', role=Roles[2], status=ddz.PlayerStatus.Ready}),
+    GamePlayer.new({userId=3, name='东方不败', role=Roles[3], status=ddz.PlayerStatus.Ready})
+  }
+  for _, playerInfo in pairs(playersInfo) do
+    playerInfo.headIcon = Heads[ math.random(#Heads) ]
+  end
+  table.shuffle(playersInfo)
+  
+  self.players = playersInfo
+
+  this:doPlayerJoin(self.players)
+end
+
 
 local function createScene()
   --local scene = cc.Scene:create()

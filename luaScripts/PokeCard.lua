@@ -317,10 +317,11 @@ PokeCard.releaseAllCards = function()
 --	  dump(value, 'poke card')
 --	  print(value.card_sprite.cname)
 		local pokeSprite = value.card_sprite
-		if pokeSprite:getParent() then
+		if pokeSprite and pokeSprite:getParent() then
 			pokeSprite:removeFromParentAndCleanup(true)
 		end
 		pokeSprite = nil
+		value.card_sprite = nil
 	end
 	
 --	g_shared_cards = {}
@@ -467,9 +468,9 @@ PokeCard.slicePokeCards = function()
   local allPokeCards = PokeCard.getShuffledPokeCards()
   local p1, p2, p3, lordCards = {}, {}, {}, {}
   for i=1, 17 do
-    table.insert(p1, table.remove(allPokeCards, 1))
-    table.insert(p2, table.remove(allPokeCards, 1))
-    table.insert(p3, table.remove(allPokeCards, 1))
+    table.insert(p1, table.remove(allPokeCards, math.random(#allPokeCards)))
+    table.insert(p2, table.remove(allPokeCards, math.random(#allPokeCards)))
+    table.insert(p3, table.remove(allPokeCards, math.random(#allPokeCards)))
   end
 
   table.sort(p1, sortDescBy('index'))

@@ -95,3 +95,9 @@ function getContent(filename)
   
   return content
 end
+
+function __bind(fn, this)
+  return function(...)
+    fn(this, ...)
+  end
+end
