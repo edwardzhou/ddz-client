@@ -1,6 +1,7 @@
 require 'GuiConstants'
 require 'PokeCard'
 local GamePlayer = require('GamePlayer')
+local GameService = require('LocalGameService')
 
 local GameScene = class('GameScene', function()
   return cc.Scene:create()
@@ -21,6 +22,9 @@ function GameScene.extend(target, ...)
 end
 
 function GameScene:ctor(...)
+
+  self.gameService = GameService.new()
+
   cc.SpriteFrameCache:getInstance():addSpriteFramesWithFile('poke_cards.plist')
   
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
@@ -58,19 +62,10 @@ function GameScene:init()
   self.selfUserId = 1
 
   PokeCard.sharedPokeCard(pokeCardsLayer)
---   PokeCard.reloadAllCardSprites(pokeCardsLayer)
---   self.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
---   dump(self.visibleSize, 'visibleSize')
--- --pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXp')
---   self.pokeCards = PokeCard.getByPokeChars('AcjmDrBekRuvCVNXpWSY')
---   table.sort(self.pokeCards, sortDescBy('index'))
---   self:showCards()
-  
   self:initPokeCardsLayerTouchHandler()
-
   self:showSysTime()
   self:initPlayers()
-  
+  self.SysTime:setFontName("fonts/Marker Felt.ttf")
 end
 
 function GameScene:Ready_onClicked(sender, event)
@@ -125,23 +120,11 @@ end
 function GameScene:initPlayers()
   self.selfUserId = 1
   local this = self
-  local Heads = {'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
-  local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
-  local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
-  table.shuffle(Roles)
-  local playersInfo = {
-    GamePlayer.new({userId=1, name='我自己', role=Roles[1], status=ddz.PlayerStatus.None}),
-    GamePlayer.new({userId=2, name='张无忌', role=Roles[2], status=ddz.PlayerStatus.Ready}),
-    GamePlayer.new({userId=3, name='东方不败', role=Roles[3], status=ddz.PlayerStatus.Ready})
-  }
-  for _, playerInfo in pairs(playersInfo) do
-    playerInfo.headIcon = Heads[ math.random(#Heads) ]
-  end
-  table.shuffle(playersInfo)
-  
-  self.players = playersInfo
 
-  this:doPlayerJoin(self.players)
+  this.gameService:enterRoom(1, function(playersInfo)
+    this.players = playersInfo
+    this:doPlayerJoin(self.players)
+  end)
 end
 
 
