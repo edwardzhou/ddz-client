@@ -11,6 +11,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
       Name = self.SelfUserName,
       Head = self.SelfUserHead,
       Status = self.SelfUserStatus,
+      PokeCount = self.SelfUserPokeCount,
       Role = self.SelfUserRole
     }
     
@@ -23,6 +24,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
       Name = self.PrevUserName,
       Head = self.PrevUserHead,
       Status = self.PrevUserStatus,
+      PokeCount = self.PrevUserPokeCount,
       Role = self.PrevUserRole
     }
     
@@ -35,6 +37,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
       Name = self.NextUserName,
       Head = self.NextUserHead,
       Status = self.NextUserStatus,
+      PokeCount = self.NextUserPokeCount,
       Role = self.NextUserRole
     }
     
@@ -67,6 +70,8 @@ function UIPlayerUpdatePlugin.bind(theClass)
       userUI.Role:loadTexture(Res.Images.PlayerRoles.Lord, ccui.TextureResType.localType)
     end
     userUI.Role:setVisible(userInfo.role and userInfo.role ~= ddz.PlayerRoles.None)
+
+    userUI.PokeCount:setText(#userInfo.pokeCards)
 
   end
 end

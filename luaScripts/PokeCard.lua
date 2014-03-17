@@ -454,6 +454,32 @@ PokeCard.getPokeValuesChars = function(pokeCards, sorted)
   return s
 end
 
+PokeCard.getShuffledPokeCards = function()
+  local pokeCards = table.dup(g_shared_cards)
+  shuffleArray(pokeCards)
+  shuffleArray(pokeCards)
+  shuffleArray(pokeCards)
+
+  return pokeCards
+end
+
+PokeCard.slicePokeCards = function()
+  local allPokeCards = PokeCard.getShuffledPokeCards()
+  local p1, p2, p3, lordCards = {}, {}, {}, {}
+  for i=1, 17 do
+    table.insert(p1, table.remove(allPokeCards, 1))
+    table.insert(p2, table.remove(allPokeCards, 1))
+    table.insert(p3, table.remove(allPokeCards, 1))
+  end
+
+  table.sort(p1, sortDescBy('index'))
+  table.sort(p2, sortDescBy('index'))
+  table.sort(p3, sortDescBy('index'))
+  table.sort(allPokeCards, sortDescBy('index'))
+
+  return p1, p2, p3, allPokeCards
+end
+
 allCardTypes = require('cjson.safe').decode(getContent('allCardTypes.json'))
 
 PokeCard.getByPokeChars = PokeCard.pokeCardsFromChars
