@@ -2,11 +2,12 @@ local SPlayerJoinPlugin = {}
 
 function SPlayerJoinPlugin.bind(theClass)
   function theClass:onServerPlayerJoin( playersInfo )
-    -- body
+    self:doPlayerJoin(playersInfo)
   end
 
   function theClass:doPlayerJoin(playersInfo)
     local this = self
+    this.players = playersInfo
     if playersInfo[1].userId == this.selfUserId then
       this.selfPlayerInfo = playersInfo[1]
       this.nextPlayerInfo = playersInfo[2]
@@ -21,7 +22,7 @@ function SPlayerJoinPlugin.bind(theClass)
       this.prevPlayerInfo = playersInfo[2]
     end
 
-    self:doUpdatePlayersUI()
+    this:doUpdatePlayersUI()
   end
 
   function theClass:doUpdatePlayersUI()

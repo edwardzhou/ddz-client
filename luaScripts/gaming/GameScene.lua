@@ -25,7 +25,7 @@ function GameScene:ctor(...)
 
   self.gameService = GameService.new()
 
-  cc.SpriteFrameCache:getInstance():addSpriteFramesWithFile('poke_cards.plist')
+  cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
   
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
   self.origin = cc.Director:getInstance():getVisibleOrigin()
@@ -75,14 +75,13 @@ function GameScene:Ready_onClicked(sender, event)
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
 
-    local p1, p2, p3, lordPokeCards = PokeCard.slicePokeCards()
-    self.pokeCards = p1
-    self.selfPlayerInfo.pokeCards = p1
-    self.nextPlayerInfo.pokeCards = p2
-    self.prevPlayerInfo.pokeCards = p3
-    self.lordPokeCards = lordPokeCards
-    self:doUpdatePlayersUI()
-    this:showCards()
+    -- local p1, p2, p3, lordPokeCards = PokeCard.slicePokeCards()
+    -- self.pokeCards = p1
+    -- self.selfPlayerInfo.pokeCards = p1
+    -- self.nextPlayerInfo.pokeCards = p2
+    -- self.prevPlayerInfo.pokeCards = p3
+    -- self.lordPokeCards = lordPokeCards
+    self.gameService:readyGame(__bind(self.onServerGameStart, self))
   end
 end
 
@@ -121,12 +120,18 @@ function GameScene:initPlayers()
   self.selfUserId = 1
   local this = self
 
-  this.gameService:enterRoom(1, function(playersInfo)
-    this.players = playersInfo
-    this:doPlayerJoin(self.players)
-  end)
+  this.gameService:enterRoom(1, __bind(self.onServerPlayerJoin, self))
 end
 
+function GameScene:onServerGameStart(pokeGame)
+  self.pokeGame = pokeGame
+  self.pokeCards = self.selfPlayerInfo.pokeCards
+  self:doUpdatePlayersUI()
+  self:showCards()
+  self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
+  self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
+  self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+end
 
 local function createScene()
   --local scene = cc.Scene:create()

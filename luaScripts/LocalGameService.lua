@@ -1,5 +1,5 @@
 local GamePlayer = require('GamePlayer')
-
+local PokeGame = require('PokeGame')
 LocalGameService = class('GameService')
 
 function LocalGameService:ctor()
@@ -10,7 +10,7 @@ function LocalGameService:enterRoom(roomId, callback)
   local this = self
   local Heads = {'head1', 'head2', 'head3', 'head4', 'head5', 'head6', 'head7', 'head8'}
   local Status = {ddz.PlayerStatus.None, ddz.PlayerStatus.Ready}
-  local Roles = {ddz.PlayerRoles.None, ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
+  local Roles = {ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
   table.shuffle(Roles)
   local playersInfo = {
     GamePlayer.new({userId=1, name='我自己', role=Roles[1], status=ddz.PlayerStatus.None}),
@@ -22,9 +22,19 @@ function LocalGameService:enterRoom(roomId, callback)
   end
   table.shuffle(playersInfo)
 
+  self.playersInfo = playersInfo
+
   callback(playersInfo)
 end
 
-
+function LocalGameService:readyGame(callback)
+  self.pokeGame = PokeGame.new(self.playersInfo)
+  self.playersInfo[1].status = ddz.PlayerStatus.None
+  self.playersInfo[2].status = ddz.PlayerStatus.None
+  self.playersInfo[3].status = ddz.PlayerStatus.None
+  if type(callback) == 'function' then
+    callback(self.pokeGame)
+  end
+end
 
 return LocalGameService

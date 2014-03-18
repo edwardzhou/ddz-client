@@ -318,7 +318,7 @@ PokeCard.releaseAllCards = function()
 --	  print(value.card_sprite.cname)
 		local pokeSprite = value.card_sprite
 		if pokeSprite and pokeSprite:getParent() then
-			pokeSprite:removeFromParentAndCleanup(true)
+			pokeSprite:removeFromParent(true)
 		end
 		pokeSprite = nil
 		value.card_sprite = nil
