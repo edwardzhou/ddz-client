@@ -150,20 +150,27 @@ function GameScene:ButtonTip_onClicked(sender, event)
 end
 
 function GameScene:ButtonPlay_onClicked(sender, event)
-  local pokeCards = theClass:getPickedPokecards()
+  local pokeCards = self:getPickedPokecards()
+  if #pokeCards == 0 then
+    return
+  end
+  --table.sort(pokeCards, sortDescBy('index'))
   local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2)
   local step = 35 * 0.7
   local pokeSize = self.cardContentSize.width/2
   local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7
-  for index = #pokeCards, -1, -1 do
+  for index = #pokeCards, 1, -1 do
     local pokeSprite = pokeCards[index].card_sprite
     pokeSprite:runAction(cc.Spawn:create(
       cc.MoveTo:create(0.2, cc.p(startX, centerPoint.y)),
       cc.ScaleTo:create(0.1, 0.7)
     ))
     startX = startX + 35 * 0.7
-    pokeSprite:setLocalZOrder(19 + index)
+    pokeSprite:setLocalZOrder(30 - index)
   end
+  table.removeItems(self.pokeCards, pokeCards)
+  self:alignCards()
+
 end
 
 local function createScene()
