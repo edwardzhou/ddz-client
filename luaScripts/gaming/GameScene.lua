@@ -149,6 +149,23 @@ function GameScene:ButtonTip_onClicked(sender, event)
   self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
 end
 
+function GameScene:ButtonPlay_onClicked(sender, event)
+  local pokeCards = theClass:getPickedPokecards()
+  local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2)
+  local step = 35 * 0.7
+  local pokeSize = self.cardContentSize.width/2
+  local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7
+  for index = #pokeCards, -1, -1 do
+    local pokeSprite = pokeCards[index].card_sprite
+    pokeSprite:runAction(cc.Spawn:create(
+      cc.MoveTo:create(0.2, cc.p(startX, centerPoint.y)),
+      cc.ScaleTo:create(0.1, 0.7)
+    ))
+    startX = startX + 35 * 0.7
+    pokeSprite:setLocalZOrder(19 + index)
+  end
+end
+
 local function createScene()
   --local scene = cc.Scene:create()
   return GameScene.new()
