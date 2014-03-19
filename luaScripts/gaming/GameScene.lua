@@ -66,11 +66,13 @@ function GameScene:init()
   self:showSysTime()
   self:initPlayers()
   self.SysTime:setFontName("fonts/Marker Felt.ttf")
+  self:showButtonsPanel(false)
+
 end
 
 function GameScene:Ready_onClicked(sender, event)
   local this = self
-  if event == ccui.TouchEventType.ended then
+  --if event == ccui.TouchEventType.ended then
     PokeCard.releaseAllCards()
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
@@ -82,7 +84,7 @@ function GameScene:Ready_onClicked(sender, event)
     -- self.prevPlayerInfo.pokeCards = p3
     -- self.lordPokeCards = lordPokeCards
     self.gameService:readyGame(__bind(self.onServerGameStart, self))
-  end
+  --end
 end
 
 function GameScene:initKeypadHandler()
@@ -127,10 +129,24 @@ function GameScene:onServerGameStart(pokeGame)
   self.pokeGame = pokeGame
   self.pokeCards = self.selfPlayerInfo.pokeCards
   self:doUpdatePlayersUI()
+  self.Ready:setVisible(false)
+  self:showButtonsPanel(true)
   self:showCards()
   self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
   self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
   self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+end
+
+function GameScene:ButtonPass_onClicked(sender, event)
+  self:enableButtonTip(false)
+end
+
+function GameScene:ButtonReset_onClicked(sender, event)
+  self:enableButtonTip(true)
+end
+
+function GameScene:ButtonTip_onClicked(sender, event)
+  self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
 end
 
 local function createScene()
@@ -141,5 +157,6 @@ end
 require('gaming.UIPlayerUpdatePlugin').bind(GameScene)
 require('gaming.SPlayerJoinPlugin').bind(GameScene)
 require('gaming.UIPokecardPickPlugin').bind(GameScene)
+require('gaming.UIButtonsPlugin').bind(GameScene)
 
 return createScene

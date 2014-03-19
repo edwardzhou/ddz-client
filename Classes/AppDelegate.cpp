@@ -49,38 +49,38 @@ bool AppDelegate::applicationDidFinishLaunching()
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
 
-    int nRet;
-	unzFile pFile = NULL;
-    do {
-		pFile = unzOpen("/sdcard/tms/Resources.zip");
-		CC_BREAK_IF(!pFile);
-		while (unzGoToNextFile(pFile) == UNZ_OK) {
-			char szFilePathA[260];
-			unz_file_info FileInfo;
-			nRet = unzGetCurrentFileInfo(pFile, &FileInfo, szFilePathA, sizeof(szFilePathA), NULL, 0, NULL, 0);
-			CC_BREAK_IF(UNZ_OK != nRet);
-			CCLOG("File: %s", szFilePathA);
-		}
+ //    int nRet;
+	// unzFile pFile = NULL;
+ //    do {
+	// 	pFile = unzOpen("/sdcard/tms/Resources.zip");
+	// 	CC_BREAK_IF(!pFile);
+	// 	while (unzGoToNextFile(pFile) == UNZ_OK) {
+	// 		char szFilePathA[260];
+	// 		unz_file_info FileInfo;
+	// 		nRet = unzGetCurrentFileInfo(pFile, &FileInfo, szFilePathA, sizeof(szFilePathA), NULL, 0, NULL, 0);
+	// 		CC_BREAK_IF(UNZ_OK != nRet);
+	// 		CCLOG("File: %s", szFilePathA);
+	// 	}
 
-		CCLOG("Try to locate file.");
-		//unzGoToFirstFile(pFile);
-		nRet = unzLocateFile(pFile, "Resources/UI/Hall/", 2);
-		CC_BREAK_IF(UNZ_OK != nRet);
-		do {
-			char szFilePathA[260];
-			unz_file_info FileInfo;
-			nRet = unzGetCurrentFileInfo(pFile, &FileInfo, szFilePathA, sizeof(szFilePathA), NULL, 0, NULL, 0);
-			CC_BREAK_IF(UNZ_OK != nRet);
-			CCLOG("File: %s", szFilePathA);
-		} while (unzGoToNextFile(pFile) == UNZ_OK);
+	// 	CCLOG("Try to locate file.");
+	// 	//unzGoToFirstFile(pFile);
+	// 	nRet = unzLocateFile(pFile, "Resources/UI/Hall/", 2);
+	// 	CC_BREAK_IF(UNZ_OK != nRet);
+	// 	do {
+	// 		char szFilePathA[260];
+	// 		unz_file_info FileInfo;
+	// 		nRet = unzGetCurrentFileInfo(pFile, &FileInfo, szFilePathA, sizeof(szFilePathA), NULL, 0, NULL, 0);
+	// 		CC_BREAK_IF(UNZ_OK != nRet);
+	// 		CCLOG("File: %s", szFilePathA);
+	// 	} while (unzGoToNextFile(pFile) == UNZ_OK);
 
 
-    } while(false);
+ //    } while(false);
 
-    if (pFile) {
-    	unzClose(pFile);
-    }
-	CCLOG("Close Zip file.");
+ //    if (pFile) {
+ //    	unzClose(pFile);
+ //    }
+	// CCLOG("Close Zip file.");
 //    std::string sstr = "中文测试1234";
 //    CCLOG("sstr: length %d", sstr.length());
 //    int size = sstr.length()*2 + 10;

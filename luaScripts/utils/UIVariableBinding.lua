@@ -2,9 +2,16 @@ local UIVaribleBdinding = {}
 
 local TypeMapping = {
   Panel = 'ccui.Layout',
+  Layout = 'ccui.Layout',
+  CheckBox = 'ccui.CheckBox',
+  ListView = 'ccui.ListView',
+  LoadingBar = 'ccui.LoadingBar',
+  PageView = 'ccui.PageView',
+  ScrollView = 'ccui.ScrollView',
   Image = 'ccui.ImageView',
   ImageView = 'ccui.ImageView',
   Label = 'ccui.Text',
+  Text = 'ccui.Text',
   Button = 'ccui.Button'
 }
 
@@ -23,7 +30,8 @@ function UIVaribleBdinding.bind(uiWidget, varContainer, eventContainer)
 --
   local function bindVariables(uiWidget, varHodler)
     local widgetName = uiWidget:getName()
-    local vname, vtype, wtype = string.gmatch(widgetName, '(.*)_(%l*)(.*)')()
+    local vtype, vname, wtype = string.gmatch(widgetName, '(.*)_(.*)')()
+    wtype = uiWidget:getDescription()
     local tmpParent = varHodler
     local widget = nil
     if vtype ~= nil and vname ~= nil and wtype ~= nil then
@@ -36,13 +44,20 @@ function UIVaribleBdinding.bind(uiWidget, varContainer, eventContainer)
         varHodler[vname] = widget
       end
       if widget and eventContainer and wtype == 'Button' then
-        local eventHandlerName = vname .. '_onClicked'
+        local eventHandlerName = vname .. '_onEvent'
         local eventHandler = eventContainer[eventHandlerName]
-        print('[bind event]', vname, eventHandlerName, eventHandler)
+        local onclickName = vname .. '_onClicked'
+        local onclickHandler = eventContainer[onclickName]
+        print('[bind event]', vname, eventHandlerName, ' eventHandler:', eventHandler , ' onclickHandler: ', onclickHandler)
         
-        if type(eventHandler) == 'function' then
+        if type(eventHandler) == 'function' or type(onclickHandler) == 'function' then
           widget:addTouchEventListener(function(sender, event)
-            eventHandler(eventContainer, sender, event)
+            if eventHandler then
+              eventHandler(eventContainer, sender, event)
+            end
+            if event == ccui.TouchEventType.ended and onclickHandler then
+              onclickHandler(eventContainer, sender, event)
+            end
           end)
         end
       end
