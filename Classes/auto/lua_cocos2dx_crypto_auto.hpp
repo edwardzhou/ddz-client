@@ -10,3 +10,18 @@ extern "C" {
 #endif
 
 int register_all_cocos2dx_crypto(lua_State* tolua_S);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif // __cocos2dx_crypto_h__

@@ -151,25 +151,30 @@ end
 
 function GameScene:ButtonPlay_onClicked(sender, event)
   local pokeCards = self:getPickedPokecards()
-  if #pokeCards == 0 then
-    return
-  end
-  --table.sort(pokeCards, sortDescBy('index'))
-  local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2)
-  local step = 35 * 0.7
-  local pokeSize = self.cardContentSize.width/2
-  local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7
-  for index = #pokeCards, 1, -1 do
-    local pokeSprite = pokeCards[index].card_sprite
-    pokeSprite:runAction(cc.Spawn:create(
-      cc.MoveTo:create(0.2, cc.p(startX, centerPoint.y)),
-      cc.ScaleTo:create(0.1, 0.7)
-    ))
-    startX = startX + 35 * 0.7
-    pokeSprite:setLocalZOrder(30 - index)
-  end
-  table.removeItems(self.pokeCards, pokeCards)
-  self:alignCards()
+  self:selfPlayCardEffect({pokeCards = pokeCards})
+
+  local prevPokecards = table.copy(self.prevPlayerInfo.pokeCards, 1, 3)
+  table.sort(prevPokecards, sortAscBy('index'))
+  local nextPokecards = table.copy(self.nextPlayerInfo.pokeCards, 1, 3)
+  table.sort(nextPokecards, sortAscBy('index'))
+
+  self:prevPlayCardEffect({pokeCards = prevPokecards})
+  self:nextPlayCardEffect({pokeCards = nextPokecards})
+
+  -- local renderTexture = cc.RenderTexture:create(self.visibleSize.width, self.visibleSize.height)
+  -- renderTexture:retain()
+  -- renderTexture:begin()
+  -- self:visit()
+  -- renderTexture:endToLua()
+  -- self:runAction(cc.Sequence:create(
+  --   cc.DelayTime:create(0.02),
+  --   cc.CallFunc:create(function() 
+  --     local image = renderTexture:newImage()
+  --     image:saveToFile('/sdcard/tms/screen-shot.png')
+  --     renderTexture:release()
+  --     image:release()
+  --   end)
+  -- ))
 
 end
 
@@ -180,7 +185,7 @@ end
 
 require('gaming.UIPlayerUpdatePlugin').bind(GameScene)
 require('gaming.SPlayerJoinPlugin').bind(GameScene)
-require('gaming.UIPokecardPickPlugin').bind(GameScene)
+require('gaming.UIPokecardsPlugin').bind(GameScene)
 require('gaming.UIButtonsPlugin').bind(GameScene)
 
 return createScene

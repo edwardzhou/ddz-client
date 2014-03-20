@@ -2,7 +2,14 @@
 #ifndef __CC_EXTENSION_CCCRYPTO_H_
 #define __CC_EXTENSION_CCCRYPTO_H_
 
-#include "cocos2dx_extra.h"
+#include "cocos2d.h"
+#include <string>
+
+#ifndef NS_CC_EXTRA_BEGIN
+#define NS_CC_EXTRA_BEGIN                     namespace cocos2d { namespace extra {
+#define NS_CC_EXTRA_END                       }}
+#define USING_NS_CC_EXTRA                     using namespace cocos2d::extra
+#endif
 
 //#define CC_LUA_ENGINE_ENABLED 1
 
@@ -78,8 +85,10 @@ public:
     
     
 
-    static const string MD5String(void* input, int inputLength);
+    static const std::string MD5String(void* input, int inputLength);
     
+    static bool isValidNativeObject(Ref* refObj);
+
 #pragma mark -
 #pragma mark for Lua
     

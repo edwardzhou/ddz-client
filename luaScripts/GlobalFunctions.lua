@@ -21,6 +21,20 @@ function table.dup(src)
   return newTable
 end
 
+function table.copy(src, from, to)
+  from = from or 1
+  to = to or #src
+  if from > to then
+    from, to = to, from
+  end
+
+  local newTable = {}
+  for index = from, to do
+    table.insert(newTable, src[index])
+  end
+  return newTable
+end
+
 function table.append(dst, src)
   for _, value in pairs(src) do
     table.insert(dst, value)

@@ -1,6 +1,6 @@
-local UIPokecardPickPlugin = {}
+local UIPokecardsPlugin = {}
 
-function UIPokecardPickPlugin.bind( theClass )
+function UIPokecardsPlugin.bind( theClass )
   local lastIndexBegin, lastIndexEnd = nil, nil
   local thisObj = nil
 
@@ -228,6 +228,81 @@ function UIPokecardPickPlugin.bind( theClass )
     table.sort(picked, sortAscBy('index'))
     return picked
   end
+
+  function theClass:selfPlayCardEffect(card)
+    local pokeCards = card.pokeCards
+    if #pokeCards == 0 then
+      return
+    end
+
+    if self.selfLastCard and #self.selfLastCard.pokeCards > 0 then
+      for _, pokeCard in pairs(self.selfLastCard.pokeCards) do
+        pokeCard.card_sprite:setPosition(-150, 0)
+        pokeCard.card_sprite:setVisible(false)
+      end 
+    end
+
+    self.selfLastCard = {pokeCards = pokeCards}
+
+    local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 50)
+    local step = 35 * 0.7
+    local pokeSize = self.cardContentSize.width/2
+    local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7
+    for index = #pokeCards, 1, -1 do
+      local pokeSprite = pokeCards[index].card_sprite
+      pokeSprite:runAction(cc.Spawn:create(
+        cc.MoveTo:create(0.2, cc.p(startX, centerPoint.y)),
+        cc.ScaleTo:create(0.1, 0.7)
+      ))
+      startX = startX + 35 * 0.7
+      pokeSprite:setLocalZOrder(30 - index)
+    end
+    table.removeItems(self.pokeCards, pokeCards)
+    self:alignCards()
+  end
+
+  function theClass:prevPlayCardEffect(card)
+    local pokeCards = card.pokeCards
+    local startPoint = cc.p(-100, self.visibleSize.height + 100)
+    local pokeSize = self.cardContentSize.width/2
+    local step = 35 * 0.7
+    local endPoint = cc.p(165, 300)
+
+    for index = #pokeCards, 1, -1 do
+      local pokeSprite = pokeCards[index].card_sprite
+      pokeSprite:setPosition(startPoint)
+      pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:setVisible(true)
+
+      pokeSprite:runAction(cc.Spawn:create(
+        cc.MoveTo:create(0.2, endPoint),
+        cc.ScaleTo:create(0.1, 0.7)
+      ))
+      endPoint.x = endPoint.x + 35 * 0.7
+    end
+  end
+
+  function theClass:nextPlayCardEffect(card)
+    local pokeCards = card.pokeCards
+    local startPoint = cc.p(self.visibleSize.width + 100, self.visibleSize.height + 100)
+    local pokeSize = self.cardContentSize.width/2
+    local step = 35 * 0.7
+    local endPoint = cc.p(585, 300)
+
+    for index = 1, #pokeCards do
+      local pokeSprite = pokeCards[index].card_sprite
+      pokeSprite:setPosition(startPoint)
+      pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:setVisible(true)
+
+      pokeSprite:runAction(cc.Spawn:create(
+        cc.MoveTo:create(0.2, endPoint),
+        cc.ScaleTo:create(0.1, 0.7)
+      ))
+      endPoint.x = endPoint.x - 35 * 0.7
+    end
+  end
+
 end
 
-return UIPokecardPickPlugin
+return UIPokecardsPlugin
