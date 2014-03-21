@@ -414,6 +414,14 @@ PokeCard.getByChar = function(char)
   return g_PokeCharMap[char]
 end
 
+PokeCard.getIdChars = function(pokeCards)
+  local pokeChars = {}
+  for _, pokeCard in pairs(pokeCards) do
+    table.insert(pokeChars, pokeCard.idChar)
+  end
+  return table.concat(pokeChars)
+end
+
 PokeCard.pokeCardsFromIds = function(pokeIds)
   if type(pokeIds) == 'string' then
     pokeIds = string.split(pokeIds, ',')

@@ -28,6 +28,10 @@ function table.copy(src, from, to)
     from, to = to, from
   end
 
+  if to > #src then
+    to = #src
+  end
+
   local newTable = {}
   for index = from, to do
     table.insert(newTable, src[index])

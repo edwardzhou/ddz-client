@@ -14,6 +14,7 @@ function GamePlayer:ctor(playerInfo)
   self.headIcon = playerInfo.headIcon
   self.role = playerInfo.role
   self.status = playerInfo.status
+  self.robot = playerInfo.robot or false
 end
 
 return GamePlayer

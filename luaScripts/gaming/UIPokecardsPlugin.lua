@@ -244,7 +244,7 @@ function UIPokecardsPlugin.bind( theClass )
 
     self.selfLastCard = {pokeCards = pokeCards}
 
-    local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 50)
+    local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 30)
     local step = 35 * 0.7
     local pokeSize = self.cardContentSize.width/2
     local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7
