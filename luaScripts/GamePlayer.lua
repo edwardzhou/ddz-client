@@ -1,3 +1,5 @@
+local CardAnalyzer = require('CardAnalyzer')
+
 local GamePlayer = class('GamePlayer')
 
 function GamePlayer:ctor(playerInfo)
@@ -16,5 +18,17 @@ function GamePlayer:ctor(playerInfo)
   self.status = playerInfo.status
   self.robot = playerInfo.robot or false
 end
+
+function GamePlayer:analyzePokecards()
+  if self.cardAnalyzer == nil then
+    self.cardAnalyzer = CardAnalyzer.new(self.pokeCards)
+  else
+    self.cardAnalyzer:setPokecards(self.pokeCards)
+  end
+
+  self.cardAnalyzer:analyze()
+
+end
+
 
 return GamePlayer

@@ -106,6 +106,7 @@ function UIPokecardsPlugin.bind( theClass )
 
     -- 如果没有牌被划过，直接返回
     if (indexBegin == nil or indexBegin < 0) then
+      thisObj:updateButtonsState()
       return
     end
 
@@ -133,6 +134,7 @@ function UIPokecardsPlugin.bind( theClass )
         pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
       end
     end
+    thisObj:updateButtonsState()
   end
 
   --[[-----------------------------------------------------------
@@ -159,8 +161,8 @@ function UIPokecardsPlugin.bind( theClass )
   function theClass:showCards()
     local p = cc.p(20, (self.visibleSize.height - self.cardContentSize.height)/2)
     p.y = 0
-    
-    for index, pokeCard in pairs(self.pokeCards) do
+    local pokeCards = self.selfPlayerInfo.pokeCards
+    for index, pokeCard in pairs(pokeCards) do
       local cardSprite = pokeCard.card_sprite
       local cardValue = pokeCard.index
   
@@ -176,8 +178,9 @@ function UIPokecardsPlugin.bind( theClass )
   -- 根据牌的数量重新排列展示
   --]]----------------------------------------------------
   function theClass:alignCards() 
-    -- 无牌？返回
-    if #self.pokeCards < 1 then
+   local pokeCards = self.selfPlayerInfo.pokeCards
+     -- 无牌？返回
+    if #pokeCards < 1 then
       return
     end
     
@@ -185,7 +188,7 @@ function UIPokecardsPlugin.bind( theClass )
     local cardWidth = self.cardContentSize.width --* GlobalSetting.content_scale_factor
     --print("cardWidth", cardWidth)
     -- 计算牌之间的覆盖位置，最少遮盖30% 即显示面积最多为70%
-    local step = (self.visibleSize.width) / (#self.pokeCards + 1)
+    local step = (self.visibleSize.width) / (#pokeCards + 1)
     if step > cardWidth * 0.7 then
       step = cardWidth * 0.7
     end
@@ -195,7 +198,7 @@ function UIPokecardsPlugin.bind( theClass )
     local center_point = cc.p(self.visibleSize.width/2, 0)
     
     -- 第一张牌的起始位置，必须大于等于0
-    local start_x = center_point.x - (step * #self.pokeCards/2 + poke_size / 2)
+    local start_x = center_point.x - (step * #pokeCards/2 + poke_size / 2)
     if start_x < 0 then
       start_x = 0
     end
@@ -203,7 +206,7 @@ function UIPokecardsPlugin.bind( theClass )
     p.x = start_x
     
     -- 排列并产生移动效果
-    for index, pokeCard in pairs(self.pokeCards) do 
+    for index, pokeCard in pairs(pokeCards) do 
       if pokeCard.card_sprite:getParent() then
         pokeCard.card_sprite:setLocalZOrder(index)
         --card.card_sprite:getParent():reorderChild(card.card_sprite, index)
@@ -219,7 +222,7 @@ function UIPokecardsPlugin.bind( theClass )
   --]]
   function theClass:getPickedPokecards()
     local picked = {}
-    for _, pokeCard in pairs(self.pokeCards) do
+    for _, pokeCard in pairs(self.selfPlayerInfo.pokeCards) do
       if pokeCard.picked then
         table.insert(picked, pokeCard)
       end
@@ -229,20 +232,45 @@ function UIPokecardsPlugin.bind( theClass )
     return picked
   end
 
+  --[[
+  取消选中的牌
+  --]]
+  function theClass:resetPickedPokecards()
+    local pokeCards = self.selfPlayerInfo.pokeCards
+    for _, pokeCard in pairs(pokeCards) do
+      if pokeCard.picked then
+        -- 牌已被选取，做退牌处理
+        pokeCard.picked = false
+        pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
+      end
+    end
+  end
+
+  function theClass:pickupPokecards(pokeCards)
+    self:resetPickedPokecards()
+    for _, pokeCard in pairs(pokeCards) do
+      pokeCard.picked = true
+      pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
+    end
+  end
+
+  --[[-----------------------------------------------------------
+  显示自己出牌动画效果
+  --]]-----------------------------------------------------------
   function theClass:selfPlayCardEffect(card)
     local pokeCards = card.pokeCards
     if #pokeCards == 0 then
       return
     end
 
-    if self.selfLastCard and #self.selfLastCard.pokeCards > 0 then
-      for _, pokeCard in pairs(self.selfLastCard.pokeCards) do
-        pokeCard.card_sprite:setPosition(-150, 0)
-        pokeCard.card_sprite:setVisible(false)
-      end 
-    end
+    -- if self.selfLastCard and #self.selfLastCard.pokeCards > 0 then
+    --   for _, pokeCard in pairs(self.selfLastCard.pokeCards) do
+    --     pokeCard.card_sprite:setPosition(-150, 0)
+    --     pokeCard.card_sprite:setVisible(false)
+    --   end 
+    -- end
 
-    self.selfLastCard = {pokeCards = pokeCards}
+    -- self.selfLastCard = {pokeCards = pokeCards}
 
     local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 30)
     local step = 35 * 0.7
@@ -257,10 +285,13 @@ function UIPokecardsPlugin.bind( theClass )
       startX = startX + 35 * 0.7
       pokeSprite:setLocalZOrder(30 - index)
     end
-    table.removeItems(self.pokeCards, pokeCards)
+    --table.removeItems(self.selfPlayerInfo.pokeCards, pokeCards)
     self:alignCards()
   end
 
+  --[[-----------------------------------------------------------
+  显示上家出牌动画效果
+  --]]-----------------------------------------------------------
   function theClass:prevPlayCardEffect(card)
     local pokeCards = card.pokeCards
     local startPoint = cc.p(-100, self.visibleSize.height + 100)
@@ -282,6 +313,9 @@ function UIPokecardsPlugin.bind( theClass )
     end
   end
 
+  --[[-----------------------------------------------------------
+  显示下家出牌动画效果
+  --]]-----------------------------------------------------------
   function theClass:nextPlayCardEffect(card)
     local pokeCards = card.pokeCards
     local startPoint = cc.p(self.visibleSize.width + 100, self.visibleSize.height + 100)
@@ -300,6 +334,20 @@ function UIPokecardsPlugin.bind( theClass )
         cc.ScaleTo:create(0.1, 0.7)
       ))
       endPoint.x = endPoint.x - 35 * 0.7
+    end
+  end
+
+  --[[-----------------------------------------------------------
+  隐藏出过的牌
+  --]]-----------------------------------------------------------
+  function theClass:hideCard(theCard)
+    theCard = theCard or {}
+    theCard.pokeCards = theCard.pokeCards or {}
+    for _, pokeCard in pairs(theCard.pokeCards) do
+      local cardSprite = pokeCard.card_sprite
+      cardSprite:setVisible(false)
+      cardSprite:setScale(1)
+      cardSprite:setPosition(-150, -150)
     end
   end
 

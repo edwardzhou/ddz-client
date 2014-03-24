@@ -199,7 +199,7 @@ function Card:ctor(opts)
 	self.maxPokeValue = opts.maxPokeValue or (pokeCards[#pokeCards] and pokeCards[#pokeCards].value) or 0  
   self.minPokeValue = opts.minPokeValue or (pokeCards[1] and pokeCards[1].value) or 0  
 	self.cardLength = opts.cardLength or 0
-	self.weight = opts.weight or 0
+	self.weight = opts.weight or self:calcWeight()
 	self.owner = nil
 end
 

@@ -24,17 +24,25 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onSelfPlayerPlayCard(card)
+    self:hideCard(self.selfPlayerInfo.lastCard)
     self:selfPlayCardEffect(card)
+    self:updateSelfPlayerUI(self.selfPlayerInfo)
+    self.selfPlayerInfo.lastCard = card
+    self.selfPlayerInfo:analyzePokecards()
   end
 
   function theClass:onPrevPlayerPlayCard(card)
+    self:hideCard(self.prevPlayerInfo.lastCard)
     self:prevPlayCardEffect(card)
     self:updatePrevPlayerUI(self.prevPlayerInfo)
+    self.prevPlayerInfo.lastCard = card
   end
 
   function theClass:onNextPlayerPlayCard(card)
+    self:hideCard(self.nextPlayerInfo.lastCard)
     self:nextPlayCardEffect(card)
     self:updateNextPlayerUI(self.nextPlayerInfo)
+    self.nextPlayerInfo.lastCard = card
   end
 
 end

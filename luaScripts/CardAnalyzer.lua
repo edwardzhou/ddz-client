@@ -1,15 +1,14 @@
 require 'CardUtility'
 
-CardAnalyzer = class('CardAnalyzer')
+local CardAnalyzer = class('CardAnalyzer')
 
 function CardAnalyzer:ctor(pokeCards)
+  self:setPokecards(pokeCards)
+end
+
+function CardAnalyzer:setPokecards(pokeCards)
   self.pokeCards = table.dup(pokeCards)
   self.orgPokeCards = table.dup(pokeCards)
---  self.bombsInfos = CardUtility.getBombsInfos(self.pokeInfos)
---  self.pairsInfos = CardUtility.getPairsInfos(self.pokeInfos)
---  self.threesInfos = CardUtility.getThreesInfos(self.pokeInfos)
---  self.singlesInfos = CardUtility.getSinglesInfos(self.pokeInfos)
---  self.rocketInfos = CardUtility.getRocketInfos(self.pokeInfos)
 end
 
 function CardAnalyzer:analyze()
@@ -296,6 +295,47 @@ function CardAnalyzer:extractSingles()
   table.removeItems(self.pokeCards, tmpPokeCards)  
 end
 
+function CardAnalyzer.filterCards(cards, cardType)
+  local tmpCards = {}
+  for _, card in pairs(cards) do
+    if card.cardType == cardType then
+      table.insert(tmpCards, card)
+    end
+  end
+
+  table.sort(tmpCards, sortAscBy('maxPokeValue'))
+  return tmpCards  
+end
+
+function CardAnalyzer:getStraightCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.STRAIGHT)
+end
+
+function CardAnalyzer:getPairsCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.PAIRS)
+end
+
+function CardAnalyzer:getThreeCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.THREE)
+end
+
+function CardAnalyzer:getBombCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.BOMB)
+end
+
+function CardAnalyzer:getRocketCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.ROCKET)
+end
+
+function CardAnalyzer:getThreeStraightCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.THREE_STRAIGHT)
+end
+
+function CardAnalyzer:getSingleCards()
+  return CardAnalyzer.filterCards(self.availCards, CardType.SINGLE)
+end
+
+
 function CardAnalyzer:dump(level)
   level = level or 3
 --  dump(self.cardInfos.indexedPokeCards, 'pokeInfos', false, level)
@@ -314,3 +354,5 @@ function CardAnalyzer:dump(level)
   print('remaining: ' , table.concat(remaining, ', ')) 
   
 end
+
+return CardAnalyzer

@@ -130,7 +130,7 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.pokeCards = self.selfPlayerInfo.pokeCards
   self:doUpdatePlayersUI()
   self.Ready:setVisible(false)
-  self:showButtonsPanel(nextUserId == selfUserId)
+  self:showButtonsPanel(nextUserId == self.selfUserId)
   self:showCards()
   self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
   self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
@@ -138,22 +138,74 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
 end
 
 function GameScene:ButtonPass_onClicked(sender, event)
-  self:enableButtonTip(false)
+  --self:enableButtonTip(false)
 end
 
 function GameScene:ButtonReset_onClicked(sender, event)
-  self:enableButtonTip(true)
+  --self:enableButtonTip(true)
+  self:resetPickedPokecards()
+  self:updateButtonsState()
 end
 
 function GameScene:ButtonTip_onClicked(sender, event)
-  self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
+  --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
+  local analyzer = self.selfPlayerInfo.cardAnalyzer
+  local cards
+  local pokeCards = {}
+  cards = analyzer:getStraightCards()
+  if #cards == 0 then
+    cards = analyzer:getThreeCards()
+  end
+  if #cards == 0 then
+    cards = analyzer:getPairsCards()
+  end
+  if #cards == 0 then
+    cards = analyzer:getSingleCards()
+  end
+
+  if #cards > 0 then
+    local card = cards[1]
+    local pokeCards = table.dup(card.pokeCards)
+    if card.cardType == CardType.THREE then
+      local singleCards = analyzer:getSingleCards()
+      if #singleCards > 0 then
+        table.insert(pokeCards, singleCards[1].pokeCards[1])
+      else
+        local pairsCards = analyzer:getPairsCards()
+        if #pairsCards > 0 then
+          table.append(pokeCards, pairsCards[1].pokeCards)
+        end
+      end
+    elseif card.CardType == CardType.THREE_STRAIGHT then
+      local singleCards = analyzer:getSingleCards()
+      if #singleCards >= card.cardLength then
+        for i=1,card.cardLength do
+          table.insert(pokeCards, singleCards[i].pokeCards[1])
+        end
+      else
+        local pairsCards = analyzer:getPairsCards()
+        if #pairsCards >= card.cardLength then
+          table.append(pokeCards, pairsCards[i].pokeCards)
+        end 
+      end
+    end
+
+    self:pickupPokecards(pokeCards)
+  end
+
 end
 
 function GameScene:ButtonPlay_onClicked(sender, event)
-  self:showButtonsPanel(false)
   local pokeCards = self:getPickedPokecards()
   local pokeIdChars = PokeCard.getIdChars(pokeCards)
 
+  local card = Card.create(pokeCards)
+  dump(card, '[GameScene:ButtonPlay_onClicked] card')
+  if card.cardType == CardType.NONE then
+    return
+  end
+
+  self:showButtonsPanel(false)
   self.gameService:playCard(self.selfUserId, pokeIdChars)
 
   -- local renderTexture = cc.RenderTexture:create(self.visibleSize.width, self.visibleSize.height)

@@ -43,6 +43,9 @@ function LocalGameService:readyGame(callback)
   self.playersInfo[3].role = Roles[3]
   
   local pokeGame = PokeGame.new(self.playersInfo)
+  self.playersInfo[1]:analyzePokecards()
+  self.playersInfo[2]:analyzePokecards()
+  self.playersInfo[3]:analyzePokecards()
   self:onServerStartNewGameMsg({pokeGame = pokeGame})
   -- if type(callback) == 'function' then
   --   callback(self.pokeGame)
