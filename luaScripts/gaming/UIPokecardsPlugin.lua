@@ -252,6 +252,7 @@ function UIPokecardsPlugin.bind( theClass )
       pokeCard.picked = true
       pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
     end
+    self:updateButtonsState()
   end
 
   --[[-----------------------------------------------------------

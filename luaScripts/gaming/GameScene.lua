@@ -204,7 +204,7 @@ function GameScene:ButtonPlay_onClicked(sender, event)
   local pokeIdChars = PokeCard.getIdChars(pokeCards)
 
   local card = Card.create(pokeCards)
-  dump(card, '[GameScene:ButtonPlay_onClicked] card')
+  -- dump(card, '[GameScene:ButtonPlay_onClicked] card')
   if card.cardType == CardType.NONE then
     return
   end

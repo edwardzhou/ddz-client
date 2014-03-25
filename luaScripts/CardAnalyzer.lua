@@ -191,8 +191,8 @@ function CardAnalyzer.extractStraights(params)
   local indexedPokeCards = params.cardInfos.indexedPokeCards  
   local count = #indexedPokeCards
   
-  print('count = ', count)
-  dump(indexedPokeCards)
+  --print('count = ', count)
+  --dump(indexedPokeCards)
   
   while count >= 5 do
     local found = false
