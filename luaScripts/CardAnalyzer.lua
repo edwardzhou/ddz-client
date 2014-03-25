@@ -13,7 +13,7 @@ end
 
 local function sumWegiht(cards)
   local weight = 0
-  dump(cards)
+  --dump(cards)
   for _, card in pairs(cards) do
     weight = weight + card.weight
   end
