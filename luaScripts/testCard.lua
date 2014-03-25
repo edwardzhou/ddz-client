@@ -4,7 +4,7 @@ require('GlobalFunctions')
 require('extern')
 require('PokeCard')
 require('CardUtility')
-require('CardAnalyzer')
+local CardAnalyzer = require('CardAnalyzer')
 
 
 -- cclog
@@ -48,9 +48,18 @@ pokeIds = {
 pokeCards = PokeCard.pokeCardsFromIds(pokeIds)
 table.sort(pokeCards, sortAscBy('index'))
 
+function testA(card)
+    card = {x=5}
+end
+
+local x = {y=6}
+dump(x, "org X")
+testA(x)
+dump(x, "new X")
+
 --card = Card.create({pokeCards[1], pokeCards[2]})
 --dump(card)
 
-analyzer = CardAnalyzer.new(pokeCards)
-analyzer:analyze()
-analyzer:dump()
+--analyzer = CardAnalyzer.new(pokeCards)
+results = CardAnalyzer.analyze(pokeCards)
+CardAnalyzer.dumpResults(results)

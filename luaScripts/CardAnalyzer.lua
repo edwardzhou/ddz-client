@@ -11,59 +11,115 @@ function CardAnalyzer:setPokecards(pokeCards)
   self.orgPokeCards = table.dup(pokeCards)
 end
 
-function CardAnalyzer:analyze()
-  self.availCards = {}
-  self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  self.orgCardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  
-  self:extractRocket()
-  self:extractBombs()
-  self:extractThreesStraights()
-  self:extractThrees()
-  self:extractStraights()
-  self:extractPairsStraights()
-  self:extractPairs()
-  self:extractSingles()
+local function sumWegiht(cards)
+  local weight = 0
+  dump(cards)
+  for _, card in pairs(cards) do
+    weight = weight + card.weight
+  end
+  return weight
 end
 
-function CardAnalyzer:extractRocket()
+function CardAnalyzer.analyze(pokeCards)
+
+  local results = {}
+
+  local params = {
+    cardInfos = CardUtility.getPokeCardsInfo(pokeCards), 
+    pokeCards = table.dup(pokeCards)
+  }
+
+  results.rocketCards = CardAnalyzer.extractRocket(params)
+  results.bombsCards = CardAnalyzer.extractBombs(params)
+  results.threesStraightsCards = CardAnalyzer.extractThreesStraights(params)
+  results.threesCards = CardAnalyzer.extractThrees(params)
+  results.straightsCards = CardAnalyzer.extractStraights(params)
+  results.pairsStraightsCards = CardAnalyzer.extractPairsStraights(params)
+  results.pairsCards = CardAnalyzer.extractPairs(params)
+  results.singlesCards = CardAnalyzer.extractSingles(params)
+
+  results.totalWeight = 0
+  results.totalWeight = results.totalWeight + sumWegiht(results.rocketCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.bombsCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.threesStraightsCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.threesCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.straightsCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.pairsStraightsCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.pairsCards)
+  results.totalWeight = results.totalWeight + sumWegiht(results.singlesCards)
+
+  results.totalHands = 0
+  results.totalHands = results.totalHands + #results.rocketCards
+  results.totalHands = results.totalHands + #results.bombsCards
+  results.totalHands = results.totalHands + #results.threesStraightsCards
+  results.totalHands = results.totalHands + #results.threesCards
+  results.totalHands = results.totalHands + #results.straightsCards
+  results.totalHands = results.totalHands + #results.pairsStraightsCards
+  results.totalHands = results.totalHands + #results.pairsCards
+  results.totalHands = results.totalHands + #results.singlesCards
+
+  local threesCardsCount = #results.threesCards
+  local singlesCardsCount = #results.singlesCards
+  local pairsCardsCount = #results.pairsCards
+
+  if threesCardsCount > 0 then
+    if singlesCardsCount >= threesCardsCount then
+      results.totalHands = results.totalHands - threesCardsCount
+    else
+      local leftHands = threesCardsCount - singlesCardsCount
+      if pairsCardsCount >= leftHands then
+        results.totalHands = results.totalHands - threesCardsCount
+      else
+        results.totalHands = results.totalHands - (singlesCardsCount + pairsCardsCount)
+      end
+    end
+  end
+
+  return results
+end
+
+function CardAnalyzer.extractRocket(params)
   local found = false
-  local rocketCards = {}
+  local result = {}
   --dump(self.cardInfos.rocketInfos, 'self.cardInfos.rocketInfos')
-  if #(self.cardInfos.rocketInfos) > 0 then
-    local rocketCard = Card.create(self.cardInfos.rocketInfos[1].pokeCards)
-    table.insert(self.availCards, rocketCard)
+  if #(params.cardInfos.rocketInfos) > 0 then
+    local rocketCard = Card.create(params.cardInfos.rocketInfos[1].pokeCards)
+    table.insert(result, rocketCard)
     found = true
   end
   
   if found then
-    table.removeItems(self.pokeCards, self.cardInfos.rocketInfos[1].pokeCards)
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+    table.removeItems(params.pokeCards, params.cardInfos.rocketInfos[1].pokeCards)
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
   end
+  return result
 end
 
-function CardAnalyzer:extractBombs()
-  local bombsInfos = self.cardInfos.bombsInfos
+function CardAnalyzer.extractBombs(params)
+  local bombsInfos = params.cardInfos.bombsInfos
   local found = false
+  local result = {}
   for _, pokeInfo in pairs(bombsInfos) do
     local bombCard = Card.create(pokeInfo.pokeCards)
-    table.insert(self.availCards, bombCard)
-    table.removeItems(self.pokeCards, pokeInfo.pokeCards)
+    table.insert(result, bombCard)
+    table.removeItems(params.pokeCards, pokeInfo.pokeCards)
     found = true
   end
   
   if found then
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
   end
+  return result
 end
 
-function CardAnalyzer:extractThreesStraights()
-  local threesInfos = self.cardInfos.threesInfos
+function CardAnalyzer.extractThreesStraights(params)
+  local result = {}
+  local threesInfos = params.cardInfos.threesInfos
   local threesCount = #threesInfos
   if threesCount < 2 then
-    return
+    return result
   end
-  
+
   local startIndex = 1
   local endIndex
   local found = false
@@ -90,8 +146,8 @@ function CardAnalyzer:extractThreesStraights()
       for i = startIndex, lastIndex do
         table.append(tmpPokeCards, threesInfos[i].pokeCards)
       end
-      table.insert(self.availCards, Card.create(tmpPokeCards))
-      table.removeItems(self.pokeCards, tmpPokeCards)
+      table.insert(result, Card.create(tmpPokeCards))
+      table.removeItems(params.pokeCards, tmpPokeCards)
       startIndex = lastIndex + 1
       found = true
     else
@@ -100,35 +156,39 @@ function CardAnalyzer:extractThreesStraights()
   end
   
   if found then
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  end  
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
+  end
+  return result
 end
 
-function CardAnalyzer:extractThrees()
-  local threesInfos = self.cardInfos.threesInfos
+function CardAnalyzer.extractThrees(params)
+  local result = {}
+  local threesInfos = params.cardInfos.threesInfos
   local threesCount = #threesInfos
   if threesCount < 1 then
-    return
+    return result
   end
   
   local found = false
   
   for _, pokeInfo in pairs(threesInfos) do
-    table.insert(self.availCards, Card.create(pokeInfo.pokeCards))
-    table.removeItems(self.pokeCards, pokeInfo.pokeCards)
+    table.insert(result, Card.create(pokeInfo.pokeCards))
+    table.removeItems(params.pokeCards, pokeInfo.pokeCards)
     found = true
   end
   
   if found then
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
   end
+  return result
 end
 
-function CardAnalyzer:extractStraights()
-  local pokeCards = self.pokeCards
+function CardAnalyzer.extractStraights(params)
+  local pokeCards = params.pokeCards
 
+  local result = {}
   local straights = {}
-  local indexedPokeCards = self.cardInfos.indexedPokeCards  
+  local indexedPokeCards = params.cardInfos.indexedPokeCards  
   local count = #indexedPokeCards
   
   print('count = ', count)
@@ -147,9 +207,9 @@ function CardAnalyzer:extractStraights()
           table.insert(tmpPokeCards, indexedPokeCards[x].pokeCards[1])
         end
         table.insert(straights, Card.create(tmpPokeCards))
-        table.removeItems(self.pokeCards, tmpPokeCards)
-        self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-        indexedPokeCards = self.cardInfos.indexedPokeCards
+        table.removeItems(params.pokeCards, tmpPokeCards)
+        params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
+        indexedPokeCards = params.cardInfos.indexedPokeCards
         count = #indexedPokeCards
         found = true
         break        
@@ -165,8 +225,8 @@ function CardAnalyzer:extractStraights()
     local card = straights[i]
     local tmpPokeCards = table.dup(card.pokeCards)
     local found = false
-    for j=1, #self.cardInfos.indexedPokeCards do
-      local pokeInfo = self.cardInfos.indexedPokeCards[j]
+    for j=1, #params.cardInfos.indexedPokeCards do
+      local pokeInfo = params.cardInfos.indexedPokeCards[j]
       local tmpPokeCardsBak = table.dup(tmpPokeCards)
       if pokeInfo.pokeValue < card.minPokeValue then
         table.insert(tmpPokeCards, 1, pokeInfo.pokeCards[1])
@@ -177,14 +237,14 @@ function CardAnalyzer:extractStraights()
       local tmpCardType = allCardTypes[valuesChars]
       if tmpCardType and tmpCardType.cardType == CardType.STRAIGHT then
         straights[i] = Card.create(tmpPokeCards)
-        table.removeItem(self.pokeCards, pokeInfo.pokeCards[1])
+        table.removeItem(params.pokeCards, pokeInfo.pokeCards[1])
         found = true
       else
         tmpPokeCards = tmpPokeCardsBak
       end
     end
     if found then
-      self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
+      params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
     end
   end
   
@@ -210,7 +270,7 @@ function CardAnalyzer:extractStraights()
       table.append(tmpPokeCards, card1.pokeCards)
       table.append(tmpPokeCards, card2.pokeCards)
       table.sort(tmpPokeCards, sortAscBy('index'))
-      table.insert(self.availCards, Card.create(tmpPokeCards))
+      table.insert(result, Card.create(tmpPokeCards))
       table.remove(straights, i)
       table.remove(straights, i-1)
       i = i - 1
@@ -219,15 +279,17 @@ function CardAnalyzer:extractStraights()
   end
   
   if #straights > 0 then
-    table.append(self.availCards, straights)
+    table.append(result, straights)
   end
+  return result
 end
 
-function CardAnalyzer:extractPairsStraights()
- local pairsInfos = self.cardInfos.pairsInfos
+function CardAnalyzer.extractPairsStraights(params)
+  local result = {}
+  local pairsInfos = params.cardInfos.pairsInfos
   local pairsCount = #pairsInfos
   if pairsCount < 2 then
-    return
+    return result
   end
   
   local startIndex = 1
@@ -256,8 +318,8 @@ function CardAnalyzer:extractPairsStraights()
       for i = startIndex, lastIndex do
         table.append(tmpPokeCards, pairsInfos[i].pokeCards)
       end
-      table.insert(self.availCards, Card.create(tmpPokeCards))
-      table.removeItems(self.pokeCards, tmpPokeCards)
+      table.insert(result, Card.create(tmpPokeCards))
+      table.removeItems(params.pokeCards, tmpPokeCards)
       startIndex = lastIndex + 1
       found = true
     else
@@ -266,33 +328,38 @@ function CardAnalyzer:extractPairsStraights()
   end
   
   if found then
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  end  
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
+  end
+  return result
 end
 
-function CardAnalyzer:extractPairs()
+function CardAnalyzer.extractPairs(params)
   local found = false
+  local result = {}
   
-  for _, pokeInfo in pairs(self.cardInfos.pairsInfos) do
-    table.insert(self.availCards, Card.create(pokeInfo.pokeCards))
-    table.removeItems(self.pokeCards, pokeInfo.pokeCards)
+  for _, pokeInfo in pairs(params.cardInfos.pairsInfos) do
+    table.insert(result, Card.create(pokeInfo.pokeCards))
+    table.removeItems(params.pokeCards, pokeInfo.pokeCards)
     found = true
   end
   
   if found then
-    self.cardInfos = CardUtility.getPokeCardsInfo(self.pokeCards)
-  end  
+    params.cardInfos = CardUtility.getPokeCardsInfo(params.pokeCards)
+  end
+  return result
 end
 
-function CardAnalyzer:extractSingles()
+function CardAnalyzer.extractSingles(params)
   local tmpPokeCards = {}
+  local result = {}
   
-  for _, pokeInfo in pairs(self.cardInfos.singlesInfos) do
-    table.insert(self.availCards, Card.create(pokeInfo.pokeCards))
+  for _, pokeInfo in pairs(params.cardInfos.singlesInfos) do
+    table.insert(result, Card.create(pokeInfo.pokeCards))
     table.append(tmpPokeCards, pokeInfo.pokeCards)
   end
   
-  table.removeItems(self.pokeCards, tmpPokeCards)  
+  table.removeItems(params.pokeCards, tmpPokeCards)  
+  return result
 end
 
 function CardAnalyzer.filterCards(cards, cardType)
@@ -353,6 +420,19 @@ function CardAnalyzer:dump(level)
   local remaining = table.tableFromField(self.pokeCards, 'valueChar')
   print('remaining: ' , table.concat(remaining, ', ')) 
   
+end
+
+function CardAnalyzer.dumpResults(results, level)
+  level = level or 3
+  for cardsName, cards in pairs(results) do
+    if type(cards) == 'table' then
+      print('------------------ ' .. cardsName .. ' ------------------' )
+      for _, card in pairs(cards) do
+        print(card:toString())
+      end
+    end
+  end
+  print('totalWeight: ', results.totalWeight, ',   totalHands: ', results.totalHands)
 end
 
 return CardAnalyzer

@@ -128,6 +128,7 @@ end
 function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.pokeGame = pokeGame
   self.pokeCards = self.selfPlayerInfo.pokeCards
+  self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
   self.Ready:setVisible(false)
   self:showButtonsPanel(nextUserId == self.selfUserId)
@@ -149,41 +150,44 @@ end
 
 function GameScene:ButtonTip_onClicked(sender, event)
   --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
-  local analyzer = self.selfPlayerInfo.cardAnalyzer
+  local analyzedCards = self.selfPlayerInfo.analyzedCards
   local cards
   local pokeCards = {}
-  cards = analyzer:getStraightCards()
+  cards = analyzedCards.straightsCards
   if #cards == 0 then
-    cards = analyzer:getThreeCards()
+    cards = analyzedCards.pairsStraightsCards
   end
   if #cards == 0 then
-    cards = analyzer:getPairsCards()
+    cards = analyzedCards.threesCards
   end
   if #cards == 0 then
-    cards = analyzer:getSingleCards()
+    cards = analyzedCards.pairsCards
+  end
+  if #cards == 0 then
+    cards = analyzedCards.singlesCards
   end
 
   if #cards > 0 then
     local card = cards[1]
     local pokeCards = table.dup(card.pokeCards)
     if card.cardType == CardType.THREE then
-      local singleCards = analyzer:getSingleCards()
+      local singleCards = analyzedCards.singlesCards
       if #singleCards > 0 then
         table.insert(pokeCards, singleCards[1].pokeCards[1])
       else
-        local pairsCards = analyzer:getPairsCards()
+        local pairsCards = analyzedCards.pairsCards
         if #pairsCards > 0 then
           table.append(pokeCards, pairsCards[1].pokeCards)
         end
       end
     elseif card.CardType == CardType.THREE_STRAIGHT then
-      local singleCards = analyzer:getSingleCards()
+      local singleCards = analyzedCards.singlesCards
       if #singleCards >= card.cardLength then
         for i=1,card.cardLength do
           table.insert(pokeCards, singleCards[i].pokeCards[1])
         end
       else
-        local pairsCards = analyzer:getPairsCards()
+        local pairsCards = analyzedCards.pairsCards
         if #pairsCards >= card.cardLength then
           table.append(pokeCards, pairsCards[i].pokeCards)
         end 

@@ -20,13 +20,14 @@ function GamePlayer:ctor(playerInfo)
 end
 
 function GamePlayer:analyzePokecards()
-  if self.cardAnalyzer == nil then
-    self.cardAnalyzer = CardAnalyzer.new(self.pokeCards)
-  else
-    self.cardAnalyzer:setPokecards(self.pokeCards)
-  end
+  self.analyzedCards = CardAnalyzer.analyze(self.pokeCards)
+  -- if self.cardAnalyzer == nil then
+  --   self.cardAnalyzer = CardAnalyzer.new(self.pokeCards)
+  -- else
+  --   self.cardAnalyzer:setPokecards(self.pokeCards)
+  -- end
 
-  self.cardAnalyzer:analyze()
+  -- self.cardAnalyzer:analyze()
 
 end
 

@@ -28,9 +28,12 @@ function UIVaribleBdinding.bind(uiWidget, varContainer, eventContainer)
 --    end
 --  end
 --
+  --[[
+    variable pattern v_VarName , it will set varHolder[VarName] = widget
+  --]]
   local function bindVariables(uiWidget, varHodler)
     local widgetName = uiWidget:getName()
-    local vtype, vname, wtype = string.gmatch(widgetName, '(.*)_(.*)')()
+    local vtype, vname, wtype = string.gmatch(widgetName, '(%w*)_(.*)')()
     wtype = uiWidget:getDescription()
     local tmpParent = varHodler
     local widget = nil
