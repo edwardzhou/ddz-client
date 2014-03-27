@@ -30,7 +30,7 @@ function CardAnalyzer.analyze(pokeCards)
   local cardInfos = CardUtility.getPokeCardsInfo(pokeCards)
   -- print('[CardAnalyzer.analyze] CardUtility.getPokeCardsInfo end')
   -- print('[CardAnalyzer.analyze] cardInfos:clone start')
-  cardInfos:clone()
+  results.cardInfos = cardInfos:clone()
   -- print('[CardAnalyzer.analyze] cardInfos:clone end')
 
   local params = {
@@ -370,6 +370,35 @@ function CardAnalyzer.extractSingles(params)
   
   table.removeItems(params.pokeCards, tmpPokeCards)  
   return result
+end
+
+function CardAnalyzer.getMaxAvailStraights(params)
+  local straights = {}
+  local index = 1
+  local indexedPokeCards = params.indexedPokeCards 
+  while index < #indexedPokeCards - 5 do
+    local indexEnd = index
+    local tempStraight = {}
+    while indexEnd < #indexedPokeCards do
+      if indexedPokeCards[indexEnd].pokeValue == indexedPokeCards[indexEnd+1].pokeValue - 1 then
+        table.insert(tempStraight, indexedPokeCards[indexEnd])
+      else
+        if indexedPokeCards[indexEnd].pokeValue == indexedPokeCards[indexEnd-1].pokeValue + 1 then
+          table.insert(tempStraight, indexedPokeCards[indexEnd])
+        end
+        break
+      end
+      indexEnd = indexEnd + 1
+    end
+    if #tempStraight >= 5 then
+      index = indexEnd + 1
+      table.insert(straights, tempStraight)
+    else
+      index = index + 1
+    end
+  end
+
+  return straights
 end
 
 function CardAnalyzer.filterCards(cards, cardType)

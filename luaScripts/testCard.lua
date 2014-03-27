@@ -30,12 +30,13 @@ pokeIds = {
     'd06',
     'd07',
     'c08',
-    'c09',
+    'c10',
     'd10',
     'd11',
     'd12',
     'b12',
     'a12',
+    'a13',
     'c01',
     'a01',
     'd02',
@@ -61,5 +62,11 @@ dump(x, "new X")
 --dump(card)
 
 --analyzer = CardAnalyzer.new(pokeCards)
-results = CardAnalyzer.analyze(pokeCards)
-CardAnalyzer.dumpResults(results)
+-- results = CardAnalyzer.analyze(pokeCards)
+-- CardAnalyzer.dumpResults(results)
+
+cardInfos = CardUtility.getPokeCardsInfo(pokeCards)
+
+straights = CardAnalyzer.getMaxAvailStraights(cardInfos)
+
+dump(straights, 'straights', false, 5)

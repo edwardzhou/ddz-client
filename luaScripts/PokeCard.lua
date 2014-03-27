@@ -246,9 +246,13 @@ function Card:calcWeight()
     return 4 + #self.pokeCards - 5
   elseif self.cardType == CardType.PAIRS_STRAIGHT then
     return 5 + #self.pokeCards - 6
+  elseif self.cardType == CardType.THREE_STRAIGHT then
+    return 6 + #self.pokeCards - 3
   elseif self.cardType == CardType.BOMB or self.cardType == CardType.ROCKET then
     return 7
   end
+
+  print('[Card:calcWeight] WARNING: no weight for ' , self:toString())
 
   return 0
 end
