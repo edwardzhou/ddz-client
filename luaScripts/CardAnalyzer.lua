@@ -21,11 +21,20 @@ local function sumWegiht(cards)
 end
 
 function CardAnalyzer.analyze(pokeCards)
+  print('[CardAnalyzer.analyze] start ---------------------')
+  print('[CardAnalyzer.analyze] pokeCards: ' , PokeCard.getPokeValuesChars(pokeCards))
 
   local results = {}
 
+  -- print('[CardAnalyzer.analyze] CardUtility.getPokeCardsInfo start')
+  local cardInfos = CardUtility.getPokeCardsInfo(pokeCards)
+  -- print('[CardAnalyzer.analyze] CardUtility.getPokeCardsInfo end')
+  -- print('[CardAnalyzer.analyze] cardInfos:clone start')
+  cardInfos:clone()
+  -- print('[CardAnalyzer.analyze] cardInfos:clone end')
+
   local params = {
-    cardInfos = CardUtility.getPokeCardsInfo(pokeCards), 
+    cardInfos = cardInfos, 
     pokeCards = table.dup(pokeCards)
   }
 
@@ -75,6 +84,7 @@ function CardAnalyzer.analyze(pokeCards)
     end
   end
 
+  print('[CardAnalyzer.analyze] end ************')
   return results
 end
 
@@ -199,7 +209,7 @@ function CardAnalyzer.extractStraights(params)
     for i=1, count-5 do
       local valuesChars = table.tableFromField(indexedPokeCards, 'pokeValueChar', i, i + 4)
       valuesChars = table.concat(valuesChars)
-      print('CardAnalyzer:extractStraights: valuesChars = ', valuesChars)
+      -- print('CardAnalyzer:extractStraights: valuesChars = ', valuesChars)
       local card = allCardTypes[valuesChars]
       if card and card.cardType == CardType.STRAIGHT then
         local tmpPokeCards = {}
@@ -372,34 +382,6 @@ function CardAnalyzer.filterCards(cards, cardType)
 
   table.sort(tmpCards, sortAscBy('maxPokeValue'))
   return tmpCards  
-end
-
-function CardAnalyzer:getStraightCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.STRAIGHT)
-end
-
-function CardAnalyzer:getPairsCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.PAIRS)
-end
-
-function CardAnalyzer:getThreeCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.THREE)
-end
-
-function CardAnalyzer:getBombCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.BOMB)
-end
-
-function CardAnalyzer:getRocketCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.ROCKET)
-end
-
-function CardAnalyzer:getThreeStraightCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.THREE_STRAIGHT)
-end
-
-function CardAnalyzer:getSingleCards()
-  return CardAnalyzer.filterCards(self.availCards, CardType.SINGLE)
 end
 
 

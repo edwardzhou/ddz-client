@@ -3,6 +3,12 @@ local PokeGame = class('PokeGame')
 
 function PokeGame:ctor(playersInfo)
   self.playersInfo = playersInfo
+  self.playersInfo[1].nextPlayer = self.playersInfo[2]
+  self.playersInfo[1].prevPlayer = self.playersInfo[3]
+  self.playersInfo[2].nextPlayer = self.playersInfo[3]
+  self.playersInfo[2].prevPlayer = self.playersInfo[1]
+  self.playersInfo[3].nextPlayer = self.playersInfo[1]
+  self.playersInfo[3].prevPlayer = self.playersInfo[2]
   self.currentPlayer = nil
   self:arrangePokeCards()
 end

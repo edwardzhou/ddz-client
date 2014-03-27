@@ -101,7 +101,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     //The call was commented because it will lead to ZeroBrane Studio can't find correct context when debugging
     //engine->executeScriptFile("hello.lua");
-    cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
+    //cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
 
 
     engine->executeString("require 'boot.lua'");

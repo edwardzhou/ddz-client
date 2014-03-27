@@ -195,6 +195,7 @@ function GameScene:ButtonTip_onClicked(sender, event)
     end
 
     self:pickupPokecards(pokeCards)
+    self:updateButtonsState()
   end
 
 end

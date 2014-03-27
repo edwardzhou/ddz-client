@@ -249,6 +249,8 @@ function Card:calcWeight()
   elseif self.cardType == CardType.BOMB or self.cardType == CardType.ROCKET then
     return 7
   end
+
+  return 0
 end
 
 function Card:isBomb()
