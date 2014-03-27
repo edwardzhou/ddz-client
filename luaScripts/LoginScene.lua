@@ -24,9 +24,11 @@ end
 
 function LoginScene:init()
   local rootLayer = cc.Layer:create()
+
   self:addChild(rootLayer)
   
-  local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing/Landing.json')
+  local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('res/UI/Landing/Landing.json')
+  print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonHolder')
   local loadingBar = ccui.Helper:seekWidgetByName(uiRoot, 'loadingBar')
@@ -47,11 +49,11 @@ function LoginScene:init()
       end)
   ))
   
-  local snow = cc.ParticleSystemQuad:create('scenes/Resources/snow.plist')
+  local snow = cc.ParticleSystemQuad:create('res/scenes/Resources/snow.plist')
   snow:setPosition(200, 480)
   rootLayer:addChild(snow)
 
-  snow = cc.ParticleSystemQuad:create('scenes/Resources/snow.plist')
+  snow = cc.ParticleSystemQuad:create('res/scenes/Resources/snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
   

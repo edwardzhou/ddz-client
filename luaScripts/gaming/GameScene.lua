@@ -56,7 +56,7 @@ function GameScene:init()
   self:bindControlsVariables()
 
   local pokeCardsLayer = cc.Layer:create()
-  self.SelfPokeCards:addNode(pokeCardsLayer)
+  self.SelfPokeCards:addChild(pokeCardsLayer)
   self.pokeCardsLayer = pokeCardsLayer
   
   self.selfUserId = 1

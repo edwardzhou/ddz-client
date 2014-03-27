@@ -6,3 +6,4 @@ lint.xml
 *~
 *.DS*
 cocos2d.bak
+runtime
