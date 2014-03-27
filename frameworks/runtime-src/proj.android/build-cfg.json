@@ -8,6 +8,7 @@
     "copy_to_assets" :[
         "../../../src",
         "../../../res",
+        "../../../Resources/",
         "../../../luaScripts",
         "../../cocos2d-x/cocos/scripting/lua-bindings/script/"
     ]

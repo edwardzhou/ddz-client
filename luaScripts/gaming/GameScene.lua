@@ -41,6 +41,7 @@ function GameScene:ctor(...)
 end
 
 function GameScene:cleanup()
+  self:stopAllActions()
 end
 
 function GameScene:init()
@@ -109,7 +110,7 @@ function GameScene:bindControlsVariables()
 end
 
 function GameScene:showSysTime()
-  self:runAction(cc.RepeatForever:create(cc.Sequence:create(
+  self.timerAction = self:runAction(cc.RepeatForever:create(cc.Sequence:create(
     cc.CallFunc:create(function()
       local tm = os.date("*t")
       self.SysTime:setText( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
