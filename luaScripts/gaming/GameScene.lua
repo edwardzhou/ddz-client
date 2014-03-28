@@ -25,8 +25,6 @@ function GameScene:ctor(...)
 
   self.gameService = GameService.new(self)
 
-  cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
-  
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
   self.origin = cc.Director:getInstance():getVisibleOrigin()
 
@@ -66,7 +64,7 @@ function GameScene:init()
   self:initPokeCardsLayerTouchHandler()
   self:showSysTime()
   self:initPlayers()
-  self.SysTime:setFontName("fonts/Marker Felt.ttf")
+  --self.SysTime:setFontName("fonts/Marker Felt.ttf")
   self:showButtonsPanel(false)
 
 end
@@ -137,99 +135,14 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
   self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
   self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+
+  self:startCountdown(cc.p(550, 380), 
+    function() 
+      print('timeout~~~~~~~')
+    end, 
+    15)
 end
 
-function GameScene:ButtonPass_onClicked(sender, event)
-  --self:enableButtonTip(false)
-end
-
-function GameScene:ButtonReset_onClicked(sender, event)
-  --self:enableButtonTip(true)
-  self:resetPickedPokecards()
-  self:updateButtonsState()
-end
-
-function GameScene:ButtonTip_onClicked(sender, event)
-  --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
-  local analyzedCards = self.selfPlayerInfo.analyzedCards
-  local cards
-  local pokeCards = {}
-  cards = analyzedCards.straightsCards
-  if #cards == 0 then
-    cards = analyzedCards.pairsStraightsCards
-  end
-  if #cards == 0 then
-    cards = analyzedCards.threesCards
-  end
-  if #cards == 0 then
-    cards = analyzedCards.pairsCards
-  end
-  if #cards == 0 then
-    cards = analyzedCards.singlesCards
-  end
-
-  if #cards > 0 then
-    local card = cards[1]
-    local pokeCards = table.dup(card.pokeCards)
-    if card.cardType == CardType.THREE then
-      local singleCards = analyzedCards.singlesCards
-      if #singleCards > 0 then
-        table.insert(pokeCards, singleCards[1].pokeCards[1])
-      else
-        local pairsCards = analyzedCards.pairsCards
-        if #pairsCards > 0 then
-          table.append(pokeCards, pairsCards[1].pokeCards)
-        end
-      end
-    elseif card.CardType == CardType.THREE_STRAIGHT then
-      local singleCards = analyzedCards.singlesCards
-      if #singleCards >= card.cardLength then
-        for i=1,card.cardLength do
-          table.insert(pokeCards, singleCards[i].pokeCards[1])
-        end
-      else
-        local pairsCards = analyzedCards.pairsCards
-        if #pairsCards >= card.cardLength then
-          table.append(pokeCards, pairsCards[i].pokeCards)
-        end 
-      end
-    end
-
-    self:pickupPokecards(pokeCards)
-    self:updateButtonsState()
-  end
-
-end
-
-function GameScene:ButtonPlay_onClicked(sender, event)
-  local pokeCards = self:getPickedPokecards()
-  local pokeIdChars = PokeCard.getIdChars(pokeCards)
-
-  local card = Card.create(pokeCards)
-  -- dump(card, '[GameScene:ButtonPlay_onClicked] card')
-  if card.cardType == CardType.NONE then
-    return
-  end
-
-  self:showButtonsPanel(false)
-  self.gameService:playCard(self.selfUserId, pokeIdChars)
-
-  -- local renderTexture = cc.RenderTexture:create(self.visibleSize.width, self.visibleSize.height)
-  -- renderTexture:retain()
-  -- renderTexture:begin()
-  -- self:visit()
-  -- renderTexture:endToLua()
-  -- self:runAction(cc.Sequence:create(
-  --   cc.DelayTime:create(0.02),
-  --   cc.CallFunc:create(function() 
-  --     local image = renderTexture:newImage()
-  --     image:saveToFile('/sdcard/tms/screen-shot.png')
-  --     renderTexture:release()
-  --     image:release()
-  --   end)
-  -- ))
-
-end
 
 local function createScene()
   --local scene = cc.Scene:create()
@@ -241,5 +154,6 @@ require('gaming.SPlayerJoinPlugin').bind(GameScene)
 require('gaming.UIPokecardsPlugin').bind(GameScene)
 require('gaming.UIButtonsPlugin').bind(GameScene)
 require('gaming.SGamingActionsPlugin').bind(GameScene)
+require('gaming.UIClockCountDownPlugin').bind(GameScene)
 
 return createScene

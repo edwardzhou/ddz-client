@@ -81,9 +81,21 @@ function LoginScene:init()
   self:initKeypadHandler()
   
 --  local proxy = cc.CCBReader
-  local cjson = require('cjson.safe')
-  local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
-  AllCardTypes = cjson.decode(jsonStr)
+  self:runAction(cc.Sequence:create(
+    cc.DelayTime:create(0.3),
+    cc.CallFunc:create(function()
+      local cjson = require('cjson.safe')
+      print('start to load allCardTypes.json')
+      local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
+      print('start to decode allCardTypes.json')
+      AllCardTypes = cjson.decode(jsonStr)
+      print('decode allCardTypes.json finished')
+    end),
+    cc.DelayTime:create(0.1),
+    cc.CallFunc:create(function()
+      cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
+    end)
+  ))
   
 --  dump(AllCardTypes["3333"])
 --  

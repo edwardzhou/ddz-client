@@ -216,16 +216,17 @@ end
 
 function Card.create(pokeCards)
   local opts = {}
-  opts.pokeCards = table.dup(pokeCards)
-  table.sort(opts.pokeCards, sortAscBy('index'))
-  local valueChars = PokeCard.getPokeValuesChars(opts.pokeCards, true)
-  local cardDef = allCardTypes[valueChars]
-  if cardDef ~= nil then
-    opts.cardType = cardDef.cardType
-    opts.cardLength = cardDef.cardLength
-    opts.maxPokeValue = cardDef.maxPokeValue
-  end
-  
+  if pokeCards and #pokeCards > 0 then
+    opts.pokeCards = table.dup(pokeCards)
+    table.sort(opts.pokeCards, sortAscBy('index'))
+    local valueChars = PokeCard.getPokeValuesChars(opts.pokeCards, true)
+    local cardDef = allCardTypes[valueChars]
+    if cardDef ~= nil then
+      opts.cardType = cardDef.cardType
+      opts.cardLength = cardDef.cardLength
+      opts.maxPokeValue = cardDef.maxPokeValue
+    end
+  end  
   return Card.new(opts)
 end
 
