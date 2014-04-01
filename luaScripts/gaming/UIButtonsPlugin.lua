@@ -49,6 +49,14 @@ function UIButtonsPlugin.bind( theClass )
     self:enableButtonReset(hasPicked)
   end
 
+  function theClass:Ready_onClicked(sender, event)
+    local this = self
+    PokeCard.releaseAllCards()
+    PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
+    this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
+    self.gameService:readyGame(__bind(self.onServerGameStart, self))
+  end
+
   function theClass:ButtonPass_onClicked(sender, event)
     self:showButtonsPanel(false)
     self.gameService:playCard(self.selfUserId, '')

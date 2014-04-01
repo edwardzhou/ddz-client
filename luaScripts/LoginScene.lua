@@ -94,6 +94,7 @@ function LoginScene:init()
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()
       cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
+      PokeCard.sharedPokeCard()
     end)
   ))
   

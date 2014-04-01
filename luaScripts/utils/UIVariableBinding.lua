@@ -1,4 +1,4 @@
-local UIVaribleBdinding = {}
+local UIVaribleBinding = {}
 
 local TypeMapping = {
   Panel = 'ccui.Layout',
@@ -15,19 +15,7 @@ local TypeMapping = {
   Button = 'ccui.Button'
 }
 
-function UIVaribleBdinding.bind(uiWidget, varContainer, eventContainer)
-
---  local function onButtonEvent(sender, event)
---    --local buttonName = sender:getName()
---    local buttonName, vtype, wtype = string.gmatch(sender:getName(), '(.*)_(%l*)(.*)')()
---    local eventHandlerName = string.format('%s_onClicked', buttonName)
---    local onClickHandler = eventContainer[eventHandlerName]
---    print('[onButtonEvent]', event, buttonName, eventHandlerName, onClickHandler)
---    if event == ccui.TouchEventType.ended and type(onClickHandler) == 'function' then
---      onClickHandler(eventContainer, sender, event)
---    end
---  end
---
+function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
   --[[
     variable pattern v_VarName , it will set varHolder[VarName] = widget
   --]]
@@ -74,4 +62,4 @@ function UIVaribleBdinding.bind(uiWidget, varContainer, eventContainer)
 	bindVariables(uiWidget, varContainer)
 end
 
-return UIVaribleBdinding
+return UIVaribleBinding

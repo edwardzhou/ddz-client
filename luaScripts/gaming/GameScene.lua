@@ -60,30 +60,10 @@ function GameScene:init()
   
   self.selfUserId = 1
 
-  PokeCard.sharedPokeCard(pokeCardsLayer)
   self:initPokeCardsLayerTouchHandler()
   self:showSysTime()
   self:initPlayers()
-  --self.SysTime:setFontName("fonts/Marker Felt.ttf")
   self:showButtonsPanel(false)
-
-end
-
-function GameScene:Ready_onClicked(sender, event)
-  local this = self
-  --if event == ccui.TouchEventType.ended then
-    PokeCard.releaseAllCards()
-    PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
-    this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
-
-    -- local p1, p2, p3, lordPokeCards = PokeCard.slicePokeCards()
-    -- self.pokeCards = p1
-    -- self.selfPlayerInfo.pokeCards = p1
-    -- self.nextPlayerInfo.pokeCards = p2
-    -- self.prevPlayerInfo.pokeCards = p3
-    -- self.lordPokeCards = lordPokeCards
-    self.gameService:readyGame(__bind(self.onServerGameStart, self))
-  --end
 end
 
 function GameScene:initKeypadHandler()
