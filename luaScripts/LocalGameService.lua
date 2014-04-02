@@ -71,7 +71,7 @@ function LocalGameService:onServerStartNewGameMsg(data)
     scheduler.performWithDelayGlobal(function() 
       local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
       this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-    end, math.random(2) - 0.5)
+    end, math.random(5) - 0.5)
   end
 
 end

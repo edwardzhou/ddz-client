@@ -116,11 +116,7 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
   self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
 
-  self:startCountdown(cc.p(550, 380), 
-    function() 
-      print('timeout~~~~~~~')
-    end, 
-    15)
+  self:showPlaycardClock()
 end
 
 

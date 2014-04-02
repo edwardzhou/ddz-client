@@ -8,7 +8,11 @@ function UIClockCountDownPlugin.bind(theClass)
       if _self._countDownTimes < 0 then
         _self._clockAction = nil
         _self.CountDownClock:setVisible(false)
-        timeoutCallback()
+        if type(timeoutCallback) == 'function' then
+          timeoutCallback()
+        else
+          print('[UIClockCountDownPlugin] WARNING: timeoutCallback is not a function')
+        end
       elseif _self._countDownTimes == 9 then
         _self.CountDownLabel:setColor(cc.c3b(255,0,0))
       end
@@ -18,6 +22,8 @@ function UIClockCountDownPlugin.bind(theClass)
 
   function theClass:startCountdown(pos, timeoutCallback, times)
     local this = self
+    times = times or 30
+    self:stopCountdown()
     self.CountDownLabel:setText(tostring(times))
     self.CountDownLabel:setColor(cc.c3b(0,0,0))
     self.CountDownClock:setPosition(pos)
@@ -37,6 +43,30 @@ function UIClockCountDownPlugin.bind(theClass)
     self.CountDownClock:setVisible(false)
   end
 
+  function theClass:startSelfPlayerCountdown(timeoutCallback, times)
+    local pos = cc.p(130, 180)
+    self:startCountdown(pos, timeoutCallback, times)
+  end
+
+  function theClass:startNextPlayerCountdown(timeoutCallback, times)
+    local pos = cc.p(670, 325)
+    self:startCountdown(pos, timeoutCallback, times)
+  end
+
+  function theClass:startPrevPlayerCountdown(timeoutCallback, times)
+    local pos = cc.p(130, 350)
+    self:startCountdown(pos, timeoutCallback, times)
+  end
+
+  function theClass:showPlaycardClock()
+    if self.pokeGame.currentPlayer == self.selfPlayerInfo then
+      self:startSelfPlayerCountdown()
+    elseif self.pokeGame.currentPlayer == self.prevPlayerInfo then
+      self:startPrevPlayerCountdown()
+    elseif self.pokeGame.currentPlayer == self.nextPlayerInfo then
+      self:startNextPlayerCountdown()
+    end
+  end
 end
 
 return UIClockCountDownPlugin

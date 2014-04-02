@@ -21,6 +21,8 @@ function SGamingActionsPlugin.bind(theClass)
     if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId then
       self:showButtonsPanel(true)
     end
+
+    self:showPlaycardClock()
   end
 
   function theClass:onSelfPlayerPlayCard(card)
