@@ -1,6 +1,7 @@
 local GamePlayer = require('GamePlayer')
 local PokeGame = require('PokeGame')
 local scheduler = require('framework.scheduler')
+local AI = require('PokecardAI')
 
 LocalGameService = class('GameService')
 
@@ -38,9 +39,9 @@ end
 function LocalGameService:readyGame(callback)
   local Roles = {ddz.PlayerRoles.Farmer, ddz.PlayerRoles.Lord, ddz.PlayerRoles.Farmer}
   table.shuffle(Roles)
-  self.playersInfo[1].role = Roles[1]
-  self.playersInfo[2].role = Roles[2]
-  self.playersInfo[3].role = Roles[3]
+  self.playersInfo[1].role = ddz.PlayerRoles.None
+  self.playersInfo[2].role = ddz.PlayerRoles.None
+  self.playersInfo[3].role = ddz.PlayerRoles.None
   
   local pokeGame = PokeGame.new(self.playersInfo)
   self.playersInfo[1]:analyzePokecards()
@@ -52,8 +53,46 @@ function LocalGameService:readyGame(callback)
   -- end
 end
 
+function LocalGameService:grabLord(userId, lordActionValue)
+  self:onServerGrabbingLordMsg({userId = userId, lordActionValue = lordActionValue})
+end
+
 function LocalGameService:playCard(userId, pokeIdChars, callback)
   self:onServerPlayCardMsg({userId = userId, pokeIdChars = pokeIdChars})
+end
+
+function LocalGameService:onServerGrabbingLordMsg(data)
+  local this = self
+  local userId = data.userId
+  local player = self.playersMap[userId]
+  local pokeGame = self.pokeGame
+  --player.lordValue = data.lordValue
+  if pokeGame.grabbingLord.lordValue == 0 then
+    if data.lordActionValue == ddz.Actions.GrabbingLord.None then
+      player.status = ddz.PlayerStatus.NoGrabLord
+    else
+      player.status = ddz.PlayerStatus.GrabLord
+      pokeGame.grabbingLord.lordValue = 3
+    end
+  else
+    if data.lordActionValue == ddz.Actions.GrabbingLord.None then
+      player.status = ddz.PlayerStatus.PassGrabLord
+    else
+      player.status = ddz.PlayerStatus.ReGrabLord
+      pokeGame.grabbingLord.lordValue = pokeGame.grabbingLord.lordValue * 2
+    end
+  end
+
+  local nextPlayer = self.pokeGame:setToNextPlayer()
+
+  if self.msgReceiver.onGrabbingLordMsg then
+    self.msgReceiver:onGrabbingLordMsg(userId, pokeIdChars)
+  end
+
+  if nextPlayer.robot then
+    AI.grabLord(self, nextPlayer)
+  end  
+
 end
 
 function LocalGameService:onServerStartNewGameMsg(data)
@@ -68,11 +107,15 @@ function LocalGameService:onServerStartNewGameMsg(data)
   end
 
   if nextPlayer.robot then
-    scheduler.performWithDelayGlobal(function() 
-      local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
-      this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-    end, math.random(5) - 0.5)
+    AI.grabLord(self, nextPlayer)
   end
+
+  -- if nextPlayer.robot then
+  --   scheduler.performWithDelayGlobal(function() 
+  --     local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
+  --     this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
+  --   end, math.random(5) - 0.5)
+  -- end
 
 end
 

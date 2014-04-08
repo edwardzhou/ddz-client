@@ -61,6 +61,14 @@ function UIPlayerUpdatePlugin.bind(theClass)
 
     if userInfo.status == ddz.PlayerStatus.Ready then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+    elseif userInfo.status == ddz.PlayerStatus.NoGrabLord then
+      userUI.Status:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+    elseif userInfo.status == ddz.PlayerStatus.GrabLord then
+      userUI.Status:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+    elseif userInfo.status == ddz.PlayerStatus.PassGrabLord then
+      userUI.Status:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+    elseif userInfo.status == ddz.PlayerStatus.ReGrabLord then
+      userUI.Status:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
     end
     userUI.Status:setVisible(userInfo.status and userInfo.status ~= ddz.PlayerStatus.None)
 

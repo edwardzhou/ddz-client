@@ -9,7 +9,10 @@ function PokeGame:ctor(playersInfo)
   self.playersInfo[2].prevPlayer = self.playersInfo[1]
   self.playersInfo[3].nextPlayer = self.playersInfo[1]
   self.playersInfo[3].prevPlayer = self.playersInfo[2]
-  self.currentPlayer = nil
+  self.currentPlayer = self.playersInfo[math.random(3)]
+  self.grabbingLord = {}
+  self.grabbingLord.lordValue = 0
+  self.grabbingLord.firstPlayer = self.currentPlayer
   self:arrangePokeCards()
 end
 
@@ -20,19 +23,19 @@ function PokeGame:arrangePokeCards()
   self.playersInfo[3].pokeCards = p3
   self.lordPokeCards = lordPokeCards
 
-  if self.playersInfo[1].role == ddz.PlayerRoles.Lord then
-    table.append(self.playersInfo[1].pokeCards, self.lordPokeCards)
-    table.sort(self.playersInfo[1].pokeCards, sortDescBy('index'))
-    self.currentPlayer = self.playersInfo[1]
-  elseif self.playersInfo[2].role == ddz.PlayerRoles.Lord then
-    table.append(self.playersInfo[2].pokeCards, self.lordPokeCards)
-    table.sort(self.playersInfo[2].pokeCards, sortDescBy('index'))
-    self.currentPlayer = self.playersInfo[2]
-  else
-    table.append(self.playersInfo[3].pokeCards, self.lordPokeCards)
-    table.sort(self.playersInfo[3].pokeCards, sortDescBy('index'))
-    self.currentPlayer = self.playersInfo[3]
-  end
+  -- if self.playersInfo[1].role == ddz.PlayerRoles.Lord then
+  --   table.append(self.playersInfo[1].pokeCards, self.lordPokeCards)
+  --   table.sort(self.playersInfo[1].pokeCards, sortDescBy('index'))
+  --   self.currentPlayer = self.playersInfo[1]
+  -- elseif self.playersInfo[2].role == ddz.PlayerRoles.Lord then
+  --   table.append(self.playersInfo[2].pokeCards, self.lordPokeCards)
+  --   table.sort(self.playersInfo[2].pokeCards, sortDescBy('index'))
+  --   self.currentPlayer = self.playersInfo[2]
+  -- else
+  --   table.append(self.playersInfo[3].pokeCards, self.lordPokeCards)
+  --   table.sort(self.playersInfo[3].pokeCards, sortDescBy('index'))
+  --   self.currentPlayer = self.playersInfo[3]
+  -- end
 end
 
 function PokeGame:getNextPlayer(curPlayer)

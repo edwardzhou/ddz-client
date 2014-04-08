@@ -1,8 +1,12 @@
 ddz = ddz or {}
 
 ddz.PlayerStatus = {
-  None = 0,
-  Ready = 1
+  None = 0,             -- 无效
+  Ready = 1,            -- 准备
+  NoGrabLord = 2,       -- 不叫
+  GrabLord = 3,         -- 叫地主
+  PassGrabLord = 4,     -- 不抢
+  ReGrabLord = 5        -- 抢地主
 }
 
 ddz.PlayerRoles = {
@@ -19,6 +23,20 @@ ddz.PokecardPickTags = {
 ddz.PokecardPickColors = {
   Normal = cc.c3b(255, 255, 255),
   Selected = cc.c3b(0x99, 0x99, 0x99)
+}
+
+ddz.PokeGameStatus = {
+  None = 0,
+  WaitingForReady = 1,
+  GrabbingLord = 2,
+  Playing = 3,
+  GameOver = 4
+}
+
+ddz.Actions = {}
+ddz.Actions.GrabbingLord = {
+  None = 0, -- 不叫
+  Grab = 1, -- 叫地主
 }
 
 GlobalSetting = {

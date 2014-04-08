@@ -6,6 +6,23 @@ function SGamingActionsPlugin.bind(theClass)
     self:doServerGameStart(pokeGame, nextUserId)
   end
 
+  function theClass:onGrabbingLordMsg(userId)
+    if userId == self.selfPlayerInfo.userId then
+      self:updateSelfPlayerUI(self.selfPlayerInfo)
+    elseif userId == self.prevPlayerInfo.userId then
+      self:updatePrevPlayerUI(self.prevPlayerInfo)
+    elseif userId == self.nextPlayerInfo.userId then
+      self:updateNextPlayerUI(self.nextPlayerInfo)
+    else
+      -- error
+    end
+    if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId then
+      --self:showButtonsPanel(true)
+    end
+
+    self:showPlaycardClock()
+  end
+
   function theClass:onPlayCardMsg(userId, pokeIdChars)
     local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
     local card = Card.create(pokeCards)
