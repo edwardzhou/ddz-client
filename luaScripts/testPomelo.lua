@@ -6,6 +6,8 @@ local ev = require 'ev'
 
 p = Pomelo.new()
 params = {host='localhost', port='4001'}
+
+
 p:init(params, function(x)
   dump(x, 'p.init callback')
   p:request('gate.gateHandler.queryEntry', {uid=10001}, function(...)
