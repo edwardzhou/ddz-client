@@ -46,6 +46,10 @@ function PokeGame:restart()
   self:arrangePokeCards()
 end
 
+function PokeGame:setNextPlayer(nextPlayer)
+  self.currentPlayer = nextPlayer
+end
+
 function PokeGame:getNextPlayer(curPlayer)
   curPlayer = curPlayer or self.currentPlayer
   local index = table.indexOf(self.playersInfo, curPlayer)

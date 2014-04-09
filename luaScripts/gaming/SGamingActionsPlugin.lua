@@ -6,7 +6,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:doServerGameStart(pokeGame, nextUserId)
   end
 
-  function theClass:onGrabbingLordMsg(userId, nextUserId, isGiveup)
+  function theClass:onGrabbingLordMsg(userId, nextUserId, isGiveup, isFinish)
     if userId == self.selfPlayerInfo.userId then
       self:updateSelfPlayerUI(self.selfPlayerInfo)
     elseif userId == self.prevPlayerInfo.userId then
@@ -26,6 +26,19 @@ function SGamingActionsPlugin.bind(theClass)
 
     if isGiveup then
       self:hideSelfPokecards()
+    end
+
+    if isFinish then
+      self.LordCard1:loadTexture(self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
+      self.LordCard2:loadTexture(self.pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
+      self.LordCard3:loadTexture(self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+      self:doUpdatePlayersUI()
+
+      self:showGrabLordButtonsPanel(false)
+      if self.pokeGame.lordPlayer == self.selfPlayerInfo then
+        self:showCards()
+        self:showButtonsPanel(true)
+      end      
     end
 
   end

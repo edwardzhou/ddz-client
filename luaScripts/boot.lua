@@ -29,10 +29,10 @@ local function main()
     if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) or 
        (cc.PLATFORM_OS_ANDROID == targetPlatform) or (cc.PLATFORM_OS_WINDOWS == targetPlatform) or
        (cc.PLATFORM_OS_MAC == targetPlatform) then
-        local host = 'localhost' -- please change localhost to your PC's IP for on-device debugging
-        -- require('mobdebug').start(host)
+        local host = '192.168.0.90' -- please change localhost to your PC's IP for on-device debugging
+        --require('src.mobdebug').start(host)
     end
-
+    
     -- run
     local createLoginScene = require('LoginScene')
     local sceneGame = createLoginScene()

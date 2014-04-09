@@ -73,6 +73,8 @@ function LocalGameService:onServerGrabbingLordMsg(data)
     else
       player.status = ddz.PlayerStatus.GrabLord
       pokeGame.grabbingLord.lordValue = 3
+      pokeGame.grabbingLord.firstLordPlayer = player
+      pokeGame.grabbingLord.lordPlayer = player
     end
   else
     if data.lordActionValue == ddz.Actions.GrabbingLord.None then
@@ -80,6 +82,7 @@ function LocalGameService:onServerGrabbingLordMsg(data)
     else
       player.status = ddz.PlayerStatus.ReGrabLord
       pokeGame.grabbingLord.lordValue = pokeGame.grabbingLord.lordValue * 2
+      pokeGame.grabbingLord.lordPlayer = player
     end
   end
 
@@ -87,9 +90,33 @@ function LocalGameService:onServerGrabbingLordMsg(data)
 
   local isGiveup = (self.pokeGame.grabbingLord.firstPlayer == nextPlayer) and 
                     (self.pokeGame.grabbingLord.lordValue == 0)
+  local isGrabLordFinish = false
+  if self.pokeGame.grabbingLord.lordValue == 3 then
+    isGrabLordFinish = self.pokeGame.grabbingLord.firstPlayer == nextPlayer
+  elseif self.pokeGame.grabbingLord.lordValue > 3 then
+    isGrabLordFinish = self.pokeGame.grabbingLord.firstLordPlayer == player
+  end
+
+  if isGrabLordFinish then
+    local lordPlayer = self.pokeGame.grabbingLord.lordPlayer
+    self.pokeGame:setNextPlayer(lordPlayer)
+    dump(self.pokeGame.lordPokeCards, 'lordPokeCards')
+    --dump(lordPlayer, 'lordPlayer')
+    table.append(lordPlayer.pokeCards, self.pokeGame.lordPokeCards)
+    table.sort(lordPlayer.pokeCards, sortDescBy('index'))
+    --dump(lordPlayer.pokeCards, 'lordPlayer.pokeCards')
+    lordPlayer.role = ddz.PlayerRoles.Lord 
+    lordPlayer.nextPlayer.role = ddz.PlayerRoles.Farmer
+    lordPlayer.prevPlayer.role = ddz.PlayerRoles.Farmer
+    self.pokeGame.lordPlayer = lordPlayer
+    lordPlayer:analyzePokecards()
+    self.playersInfo[1].status = ddz.PlayerStatus.None
+    self.playersInfo[2].status = ddz.PlayerStatus.None
+    self.playersInfo[3].status = ddz.PlayerStatus.None
+  end
 
   if self.msgReceiver.onGrabbingLordMsg then
-    self.msgReceiver:onGrabbingLordMsg(userId, nextPlayer.userId, isGiveup)
+    self.msgReceiver:onGrabbingLordMsg(userId, nextPlayer.userId, isGiveup, isGrabLordFinish)
   end
 
   if isGiveup then
@@ -100,6 +127,14 @@ function LocalGameService:onServerGrabbingLordMsg(data)
       end, 0.7)
 
      return
+  end
+
+  if isGrabLordFinish then
+    if self.pokeGame.lordPlayer.robot then
+      AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
+    end
+
+    return
   end
 
   if nextPlayer.robot then

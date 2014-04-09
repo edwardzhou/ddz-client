@@ -1,5 +1,6 @@
 require 'GuiConstants'
 require 'PokeCard'
+local mobdebug = require('src.mobdebug')
 local GamePlayer = require('GamePlayer')
 local GameService = require('LocalGameService')
 
@@ -109,7 +110,7 @@ end
 function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.pokeGame = pokeGame
   self.pokeCards = self.selfPlayerInfo.pokeCards
-  -- self.selfPlayerInfo:analyzePokecards()
+  self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
   self.Ready:setVisible(false)
   self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
