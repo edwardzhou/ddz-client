@@ -12,6 +12,7 @@ local TypeMapping = {
   ImageView = 'ccui.ImageView',
   Label = 'ccui.Text',
   Text = 'ccui.Text',
+  TextBMFont = 'ccui.TextBMFont',
   Button = 'ccui.Button'
 }
 

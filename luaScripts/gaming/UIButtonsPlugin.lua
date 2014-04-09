@@ -1,6 +1,22 @@
+local Res = require('Resources')
 local UIButtonsPlugin = {}
 
+
 function UIButtonsPlugin.bind( theClass )
+  function theClass:showGrabLordButtonsPanel(show, currentLordValue)
+    currentLordValue = currentLordValue or 0
+    self.GrabLordButtonsPanel:setVisible(show)
+    if show then
+      if currentLordValue == 0 then
+        self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+        self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+      else
+        self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+        self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+      end
+    end
+  end
+
   function theClass:showButtonsPanel(show)
     self.ButtonsPanel:setVisible(show)
     self:updateButtonsState()
@@ -133,6 +149,17 @@ function UIButtonsPlugin.bind( theClass )
     self:showButtonsPanel(false)
     self.gameService:playCard(self.selfUserId, pokeIdChars)
   end
+
+  function theClass:ButtonNoGrabLord_onClicked(sender, event)
+    self.gameService:grabLord(self.selfUserId, ddz.Actions.GrabbingLord.None)
+    self:showGrabLordButtonsPanel(false)
+  end
+
+  function theClass:ButtonGrabLord_onClicked(sender, event)
+    self.gameService:grabLord(self.selfUserId, ddz.Actions.GrabbingLord.Grab)
+    self:showGrabLordButtonsPanel(false)
+  end
+
 end
 
 return UIButtonsPlugin

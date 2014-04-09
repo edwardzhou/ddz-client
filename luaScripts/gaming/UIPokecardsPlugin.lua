@@ -351,6 +351,10 @@ function UIPokecardsPlugin.bind( theClass )
     end
   end
 
+  function theClass:hideSelfPokecards()
+    self:hideCard({pokeCards = self.selfPlayerInfo.pokeCards})
+  end
+
 end
 
 return UIPokecardsPlugin

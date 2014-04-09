@@ -85,12 +85,25 @@ function LocalGameService:onServerGrabbingLordMsg(data)
 
   local nextPlayer = self.pokeGame:setToNextPlayer()
 
+  local isGiveup = (self.pokeGame.grabbingLord.firstPlayer == nextPlayer) and 
+                    (self.pokeGame.grabbingLord.lordValue == 0)
+
   if self.msgReceiver.onGrabbingLordMsg then
-    self.msgReceiver:onGrabbingLordMsg(userId, pokeIdChars)
+    self.msgReceiver:onGrabbingLordMsg(userId, nextPlayer.userId, isGiveup)
+  end
+
+  if isGiveup then
+    -- 流局
+    scheduler.performWithDelayGlobal(function() 
+        this.pokeGame:restart()
+        this:onServerStartNewGameMsg({pokeGame = self.pokeGame})
+      end, 0.7)
+
+     return
   end
 
   if nextPlayer.robot then
-    AI.grabLord(self, nextPlayer)
+    AI.grabLord(self, self.pokeGame, nextPlayer)
   end  
 
 end
@@ -107,7 +120,7 @@ function LocalGameService:onServerStartNewGameMsg(data)
   end
 
   if nextPlayer.robot then
-    AI.grabLord(self, nextPlayer)
+    AI.grabLord(self, self.pokeGame, nextPlayer)
   end
 
   -- if nextPlayer.robot then

@@ -38,6 +38,14 @@ function PokeGame:arrangePokeCards()
   -- end
 end
 
+function PokeGame:restart()
+  self.currentPlayer = self.playersInfo[math.random(3)]
+  self.grabbingLord = {}
+  self.grabbingLord.lordValue = 0
+  self.grabbingLord.firstPlayer = self.currentPlayer
+  self:arrangePokeCards()
+end
+
 function PokeGame:getNextPlayer(curPlayer)
   curPlayer = curPlayer or self.currentPlayer
   local index = table.indexOf(self.playersInfo, curPlayer)

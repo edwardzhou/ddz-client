@@ -6,7 +6,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:doServerGameStart(pokeGame, nextUserId)
   end
 
-  function theClass:onGrabbingLordMsg(userId)
+  function theClass:onGrabbingLordMsg(userId, nextUserId, isGiveup)
     if userId == self.selfPlayerInfo.userId then
       self:updateSelfPlayerUI(self.selfPlayerInfo)
     elseif userId == self.prevPlayerInfo.userId then
@@ -16,11 +16,18 @@ function SGamingActionsPlugin.bind(theClass)
     else
       -- error
     end
-    if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId then
-      --self:showButtonsPanel(true)
+    if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId and not isGiveup then
+      self:showGrabLordButtonsPanel(true, self.pokeGame.grabbingLord.lordValue)
     end
 
+    self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
+
     self:showPlaycardClock()
+
+    if isGiveup then
+      self:hideSelfPokecards()
+    end
+
   end
 
   function theClass:onPlayCardMsg(userId, pokeIdChars)

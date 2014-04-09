@@ -9,6 +9,7 @@ function PokecardAI.grabLord(gameService, pokeGame, currentPlayer)
     function()
       local grabs = {ddz.Actions.GrabbingLord.None, ddz.Actions.GrabbingLord.Grab}
       local action = grabs[math.random(1000)%2 + 1]
+      action = ddz.Actions.GrabbingLord.None
       gameService:grabLord(currentPlayer.userId, action)
     end, 
     math.random(5) - 0.5)

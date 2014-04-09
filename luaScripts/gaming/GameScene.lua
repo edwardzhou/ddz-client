@@ -40,6 +40,7 @@ end
 
 function GameScene:cleanup()
   self:stopAllActions()
+  PokeCard.releaseAllCards()
 end
 
 function GameScene:init()
@@ -64,6 +65,7 @@ function GameScene:init()
   self:showSysTime()
   self:initPlayers()
   self:showButtonsPanel(false)
+  self:showGrabLordButtonsPanel(false)
 end
 
 function GameScene:initKeypadHandler()
@@ -107,18 +109,17 @@ end
 function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.pokeGame = pokeGame
   self.pokeCards = self.selfPlayerInfo.pokeCards
-  self.selfPlayerInfo:analyzePokecards()
+  -- self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
   self.Ready:setVisible(false)
-  self:showButtonsPanel(nextUserId == self.selfUserId)
+  self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
+  -- self:showButtonsPanel(nextUserId == self.selfUserId)
   self:showCards()
-  self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
-  self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
-  self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
-
+  -- self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
+  -- self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
+  -- self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
   self:showPlaycardClock()
 end
-
 
 local function createScene()
   --local scene = cc.Scene:create()
