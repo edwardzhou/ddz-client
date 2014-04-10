@@ -1,15 +1,30 @@
 {
-    "ndk_module_path" :[
-        "../../cocos2d-x",
-        "../../cocos2d-x/cocos/",
-        "../../cocos2d-x/external",
+    "copy_resources": [
+        {
+            "from": "../../../src", 
+            "to": "src"
+        }, 
+        {
+            "from": "../../../res", 
+            "to": "res"
+        }, 
+        {
+            "from": "../../../Resources", 
+            "to": ""
+        }, 
+        {
+            "from": "../../../luaScripts", 
+            "to": "luaScripts"
+        }, 
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script", 
+            "to": ""
+        }
+    ], 
+    "ndk_module_path": [
+        "../../cocos2d-x", 
+        "../../cocos2d-x/cocos/", 
+        "../../cocos2d-x/external", 
         "../../cocos2d-x/cocos/scripting"
-    ],
-    "copy_to_assets" :[
-        "../../../src",
-        "../../../res",
-        "../../../Resources/",
-        "../../../luaScripts",
-        "../../cocos2d-x/cocos/scripting/lua-bindings/script/"
     ]
 }

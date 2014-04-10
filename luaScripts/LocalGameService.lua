@@ -47,10 +47,24 @@ function LocalGameService:readyGame(callback)
   self.playersInfo[1]:analyzePokecards()
   self.playersInfo[2]:analyzePokecards()
   self.playersInfo[3]:analyzePokecards()
+  pokeGame.betBase = 600
   self:onServerStartNewGameMsg({pokeGame = pokeGame})
   -- if type(callback) == 'function' then
   --   callback(self.pokeGame)
   -- end
+end
+
+function LocalGameService:startNewGame()
+  self.playersInfo[1].role = ddz.PlayerRoles.None
+  self.playersInfo[2].role = ddz.PlayerRoles.None
+  self.playersInfo[3].role = ddz.PlayerRoles.None
+  
+  local pokeGame = PokeGame.new(self.playersInfo)
+  self.playersInfo[1]:analyzePokecards()
+  self.playersInfo[2]:analyzePokecards()
+  self.playersInfo[3]:analyzePokecards()
+  pokeGame.betBase = 600
+  self:onServerStartNewGameMsg({pokeGame = pokeGame})
 end
 
 function LocalGameService:grabLord(userId, lordActionValue)
@@ -98,6 +112,7 @@ function LocalGameService:onServerGrabbingLordMsg(data)
   end
 
   if isGrabLordFinish then
+    self.pokeGame.lordValue = self.pokeGame.grabbingLord.lordValue
     local lordPlayer = self.pokeGame.grabbingLord.lordPlayer
     self.pokeGame:setNextPlayer(lordPlayer)
     dump(self.pokeGame.lordPokeCards, 'lordPokeCards')
@@ -164,9 +179,7 @@ function LocalGameService:onServerStartNewGameMsg(data)
   --     this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
   --   end, math.random(5) - 0.5)
   -- end
-
 end
-
 
 function LocalGameService:onServerPlayCardMsg(data)
   local this = self
@@ -180,13 +193,58 @@ function LocalGameService:onServerPlayCardMsg(data)
     self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
   end
 
+  if #player.pokeCards == 0 then
+    local balance = self:getGameBalance(self.pokeGame, player)
+    scheduler.performWithDelayGlobal(function ()
+        this:onServerGameOverMsg({balance = balance})
+      end, 0.5)
+
+    return
+  end
+
   if nextPlayer.robot then
     scheduler.performWithDelayGlobal(function() 
       local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
       this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
     end, math.random(2) - 0.5)
   end
+end
 
+function LocalGameService:onServerGameOverMsg(data)
+  local balance = data.balance
+  dump(balance, '[LocalGameService:onServerGameOverMsg] balance', false, 3)
+  if self.msgReceiver.onGameOverMsg then
+    self.msgReceiver:onGameOverMsg(balance)
+  end
+end
+
+function LocalGameService:getGameBalance(pokeGame, winner)
+  local totalPrize = pokeGame.lordValue * pokeGame.betBase
+  local balance = {}
+  balance.winner = winner
+  balance.betBase = pokeGame.betBase
+  balance.lordValue = pokeGame.lordValue
+  balance.totalPrize = totalPrize
+  local prevPlayer = pokeGame:getPrevPlayer(winner)
+  local nextPlayer = pokeGame:getNextPlayer(winner)
+  if winner.role == ddz.PlayerRoles.Lord then
+    balance.playerResults = {}
+    balance.playerResults[winner.userId] = {balance = totalPrize}
+    balance.playerResults[prevPlayer.userId] = {balance = -totalPrize / 2}
+    balance.playerResults[nextPlayer.userId] = {balance = -totalPrize / 2}
+  else
+    balance.playerResults = {}
+    balance.playerResults[winner.userId] = {balance = totalPrize / 2 }
+    if prevPlayer.role == ddz.PlayerRoles.Lord then
+      balance.playerResults[prevPlayer.userId] = {balance = -totalPrize}
+      balance.playerResults[nextPlayer.userId] = {balance = totalPrize / 2}
+    else
+      balance.playerResults[prevPlayer.userId] = {balance = totalPrize / 2}
+      balance.playerResults[nextPlayer.userId] = {balance = -totalPrize}
+    end
+  end
+
+  return balance
 end
 
 return LocalGameService

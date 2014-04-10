@@ -30,8 +30,13 @@ function HallScene:init()
   self:initKeypadHandler()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
+
+  local guiReader = ccs.GUIReader:getInstance()
   
-  local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Hall/Hall.json')
+  rootLayer:addChild(guiReader:widgetFromJsonFile('roleDialogUI/roleDialogUI.json'))
+  do return end
+
+  local ui = guiReader:widgetFromJsonFile('UI/Hall/Hall.json')
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
@@ -106,7 +111,7 @@ function HallScene:initKeypadHandler()
 end
 
 local function createScene()
-  local scene = cc.Scene:createWithPhysics()
+  local scene = cc.Scene:create()
   return HallScene.extend(scene)
 end
 

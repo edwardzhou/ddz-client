@@ -18,6 +18,7 @@ function SGamingActionsPlugin.bind(theClass)
     end
     if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId and not isGiveup then
       self:showGrabLordButtonsPanel(true, self.pokeGame.grabbingLord.lordValue)
+      --self:onGameOverMsg({})
     end
 
     self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
@@ -82,6 +83,25 @@ function SGamingActionsPlugin.bind(theClass)
     self:nextPlayCardEffect(card)
     self:updateNextPlayerUI(self.nextPlayerInfo)
     self.nextPlayerInfo.lastCard = card
+  end
+
+  function theClass:onGameOverMsg(balance)
+    local this = self
+    if self.gameResultPanel == nil then
+      --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
+      local onClose = function ( ... )
+        -- body
+      end
+      local onNewGame = function()
+        PokeCard.releaseAllCards()
+        PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
+        this.gameService:startNewGame()
+      end
+
+      self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
+      self:addChild(self.gameResultPanel)
+    end
+    self.gameResultPanel:show(balance, self.selfPlayerInfo)
   end
 
 end
