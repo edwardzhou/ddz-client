@@ -342,6 +342,16 @@ PokeCard.reloadAllCardSprites = function(container)
 end
 
 PokeCard.resetAll = function(container)
+  if g_shared_cards[1].card_sprite == nil then
+    PokeCard.reloadAllCardSprites(container)
+  end
+
+  for _, pokeCard in pairs(g_shared_cards) do
+    pokeCard.picked = false
+    pokeCard.card_sprite:setVisible(false)
+    pokeCard.card_sprite:setScale(1)
+    pokeCard.card_sprite:setPosition(-150, -150)
+  end
 --	PokeCard.releaseAllCards()
 --	PokeCard.sharedPokeCard(container)
 end

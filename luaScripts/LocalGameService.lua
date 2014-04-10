@@ -89,6 +89,7 @@ function LocalGameService:onServerGrabbingLordMsg(data)
       pokeGame.grabbingLord.lordValue = 3
       pokeGame.grabbingLord.firstLordPlayer = player
       pokeGame.grabbingLord.lordPlayer = player
+      self.msgReceiver:onLordValueUpgrade(pokeGame.grabbingLord.lordValue)
     end
   else
     if data.lordActionValue == ddz.Actions.GrabbingLord.None then
@@ -97,6 +98,7 @@ function LocalGameService:onServerGrabbingLordMsg(data)
       player.status = ddz.PlayerStatus.ReGrabLord
       pokeGame.grabbingLord.lordValue = pokeGame.grabbingLord.lordValue * 2
       pokeGame.grabbingLord.lordPlayer = player
+      self.msgReceiver:onLordValueUpgrade(pokeGame.grabbingLord.lordValue)
     end
   end
 
@@ -186,8 +188,16 @@ function LocalGameService:onServerPlayCardMsg(data)
   local userId = data.userId
   local pokeIdChars = data.pokeIdChars
   local player = self.playersMap[userId]
-  table.removeItems(player.pokeCards, PokeCard.getByPokeChars(pokeIdChars))
+  local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
+  table.removeItems(player.pokeCards, pokeCards)
   local nextPlayer = self.pokeGame:setToNextPlayer()
+
+  local card = Card.create(pokeCards)
+  if card:isBomb() or card:isRocket() then
+    self.pokeGame.bombs = self.pokeGame.bombs + 1
+    self.pokeGame.lordValue = self.pokeGame.lordValue * 2
+    self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
+  end
 
   if self.msgReceiver.onPlayCardMsg then
     self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
@@ -219,11 +229,12 @@ function LocalGameService:onServerGameOverMsg(data)
 end
 
 function LocalGameService:getGameBalance(pokeGame, winner)
-  local totalPrize = pokeGame.lordValue * pokeGame.betBase
   local balance = {}
   balance.winner = winner
   balance.betBase = pokeGame.betBase
-  balance.lordValue = pokeGame.lordValue
+  balance.lordValue = pokeGame.lordValue -- * math.pow(2, pokeGame.bombs)
+  local totalPrize = balance.lordValue * pokeGame.betBase
+
   balance.totalPrize = totalPrize
   local prevPlayer = pokeGame:getPrevPlayer(winner)
   local nextPlayer = pokeGame:getNextPlayer(winner)

@@ -85,6 +85,15 @@ function SGamingActionsPlugin.bind(theClass)
     self.nextPlayerInfo.lastCard = card
   end
 
+  function theClass:onLordValueUpgrade(newLordValue)
+    self.LabelLordValue:setText('x ' .. newLordValue)
+    local scaleBy = cc.ScaleBy:create(0.3, 1.5)
+    self.LabelLordValue:runAction(cc.Sequence:create(
+        scaleBy,
+        scaleBy:reverse()
+      ))
+  end
+
   function theClass:onGameOverMsg(balance)
     local this = self
     if self.gameResultPanel == nil then
@@ -93,8 +102,8 @@ function SGamingActionsPlugin.bind(theClass)
         -- body
       end
       local onNewGame = function()
-        PokeCard.releaseAllCards()
-        PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
+        PokeCard.resetAll(this.pokeCardsLayer)
+        --PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
         this.gameService:startNewGame()
       end
 

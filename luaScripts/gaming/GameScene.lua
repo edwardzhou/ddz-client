@@ -108,6 +108,9 @@ function GameScene:initPlayers()
 end
 
 function GameScene:doServerGameStart(pokeGame, nextUserId)
+  self.selfPlayerInfo.lastCard = nil
+  self.prevPlayerInfo.lastCard = nil
+  self.nextPlayerInfo.lastCard = nil
   self.pokeGame = pokeGame
   self.pokeCards = self.selfPlayerInfo.pokeCards
   self.selfPlayerInfo:analyzePokecards()
@@ -116,14 +119,14 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
   -- self:showButtonsPanel(nextUserId == self.selfUserId)
   self:showCards()
-  -- self.LordCard1:loadTexture(pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
-  -- self.LordCard2:loadTexture(pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
-  -- self.LordCard3:loadTexture(pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+  self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self:showPlaycardClock()
 end
 
 local function createScene()
-  --local scene = cc.Scene:create()
+  --local scene = cc.Scene:create()b
   return GameScene.new()
 end
 

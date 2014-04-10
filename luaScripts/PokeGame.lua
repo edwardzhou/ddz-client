@@ -10,6 +10,9 @@ function PokeGame:ctor(playersInfo)
   self.playersInfo[3].nextPlayer = self.playersInfo[1]
   self.playersInfo[3].prevPlayer = self.playersInfo[2]
   self.currentPlayer = self.playersInfo[math.random(3)]
+  self.bombs = 0
+  self.spring = 0
+  self.antiSpring = 0
   self.grabbingLord = {}
   self.grabbingLord.lordValue = 0
   self.grabbingLord.firstPlayer = self.currentPlayer

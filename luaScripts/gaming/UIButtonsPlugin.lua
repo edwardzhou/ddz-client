@@ -160,6 +160,15 @@ function UIButtonsPlugin.bind( theClass )
     self:showGrabLordButtonsPanel(false)
   end
 
+  function theClass:ButtonConfig_onClicked(sender, event)
+    for i=1, #self.pokeCards do
+      local pokeCard = self.pokeCards[i]
+      local x,y = pokeCard.card_sprite:getPosition()
+      local visible = pokeCard.card_sprite:isVisible()
+      local str = string.format('%d => %s, pos: (%d, %d), visible: ', i, pokeCard.id, x,y)
+      print(str, visible)
+    end
+  end
 end
 
 return UIButtonsPlugin
