@@ -103,6 +103,9 @@ function LocalGameService:onServerGrabbingLordMsg(data)
   end
 
   local nextPlayer = self.pokeGame:setToNextPlayer()
+  if nextPlayer.status == ddz.PlayerStatus.NoGrabLord then
+    nextPlayer = self.pokeGame:setToNextPlayer()
+  end
 
   local isGiveup = (self.pokeGame.grabbingLord.firstPlayer == nextPlayer) and 
                     (self.pokeGame.grabbingLord.lordValue == 0)

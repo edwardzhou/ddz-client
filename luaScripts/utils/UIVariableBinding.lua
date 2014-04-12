@@ -13,6 +13,7 @@ local TypeMapping = {
   Label = 'ccui.Text',
   Text = 'ccui.Text',
   TextBMFont = 'ccui.TextBMFont',
+  TextAtlas = 'ccui.TextAtlas',
   Button = 'ccui.Button'
 }
 
@@ -27,7 +28,7 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
     local tmpParent = varHodler
     local widget = nil
     if vtype ~= nil and vname ~= nil and wtype ~= nil then
-      print('bind variable:' , vtype, vname, TypeMapping[wtype])
+      print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
       if vtype == 'v' then
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget

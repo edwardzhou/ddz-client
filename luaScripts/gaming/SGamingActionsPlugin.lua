@@ -21,7 +21,7 @@ function SGamingActionsPlugin.bind(theClass)
       --self:onGameOverMsg({})
     end
 
-    self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
+    --self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
 
     self:showPlaycardClock()
 
@@ -86,8 +86,8 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onLordValueUpgrade(newLordValue)
-    self.LabelLordValue:setText('x ' .. newLordValue)
-    local scaleBy = cc.ScaleBy:create(0.3, 1.5)
+    self.LabelLordValue:setStringValue(newLordValue)
+    local scaleBy = cc.ScaleBy:create(0.15, 2.5)
     self.LabelLordValue:runAction(cc.Sequence:create(
         scaleBy,
         scaleBy:reverse()
