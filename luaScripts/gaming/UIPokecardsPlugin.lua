@@ -337,6 +337,52 @@ function UIPokecardsPlugin.bind( theClass )
     end
   end
 
+  function theClass:showPrevPlayerRestPokecards()
+    local pokeCards = self.prevPlayerInfo.pokeCards
+    self:hideCard(self.prevPlayerInfo.lastCard)
+    local startPoint = cc.p(-100, 330)
+    local pokeSize = self.cardContentSize.width/2
+    local step = 35 * 0.7
+    local endPoint = cc.p(125, 280)
+
+    for index = #pokeCards, 1, -1 do
+      local pokeSprite = pokeCards[index].card_sprite
+      pokeSprite:setPosition(endPoint)
+      pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:setVisible(true)
+      pokeSprite:setScale(0.7)
+
+      -- pokeSprite:runAction(cc.Spawn:create(
+      --   cc.MoveTo:create(0.2, endPoint),
+      --   cc.ScaleTo:create(0.1, 0.7)
+      -- ))
+      endPoint.x = endPoint.x + 35 * 0.7
+    end
+  end
+
+  function theClass:showNextPlayerRestPokecards()
+    local pokeCards = self.nextPlayerInfo.pokeCards
+    self:hideCard(self.nextPlayerInfo.lastCard)
+    local startPoint = cc.p(self.visibleSize.width + 100, 335)
+    local pokeSize = self.cardContentSize.width/2
+    local step = 35 * 0.7
+    local endPoint = cc.p(625, 335)
+
+    for index = 1, #pokeCards do
+      local pokeSprite = pokeCards[index].card_sprite
+      pokeSprite:setPosition(endPoint)
+      pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:setScale(0.7)
+      pokeSprite:setVisible(true)
+
+      -- pokeSprite:runAction(cc.Spawn:create(
+      --   cc.MoveTo:create(0.2, endPoint),
+      --   cc.ScaleTo:create(0.1, 0.7)
+      -- ))
+      endPoint.x = endPoint.x - 35 * 0.7
+    end
+  end
+
   --[[-----------------------------------------------------------
   隐藏出过的牌
   --]]-----------------------------------------------------------

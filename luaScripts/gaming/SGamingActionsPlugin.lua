@@ -1,3 +1,4 @@
+local scheduler = require('framework.scheduler')
 local SGamingActionsPlugin = {}
 
 function SGamingActionsPlugin.bind(theClass)
@@ -95,6 +96,10 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onGameOverMsg(balance)
+    self:hideCard(self.selfPlayerInfo.lastCard)
+    self:showPrevPlayerRestPokecards()
+    self:showNextPlayerRestPokecards()
+    self:stopCountdown()
     local this = self
     if self.gameResultPanel == nil then
       --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
@@ -110,7 +115,9 @@ function SGamingActionsPlugin.bind(theClass)
       self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
       self:addChild(self.gameResultPanel)
     end
-    self.gameResultPanel:show(balance, self.selfPlayerInfo)
+    scheduler.performWithDelayGlobal(function() 
+        this.gameResultPanel:show(balance, this.selfPlayerInfo)
+      end, 1)
   end
 
 end
