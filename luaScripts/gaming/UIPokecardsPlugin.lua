@@ -259,7 +259,7 @@ function UIPokecardsPlugin.bind( theClass )
   --]]-----------------------------------------------------------
   function theClass:selfPlayCardEffect(card)
     local pokeCards = card.pokeCards
-    if #pokeCards == 0 then
+    if pokeCards == nil or #pokeCards == 0 then
       return
     end
 
@@ -272,7 +272,7 @@ function UIPokecardsPlugin.bind( theClass )
 
     -- self.selfLastCard = {pokeCards = pokeCards}
 
-    local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 30)
+    local centerPoint = cc.p(self.visibleSize.width/2, self.visibleSize.height/2 - 80)
     local step = 35 * 0.7
     local pokeSize = self.cardContentSize.width/2
     local startX = centerPoint.x - (step * #pokeCards / 2 + pokeSize) * 0.7

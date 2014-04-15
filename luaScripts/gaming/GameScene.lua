@@ -51,7 +51,7 @@ function GameScene:init()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
 
-  local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Gaming/Gaming.json')
+  local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Gaming.json')
   rootLayer:addChild(ui)
   self.uiWidget = ui
   self:bindControlsVariables()
@@ -115,7 +115,7 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.pokeCards = self.selfPlayerInfo.pokeCards
   self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
-  self.Ready:setVisible(false)
+  self.ButtonReady:setVisible(false)
   self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
   self.LabelBetBase:setStringValue(pokeGame.betBase)
   -- self:showButtonsPanel(nextUserId == self.selfUserId)
@@ -123,6 +123,7 @@ function GameScene:doServerGameStart(pokeGame, nextUserId)
   self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LabelLordValue:setStringValue('0')
   self:showPlaycardClock()
 end
 

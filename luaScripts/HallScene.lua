@@ -33,10 +33,7 @@ function HallScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   
-  rootLayer:addChild(guiReader:widgetFromJsonFile('roleDialogUI/roleDialogUI.json'))
-  do return end
-
-  local ui = guiReader:widgetFromJsonFile('UI/Hall/Hall.json')
+  local ui = guiReader:widgetFromJsonFile('UI/Hall.json')
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)

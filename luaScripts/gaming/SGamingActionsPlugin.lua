@@ -48,15 +48,24 @@ function SGamingActionsPlugin.bind(theClass)
   function theClass:onPlayCardMsg(userId, pokeIdChars)
     local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
     local card = Card.create(pokeCards)
+    local nextPlayer = nil
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
+      nextPlayer = self.nextPlayerInfo
     elseif userId == self.prevPlayerInfo.userId then
       self:onPrevPlayerPlayCard(card)
+      nextPlayer = self.selfPlayerInfo
     elseif userId == self.nextPlayerInfo.userId then
       self:onNextPlayerPlayCard(card)
+      nextPlayer = self.prevPlayerInfo
     else
       -- error
     end
+
+    if nextPlayer then
+      self:hideCard(nextPlayer.lastCard)
+    end
+
     if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId then
       self:showButtonsPanel(true)
     end
@@ -100,6 +109,14 @@ function SGamingActionsPlugin.bind(theClass)
     self:showPrevPlayerRestPokecards()
     self:showNextPlayerRestPokecards()
     self:stopCountdown()
+
+    self.selfPlayerInfo.status = ddz.PlayerStatus.None
+    self.prevPlayerInfo.status = ddz.PlayerStatus.Ready
+    self.prevPlayerInfo.status = ddz.PlayerStatus.Ready
+    self:doUpdatePlayersUI()
+    self:startSelfPlayerCountdown(nil, 15)
+
+    --self.self
     local this = self
     if self.gameResultPanel == nil then
       --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
@@ -107,15 +124,17 @@ function SGamingActionsPlugin.bind(theClass)
         -- body
       end
       local onNewGame = function()
-        PokeCard.resetAll(this.pokeCardsLayer)
+        --PokeCard.resetAll(this.pokeCardsLayer)
         --PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
-        this.gameService:startNewGame()
+        --this.gameService:
+        self:ButtonReady_onClicked(self.ButtonReady, ccui.TouchEventType.ended)
       end
 
       self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
       self:addChild(self.gameResultPanel)
     end
     scheduler.performWithDelayGlobal(function() 
+        self.ButtonReady:setVisible(true)
         this.gameResultPanel:show(balance, this.selfPlayerInfo)
       end, 1)
   end

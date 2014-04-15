@@ -65,7 +65,7 @@ function UIButtonsPlugin.bind( theClass )
     self:enableButtonReset(hasPicked)
   end
 
-  function theClass:Ready_onClicked(sender, event)
+  function theClass:ButtonReady_onClicked(sender, event)
     local this = self
     PokeCard.releaseAllCards()
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)

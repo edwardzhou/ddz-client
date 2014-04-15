@@ -13,10 +13,6 @@
             "to": ""
         }, 
         {
-            "from": "../../../luaScripts", 
-            "to": "luaScripts"
-        }, 
-        {
             "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script", 
             "to": ""
         }
