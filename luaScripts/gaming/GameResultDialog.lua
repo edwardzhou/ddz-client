@@ -38,17 +38,20 @@ function GameResultDialog:show(balance, selfPlayer)
   local selfResult = balance.playerResults[selfPlayer.userId].balance
   local prevResult = balance.playerResults[selfPlayer.prevPlayer.userId].balance
   local nextResult = balance.playerResults[selfPlayer.nextPlayer.userId].balance
-  if selfResult > 0 then
-    selfResult = '+' .. selfResult
-  end
+  selfResult = string.format('%+d', selfResult)
+  prevResult = string.format('%+d', prevResult)
+  nextResult = string.format('%+d', nextResult)
+  -- if selfResult > 0 then
+  --   selfResult = '+' .. selfResult
+  -- end
 
-  if nextResult > 0 then
-    nextResult = '+' .. nextResult
-  end
+  -- if nextResult > 0 then
+  --   nextResult = '+' .. nextResult
+  -- end
 
-  if prevResult > 0 then
-    prevResult = '+' .. prevResult
-  end
+  -- if prevResult > 0 then
+  --   prevResult = '+' .. prevResult
+  -- end
 
   self.LabelSelfPlayerResult:setText(selfResult)
   self.LabelPrevPlayerResult:setText(prevResult)
