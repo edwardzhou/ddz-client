@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" default="release">
+<target name="-pre-compile">
+    <echo message="JARPATH=${toString:project.all.jars.path}"></echo>
+
+    <property name="plugin-x" value="/Users/edwardzhou/develop/cocos2d-x-3.0/plugin/publish"></property>
+    <path id="plugin-x.lib">
+        <path path="${toString:project.all.jars.path}"></path>
+        <pathelement location="${plugin-x}/protocols/android/libPluginProtocol.jar"></pathelement>
+        <pathelement location="${plugin-x}/plugins/umeng/android/libPluginUmeng.jar"></pathelement>
+        <pathelement location="${plugin-x}/plugins/umeng/android/umeng_sdk.jar"></pathelement>
+    </path>
+
+<!--     <path id="project.all.jars.path">
+        <path refid="plugin-x.lib"></path>
+    </path>
+ -->
+    <echo message="JARPATH=${toString:project.all.jars.path}"></echo>
+</target>
+</project>

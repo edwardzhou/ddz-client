@@ -19,6 +19,14 @@ function GamePlayer:ctor(playerInfo)
   self.robot = playerInfo.robot or false
 end
 
+function GamePlayer:isFarmer()
+  return self.role == ddz.PlayerRoles.Farmer
+end
+
+function GamePlayer:isLord()
+  return self.role == ddz.PlayerRoles.Lord
+end
+
 function GamePlayer:analyzePokecards()
   self.analyzedCards = CardAnalyzer.analyze(self.pokeCards)
   -- if self.cardAnalyzer == nil then

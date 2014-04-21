@@ -202,6 +202,11 @@ function LocalGameService:onServerPlayCardMsg(data)
     self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
   end
 
+  self.pokeGame.prevPlay = {player = player, card = card}
+  if card:isValid() then
+    self.pokeGame.lastPlay = {player = player, card = card}
+  end
+
   if self.msgReceiver.onPlayCardMsg then
     self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
   end
@@ -216,10 +221,11 @@ function LocalGameService:onServerPlayCardMsg(data)
   end
 
   if nextPlayer.robot then
-    scheduler.performWithDelayGlobal(function() 
-      local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
-      this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-    end, math.random(2) - 0.5)
+    AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
+    -- scheduler.performWithDelayGlobal(function() 
+    --   local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
+    --   this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
+    -- end, math.random(2) - 0.5)
   end
 end
 

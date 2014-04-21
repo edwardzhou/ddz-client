@@ -258,6 +258,10 @@ function Card:calcWeight()
   return 0
 end
 
+function Card:isValid()
+  return self.cardType ~= CardType.NONE
+end
+
 function Card:isBomb()
   return self.cardType == CardType.BOMB
 end

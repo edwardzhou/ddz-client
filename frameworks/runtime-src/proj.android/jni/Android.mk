@@ -15,6 +15,9 @@ LOCAL_SRC_FILES := hellolua/main.cpp \
                    ../../Classes/struct/struct.c \
                    ../../Classes/crypto/base64/libbase64.c \
                    ../../Classes/crypto/xxtea/xxtea.c \
+                   ../../Classes/lua-binding/auto/lua_cocos2dx_umeng_auto.cpp \
+
+#                   ../../Classes/auto/lua_cocos2dx_plugin_auto.cpp \
 
 #                   ../../Classes/crypto/CCCrypto.cpp \
 #                   ../../Classes/crypto/CCCryptoAndroid.cpp \
@@ -28,16 +31,26 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
                    	$(LOCAL_PATH)/../../Classes/crypto/base64 \
                    	$(LOCAL_PATH)/../../Classes/crypto/xxtea \
                    	$(LOCAL_PATH)/../../Classes/crypto \
+                    $(LOCAL_PATH)/../../3rdLibs/umeng/include \
+                    $(LOCAL_PATH)/../../Classes/lua-binding/auto \
                     
 
-LOCAL_WHOLE_STATIC_LIBRARIES := cocos_lua_static
+LOCAL_WHOLE_STATIC_LIBRARIES := cocos_lua_static \
+PluginProtocolStatic UMengStatic
+
+LOCAL_SHARED_LIBRARIES := UMengPatcher-prebuilt
 
 include $(BUILD_SHARED_LIBRARY)
 
-#COCOS2DX_PATH := /Users/edwardzhou/develop/cocos2d-x-3.0
+COCOS2DX_PATH := /Users/edwardzhou/develop/cocos2d-x-3.0
 
-#$(call import-add-path,$(COCOS2DX_PATH))
+$(call import-add-path, $(LOCAL_PATH)/../../3rdLibs/umeng)
+#$(call import-add-path,$(COCOS2DX_PATH)/plugin/publish)
 #$(call import-add-path,$(COCOS2DX_PATH)/cocos)
 #$(call import-add-path,$(COCOS2DX_PATH)/external)
 
 $(call import-module, scripting/lua-bindings)
+
+#$(call import-module, protocols/android)
+$(call import-module, platforms/android)
+$(call import-module, platforms/android/patch)

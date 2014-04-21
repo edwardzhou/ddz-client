@@ -23,6 +23,34 @@ function LoginScene:ctor(...)
 end
 
 function LoginScene:init()
+
+  umeng.MobClickCpp:beginScene('landing scene')
+
+  -- local pluginName = 'AnalyticsUmeng'
+  -- local appKey = '5351dee256240b09f604ee4c'
+
+  -- local _pluginAnalytics = plugin.PluginManager:getInstance():loadPlugin(pluginName)
+  -- print( '_pluginAnalytics => ' , _pluginAnalytics)
+  -- local umeng = tolua.cast(_pluginAnalytics, 'plugin.ProtocolAnalytics')
+  -- umeng:setDebugMode(true)
+  -- umeng:startSession(appKey)
+  -- umeng:logEvent('test')
+
+  -- local param = plugin.PluginParam:new("1.1")
+  -- umeng:callFuncWithParam('setVersionName', param)
+
+  self:registerScriptHandler(function(event)
+    print('event => ', event)
+    if event == "enterTransitionFinish" then
+      --self:init()
+    elseif event == 'exit' then
+      -- umeng:stopSession()
+      umeng.MobClickCpp:endScene('landing scene')
+    end
+  end)
+
+
+
   local rootLayer = cc.Layer:create()
 
   self:addChild(rootLayer)

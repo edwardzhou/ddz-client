@@ -4,6 +4,9 @@
 #include "lua_extensions.h"
 #include "editor-support/cocostudio/CCSGUIReader.h"
 #include "unzip.h"
+#include "MobClickCpp.h"
+#include "lua_cocos2dx_umeng_auto.hpp"
+//#include "auto/lua_cocos2dx_plugin_auto.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +24,7 @@ AppDelegate::AppDelegate()
 
 AppDelegate::~AppDelegate()
 {
+    MobClickCpp::end();
     SimpleAudioEngine::end();
 }
 
@@ -50,6 +54,10 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto engine = LuaEngine::getInstance();
     auto luaState = engine->getLuaStack()->getLuaState();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
+    register_all_cocos2dx_umeng(luaState);
+    // CCLOG("register_all_cocos2dx_pluginx ....");
+    // register_all_cocos2dx_plugin(luaState);
+    // CCLOG("after register_all_cocos2dx_pluginx ....");
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
 
@@ -107,6 +115,15 @@ bool AppDelegate::applicationDidFinishLaunching()
     //engine->executeScriptFile("hello.lua");
     //cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
 
+    MobClickCpp::setLogEnabled(true);
+    MobClickCpp::startWithAppkey("5351dee256240b09f604ee4c", "my_channel");
+    MobClickCpp::setAppVersion("1.2");
+    MobClickCpp::beginEvent("test");
+
+    MobClickCpp::endEvent("test");
+    MobClickCpp::updateOnlineConfig();
+    CCLOG("online config> testParam: %s" , MobClickCpp::getConfigParams("testParam").c_str());
+
 
     engine->executeString("require 'boot.lua'");
     
@@ -118,6 +135,8 @@ void AppDelegate::applicationDidEnterBackground()
 {
     Director::getInstance()->stopAnimation();
 
+    MobClickCpp::applicationDidEnterBackground();
+
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
@@ -125,6 +144,8 @@ void AppDelegate::applicationDidEnterBackground()
 void AppDelegate::applicationWillEnterForeground()
 {
     Director::getInstance()->startAnimation();
+
+    MobClickCpp::applicationWillEnterForeground();
 
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
