@@ -12,17 +12,6 @@
 
 using namespace cocos2d;
 
-extern "C" {
-jint JNI_OnLoad(JavaVM *vm, void *reserved)
-{
-    JniHelper::setJavaVM(vm);
-    //MobClickCpp::initJniForCocos2dx2((void*)vm, "org.cocos2dx.lua.AppActivity");
-
-    return JNI_VERSION_1_4;
-}
-}
-
-
 void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     LOGD("cocos_android_app_init");
     JniMethodInfo getActivity;
