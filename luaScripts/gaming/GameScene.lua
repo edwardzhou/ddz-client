@@ -40,11 +40,21 @@ function GameScene:ctor(...)
 end
 
 function GameScene:cleanup()
+  umeng.MobClickCpp:finishLevel('base_200')
+  umeng.MobClickCpp:endLogPageView('page_gaming')
+  umeng.MobClickCpp:endScene('gaming')
   self:stopAllActions()
   PokeCard.releaseAllCards()
 end
 
 function GameScene:init()
+  umeng.MobClickCpp:beginScene('gaming')
+  umeng.MobClickCpp:beginLogPageView('page_gaming')
+  umeng.MobClickCpp:startLevel('base_200')
+
+  umeng.MobClickCpp:pay(10, 2, 1000)
+  umeng.MobClickCpp:pay(20, 1, "count_card", 1, 20)
+
   local this = self
   self:initKeypadHandler()
 

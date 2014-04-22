@@ -302,6 +302,28 @@ function Card:getPokeChars()
   return table.concat(pokeChars)
 end
 
+function Card:isGreaterThan(otherCard)
+  -- 火箭最大
+  if self:isRocket() then
+    return true
+  end
+
+  -- 自己是炸弹，对方不是炸弹
+  if self:isBomb() and not otherCard:isBomb() then
+    return true
+  end
+
+  if self.cardType ~= otherCard.cardType then
+    return false
+  elseif self.cardLength ~= otherCard.cardLength then
+    return false
+  elseif self.maxPokeValue <= otherCard.maxPokeValue then
+    return false
+  end
+
+  return true
+end
+
 function Card:dumpPokeValues()
 	cclog("[Card.dumpPokeValues] " .. table.toString(self.getPokeValues(true)))
 end

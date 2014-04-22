@@ -146,12 +146,17 @@ function LocalGameService:onServerGrabbingLordMsg(data)
         this:onServerStartNewGameMsg({pokeGame = self.pokeGame})
       end, 0.7)
 
-     return
+    return
   end
 
   if isGrabLordFinish then
     if self.pokeGame.lordPlayer.robot then
-      AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
+      local this = self
+      scheduler.performWithDelayGlobal( 
+        AI.playCard, 
+        {this, this, this.pokeGame.lordPlayer},
+        math.random() * 10 % 2)
+      -- AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
     end
 
     return
@@ -159,6 +164,10 @@ function LocalGameService:onServerGrabbingLordMsg(data)
 
   if nextPlayer.robot then
     AI.grabLord(self, self.pokeGame, nextPlayer)
+      -- scheduler.performWithDelayGlobal( 
+      --   AI.playCard, 
+      --   {self, self.pokeGame, nextPlayer},
+      --   math.random() * 10 % 2)
   end  
 
 end
@@ -193,6 +202,7 @@ function LocalGameService:onServerPlayCardMsg(data)
   local player = self.playersMap[userId]
   local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
   table.removeItems(player.pokeCards, pokeCards)
+  player:analyzePokecards()
   local nextPlayer = self.pokeGame:setToNextPlayer()
 
   local card = Card.create(pokeCards)
@@ -221,7 +231,10 @@ function LocalGameService:onServerPlayCardMsg(data)
   end
 
   if nextPlayer.robot then
-    AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
+    scheduler.performWithDelayGlobal(
+      AI.playCard, 
+      {this, this.pokeGame, nextPlayer},
+      math.random()*10 % 2)
     -- scheduler.performWithDelayGlobal(function() 
     --   local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
     --   this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))

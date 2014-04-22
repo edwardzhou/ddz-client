@@ -26,6 +26,10 @@ function LoginScene:init()
 
   umeng.MobClickCpp:beginScene('landing scene')
 
+  umeng.MobClickCpp:beginEvent('test')
+
+  umeng.MobClickCpp:pay(10, 2, 1000)
+
   -- local pluginName = 'AnalyticsUmeng'
   -- local appKey = '5351dee256240b09f604ee4c'
 
@@ -45,7 +49,6 @@ function LoginScene:init()
       --self:init()
     elseif event == 'exit' then
       -- umeng:stopSession()
-      umeng.MobClickCpp:endScene('landing scene')
     end
   end)
 
@@ -74,6 +77,7 @@ function LoginScene:init()
     cc.CallFunc:create(function()
         loadingBar:setVisible(false)
         buttonHolder:setVisible(true)
+        umeng.MobClickCpp:endEvent('test')
       end)
   ))
   
@@ -141,6 +145,8 @@ function LoginScene:initKeypadHandler()
       --      if type(self.onMainMenu) == 'function' then
       --        self.onMainMenu()
       --      end
+      umeng.MobClickCpp:endScene('landing scene')
+      umeng.MobClickCpp:endToLua()
       cc.Director:getInstance():endToLua()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
     end

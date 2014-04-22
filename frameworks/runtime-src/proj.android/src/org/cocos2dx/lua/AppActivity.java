@@ -32,6 +32,8 @@ import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.umeng.analytics.MobclickAgent;
+
 public class AppActivity extends Cocos2dxActivity {
 	
 	@Override
@@ -39,9 +41,21 @@ public class AppActivity extends Cocos2dxActivity {
         Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
         // TestCpp should create stencil buffer
         glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
-        System.out.println(getDeviceInfo(this.getApplicationContext()));
+        System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
         
         return glSurfaceView;
+    }
+    
+    @Override
+    public void onResume() {
+      super.onResume();
+      MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+      super.onPause();
+      MobclickAgent.onPause(this);
     }
 
 

@@ -15,11 +15,15 @@ function scheduler.unscheduleGlobal(handle)
     sharedScheduler:unscheduleScriptEntry(handle)
 end
 
-function scheduler.performWithDelayGlobal(listener, time)
+function scheduler.performWithDelayGlobal(listener, params, time)
     local handle
+    if time == nil then
+      time = params
+      params = {}
+    end
     handle = sharedScheduler:scheduleScriptFunc(function()
         scheduler.unscheduleGlobal(handle)
-        listener()
+        listener(unpack(params))
     end, time, false)
     return handle
 end

@@ -46,6 +46,11 @@ function table.append(dst, src)
   return dst
 end
 
+function table.union(first, second)
+  local newTable = table.dup(first)
+  return table.append(newTable, second)
+end
+
 function table.removeItems(src, items)
   for _, item in pairs(items) do
     table.removeItem(src, item)
