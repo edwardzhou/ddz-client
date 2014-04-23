@@ -21,7 +21,7 @@ function PokecardAI.playCard(gameService, pokeGame, currentPlayer)
 
   if currentPlayer:isLord() then
     local card = PokecardAI.getAICard(pokeGame, currentPlayer)
-    print(currentPlayer.userId .. ' plays ' .. card:toString())
+    print('player[id: ' .. currentPlayer.userId .. ' ] plays ' .. card:toString())
     gameService:playCard(currentPlayer.userId, PokeCard.getIdChars(card.pokeCards))
   else
     gameService:playCard(currentPlayer.userId, '')
