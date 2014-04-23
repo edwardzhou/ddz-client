@@ -339,6 +339,9 @@ function UIPokecardsPlugin.bind( theClass )
 
   function theClass:showPrevPlayerRestPokecards()
     local pokeCards = self.prevPlayerInfo.pokeCards
+    if #pokeCards == 0 then
+      return
+    end
     self:hideCard(self.prevPlayerInfo.lastCard)
     local startPoint = cc.p(-100, 330)
     local pokeSize = self.cardContentSize.width/2
@@ -362,6 +365,10 @@ function UIPokecardsPlugin.bind( theClass )
 
   function theClass:showNextPlayerRestPokecards()
     local pokeCards = self.nextPlayerInfo.pokeCards
+    if #pokeCards == 0 then
+      return
+    end
+    
     self:hideCard(self.nextPlayerInfo.lastCard)
     local startPoint = cc.p(self.visibleSize.width + 100, 335)
     local pokeSize = self.cardContentSize.width/2

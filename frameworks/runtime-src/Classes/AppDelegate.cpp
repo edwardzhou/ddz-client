@@ -115,9 +115,9 @@ bool AppDelegate::applicationDidFinishLaunching()
     //engine->executeScriptFile("hello.lua");
     //cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
 
-    MobClickCpp::setLogEnabled(true);
-    MobClickCpp::startWithAppkey("5351dee256240b09f604ee4c", "my_channel");
-    MobClickCpp::setAppVersion("1.2");
+    // MobClickCpp::setLogEnabled(true);
+    // MobClickCpp::setAppVersion("1.2");
+    // MobClickCpp::startWithAppkey("5351dee256240b09f604ee4c", "my_channel");
     MobClickCpp::beginEvent("test");
 
     MobClickCpp::endEvent("test");

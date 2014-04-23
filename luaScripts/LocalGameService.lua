@@ -225,7 +225,7 @@ function LocalGameService:onServerPlayCardMsg(data)
     local balance = self:getGameBalance(self.pokeGame, player)
     scheduler.performWithDelayGlobal(function ()
         this:onServerGameOverMsg({balance = balance})
-      end, 0.0)
+      end, 0.3)
 
     return
   end

@@ -56,8 +56,30 @@ end
 function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
   local card = nil
   local analyzedCards = currentPlayer.analyzedCards
-  if #analyzedCards.straightsCards > 0 then
-    return analyzedCards.straightsCards[1]
+  local straightsCount = #analyzedCards.straightsCards
+  if straightsCount > 0 then
+    local prevStraightsCount = #prevPlayer.analyzedCards.straightsCards
+    local nextStraightsCount = #nextPlayer.analyzedCards.straightsCards
+    local card = analyzedCards.straightsCards[1]
+    if prevStraightsCount == 0 and nextStraightsCount == 0 and card.maxPokeValue <= PokeCardValue.QUEEN then
+      return card
+    end
+
+    if card.minPokeValue == 3 then
+      return card
+    end
+
+    local prevLastStraight = #prevPlayer.analyzedCards.straightsCards[prevStraightsCount]
+    local nextLastStraight = #nextPlayer.analyzedCards.straightsCards[nextStraightsCount]
+
+    local biggestStraightCard = analyzedCards.straightsCards[straightsCount]
+
+    if card.maxPokeValue > PokeCardValue.QUEEN then
+      if analyzedCards.totalHands <= 3 then
+        return card
+      end
+    end
+
   end
 
   if #analyzedCards.pairsStraightsCards > 0 then
@@ -65,7 +87,20 @@ function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
   end
 
   if #analyzedCards.threesStraightsCards > 0 then
-    return analyzedCards.threesStraightsCards[1] 
+    local card = analyzedCards.threesStraightsCards[1]
+    local pokeCards = table.dup(card.pokeCards)
+    local cardLength = card.cardLength
+    if cardLength <= #analyzedCards.singlesCards then
+      for i = 1, cardLength do
+        table.append(pokeCards, analyzedCards.singlesCards[i].pokeCards)
+      end
+    elseif cardLength <= #analyzedCards.pairsCards then
+      for i = 1, cardLength do
+        table.append(pokeCards, analyzedCards.pairsCards[i].pokeCards)
+      end
+    end
+
+    return Card.create(pokeCards)
   end
 
   if #analyzedCards.threesCards > 0 then

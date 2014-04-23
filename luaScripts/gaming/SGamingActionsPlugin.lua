@@ -105,15 +105,16 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onGameOverMsg(balance)
-    self:hideCard(self.selfPlayerInfo.lastCard)
+    -- self:hideCard(self.selfPlayerInfo.lastCard)
     self:showPrevPlayerRestPokecards()
     self:showNextPlayerRestPokecards()
     self:stopCountdown()
 
     self.selfPlayerInfo.status = ddz.PlayerStatus.None
     self.prevPlayerInfo.status = ddz.PlayerStatus.Ready
-    self.prevPlayerInfo.status = ddz.PlayerStatus.Ready
+    self.nextPlayerInfo.status = ddz.PlayerStatus.Ready
     self:doUpdatePlayersUI()
+    self:showButtonsPanel(false)
     self:startSelfPlayerCountdown(nil, 15)
 
     --self.self
