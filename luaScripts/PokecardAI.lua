@@ -20,7 +20,7 @@ function PokecardAI.playCard(gameService, pokeGame, currentPlayer)
   -- gameService:playCard(currentPlayer.userId, PokeCard.getIdChars(pokeCards))
 
   if currentPlayer:isLord() then
-    local card = PokecardAI.getAICard(pokeGame, currentPlayer)
+    local card = PokecardAI.getAICard(pokeGame, currentPlayer, currentPlayer.prevPlayer, currentPlayer.nextPlayer)
     print('player[id: ' .. currentPlayer.userId .. ' ] plays ' .. card:toString())
     gameService:playCard(currentPlayer.userId, PokeCard.getIdChars(card.pokeCards))
   else
@@ -57,6 +57,14 @@ function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
   local card = nil
   local analyzedCards = currentPlayer.analyzedCards
   local straightsCount = #analyzedCards.straightsCards
+
+  --dump(analyzedCards, 'analyzedCards => ' , false, 3)
+  local pairsCount = #analyzedCards.pairsCards
+  local threesCount = #analyzedCards.threesCards
+  local bombsCount = #analyzedCards.bombsCards
+  local threesStraightsCount = #analyzedCards.threesStraightsCards
+  local singlesCount = #analyzedCards.singlesCards
+
   if straightsCount > 0 then
     local prevStraightsCount = #prevPlayer.analyzedCards.straightsCards
     local nextStraightsCount = #nextPlayer.analyzedCards.straightsCards
@@ -65,12 +73,12 @@ function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
       return card
     end
 
-    if card.minPokeValue == 3 then
+    if card.minPokeValue <= 5 then
       return card
     end
 
-    local prevLastStraight = #prevPlayer.analyzedCards.straightsCards[prevStraightsCount]
-    local nextLastStraight = #nextPlayer.analyzedCards.straightsCards[nextStraightsCount]
+    local prevLastStraight = prevPlayer.analyzedCards.straightsCards[prevStraightsCount]
+    local nextLastStraight = nextPlayer.analyzedCards.straightsCards[nextStraightsCount]
 
     local biggestStraightCard = analyzedCards.straightsCards[straightsCount]
 
@@ -121,6 +129,14 @@ function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
 
   if #analyzedCards.singlesCards > 0 then
     return analyzedCards.singlesCards[1]
+  end
+
+  if #analyzedCards.bombsCards > 0 then
+    return analyzedCards.bombsCards[1]
+  end
+
+  if #analyzedCards.rocketCards > 0 then
+    return analyzedCards.rocketCards[1]
   end
 
   return Card.create({currentPlayer.pokeCards[1]})

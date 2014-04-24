@@ -160,7 +160,7 @@ end
 function CardUtility.getRocketInfos(pokeInfos)
   local infos = {}
   local count = #pokeInfos
-  if count > 2 and pokeInfos[count].pokeValue == PokeCardValue.BIG_JOKER and
+  if count >= 2 and pokeInfos[count].pokeValue == PokeCardValue.BIG_JOKER and
       pokeInfos[count-1].pokeValue == PokeCardValue.SMALL_JOKER then
     local newInfo = pokeInfos[count]:clone()
     newInfo:push(pokeInfos[count-1].pokeCards[1])
