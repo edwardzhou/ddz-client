@@ -24,6 +24,11 @@ end
 
 function LoginScene:init()
 
+  require('pomelo.cocos2dx_websocket')
+
+  require('testPomelo')
+  testPomelo(Cocos2dxWebsocket)
+
   umeng.MobClickCpp:beginScene('landing scene')
 
   umeng.MobClickCpp:beginEvent('test')

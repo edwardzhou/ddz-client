@@ -1,3 +1,5 @@
+local Protocol = require('pomelo.protocol.protocol')
+
 Cocos2dxWebsocket = class('Cocos2dxWebsocket')
 
 local WS = Cocos2dxWebsocket

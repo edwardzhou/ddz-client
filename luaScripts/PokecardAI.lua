@@ -87,7 +87,24 @@ function PokecardAI.getAICard(pokeGame, currentPlayer, prevPlayer, nextPlayer)
         return card
       end
     end
+  end
 
+  local absSinglesCount = singlesCount - threesStraightsCount - threesCount
+  if absSinglesCount > 4 and analyzedCards.singlesCards[1].maxPokeValue < PokeCardValue.QUEEN then
+    return analyzedCards.singlesCards[1]
+  end
+
+  if pairsCount > 0 then
+    local maxPair = analyzedCards.pairsCards[pairsCount]
+    local prevOverPairs = PokecardAI.findCardGreaterThan(prevPlayer, maxPair)
+    local nextOverPairs = PokecardAI.findCardGreaterThan(nextPlayer, maxPair)
+
+    selfMaxPairBiggest = true
+    if #prevOverPairs > 0 or #nextOverPairs > 0 then
+      selfMaxPairBiggest = false
+    end
+
+    return analyzedCards.pairsCards[1]
   end
 
   if #analyzedCards.pairsStraightsCards > 0 then
@@ -149,10 +166,10 @@ function PokecardAI.findCardGreaterThan(player, testCard)
   if #player.pokeCards < #testCard.pokeCards then
     -- 牌不足，直接返回
     return result
-  elseif testCard.isRocket() then
+  elseif testCard:isRocket() then
     -- 对方火箭，直接返回
     return result
-  elseif testCard.isBomb() then
+  elseif testCard:isBomb() then
     -- 炸弹
     for _, card in pairs(analyzedCards.bombsCards) do
       if card:isGreaterThan(testCard) then
@@ -221,6 +238,29 @@ function PokecardAI.findCardGreaterThan(player, testCard)
         table.insert( result, {card, 0})
       end
     end
+
+    for _, card in pairs(analyzedCards.threesCards) do
+      if card.maxPokeValue > testCard.maxPokeValue then
+        table.insert( result, {card, 1})
+      end
+    end
+
+    for _, card in pairs(analyzedCards.pairsStraightsCards) do
+      for i=1, #card.pokeCards, 2 do
+        if card.pokeCards[i].value > card.maxPokeValue then
+          table.insert( result, {Card.create({card.pokeCards[i], card.pokeCards[i+1]}, 2)} )
+        end
+      end
+    end
+
+    for _, card in pairs(analyzedCards.threesStraightsCards) do
+      for i=1, #card.pokeCards, 3 do
+        if card.pokeCards[i].value > card.maxPokeValue then
+          table.insert( result, {Card.create({card.pokeCards[i], card.pokeCards[i+1]}, 2)} )
+        end
+      end
+    end
+    
   elseif testCard.cardType == CardType.SINGLE then
     for _, card in pairs(analyzedCards.singlesCards) do
       if card.maxPokeValue > testCard.maxPokeValue then
