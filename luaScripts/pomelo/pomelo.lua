@@ -272,7 +272,7 @@ function Pomelo:handshake(data)
 	local obj = Package.encode(Package.TYPE_HANDSHAKE_ACK)
 	self:send(obj)
 	if self.initCallback then
-		self.initCallback(self.socket)
+		self.initCallback(self)
 		self.initCallback = nil
 	end
 end

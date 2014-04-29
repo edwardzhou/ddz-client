@@ -35,6 +35,65 @@ function LoginScene:init()
 
   umeng.MobClickCpp:pay(10, 2, 1000)
 
+  local handsetInfo = {}
+  local luaj = require('luaj')
+  local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
+  print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
+  if ok then
+    local cjson = require('cjson.safe')
+    handsetInfo = cjson.decode(ret)
+    dump(handsetInfo, 'handsetInfo')
+  end
+
+  local pomelo = nil
+  local fu = cc.FileUtils:getInstance()
+
+  local SignIn = function()
+    local userInfo = {}
+    userInfo.appVersion = "1.0"
+    userInfo.resVersion = "1.0.0"
+    userInfo.handsetInfo = handsetInfo
+    pomelo:request('gate.gateHandler.signIn', userInfo, function(err, data) 
+      if err ~= nil then
+        dump(err, 'Failed to call gate.gateHandler.signIn')
+        return
+      end
+
+      dump(data, '[gate.gateHandler.signIn] data =>')
+      local userData = cjson.encode(data.user)
+      fu:writeToFile(data.user, 'userinfo.plist')
+
+    end)
+ 
+  end
+
+  local SignUp = function()
+  end
+
+
+  local doSignInUp = function()
+    local sessionInfo = nil
+    if fu:isFileExist('userinfo.json') then
+      --local userinfoString = fu:getStringFromFile('userinfo.plist')
+      sessionInfo = fu:getValueMapFromFile('userinfo.plist')
+      dump(sessionInfo, 'sessionInfo')
+    end
+
+    initCocos2dxPomelo(nil, function(p) 
+      pomelo = p
+
+      if sessionInfo == nil then
+        SignIn()
+      end
+    end)
+  end
+
+  self:runAction(cc.Sequence:create(
+    cc.DelayTime:create(2),
+    cc.CallFunc:create(doSignInUp)
+  ))
+
+
   -- local pluginName = 'AnalyticsUmeng'
   -- local appKey = '5351dee256240b09f604ee4c'
 

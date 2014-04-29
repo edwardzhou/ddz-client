@@ -28,7 +28,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity
-            android:name="org.cocos2dx.lua.AppActivity"
+            android:name="com.fungame.DDZ.AppActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="landscape"

@@ -24,12 +24,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-package org.cocos2dx.lua;
+package com.fungame.DDZ;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.umeng.analytics.MobclickAgent;
@@ -37,10 +38,19 @@ import com.umeng.analytics.MobclickAgent;
 public class AppActivity extends Cocos2dxActivity {
 	
 	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		//MobileInfoGetter.mContext = AppActivity.getContext();
+	}
+
+	@Override
     public Cocos2dxGLSurfaceView onCreateView() {
         Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
         // TestCpp should create stencil buffer
         glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
+        com.umeng.analytics.game.UMGameAgent.init(getContext());
         System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
         
         return glSurfaceView;

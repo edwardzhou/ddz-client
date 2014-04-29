@@ -6,7 +6,7 @@ require 'pomelo.pomelo'
 
 function testPomelo(websocketClass)
   p = Pomelo.new(websocketClass)
-  params = {host='192.168.0.165', port='4001'}
+  local params = {host='192.168.0.165', port='4001'}
 
 
   p:init(params, function(x)
@@ -16,6 +16,18 @@ function testPomelo(websocketClass)
       dump(args, 'data---') 
       --dump(data, 'data---') 
     end)
+  end)
+end
+
+function initCocos2dxPomelo(params, callback)
+  if Cocos2dxWebsocket == nil then
+    require('pomelo.cocos2dx_websocket')
+  end
+
+  params = params or {host='192.168.0.165', port='4001'}
+  local pomelo = Pomelo.new(Cocos2dxWebsocket)
+  pomelo:init(params, function(pomelo)
+    callback(pomelo)
   end)
 end
 
