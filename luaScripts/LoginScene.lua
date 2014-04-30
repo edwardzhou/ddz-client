@@ -2,6 +2,8 @@ require 'CCBReaderLoad'
 require 'GuiConstants'
 require 'PokeCard'
 
+local cjson = require('cjson.safe')
+
 local LoginScene = class('LoginScene')
 
 function LoginScene.extend(target, ...)
@@ -40,7 +42,6 @@ function LoginScene:init()
   local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
   print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
   if ok then
-    local cjson = require('cjson.safe')
     handsetInfo = cjson.decode(ret)
     dump(handsetInfo, 'handsetInfo')
   end
@@ -53,15 +54,18 @@ function LoginScene:init()
     userInfo.appVersion = "1.0"
     userInfo.resVersion = "1.0.0"
     userInfo.handsetInfo = handsetInfo
-    pomelo:request('gate.gateHandler.signIn', userInfo, function(err, data) 
-      if err ~= nil then
-        dump(err, 'Failed to call gate.gateHandler.signIn')
-        return
-      end
+    pomelo:request('gate.gateHandler.signIn', userInfo, function(data) 
+      -- if err ~= nil then
+      --   dump(err, 'Failed to call gate.gateHandler.signIn')
+      --   return
+      -- end
 
       dump(data, '[gate.gateHandler.signIn] data =>')
       local userData = cjson.encode(data.user)
-      fu:writeToFile(data.user, 'userinfo.plist')
+      --fu:writeToFile(data.user, 'userinfo.plist')
+      local file = io.open(fu:getWritablePath() .. '/userinfo.json', 'w+')
+      file:write(userData)
+      file:close()
 
     end)
  
@@ -73,9 +77,12 @@ function LoginScene:init()
 
   local doSignInUp = function()
     local sessionInfo = nil
-    if fu:isFileExist('userinfo.json') then
-      --local userinfoString = fu:getStringFromFile('userinfo.plist')
-      sessionInfo = fu:getValueMapFromFile('userinfo.plist')
+    local filepath = fu:getWritablePath() .. 'userinfo.json'
+    print('filepath => ', filepath)
+    local userinfoString = fu:getStringFromFile(filepath)
+    if userinfoString ~= nil then
+      --local userinfoString = fu:getStringFromFile('userinfo.json')
+      sessionInfo = cjson.decode(userinfoString)
       dump(sessionInfo, 'sessionInfo')
     end
 

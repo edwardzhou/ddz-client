@@ -49,6 +49,11 @@ bool AppDelegate::applicationDidFinishLaunching()
     FileUtils::getInstance()->addSearchPath("src");
     FileUtils::getInstance()->addSearchPath("luaScripts");
     FileUtils::getInstance()->addSearchPath("res");
+    auto searchPaths = FileUtils::getInstance()->getSearchPaths();
+    auto begin = searchPaths.begin();
+    auto writablePath = FileUtils::getInstance()->getWritablePath();
+    searchPaths.insert(begin, writablePath);
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     // register lua engine
     auto engine = LuaEngine::getInstance();
