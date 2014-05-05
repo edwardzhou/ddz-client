@@ -1,7 +1,7 @@
 
 local scheduler = {}
 
-local sharedScheduler = CCDirector:sharedDirector():getScheduler()
+local sharedScheduler = cc.Director:getInstance():getScheduler()
 
 function scheduler.scheduleUpdateGlobal(listener)
     return sharedScheduler:scheduleScriptFunc(listener, 0, false)
@@ -27,5 +27,14 @@ function scheduler.performWithDelayGlobal(listener, params, time)
     end, time, false)
     return handle
 end
+
+setTimeout = function (fn, params, timeout)
+    return scheduler.performWithDelayGlobal(fn, params, timeout)
+end
+
+clearTimeout = function (timeoutId)
+    scheduler.unscheduleGlobal(timeoutId)
+end
+
 
 return scheduler

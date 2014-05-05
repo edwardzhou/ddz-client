@@ -46,6 +46,12 @@ function LoginScene:init()
     dump(handsetInfo, 'handsetInfo')
   end
 
+  local sdcardPath, fungamePath
+  ok, sdcardPath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "getExternalStorageDirectory", {}, "()Ljava/lang/String;")
+  print('sdcardPath => ', ok, sdcardPath)
+  ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {"fungame/DDZ"}, "(Ljava/lang/String;)Ljava/lang/String;")
+  print('ddzPath => ', ok, fungamePath)
+
   local pomelo = nil
   local fu = cc.FileUtils:getInstance()
 

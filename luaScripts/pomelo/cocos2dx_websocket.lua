@@ -1,3 +1,4 @@
+local scheduler = require('framework.scheduler')
 local Protocol = require('pomelo.protocol.protocol')
 
 Cocos2dxWebsocket = class('Cocos2dxWebsocket')

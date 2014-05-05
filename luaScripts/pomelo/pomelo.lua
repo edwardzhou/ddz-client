@@ -17,10 +17,16 @@ local RES_OLD_CLIENT = 501
 
 Pomelo = class('Pomelo', Emitter)
 
-function setTimeout()
+if true or setTimeout == nil then
+	setTimeout = function()
+		print('WARNING: setTimeout is not defined.')
+	end
 end
 
-function clearTimeout()
+if true or clearTimeout == nil then
+	clearTimeout = function()
+		print('WARNING: clearTimeout is not defined.')
+	end
 end
 
 function Pomelo:ctor(WebSocketClass)
@@ -49,10 +55,10 @@ function Pomelo:ctor(WebSocketClass)
 		}
 	}
 	
-	self.heartbeatingInterval = 0
-	self.heartbeatTimeout = 0
+	self.heartbeatInterval = 3
+	self.heartbeatTimeout = 30
 	self.nextHeartbeatTimeout = 0
-	self.gapThreshold = 100
+	self.gapThreshold = 30
 	self.heartbeatId = nil
 	self.heartbeatTimeoutId = nil
 	
@@ -246,7 +252,7 @@ function Pomelo:heartbeat(data)
 end
 
 function Pomelo:heartbeatTimeoutCb()
-	local gap = nextHeartbeatTimeout - os.time()
+	local gap = self.nextHeartbeatTimeout - os.time()
 	if gap > self.gapThreshold then
 		self.heartbeatTimeoutId = setTimeout(function() self:heartbeatTimeoutCb() end, gap)
 	else
@@ -348,7 +354,9 @@ function Pomelo:deCompose(msg)
 end
 
 function Pomelo:handshakeInit(data)
-	if self.data.sys and data.sys.heartbeat then
+	dump(data, '[Pomelo:handshakeInit] data ==>')
+	if data.sys and data.sys.heartbeat then
+		self.heartbeatInterval = data.sys.heartbeat
 	end
 	
 	self:initData(data)
