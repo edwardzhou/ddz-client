@@ -8,7 +8,7 @@ local WS = Cocos2dxWebsocket
 function WS:ctor(url, wsprotocol)
 	local _this = self
   self.websocket = cc.WebSocket:create(url)
-  self.close = function() self:do_close() end
+  self.close = function() _this:do_close() end
   --dump(self.websocket, 'Cocos2dxWebsocket.websocket')
   
   --print(' WebSocketScriptHandler ', kWebSocketScriptHandlerOpen, kWebSocketScriptHandlerClose, kWebSocketScriptHandlerMessage )
@@ -37,6 +37,7 @@ function WS:ctor(url, wsprotocol)
   self.websocket:registerScriptHandler(function(message)
   		--print('websocket.message => ', table.concat(message, ','))
   		--dump(message, 'websocket.message')
+      --dump_bin(message, 'websocket.message')
       if type(_this.onmessage) == 'function' then
         if type(message) == 'string' then
           -- message = {string.byte(message, 1, len)}
@@ -57,11 +58,13 @@ function WS:send(data)
 	if type(data) == 'table' then
 		data = Protocol.strdecode(data)
 	end
+
+  --dump_bin(data, '[Cocos2dxWebsocket] sending: ')
 	self.websocket:sendString(data)
 end
 
 function WS:do_close()
-  print('DefaultLuaWebSocket close...')
+  print('Cocos2dxWebsocket close...')
   self.websocket:close()
 end
 

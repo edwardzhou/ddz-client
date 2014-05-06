@@ -202,6 +202,68 @@ function getContent(filename)
   return content
 end
 
+function bin2hex(data)
+  local hexLines = {}
+  local ascLines = {}
+  local hex = {}
+
+  local outputString = {}
+  local hexLine, ascLine = '', ''
+  local byte
+  for i=1, #data do 
+    byte = data:byte(i)
+    hexLine = hexLine .. string.format('%02x ', byte)
+    if byte < 32 or byte >= 127 then
+      ascLine = ascLine .. '.'
+    else
+      ascLine = ascLine .. string.char(byte)
+    end
+    if i % 16 == 0 then
+      table.insert(hexLines, hexLine)
+      table.insert(ascLines, ascline)
+      table.insert(hex, hexLine .. ' | ' .. ascLine)
+      hexLine, ascLine = '', ''
+    end
+  end
+
+  table.insert(hexLines, hexLine)
+  table.insert(ascLines, ascline)
+
+  hexLine = hexLine .. string.rep('   ', (16 - #data % 16))
+  table.insert(hex, hexLine .. ' | ' .. ascLine)
+
+  return hex, hexLines, ascLines
+end
+
+function dump_bin(data, header, linenum)
+  local allHex, hexLines, ascLines = bin2hex(data)
+  if not linenum then
+    linenum = true
+  end
+
+  if type(header) == 'boolean' then
+    linenum = header
+    header = nil
+  end
+
+  if header then
+    print(header)
+  end
+  
+  local printFunc = function(n, str)
+    print(str)
+  end
+  if linenum then
+    printFunc = function(n, str)
+      print(string.format('0x%04x:  %s', n, str))
+    end
+  end
+
+  for n, line in pairs(allHex) do
+    printFunc(n, line)
+  end
+end
+
 function __bind(fn, this)
   return function(...)
     fn(this, ...)

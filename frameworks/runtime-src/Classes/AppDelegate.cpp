@@ -6,6 +6,7 @@
 #include "unzip.h"
 #include "MobClickCpp.h"
 #include "lua_cocos2dx_umeng_auto.hpp"
+#include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
 
 #ifdef __cplusplus
@@ -14,9 +15,123 @@ LUALIB_API int luaopen_struct (lua_State *L);
 }
 #endif
 
+#define  LOG_TAG    "AppDelegate"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+
+jclass _getClassID_x(const char *className) {
+    if (NULL == className) {
+        return NULL;
+    }
+
+    JNIEnv* env = cocos2d::JniHelper::getEnv();
+
+    jstring _jstrClassName = env->NewStringUTF(className);
+
+    jclass _clazz = (jclass) env->CallObjectMethod(cocos2d::JniHelper::classloader,
+                                                   cocos2d::JniHelper::loadclassMethod_methodID,
+                                                   _jstrClassName);
+
+    if (NULL == _clazz) {
+        LOGD("Classloader failed to find class of %s", className);
+    }
+
+    env->DeleteLocalRef(_jstrClassName);
+        
+    return _clazz;
+}
+
 using namespace CocosDenshion;
 
 USING_NS_CC;
+
+typedef struct JniFieldInfo_
+{
+    JNIEnv *    env;
+    jclass      classID;
+    jfieldID   fieldID;
+} JniFieldInfo;
+
+bool getFieldInfo(JniFieldInfo &fieldinfo,
+                              const char *className,
+                              const char *fieldName,
+                              const char *paramCode) {
+    if ((NULL == className) ||
+        (NULL == fieldName) ||
+        (NULL == paramCode)) {
+        return false;
+    }
+
+    JNIEnv *pEnv = JniHelper::getEnv();
+    if (!pEnv) {
+        return false;
+    }
+
+    jclass classID = _getClassID_x(className);
+    if (! classID) {
+        LOGD("Failed to find class %s", className);
+        pEnv->ExceptionClear();
+        return false;
+    }
+
+    jfieldID fieldID = pEnv->GetFieldID(classID, fieldName, paramCode);
+    if (! fieldID) {
+        LOGD("Failed to find method id of %s", fieldName);
+        pEnv->ExceptionClear();
+        return false;
+    }
+
+    fieldinfo.classID = classID;
+    fieldinfo.env = pEnv;
+    fieldinfo.fieldID = fieldID;
+
+    return true;
+}
+
+std::string getApkSign() {
+    std::string packageName;
+    std::string apkSign;
+
+    JNIEnv* env = JniHelper::getEnv();
+
+    JniMethodInfo _mi_getContext;
+    JniHelper::getStaticMethodInfo(_mi_getContext, "org.cocos2dx.lib.Cocos2dxActivity", "getContext", "()Landroid/content/Context;");
+    jobject j_context = env->CallStaticObjectMethod(_mi_getContext.classID, _mi_getContext.methodID);
+
+    JniMethodInfo _mi_getPackageName;
+    JniMethodInfo _mi_getPackageManager;
+    JniMethodInfo _mi_getPackageInfo;
+    JniMethodInfo _mi_toCharsString;
+    JniMethodInfo _mi_packgeInfo_toString;
+    JniFieldInfo _fi_signatures;
+
+    JniHelper::getMethodInfo(_mi_getPackageName, "android.content.Context", "getPackageName", "()Ljava/lang/String;");
+    JniHelper::getMethodInfo(_mi_getPackageManager, "android.content.Context", "getPackageManager", "()Landroid/content/pm/PackageManager;");
+    JniHelper::getMethodInfo(_mi_getPackageInfo, "android.content.pm.PackageManager", "getPackageInfo", "(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;");
+    JniHelper::getMethodInfo(_mi_toCharsString, "android.content.pm.Signature", "toCharsString", "()Ljava/lang/String;");
+    getFieldInfo(_fi_signatures, "android.content.pm.PackageInfo", "signatures", "[Landroid/content/pm/Signature;");
+
+    jobject j_packageManager;
+    jobject j_packageInfo;
+    jobjectArray j_signatures;
+    jobject j_signature;
+    jstring j_packageName; 
+
+    jobject objPkgName = env->CallObjectMethod(j_context, _mi_getPackageName.methodID);
+    j_packageName = (jstring) objPkgName;
+    packageName = JniHelper::jstring2string(j_packageName);
+    CCLOG("[getApkInfo] packageName => %s", packageName.c_str());
+
+    j_packageManager = env->CallObjectMethod(j_context, _mi_getPackageManager.methodID);
+    j_packageInfo = env->CallObjectMethod(j_packageManager, _mi_getPackageInfo.methodID, j_packageName, 64);
+    j_signatures = (jobjectArray) env->GetObjectField(j_packageInfo, _fi_signatures.fieldID);
+
+    j_signature = env->GetObjectArrayElement(j_signatures, 0);
+    jstring j_signStr = (jstring) env->CallObjectMethod(j_signature, _mi_toCharsString.methodID);
+    apkSign = JniHelper::jstring2string(j_signStr);
+    CCLOG("[getApkInfo] Signature: %s", apkSign.c_str());
+
+    return apkSign;
+}
 
 AppDelegate::AppDelegate()
 {
@@ -129,6 +244,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     MobClickCpp::updateOnlineConfig();
     CCLOG("online config> testParam: %s" , MobClickCpp::getConfigParams("testParam").c_str());
 
+    getApkSign();
 
     engine->executeString("require 'boot.lua'");
     

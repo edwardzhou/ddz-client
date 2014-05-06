@@ -12,7 +12,9 @@ function scheduler.scheduleGlobal(listener, interval)
 end
 
 function scheduler.unscheduleGlobal(handle)
-    sharedScheduler:unscheduleScriptEntry(handle)
+    if handle then
+        sharedScheduler:unscheduleScriptEntry(handle)
+    end
 end
 
 function scheduler.performWithDelayGlobal(listener, params, time)
@@ -29,6 +31,11 @@ function scheduler.performWithDelayGlobal(listener, params, time)
 end
 
 setTimeout = function (fn, params, timeout)
+    -- if timeout == nil then
+    --     timeout = params
+    --     params = {}
+    -- end
+    -- timeout = timeout / 1000.0 -- convert milliseconds into seconds, because cocos2d-x uses seconds
     return scheduler.performWithDelayGlobal(fn, params, timeout)
 end
 

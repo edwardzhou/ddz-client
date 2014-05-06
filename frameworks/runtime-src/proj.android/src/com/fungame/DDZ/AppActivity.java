@@ -30,6 +30,10 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -41,6 +45,19 @@ public class AppActivity extends Cocos2dxActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		try {
+			PackageInfo info = this.getContext().getPackageManager().getPackageInfo(this.getContext().getPackageName(), PackageManager.GET_SIGNATURES);
+			System.out.println("PackageName: " + this.getContext().getPackageName());
+			for (Signature sign : info.signatures) {
+				System.out.println("Signature CharsString: " + sign.toCharsString());
+				System.out.println("Signature toString: " + sign.toString());
+			}
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		//MobileInfoGetter.mContext = AppActivity.getContext();
 	}

@@ -60,16 +60,16 @@ function LoginScene:init()
     userInfo.appVersion = "1.0"
     userInfo.resVersion = "1.0.0"
     userInfo.handsetInfo = handsetInfo
-    pomelo:request('gate.gateHandler.signIn', userInfo, function(data) 
+    pomelo:request('gate.gateHandler.signUp', userInfo, function(data) 
       -- if err ~= nil then
       --   dump(err, 'Failed to call gate.gateHandler.signIn')
       --   return
       -- end
 
-      dump(data, '[gate.gateHandler.signIn] data =>')
+      dump(data, '[gate.gateHandler.signUp] data =>')
       local userData = cjson.encode(data.user)
       --fu:writeToFile(data.user, 'userinfo.plist')
-      local file = io.open(fu:getWritablePath() .. '/userinfo.json', 'w+')
+      local file = io.open(fungamePath .. '/userinfo.json', 'w+')
       file:write(userData)
       file:close()
 
@@ -83,7 +83,7 @@ function LoginScene:init()
 
   local doSignInUp = function()
     local sessionInfo = nil
-    local filepath = fu:getWritablePath() .. 'userinfo.json'
+    local filepath = fungamePath .. '/userinfo.json'
     print('filepath => ', filepath)
     local userinfoString = fu:getStringFromFile(filepath)
     if userinfoString ~= nil then

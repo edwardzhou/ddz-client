@@ -1,6 +1,7 @@
 local Protocol = require('pomelo.protocol.protocol')
 local ProtobufFactory = require('pomelo.protobuf.protobuf')
 local Emitter = require('pomelo.emitter')
+local socket = require('socket')
 
 local cjson = require('cjson.safe')
 
@@ -15,15 +16,19 @@ local RES_OK = 200
 local RES_FAIL = 500
 local RES_OLD_CLIENT = 501
 
+local function getTime()
+	return socket.gettime() 
+end
+
 Pomelo = class('Pomelo', Emitter)
 
-if true or setTimeout == nil then
+if setTimeout == nil then
 	setTimeout = function()
 		print('WARNING: setTimeout is not defined.')
 	end
 end
 
-if true or clearTimeout == nil then
+if clearTimeout == nil then
 	clearTimeout = function()
 		print('WARNING: clearTimeout is not defined.')
 	end
@@ -55,10 +60,10 @@ function Pomelo:ctor(WebSocketClass)
 		}
 	}
 	
-	self.heartbeatInterval = 3
-	self.heartbeatTimeout = 30
+	self.heartbeatInterval = 0
+	self.heartbeatTimeout = 0
 	self.nextHeartbeatTimeout = 0
-	self.gapThreshold = 30
+	self.gapThreshold = 0.1
 	self.heartbeatId = nil
 	self.heartbeatTimeoutId = nil
 	
@@ -112,7 +117,7 @@ function Pomelo:initWebSocket(url, cb)
 	local onmessage = function(event)
 		_this:processPackage(Package.decode(event.data), cb)
 		if _this.heartbeatTimeout then
-			_this.nextHeartbeatTimeout = os.time() + _this.heartbeatTimeout
+			_this.nextHeartbeatTimeout = getTime() + _this.heartbeatTimeout
 		end
 	end
 	
@@ -122,7 +127,22 @@ function Pomelo:initWebSocket(url, cb)
 	end
 	
 	local onclose = function(event)
-    print('[Pomelo] local onclose')
+    dump(event, '[Pomelo] local onclose, event => ')
+		if self.socket then
+			self.socket.onopen = nil
+			self.socket.onerror = nil
+			self.socket.onopen = nil
+			self.socket.onmessage = nil
+			self.socket = nil
+		end
+		if self.heartbeatId then
+			clearTimeout(self.heartbeatId)
+			self.heartbeatId = nil
+		end
+		if self.heartbeatTimeoutId then
+			clearTimeout(self.heartbeatTimeoutId)
+			self.heartbeatTimeoutId = nil
+		end	
 		_this:emit('close', event)
 	end
 	
@@ -153,8 +173,8 @@ function Pomelo:disconnect()
 		self.heartbeatId = nil
 	end
 	if self.heartbeatTimeoutId then
-		clearTimeout(heartbeatTimeoutId)
-		slef.heartbeatTimeoutId = nil
+		clearTimeout(self.heartbeatTimeoutId)
+		self.heartbeatTimeoutId = nil
 	end	
 end
 
@@ -214,24 +234,26 @@ function Pomelo:sendMessage(reqId, route, msg)
 	msg = Message.encode(reqId, type, compressRoute, route, msg)
 	-- dump(msg, '[Pomelo:sendMessage] msg after Message.encoded')
 	local packet = Package.encode(Package.TYPE_DATA, msg)
-	self:send(packet)	
+	self:send(packet)
 end
 
 function Pomelo:send(packet)
 --	print("self, ", self, 'self.socket', self.socket, packet)
 --	dump(self.socket, 'self.socket')
-	self.socket:send(packet)
+	if self.socket then
+		self.socket:send(packet)
+	end
 end
 
 function Pomelo:heartbeat(data)
---	if not self.heartbeatInterval then
---		do return end
---	end
-	--dump(data, '[Pomelo:heartbeat]')
+	if not self.heartbeatInterval or self.heartbeatInterval <= 0 then
+		do return end
+	end
+	-- dump(data, '[Pomelo:heartbeat]')
 	local obj = Package.encode(Package.TYPE_HEARTBEAT)
   self:send(obj)
 	if self.heartbeatTimeoutId then
-		clearTimeOut(self.heartbeatTimeoutId)
+		clearTimeout(self.heartbeatTimeoutId)
 		self.heartbeatTimeoutId = nil
 	end
 	
@@ -244,7 +266,7 @@ function Pomelo:heartbeat(data)
 		self.heartbeatId = nil
 		self:send(obj)
 		
-		self.nextHeartbeatTimeout = os.time() + self.heartbeatTimeout
+		self.nextHeartbeatTimeout = getTime() + self.heartbeatTimeout
 		self.heartbeatTimeoutId = setTimeout(function() 
 					self:heartbeatTimeoutCb() 
 				end, self.heartbeatTimeout)
@@ -252,10 +274,11 @@ function Pomelo:heartbeat(data)
 end
 
 function Pomelo:heartbeatTimeoutCb()
-	local gap = self.nextHeartbeatTimeout - os.time()
+	local gap = self.nextHeartbeatTimeout - getTime()
 	if gap > self.gapThreshold then
 		self.heartbeatTimeoutId = setTimeout(function() self:heartbeatTimeoutCb() end, gap)
 	else
+		print('ERROR: heartbeat timeout')
 		self:emit('heartbeat timeout')
 		self:disconnect()
 	end
@@ -356,7 +379,11 @@ end
 function Pomelo:handshakeInit(data)
 	dump(data, '[Pomelo:handshakeInit] data ==>')
 	if data.sys and data.sys.heartbeat then
-		self.heartbeatInterval = data.sys.heartbeat
+		self.heartbeatInterval = data.sys.heartbeat  -- heartbeat interval
+		self.heartbeatTimeout = self.heartbeatInterval * 2  -- max heartbeat timeout
+	else
+		self.heartbeatInterval = 0
+		self.heartbeatTimeout = 0
 	end
 	
 	self:initData(data)
