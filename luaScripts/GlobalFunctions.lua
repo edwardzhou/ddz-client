@@ -203,6 +203,7 @@ function getContent(filename)
 end
 
 function bin2hex(data)
+  data = data or ''
   local hexLines = {}
   local ascLines = {}
   local hex = {}

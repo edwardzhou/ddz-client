@@ -35,18 +35,18 @@ function WS:ctor(url, wsprotocol)
     end, kWebSocketScriptHandlerError)
   
   self.websocket:registerScriptHandler(function(message)
-  		--print('websocket.message => ', table.concat(message, ','))
-  		--dump(message, 'websocket.message')
-      --dump_bin(message, 'websocket.message')
-      if type(_this.onmessage) == 'function' then
-        if type(message) == 'string' then
-          -- message = {string.byte(message, 1, len)}
-          message = Protocol.strdecode(message)
-        end
-        _this.onmessage({data=message})
-      end
-    end, kWebSocketScriptHandlerMessage)
-  
+		--print('websocket.message => ', table.concat(message, ','))
+    if type(message) == 'string' then
+      -- message = {string.byte(message, 1, len)}
+      message = Protocol.strencode(message)
+    end
+		--dump(message, 'websocket.message')
+    dump_bin(Protocol.strdecode(message), 'websocket received: ')
+    if type(_this.onmessage) == 'function' then
+      _this.onmessage({data=message})
+    end
+  end, kWebSocketScriptHandlerMessage)
+
 	--self.websocket:connect(url, wsprotocol)		
 end
 
@@ -59,7 +59,7 @@ function WS:send(data)
 		data = Protocol.strdecode(data)
 	end
 
-  --dump_bin(data, '[Cocos2dxWebsocket] sending: ')
+  dump_bin(data, '[Cocos2dxWebsocket] sent: ')
 	self.websocket:sendString(data)
 end
 

@@ -87,6 +87,7 @@ function Pomelo:ctor(WebSocketClass)
 end
 
 function Pomelo:init(params, cb)
+	dump(params, "[Pomelo:init] params =>")
 	self.initCallback = cb
 	local host = params.host
 	local port = params.port
@@ -109,31 +110,35 @@ function Pomelo:initWebSocket(url, cb)
   
 	print('connect to ' .. url)
 	local _this = self
-	local onopen = function(event)
+	local onopen = function(webSocket, event)
+		self.selfDisconnected = false
 		local obj = Package.encode(Package.TYPE_HANDSHAKE, Protocol.strencode(cjson.encode(_this.handshakeBuffer)))
 		_this:send(obj) 
 	end
 	
-	local onmessage = function(event)
+	local onmessage = function(webSocket, event)
 		_this:processPackage(Package.decode(event.data), cb)
 		if _this.heartbeatTimeout then
 			_this.nextHeartbeatTimeout = getTime() + _this.heartbeatTimeout
 		end
 	end
 	
-	local onerror = function(event)
+	local onerror = function(webSocket, event)
 		_this:emit('io-error', event)
 		print('[error] socket error: ', event)
 	end
 	
-	local onclose = function(event)
+	local onclose = function(webSocket, event)
+		if self.selfDisconnected then
+			return
+		end
+
     dump(event, '[Pomelo] local onclose, event => ')
-		if self.socket then
-			self.socket.onopen = nil
-			self.socket.onerror = nil
-			self.socket.onopen = nil
-			self.socket.onmessage = nil
-			self.socket = nil
+		if webSocket then
+			webSocket.onopen = nil
+			webSocket.onerror = nil
+			webSocket.onopen = nil
+			webSocket.onmessage = nil
 		end
 		if self.heartbeatId then
 			clearTimeout(self.heartbeatId)
@@ -148,14 +153,15 @@ function Pomelo:initWebSocket(url, cb)
 	
 	self.socket = self.WebSocketClass.new(url)
 	self.binaryType = 'arraybuffer'
-	self.socket.onopen = onopen
-	self.socket.onmessage = onmessage
-	self.socket.onerror = onerror
-	self.socket.onclose = onclose
+	self.socket.onopen = __bind(onopen, self.socket)
+	self.socket.onmessage = __bind(onmessage, self.socket)
+	self.socket.onerror = __bind(onerror, self.socket)
+	self.socket.onclose = __bind(onclose, self.socket)
 end
 
 function Pomelo:disconnect()
 	print('[Pomelo:disconnect]')
+	self.selfDisconnected = true
 	if self.socket then
 		if self.socket.disconnect then
 			self.socket:disconnect()
@@ -163,8 +169,9 @@ function Pomelo:disconnect()
 		if self.socket.close then
 			self.socket:close()
 		end
-		
-		self.socket.onmessage = nil
+		if self.socket and self.socket.onmessage then
+			self.socket.onmessage = nil
+		end
 		self.socket = nil
 	end
 	

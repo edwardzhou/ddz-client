@@ -92,7 +92,7 @@ function LoginScene:init()
       dump(sessionInfo, 'sessionInfo')
     end
 
-    initCocos2dxPomelo(nil, function(p) 
+    initCocos2dxPomelo({user={id_key='abc'}}, function(p) 
       pomelo = p
 
       if sessionInfo == nil then
@@ -101,10 +101,10 @@ function LoginScene:init()
     end)
   end
 
-  self:runAction(cc.Sequence:create(
-    cc.DelayTime:create(2),
-    cc.CallFunc:create(doSignInUp)
-  ))
+  -- self:runAction(cc.Sequence:create(
+  --   cc.DelayTime:create(2),
+  --   cc.CallFunc:create(doSignInUp)
+  -- ))
 
 
   -- local pluginName = 'AnalyticsUmeng'
