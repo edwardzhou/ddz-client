@@ -110,35 +110,36 @@ function Pomelo:initWebSocket(url, cb)
   
 	print('connect to ' .. url)
 	local _this = self
-	local onopen = function(webSocket, event)
+	local onopen = function( event)
 		self.selfDisconnected = false
 		local obj = Package.encode(Package.TYPE_HANDSHAKE, Protocol.strencode(cjson.encode(_this.handshakeBuffer)))
 		_this:send(obj) 
 	end
 	
-	local onmessage = function(webSocket, event)
+	local onmessage = function( event)
 		_this:processPackage(Package.decode(event.data), cb)
 		if _this.heartbeatTimeout then
 			_this.nextHeartbeatTimeout = getTime() + _this.heartbeatTimeout
 		end
 	end
 	
-	local onerror = function(webSocket, event)
+	local onerror = function(event)
 		_this:emit('io-error', event)
 		print('[error] socket error: ', event)
 	end
 	
-	local onclose = function(webSocket, event)
+	local onclose = function(event)
 		if self.selfDisconnected then
+			_this:emit('close', event)
 			return
 		end
 
     dump(event, '[Pomelo] local onclose, event => ')
-		if webSocket then
-			webSocket.onopen = nil
-			webSocket.onerror = nil
-			webSocket.onopen = nil
-			webSocket.onmessage = nil
+		if self.socket then
+			self.socket.onopen = nil
+			self.socket.onerror = nil
+			self.socket.onopen = nil
+			self.socket.onmessage = nil
 		end
 		if self.heartbeatId then
 			clearTimeout(self.heartbeatId)
@@ -153,13 +154,13 @@ function Pomelo:initWebSocket(url, cb)
 	
 	self.socket = self.WebSocketClass.new(url)
 	self.binaryType = 'arraybuffer'
-	self.socket.onopen = __bind(onopen, self.socket)
-	self.socket.onmessage = __bind(onmessage, self.socket)
-	self.socket.onerror = __bind(onerror, self.socket)
-	self.socket.onclose = __bind(onclose, self.socket)
+	self.socket.onopen = onopen
+	self.socket.onmessage = onmessage
+	self.socket.onerror = onerror
+	self.socket.onclose = onclose
 end
 
-function Pomelo:disconnect()
+function Pomelo:disconnect(isTimeout)
 	print('[Pomelo:disconnect]')
 	self.selfDisconnected = true
 	if self.socket then
@@ -183,6 +184,7 @@ function Pomelo:disconnect()
 		clearTimeout(self.heartbeatTimeoutId)
 		self.heartbeatTimeoutId = nil
 	end	
+	self.selfDisconnected = false
 end
 
 function Pomelo:request(route, msg, cb)

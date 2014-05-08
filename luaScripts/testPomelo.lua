@@ -8,27 +8,41 @@ function testPomelo(websocketClass)
   p = Pomelo.new(websocketClass)
   local params = {host='192.168.0.165', port='4001'}
 
+  local function authConn(serverType, cb)
+    p:request(serverType .. '.connectionHandler.authConn', {}, function(data)
+      dump(data, 'authConn data =>')
+      cb()
+    end)
+  end
+
   local function queryRooms()
     p:request('connector.entryHandler.queryRooms', {}, function(data)
       dump(data, "queryRooms => ")
     end)
   end
 
-  local function connectToConnector(host, port, cb)
+  local function connectToConnector(host, port, serverType, cb)
     p:init({host = host, port = port}, function()
-      cb()
+      authConn(serverType, cb)
     end)
   end
 
-  p:init(params, function(x)
-    dump(x, 'p.init callback')
+  local function queryEntry()
     p:request('gate.gateHandler.queryEntry', {uid=10001}, function(data)
       --local args = {...}
       dump(data, 'data---') 
-      p:disconnect();
+      --p:disconnect();
       --dump(data, 'data---') 
-      connectToConnector(data.hosts[1].host, data.hosts[1].port, queryRooms )
+      if data.err == nil then
+        connectToConnector(data.hosts[1].host, data.hosts[1].port, 'connector', queryRooms )
+      end
     end)
+  end
+
+
+  p:init(params, function(x)
+    dump(x, 'p.init callback')
+    authConn('gate', queryEntry)
   end)
 
   return p

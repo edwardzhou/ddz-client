@@ -29,7 +29,7 @@ function LoginScene:init()
   require('pomelo.cocos2dx_websocket')
 
   require('testPomelo')
-  testPomelo(Cocos2dxWebsocket)
+  -- testPomelo(Cocos2dxWebsocket)
 
   umeng.MobClickCpp:beginScene('landing scene')
 
@@ -100,6 +100,23 @@ function LoginScene:init()
       end
     end)
   end
+
+  local function queryRooms(sender, pomelo)
+    pomelo:request('connector.entryHandler.queryRooms', {}, function(data)
+      dump(data, "rooms => ")
+    end)
+  end
+
+  local function queryEntry(sender, pomelo)
+    pomelo:request('gate.gateHandler.queryEntry', {uid = 10001}, function(data)
+      dump(data, "[LoginScene->queryEntry] data =>")
+      if data.err == nil then
+        self:connectTo(data.hosts[1].host, data.hosts[1].port, 'connector', queryRooms)
+      end
+    end)
+  end
+
+  self:connectTo('192.168.0.165', '4001', 'gate', queryEntry)
 
   -- self:runAction(cc.Sequence:create(
   --   cc.DelayTime:create(2),
@@ -234,6 +251,7 @@ function LoginScene:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
+require('network.ConnectionPlugin').bind(LoginScene)
 
 local function createScene()
   local scene = cc.Scene:create()
