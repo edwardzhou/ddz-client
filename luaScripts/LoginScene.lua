@@ -111,12 +111,12 @@ function LoginScene:init()
     pomelo:request('gate.gateHandler.queryEntry', {uid = 10001}, function(data)
       dump(data, "[LoginScene->queryEntry] data =>")
       if data.err == nil then
-        self:connectTo(data.hosts[1].host, data.hosts[1].port, 'connector', queryRooms)
+        self:connectTo(data.hosts[1].host, data.hosts[1].port, queryRooms)
       end
     end)
   end
 
-  self:connectTo('192.168.0.165', '4001', 'gate', queryEntry)
+  self:connectTo('192.168.0.165', '4001', queryEntry)
 
   -- self:runAction(cc.Sequence:create(
   --   cc.DelayTime:create(2),
