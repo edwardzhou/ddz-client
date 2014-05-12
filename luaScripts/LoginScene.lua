@@ -6,6 +6,11 @@ local cjson = require('cjson.safe')
 
 local LoginScene = class('LoginScene')
 
+debugSetting = debugSetting or {}
+debugSetting.websocket = debugSetting.websocket or {}
+debugSetting.websocket.dumpReceived = true
+debugSetting.websocket.dumpSent = true
+
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
   if not t then
@@ -25,6 +30,7 @@ function LoginScene:ctor(...)
 end
 
 function LoginScene:init()
+  local this = self
 
   require('pomelo.cocos2dx_websocket')
 
@@ -52,21 +58,25 @@ function LoginScene:init()
   ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {"fungame/DDZ"}, "(Ljava/lang/String;)Ljava/lang/String;")
   print('ddzPath => ', ok, fungamePath)
 
-  local pomelo = nil
+  -- local pomelo = nil
   local fu = cc.FileUtils:getInstance()
 
-  local SignIn = function()
+  local SignIn = function(sessionInfo)
     local userInfo = {}
     userInfo.appVersion = "1.0"
     userInfo.resVersion = "1.0.0"
     userInfo.handsetInfo = handsetInfo
-    pomelo:request('gate.gateHandler.signUp', userInfo, function(data) 
+    --userInfo.authToken = sessionInfo.authToken
+    userInfo.password = 'abc123';
+    userInfo.userId = sessionInfo.userId
+    userInfo.signInType = 3
+    this.pomeloClient:request('auth.userHandler.signIn', userInfo, function(data) 
       -- if err ~= nil then
       --   dump(err, 'Failed to call gate.gateHandler.signIn')
       --   return
       -- end
 
-      dump(data, '[gate.gateHandler.signUp] data =>')
+      dump(data, '[auth.userHandler.signIn] data =>')
       local userData = cjson.encode(data.user)
       --fu:writeToFile(data.user, 'userinfo.plist')
       local file = io.open(fungamePath .. '/userinfo.json', 'w+')
@@ -78,27 +88,45 @@ function LoginScene:init()
   end
 
   local SignUp = function()
-  end
+    local userInfo = {}
+    userInfo.appVersion = "1.0"
+    userInfo.resVersion = "1.0.0"
+    userInfo.handsetInfo = handsetInfo
+    this.pomeloClient:request('auth.userHandler.signUp', userInfo, function(data) 
+      -- if err ~= nil then
+      --   dump(err, 'Failed to call gate.gateHandler.signIn')
+      --   return
+      -- end
 
+      dump(data, '[auth.userHandler.signUp] data =>')
+      local userData = cjson.encode(data.user)
+      --fu:writeToFile(data.user, 'userinfo.plist')
+      local userDataFilename = fungamePath .. '/userinfo.json'
+      dump(userDataFilename, 'userinfo path')
+      local file = io.open(userDataFilename, 'w+')
+      file:write(userData)
+      file:close()
 
-  local doSignInUp = function()
+    end)
+   end
+
+  local doSignInUp = function(sender, pomelo)
     local sessionInfo = nil
     local filepath = fungamePath .. '/userinfo.json'
     print('filepath => ', filepath)
     local userinfoString = fu:getStringFromFile(filepath)
-    if userinfoString ~= nil then
+    dump(userinfoString, 'userinfoString')
+    if userinfoString ~= nil and userinfoString ~= 'null' then
       --local userinfoString = fu:getStringFromFile('userinfo.json')
       sessionInfo = cjson.decode(userinfoString)
-      dump(sessionInfo, 'sessionInfo')
     end
+    dump(sessionInfo, 'sessionInfo')
 
-    initCocos2dxPomelo({user={id_key='abc'}}, function(p) 
-      pomelo = p
-
-      if sessionInfo == nil then
-        SignIn()
-      end
-    end)
+    if sessionInfo == nil or sessionInfo == cjson.null then
+      SignUp()
+    else
+      SignIn(sessionInfo)
+    end
   end
 
   local function queryRooms(sender, pomelo)
@@ -116,7 +144,7 @@ function LoginScene:init()
     end)
   end
 
-  self:connectTo('192.168.0.165', '4001', queryEntry)
+  self:connectTo('192.168.0.165', '4001', doSignInUp)
 
   -- self:runAction(cc.Sequence:create(
   --   cc.DelayTime:create(2),
@@ -145,8 +173,6 @@ function LoginScene:init()
       -- umeng:stopSession()
     end
   end)
-
-
 
   local rootLayer = cc.Layer:create()
 
