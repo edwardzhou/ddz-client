@@ -6,7 +6,7 @@ function ConnectionPlugin.bind(theClass, websocketClass)
     websocketClass = require('pomelo.cocos2dx_websocket')
   end
 
-  function theClass:connectTo(host, port, readyCallback)
+  function theClass:connectTo(host, port, userId, sessionToken, readyCallback)
     local this = self
 
     if not self.pomeloClient then
@@ -21,8 +21,11 @@ function ConnectionPlugin.bind(theClass, websocketClass)
     }
 
     local function authConnection()
-      pomeloClient:request('auth.connHandler.authConn', {}, function(data)
-        readyCallback(this, pomeloClient)
+      pomeloClient:request('auth.connHandler.authConn', {
+        userId = userId,
+        sessionToken = sessionToken
+        }, function(data)
+        readyCallback(this, pomeloClient, data)
       end)
     end
 

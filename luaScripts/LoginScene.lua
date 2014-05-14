@@ -61,7 +61,13 @@ function LoginScene:init()
   -- local pomelo = nil
   local fu = cc.FileUtils:getInstance()
 
-  local SignIn = function(sessionInfo)
+  local function queryRooms(sender, pomelo)
+    pomelo:request('connector.entryHandler.queryRooms', {}, function(data)
+      dump(data, "rooms => ")
+    end)
+  end  
+
+  local SignIn = function(sessionInfo, callback)
     local userInfo = {}
     userInfo.appVersion = "1.0"
     userInfo.resVersion = "1.0.0"
@@ -83,11 +89,24 @@ function LoginScene:init()
       file:write(userData)
       file:close()
 
+      callback(this, this.pomeloClient, data.user.userId, data.user.sessionToken);
+
     end)
  
   end
 
-  local SignUp = function()
+  local function queryEntry(sender, pomelo, userId, sessionToken)
+    pomelo:request('gate.gateHandler.queryEntry', {uid = userId}, function(data)
+      dump(data, "[LoginScene->queryEntry] data =>")
+    -- pomelo:request('auth.userHandler.signIn', {uid = 10001}, function(data)
+    --   dump(data, "[auth.userHandler.signIn] data =>")
+      if data.err == nil then
+        self:connectTo(data.hosts[1].host, data.hosts[1].port, userId, sessionToken, queryRooms)
+      end
+    end)
+  end
+
+  local SignUp = function(callback)
     local userInfo = {}
     userInfo.appVersion = "1.0"
     userInfo.resVersion = "1.0.0"
@@ -106,21 +125,25 @@ function LoginScene:init()
       local file = io.open(userDataFilename, 'w+')
       file:write(userData)
       file:close()
-
+      callback(this, this.pomeloClient, data.user.userId, data.user.sessionToken);
     end)
    end
 
+  local userId, sessionToken = nil, nil
+  local sessionInfo = nil
+  local filepath = fungamePath .. '/userinfo.json'
+  print('filepath => ', filepath)
+  local userinfoString = fu:getStringFromFile(filepath)
+  dump(userinfoString, 'userinfoString')
+  if userinfoString ~= nil and userinfoString ~= 'null' then
+    --local userinfoString = fu:getStringFromFile('userinfo.json')
+    sessionInfo = cjson.decode(userinfoString)
+    userId = sessionInfo.userId
+    sessionToken = sessionInfo.sessionToken
+  end
+  dump(sessionInfo, 'sessionInfo')
+
   local doSignInUp = function(sender, pomelo)
-    local sessionInfo = nil
-    local filepath = fungamePath .. '/userinfo.json'
-    print('filepath => ', filepath)
-    local userinfoString = fu:getStringFromFile(filepath)
-    dump(userinfoString, 'userinfoString')
-    if userinfoString ~= nil and userinfoString ~= 'null' then
-      --local userinfoString = fu:getStringFromFile('userinfo.json')
-      sessionInfo = cjson.decode(userinfoString)
-    end
-    dump(sessionInfo, 'sessionInfo')
 
     if sessionInfo == nil or sessionInfo == cjson.null then
       SignUp()
@@ -129,22 +152,18 @@ function LoginScene:init()
     end
   end
 
-  local function queryRooms(sender, pomelo)
-    pomelo:request('connector.entryHandler.queryRooms', {}, function(data)
-      dump(data, "rooms => ")
-    end)
+  local onConnectionReady = function(sender, pomelo, data)
+    if userId == nil then
+      SignUp(queryEntry)
+    elseif data.needSignIn then
+      SignIn(sessionInfo, queryEntry)
+    else
+      queryEntry(sender, pomelo, userId, sessionToken)
+    end
   end
 
-  local function queryEntry(sender, pomelo)
-    pomelo:request('gate.gateHandler.queryEntry', {uid = 10001}, function(data)
-      dump(data, "[LoginScene->queryEntry] data =>")
-      if data.err == nil then
-        self:connectTo(data.hosts[1].host, data.hosts[1].port, queryRooms)
-      end
-    end)
-  end
 
-  self:connectTo('192.168.0.165', '4001', doSignInUp)
+  self:connectTo('192.168.0.165', '4001', userId, sessionToken, onConnectionReady)
 
   -- self:runAction(cc.Sequence:create(
   --   cc.DelayTime:create(2),
