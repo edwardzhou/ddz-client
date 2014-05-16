@@ -43,20 +43,16 @@ function LoginScene:init()
 
   umeng.MobClickCpp:pay(10, 2, 1000)
 
-  local handsetInfo = {}
-  local luaj = require('luaj')
-  local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
-  print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
-  if ok then
-    handsetInfo = cjson.decode(ret)
-    dump(handsetInfo, 'handsetInfo')
-  end
+  local handsetInfo = ddz.GlobalSettings.handsetInfo
+  -- local luaj = require('luaj')
+  -- local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
+  -- print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
+  -- if ok then
+  --   handsetInfo = cjson.decode(ret)
+  --   dump(handsetInfo, 'handsetInfo')
+  -- end
 
-  local sdcardPath, fungamePath
-  ok, sdcardPath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "getExternalStorageDirectory", {}, "()Ljava/lang/String;")
-  print('sdcardPath => ', ok, sdcardPath)
-  ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {"fungame/DDZ"}, "(Ljava/lang/String;)Ljava/lang/String;")
-  print('ddzPath => ', ok, fungamePath)
+  local fungamePath = ddz.GlobalSettings.ddzSDPath
 
   -- local pomelo = nil
   local fu = cc.FileUtils:getInstance()
@@ -163,7 +159,7 @@ function LoginScene:init()
   end
 
 
-  self:connectTo('192.168.0.165', '4001', userId, sessionToken, onConnectionReady)
+  self:connectTo('192.168.1.165', '4001', userId, sessionToken, onConnectionReady)
 
   -- self:runAction(cc.Sequence:create(
   --   cc.DelayTime:create(2),

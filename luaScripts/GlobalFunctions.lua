@@ -1,3 +1,5 @@
+ddz = ddz or {}
+
 function table.deepCopy(src)
   local newTable = {}
   for k, v in pairs(src) do
@@ -269,4 +271,70 @@ function __bind(fn, this)
   return function(...)
     fn(this, ...)
   end
+end
+
+ddz.getHandsetInfo = function ()
+  local cjson = require('cjson.safe')
+  local handsetInfo = {}
+  local luaj = require('luaj')
+  local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
+  print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
+  if ok then
+    handsetInfo = cjson.decode(ret)
+    dump(handsetInfo, 'handsetInfo')
+  end
+  return handsetInfo
+end
+
+ddz.getSDCardPath = function ()
+  local sdcardPath
+  local luaj = require('luaj')
+  local ok, sdcardPath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "getExternalStorageDirectory", {}, "()Ljava/lang/String;")
+  print('sdcardPath => ', ok, sdcardPath)
+  return sdcardPath
+end
+
+ddz.mkdir = function (dirPath)
+  local luaj = require('luaj')
+  local ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {dirPath}, "(Ljava/lang/String;)Ljava/lang/String;")
+  print('ddzPath => ', ok, fungamePath)
+  return fungamePath
+end
+
+ddz.getDataStorePath = function()
+  if ddz.GlobalSettings.dataStorePath == nil then
+    if ddz.GlobalSettings.mode == 'dev' then
+      ddz.GlobalSettings.dataStorePath = ddz.GlobalSettings.ddzSDPath
+    else
+      ddz.GlobalSettings.dataStorePath = ddz.GlobalSettings.appPrivatePath
+    end
+  end
+
+  return ddz.GlobalSettings.dataStorePath
+end
+
+ddz.loadSessionInfo = function()
+  local cjson = require('cjson.safe')
+  local sessionInfo = nil
+  local filepath = ddz.getDataStorePath() .. '/userinfo.json'
+  print('filepath => ', filepath)
+  local userinfoString = fu:getStringFromFile(filepath)
+  dump(userinfoString, 'userinfoString')
+  if userinfoString ~= nil and userinfoString ~= 'null' then
+    --local userinfoString = fu:getStringFromFile('userinfo.json')
+    sessionInfo = cjson.decode(userinfoString)
+    userId = sessionInfo.userId
+    sessionToken = sessionInfo.sessionToken
+  end
+  dump(sessionInfo, 'sessionInfo')
+  return sessionInfo
+end
+
+ddz.saveSessionInfo = function(sessionInfo)
+  local cjson = require('cjson.safe')
+  local filepath = ddz.getDataStorePath() .. '/userinfo.json'
+  print('filepath => ', filepath)
+  local file = io.open(filepath, 'w+')
+  file:write(cjson.encode(sessionInfo))
+  file:close()
 end

@@ -3,6 +3,7 @@ require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
 require 'consts'
+require 'GlobalSettings'
 
 -- cclog
 cclog = function(...)
@@ -32,7 +33,14 @@ local function main()
         local host = '192.168.0.90' -- please change localhost to your PC's IP for on-device debugging
         --require('src.mobdebug').start(host)
     end
+
+    ddz.GlobalSettings.handsetInfo = ddz.getHandsetInfo()
+    ddz.GlobalSettings.sdcardPath = ddz.getSDCardPath()
+    ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')
+    ddz.GlobalSettings.appPrivatePath = cc.FileUtils:getInstance():getWritablePath()
     
+    dump(ddz.GlobalSettings, 'GlobalSettings')
+
     -- run
     local createLoginScene = require('LoginScene')
     local sceneGame = createLoginScene()
