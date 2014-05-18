@@ -314,6 +314,7 @@ ddz.getDataStorePath = function()
 end
 
 ddz.loadSessionInfo = function()
+  local fu = cc.FileUtils:getInstance()
   local cjson = require('cjson.safe')
   local sessionInfo = nil
   local filepath = ddz.getDataStorePath() .. '/userinfo.json'

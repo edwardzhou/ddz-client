@@ -1,3 +1,4 @@
+local SignInType = require('consts').SignInType
 local SignInPlugin = {}
 
 function SignInPlugin.bind(theClass)
@@ -10,16 +11,26 @@ function SignInPlugin.bind(theClass)
     end
 
     local userInfo = respData.user
+    local serverInfo = respData.server
     ddz.GlobalSettings.userInfo = userInfo
     ddz.GlobalSettings.session.userId = userInfo.userId
     ddz.GlobalSettings.session.authToken = userInfo.authToken
-    ddz.GlobalSettings.session.sessionToken = userInfo.sessionToken
+    ddz.GlobalSettings.session.sessionToken = respData.sessionToken
+    ddz.GlobalSettings.serverInfo = table.dup(respData.server)
     ddz.saveSessionInfo(userInfo)
-    callback(true, userInfo)
+    callback(true, userInfo, serverInfo)
   end
 
-  function theClass:signIn(sessionInfo, callback)
+  function theClass:signIn(sessionInfo, userId, password, callback)
     local this = self
+    local signInType
+    if callback == nil and password == nil then
+      callback = userId
+      signInType = SignInType.BY_AUTH_TOKEN
+      userId = sessionInfo.userId
+    else
+      signInType = SignInType.BY_PASSWORD
+    end
 
     local signInParams = {}
     signInParams.appVersion = ddz.GlobalSettings.appInfo.appVersion
@@ -27,7 +38,9 @@ function SignInPlugin.bind(theClass)
     signInParams.handsetInfo = ddz.GlobalSettings.handsetInfo
     signInParams.authToken = sessionInfo.authToken
     signInParams.userId = sessionInfo.userId
-    signInParams.signInType = 1
+    signInParams.signInType = signInType
+    signInParams.password = password
+
     this.pomeloClient:request('auth.userHandler.signIn', signInParams, function(data) 
       handleSignInResponse(signInParams, data, callback)
     end)

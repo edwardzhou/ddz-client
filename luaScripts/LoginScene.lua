@@ -6,11 +6,6 @@ local cjson = require('cjson.safe')
 
 local LoginScene = class('LoginScene')
 
-debugSetting = debugSetting or {}
-debugSetting.websocket = debugSetting.websocket or {}
-debugSetting.websocket.dumpReceived = true
-debugSetting.websocket.dumpSent = true
-
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
   if not t then
@@ -108,6 +103,7 @@ function LoginScene:init()
     userInfo.resVersion = "1.0.0"
     userInfo.handsetInfo = handsetInfo
     this.pomeloClient:request('auth.userHandler.signUp', userInfo, function(data) 
+      
       -- if err ~= nil then
       --   dump(err, 'Failed to call gate.gateHandler.signIn')
       --   return

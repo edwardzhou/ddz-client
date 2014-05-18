@@ -1,5 +1,11 @@
 ddz = ddz or {}
 
+ddz.SignInType = {
+  BY_AUTH_TOKEN = 1,
+  BY_SESSION_TOKEN = 2,
+  BY_PASSWORD = 3
+}
+
 ddz.PlayerStatus = {
   None = 0,             -- 无效
   Ready = 1,            -- 准备
@@ -42,3 +48,5 @@ ddz.Actions.GrabbingLord = {
 GlobalSetting = {
   content_scale_factor = 1
 }
+
+return ddz

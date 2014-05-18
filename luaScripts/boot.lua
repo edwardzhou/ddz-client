@@ -4,6 +4,7 @@ require 'framework.debug'
 require 'GlobalFunctions'
 require 'consts'
 require 'GlobalSettings'
+require 'DebugSetting'
 
 -- cclog
 cclog = function(...)
@@ -42,7 +43,7 @@ local function main()
     dump(ddz.GlobalSettings, 'GlobalSettings')
 
     -- run
-    local createLoginScene = require('LoginScene')
+    local createLoginScene = require('landing.LandingScene')
     local sceneGame = createLoginScene()
     cc.Director:getInstance():runWithScene(sceneGame)
 end
