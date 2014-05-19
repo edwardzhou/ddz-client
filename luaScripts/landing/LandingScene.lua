@@ -31,40 +31,6 @@ function LandingScene:init()
   umeng.MobClickCpp:beginEvent('test')
   umeng.MobClickCpp:pay(10, 2, 1000)
 
-  local sessionInfo = ddz.loadSessionInfo() or {}
-  local userId = sessionInfo.userId
-
-  local function queryRooms()
-    self.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
-      dump(data, 'queryRooms => ')
-      if data.err == nil then
-        ddz.GlobalSettings.rooms = data
-      end
-    end)
-  end
-
-  local function onGameServerConnected(sender, pomelo, data)
-    queryRooms()
-  end
-
-  local function connectToGameServer(success, userInfo)
-    local userId = ddz.GlobalSettings.session.userId    
-    local sessionToken = ddz.GlobalSettings.session.sessionToken
-    local serverInfo = ddz.GlobalSettings.serverInfo
-    self:connectTo(serverInfo.host, serverInfo.port, userId, sessionToken, onGameServerConnected)
-  end
-
-  local onConnectionReady = function(sender, pomelo, data)
-    if userId == nil then
-      this:signUp(connectToGameServer)
-    elseif data.needSignIn then
-      this:signIn(sessionInfo, connectToGameServer)
-    else
-      queryEntry(sender, pomelo, data.user, data.server)
-    end
-  end
-
-  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
 
   self:registerScriptHandler(function(event)
     print('event => ', event)
@@ -160,6 +126,45 @@ function LandingScene:init()
   
 end
 
+function LandingScene:connectToServer()
+  local this = self
+
+  local sessionInfo = ddz.loadSessionInfo() or {}
+  local userId = sessionInfo.userId
+
+  local function queryRooms()
+    self.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
+      dump(data, 'queryRooms => ')
+      if data.err == nil then
+        ddz.GlobalSettings.rooms = data
+      end
+    end)
+  end
+
+  local function onGameServerConnected(sender, pomelo, data)
+    queryRooms()
+  end
+
+  local function connectToGameServer(success, userInfo)
+    local userId = ddz.GlobalSettings.session.userId    
+    local sessionToken = ddz.GlobalSettings.session.sessionToken
+    local serverInfo = ddz.GlobalSettings.serverInfo
+    self:connectTo(serverInfo.host, serverInfo.port, userId, sessionToken, onGameServerConnected)
+  end
+
+  local onConnectionReady = function(sender, pomelo, data)
+    if userId == nil then
+      this:signUp(connectToGameServer)
+    elseif data.needSignIn then
+      this:signIn(sessionInfo, connectToGameServer)
+    else
+      queryEntry(sender, pomelo, data.user, data.server)
+    end
+  end
+
+  self:connectTo('192.168.0.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+end
+
 function LandingScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
@@ -170,6 +175,7 @@ function LandingScene:initKeypadHandler()
       umeng.MobClickCpp:endToLua()
       cc.Director:getInstance():endToLua()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
+      self:connectToServer()
     end
   end
 

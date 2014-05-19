@@ -67,12 +67,22 @@ function HallScene:init()
 
   local touchEventHandler = __bind(self.onRoomTouchEvent, self)
 
+  local listItemSelected = true
+  local selectedIndex = -1
+  local moveTimes = 0
+
   local function listViewEvent(sender, eventType)
     print('[listViewEvent] eventType => ', eventType)
     if eventType == ccui.ListViewEventType.onsSelectedItem then
-      local itemIndex = sender:getCurSelectedIndex()
-      print("select child index = ", itemIndex)
-      local item = sender:getItem(itemIndex)
+      listItemSelected = true
+      moveTimes = 0
+      selectedIndex = sender:getCurSelectedIndex()
+      -- print("select child index = ", itemIndex)
+      -- local item = sender:getItem(itemIndex)
+      -- local gameRoom = item.gameRoom
+      -- dump(gameRoom, 'selected room: ')
+    elseif eventType == 1 and listItemSelected and selectedIndex >=0 then
+      local item = sender:getItem(selectedIndex)
       local gameRoom = item.gameRoom
       dump(gameRoom, 'selected room: ')
     end
@@ -80,6 +90,10 @@ function HallScene:init()
 
   local function scrollViewEvent(sender, eventType)
     print('[scrollViewEvent] eventType => ', eventType)
+    --listItemSelected = false
+
+    moveTimes = moveTimes + 1
+    listItemSelected = moveTimes < 4
   end
 
   listview:addEventListenerListView(listViewEvent)
