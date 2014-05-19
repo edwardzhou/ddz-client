@@ -321,11 +321,13 @@ ddz.loadSessionInfo = function()
   print('filepath => ', filepath)
   local userinfoString = fu:getStringFromFile(filepath)
   dump(userinfoString, 'userinfoString')
-  if userinfoString ~= nil and userinfoString ~= 'null' then
+  if userinfoString ~= nil and userinfoString ~= 'null' and #userinfoString > 0 then
     --local userinfoString = fu:getStringFromFile('userinfo.json')
     sessionInfo = cjson.decode(userinfoString)
     userId = sessionInfo.userId
     sessionToken = sessionInfo.sessionToken
+  else
+    sessionInfo = nil
   end
   dump(sessionInfo, 'sessionInfo')
   return sessionInfo

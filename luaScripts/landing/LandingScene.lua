@@ -37,6 +37,9 @@ function LandingScene:init()
   local function queryRooms()
     self.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
+      if data.err == nil then
+        ddz.GlobalSettings.rooms = data
+      end
     end)
   end
 
@@ -61,7 +64,7 @@ function LandingScene:init()
     end
   end
 
-  self:connectTo('192.168.0.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
 
   self:registerScriptHandler(function(event)
     print('event => ', event)

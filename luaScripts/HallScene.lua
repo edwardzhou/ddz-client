@@ -58,32 +58,64 @@ function HallScene:init()
   local listview = ccui.Helper:seekWidgetByName(ui, 'ListView_53')
   listview = tolua.cast(listview, 'ccui.ListView')
   listview:setItemModel(model)
-  listview:pushBackDefaultItem()
-  listview:pushBackDefaultItem()
-  listview:pushBackDefaultItem()
-  listview:pushBackDefaultItem()
-  listview:pushBackDefaultItem()
-  local items = listview:getItems()
-  
-  for i=1, #(items) do
-    local item = items[i]
-    local n = i % 5
-    if n == 0 then
-      n = 5
+
+  local gameRooms = ddz.GlobalSettings.rooms
+
+  for i=1, #gameRooms do
+    listview:pushBackDefaultItem()
+  end
+
+  local touchEventHandler = __bind(self.onRoomTouchEvent, self)
+
+  local function listViewEvent(sender, eventType)
+    print('[listViewEvent] eventType => ', eventType)
+    if eventType == ccui.ListViewEventType.onsSelectedItem then
+      local itemIndex = sender:getCurSelectedIndex()
+      print("select child index = ", itemIndex)
+      local item = sender:getItem(itemIndex)
+      local gameRoom = item.gameRoom
+      dump(gameRoom, 'selected room: ')
     end
+  end
+
+  local function scrollViewEvent(sender, eventType)
+    print('[scrollViewEvent] eventType => ', eventType)
+  end
+
+  listview:addEventListenerListView(listViewEvent)
+  listview:addEventListenerScrollView(scrollViewEvent)
+
+  local items = listview:getItems()
+  for i=1, #(items) do
+    local gameRoom = gameRooms[i]
+    local item = items[i]
+    local n = 1
+
+    item.gameRoom = gameRoom
+
     local roomTitle = item:getChildByName('roomTitle_Image')
     local roomIcon = item:getChildByName('roomIcon_Image')
     local roomTitleFilename = string.format("images/room1%d.png", n)
     local roomIconFilename = string.format('images/room%d.png', n)
     roomTitle:loadTexture(roomTitleFilename)
     roomIcon:loadTexture(roomIconFilename)
+
+    local labelRoomName = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomName'), 'ccui.Text')
+    local labelRoomDesc = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomDesc'), 'ccui.Text')
+
+    labelRoomName:setText(gameRoom.roomName)
+    labelRoomDesc:setText(gameRoom.roomDesc)
+
+    local roomArea = item:getChildByName('Image_RoomArea')
+    roomArea:setTag(n)
+    --roomArea:addTouchEventListener(touchEventHandler)
   end
   
-  local snow = cc.ParticleSystemQuad:create('scenes/Resources/snow.plist')
+  local snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(200, 480)
   rootLayer:addChild(snow)
 
-  snow = cc.ParticleSystemQuad:create('scenes/Resources/snow.plist')
+  snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
   
@@ -105,6 +137,11 @@ function HallScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function HallScene:onRoomTouchEvent(sender, event)
+  dump(sender, '[HallScene:onRoomTouchEvent] sender ')
+  dump(event, '[HallScene:onRoomTouchEvent] event ')
 end
 
 local function createScene()
