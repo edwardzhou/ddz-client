@@ -268,10 +268,13 @@ function Pomelo:heartbeat(data)
 	
 	if self.heartbeatId then
 		-- already in a heartbeat interval
-		do return end
+		--do return end
+		clearTimeout(self.heartbeatId)
+		self.hearbeatId = nil
 	end
 	
 	self.heartbeatId = setTimeout(function()
+		print('self.hearbeatId with setTimeout. send...')
 		self.heartbeatId = nil
 		self:send(obj)
 		
@@ -279,7 +282,7 @@ function Pomelo:heartbeat(data)
 		self.heartbeatTimeoutId = setTimeout(function() 
 					self:heartbeatTimeoutCb() 
 				end, self.heartbeatTimeout)
-	end, self.heartbeatInterval)
+	end, self.heartbeatInterval + 1)
 end
 
 function Pomelo:heartbeatTimeoutCb()

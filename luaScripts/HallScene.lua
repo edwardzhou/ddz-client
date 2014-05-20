@@ -85,6 +85,9 @@ function HallScene:init()
       local item = sender:getItem(selectedIndex)
       local gameRoom = item.gameRoom
       dump(gameRoom, 'selected room: ')
+      ddz.pomeloClient:request('connector.entryHandler.enterRoom', {room_id = gameRoom.roomId}, function(data) 
+          dump(data, "[connector.entryHandle.enterRoom] data =>")
+        end)
     end
   end
 
@@ -93,7 +96,7 @@ function HallScene:init()
     --listItemSelected = false
 
     moveTimes = moveTimes + 1
-    listItemSelected = moveTimes < 4
+    listItemSelected = moveTimes < 20
   end
 
   listview:addEventListenerListView(listViewEvent)

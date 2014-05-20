@@ -133,7 +133,7 @@ function LandingScene:connectToServer()
   local userId = sessionInfo.userId
 
   local function queryRooms()
-    self.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
+    ddz.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data
@@ -146,6 +146,11 @@ function LandingScene:connectToServer()
   end
 
   local function connectToGameServer(success, userInfo)
+    if not success then
+      this:signUp(connectToGameServer)
+      return
+    end
+
     local userId = ddz.GlobalSettings.session.userId    
     local sessionToken = ddz.GlobalSettings.session.sessionToken
     local serverInfo = ddz.GlobalSettings.serverInfo
@@ -162,7 +167,10 @@ function LandingScene:connectToServer()
     end
   end
 
-  self:connectTo('192.168.0.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  if ddz.pomeloClient then
+    ddz.pomeloClient:disconnect()
+  end
+  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
 end
 
 function LandingScene:initKeypadHandler()

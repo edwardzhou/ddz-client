@@ -29,7 +29,7 @@ function SignUpPlugin.bind(theClass)
     signUpParams.resVersion = ddz.GlobalSettings.appInfo.resVersion
     signUpParams.handsetInfo = ddz.GlobalSettings.handsetInfo
 
-    this.pomeloClient:request('auth.userHandler.signUp', signUpParams, function(data) 
+    ddz.pomeloClient:request('auth.userHandler.signUp', signUpParams, function(data) 
       handleSignUpResponse(signUpParams, data, callback)
     end)
   end

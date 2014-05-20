@@ -41,7 +41,7 @@ function SignInPlugin.bind(theClass)
     signInParams.signInType = signInType
     signInParams.password = password
 
-    this.pomeloClient:request('auth.userHandler.signIn', signInParams, function(data) 
+    ddz.pomeloClient:request('auth.userHandler.signIn', signInParams, function(data) 
       handleSignInResponse(signInParams, data, callback)
     end)
   end
