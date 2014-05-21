@@ -72,6 +72,8 @@ function Emitter:off(...)
 	return self
 end
 
+Emitter.addListener = Emitter.on
+Emitter.addListenerOnce = Emitter.once
 Emitter.removeListener = Emitter.off
 Emitter.removeAllListeners = Emitter.off
 

@@ -4,7 +4,7 @@ local GamePlayer = class('GamePlayer')
 
 function GamePlayer:ctor(playerInfo)
   playerInfo = playerInfo or {}
-  self.name = playerInfo.name
+  self.nickName = playerInfo.nickName
   self.userId = playerInfo.userId
   if playerInfo.pokeCards then
     self.pokeCards = playerInfo.pokeCards
@@ -15,7 +15,7 @@ function GamePlayer:ctor(playerInfo)
   end
   self.headIcon = playerInfo.headIcon
   self.role = playerInfo.role
-  self.status = playerInfo.status
+  self.state = playerInfo.state
   self.robot = playerInfo.robot or false
 end
 

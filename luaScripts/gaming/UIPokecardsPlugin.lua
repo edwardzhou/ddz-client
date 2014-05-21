@@ -222,6 +222,10 @@ function UIPokecardsPlugin.bind( theClass )
   --]]
   function theClass:getPickedPokecards()
     local picked = {}
+    if not self.selfPlayerInfo then
+      return picked
+    end
+
     for _, pokeCard in pairs(self.selfPlayerInfo.pokeCards) do
       if pokeCard.picked then
         table.insert(picked, pokeCard)

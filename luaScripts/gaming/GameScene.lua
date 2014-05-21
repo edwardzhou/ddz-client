@@ -2,7 +2,8 @@ require 'GuiConstants'
 require 'PokeCard'
 local mobdebug = require('src.mobdebug')
 local GamePlayer = require('GamePlayer')
-local GameService = require('LocalGameService')
+--local GameService = require('LocalGameService')
+local GameService = require('RemoteGameService')
 
 local GameScene = class('GameScene', function()
   return cc.Scene:create()
@@ -111,10 +112,10 @@ function GameScene:showSysTime()
 end
 
 function GameScene:initPlayers()
-  self.selfUserId = 1
+  self.selfUserId = ddz.GlobalSettings.userInfo.userId
   local this = self
 
-  this.gameService:enterRoom(1, __bind(self.onServerPlayerJoin, self))
+  this.gameService:enterRoom(ddz.selectedRoomId, __bind(self.onServerPlayerJoin, self))
 end
 
 function GameScene:doServerGameStart(pokeGame, nextUserId)

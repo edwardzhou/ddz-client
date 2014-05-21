@@ -52,8 +52,8 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
 
     userInfo =  userInfo or {}
-    userUI.Name:setText(userInfo.name or '')
-    userUI.Name:setVisible(userInfo.name and userInfo.name ~= '')
+    userUI.Name:setText(userInfo.nickName or '')
+    userUI.Name:setVisible(userInfo.nickName and userInfo.nickName ~= '')
     if userInfo.headIcon then
       userUI.Head:loadTexture(Res.Images.HeadIcons[userInfo.headIcon], ccui.TextureResType.localType)
     end

@@ -57,9 +57,9 @@ function GameResultDialog:show(balance, selfPlayer)
   self.LabelPrevPlayerResult:setText(prevResult)
   self.LabelNextPlayerResult:setText(nextResult)
 
-  self.LabelSelfPlayerName:setText(selfPlayer.name)
-  self.LabelPrevPlayerName:setText(selfPlayer.prevPlayer.name)
-  self.LabelNextPlayerName:setText(selfPlayer.nextPlayer.name)
+  self.LabelSelfPlayerName:setText(selfPlayer.nickName)
+  self.LabelPrevPlayerName:setText(selfPlayer.prevPlayer.nickName)
+  self.LabelNextPlayerName:setText(selfPlayer.nextPlayer.nickName)
 
   self.LabelBetBase:setText(balance.betBase)
   self.LabelLordValue:setText(balance.lordValue)
