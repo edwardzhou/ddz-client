@@ -133,7 +133,7 @@ function LandingScene:connectToServer()
   local userId = sessionInfo.userId
 
   local function queryRooms()
-    ddz.pomeloClient:request('connector.entryHandler.queryRooms', {}, function(data) 
+    ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data

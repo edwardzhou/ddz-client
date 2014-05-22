@@ -34,8 +34,8 @@ end
 function RemoteGameService:enterRoom(roomId, callback)
   local this = self
 
-  ddz.pomeloClient:request('connector.entryHandler.enterRoom', {room_id = roomId}, function(data)
-      dump(data, '[RemoteGameService:enterRoom] connector.entryHandler.enterRoom =>')
+  ddz.pomeloClient:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
+      dump(data, '[RemoteGameService:enterRoom] ddz.entryHandler.enterRoom =>')
     end)
 end
 
