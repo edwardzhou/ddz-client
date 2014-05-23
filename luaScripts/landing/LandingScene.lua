@@ -87,6 +87,8 @@ function LandingScene:init()
         print('button holder clicked!')
         local scene = require('gaming.GameScene')()
         cc.Director:getInstance():pushScene(scene)
+      elseif buttonName == 'v_ButtonConnect' then
+        self:connectToServer()
       end
     end
   end
@@ -96,6 +98,9 @@ function LandingScene:init()
   
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonStart')
   buttonHolder:addTouchEventListener(touchEvent)
+
+  local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonConnect')
+  buttonConnect:addTouchEventListener(touchEvent)
   
   self:initKeypadHandler()
   
@@ -190,6 +195,9 @@ function LandingScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+
+
+
 end
 
 require('network.ConnectionPlugin').bind(LandingScene)

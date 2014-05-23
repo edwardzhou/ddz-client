@@ -8,15 +8,18 @@ RemoteGameService = class('GameService')
 function RemoteGameService:ctor(msgReceiver)
   self.msgReceiver = msgReceiver or {}
   self._onServerPlayerJoinMsg = __bind(self.onServerPlayerJoinMsg, self)
+  self._onServerPlayerReadyMsg = __bind(self.onServerPlayerReadyMsg, self)
   self:setupPomeloEvents()
 end
 
 function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onPlayerJoin', self._onServerPlayerJoinMsg)
+  ddz.pomeloClient:on('onPlayerReady', self._onServerPlayerReadyMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onPlayerJoin', self._onServerPlayerJoinMsg)
+  ddz.pomeloClient:off('onPlayerReady', self._onServerPlayerReadyMsg)
 end
 
 function RemoteGameService:onServerPlayerJoinMsg(data)
@@ -30,6 +33,18 @@ function RemoteGameService:onServerPlayerJoinMsg(data)
   end
 end
 
+function RemoteGameService:onServerPlayerReadyMsg(data)
+  dump(data, '[RemoteGameService:onServerPlayerReadyMsg] data => ')
+  local players = {}
+  for i = 1, #data.players do
+    table.insert(players, GamePlayer.new(data.players[i]))
+  end
+  if self.msgReceiver.onServerPlayerJoin then
+    self.msgReceiver:onServerPlayerJoin(players)
+  end
+end
+
+
 
 function RemoteGameService:enterRoom(roomId, callback)
   local this = self
@@ -40,7 +55,15 @@ function RemoteGameService:enterRoom(roomId, callback)
 end
 
 function RemoteGameService:readyGame(callback)
+  ddz.pomeloClient:request('ddz.gameHandler.ready', {}, function(data) 
+      dump(data, '[RemoteGameService:readyGame] ddz.gameHandler.ready')
+    end)
+end
 
+function RemoteGameService:leaveGame(callback)
+  ddz.pomeloClient:request('ddz.entryHandler.leave', {}, function(data) 
+      dump(data, '[RemoteGameService:leaveGame] ddz.entryHandler.leave')
+    end)
 end
 
 function RemoteGameService:startNewGame()

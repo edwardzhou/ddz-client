@@ -46,6 +46,7 @@ function GameScene:cleanup()
   umeng.MobClickCpp:endScene('gaming')
   self:stopAllActions()
   PokeCard.releaseAllCards()
+  self.gameService:leaveGame()
 end
 
 function GameScene:init()

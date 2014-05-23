@@ -59,18 +59,18 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
     userUI.Head:setVisible(userInfo.headIcon ~= nil)
 
-    if userInfo.status == ddz.PlayerStatus.Ready then
+    if userInfo.state == ddz.PlayerStatus.Ready then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
-    elseif userInfo.status == ddz.PlayerStatus.NoGrabLord then
+    elseif userInfo.state == ddz.PlayerStatus.NoGrabLord then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
-    elseif userInfo.status == ddz.PlayerStatus.GrabLord then
+    elseif userInfo.state == ddz.PlayerStatus.GrabLord then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
-    elseif userInfo.status == ddz.PlayerStatus.PassGrabLord then
+    elseif userInfo.state == ddz.PlayerStatus.PassGrabLord then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
-    elseif userInfo.status == ddz.PlayerStatus.ReGrabLord then
+    elseif userInfo.state == ddz.PlayerStatus.ReGrabLord then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
     end
-    userUI.Status:setVisible(userInfo.status and userInfo.status ~= ddz.PlayerStatus.None)
+    userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None)
 
     if userInfo.role == ddz.PlayerRoles.Farmer then
       userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)
