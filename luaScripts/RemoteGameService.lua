@@ -2,6 +2,7 @@ local GamePlayer = require('GamePlayer')
 local PokeGame = require('PokeGame')
 local scheduler = require('framework.scheduler')
 local AI = require('PokecardAI')
+local utils = require('utils.utils')
 
 RemoteGameService = class('GameService')
 
@@ -39,9 +40,10 @@ function RemoteGameService:onServerPlayerReadyMsg(data)
   for i = 1, #data.players do
     table.insert(players, GamePlayer.new(data.players[i]))
   end
-  if self.msgReceiver.onServerPlayerJoin then
-    self.msgReceiver:onServerPlayerJoin(players)
-  end
+  utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players)
+  -- if self.msgReceiver.onServerPlayerJoin then
+  --   self.msgReceiver:onServerPlayerJoin(players)
+  -- end
 end
 
 
