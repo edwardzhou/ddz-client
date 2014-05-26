@@ -26,7 +26,7 @@ DecoderFactory.getDecoder = function()
     offset = 1
     
     if protos then
-      do return decodeMsg({}, protos, #buffer) end
+      return decodeMsg({}, protos, #buffer)
     end
     
     return nil
@@ -107,13 +107,15 @@ DecoderFactory.getDecoder = function()
       offset = offset + length
       do return str end
     else
-      if protos and protos.__messages[type] then
+      if protos and (protos.__messages[type] or Decoder.protos['message ' .. type])  then
+        local message = protos.__messages[type] or Decoder.protos['message ' .. type]
         local length = codec.decodeUInt32(getBytes()) - 1
         local msg = {}
         if Pomelo.debug.decoder then
           print('[decodeProp] offset: ', offset, 'length:', length)
+          dump(message, '[decodeProp] message => ')
         end
-        decodeMsg(msg, protos.__messages[type], offset + length)
+        decodeMsg(msg, message, offset + length)
         do return msg end
       end
     end
@@ -126,7 +128,11 @@ DecoderFactory.getDecoder = function()
         table.insert(array, decodeProp(type))
       end
     else
-      table.insert(array, decodeProp(type, protos))
+      local prop = decodeProp(type, protos)
+      if Pomelo.debug.decoder then
+        dump(prop, "[decodeArray] prop =>")
+      end
+      table.insert(array, prop)
     end
   end
   

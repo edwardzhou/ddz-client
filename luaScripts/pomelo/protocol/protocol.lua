@@ -341,7 +341,7 @@ Message.decode = function(buffer)
 	-- parse route
 	if msgHasRoute(type) then
 		if compressRoute > 0 then
-			route = bit.lshift(buffer[offset], 8) + bit.lshift(buffer[offset+1])
+			route = bit.lshift(buffer[offset], 8) + buffer[offset+1]
 			offset = offset + 2
 		else
 			local routeLen = buffer[offset]

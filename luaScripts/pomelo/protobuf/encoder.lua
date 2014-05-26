@@ -1,7 +1,7 @@
 local codec = require("pomelo.protobuf.codec")
 local util = require('pomelo.protobuf.util')
 local constant = require('pomelo.protobuf.constant')
-
+local cjson = require('cjson.safe')
 local EncoderFactory = {}
 
 EncoderFactory.getEncoder = function()
@@ -14,12 +14,18 @@ EncoderFactory.getEncoder = function()
   end
   
   function Encoder.encode(route, msg)
+    if not (route and msg) then
+      print('[Pomelo Encoder.encode] WARNING: Route or msg can not be null! route: ', route, ' msg ', msg)
+      return nil
+    end
     -- Get protos from protos map use the route as key
     local protos = Encoder.protos[route]
     --dump(protos, '----Encoder---- protos:')
     -- Check msg
     if not checkMsg(msg, protos) then
-      print('[Encoder.encode] checkMsg return false');
+      print('[Encoder.encode] check msg failed!');
+      dump(msg, 'msg')
+      dump(protos, 'protos')
       return nil
     end
     
@@ -47,32 +53,43 @@ EncoderFactory.getEncoder = function()
   end
   
   checkMsg = function(msg, protos)
-    if not protos then
-      do return false end
+    if not (protos and msg) then
+      return false
     end
     
     for _name, _proto in pairs(protos) do
       -- All required element must exists
       if _proto.option == 'required' then
-        if type(msg[_name]) == 'nil' then
-          do return false end
+        if msg[_name] == nil then
+          print('[Pomelo Encoder.checkMsg] WARNING: no property exists for required! name: %s, \n proto: %s \n msg: %s',
+            name, dump(_proto, '', true), dump(msg, '', true))
+          return false
         end
-        if protos.__messages[_proto.type] then
-          checkMsg(msg[_name], protos.__messages[_proto.type])
+        local message = protos.__messages[_proto.type] or Encoder.protos['message ' .. _proto.type]
+        if message and not checkMsg(msg[_name], message) then
+          print('[Pomelo Encoder.checkMsg] WARNING: inner proto error! name: %s, \n proto: %s \n msg: %s',
+            name, dump(_proto, '', true), dump(msg, '', true))
+          return false;
+          --checkMsg(msg[_name], protos.__messages[_proto.type])
         end
       elseif _proto.option == 'optional' then
-        if type(msg[_name]) ~= nil then
-          if protos.__messages[_proto.type] then
-            checkMsg(msg[_name], protos.__messages[_proto.type])
+        if msg[_name] ~= nil then
+          local message = protos.__messages[_proto.type] or Encoder.protos['message ' .. _proto.type]
+          if message and not checkMsg(msg[_name], message) then
+            print('[Pomelo Encoder.checkMsg] WARNING: inner proto error! name: %s, \n proto: %s \n msg: %s',
+              name, dump(_proto, '', true), dump(msg, '', true))
+            return false;
+            --checkMsg(msg[_name], protos.__messages[_proto.type])
           end
         end
       elseif _proto.option == 'repeated' then
         -- Check nest message in repeated elements
-        if msg[_name] and protos.__messages[_proto.type] then
+         local message = protos.__messages[_proto.type] or Encoder.protos['message ' .. _proto.type]
+         if msg[_name] and message then
           local nested = msg[_name]
           for _, _value in ipairs(nested) do
-            if not checkMsg(_value, protos.__messages[_proto.type]) then
-              do return false end
+            if not checkMsg(_value, message) then
+              return false
             end
           end
         end
@@ -95,7 +112,10 @@ EncoderFactory.getEncoder = function()
         end
         if proto.option == 'required' or proto.option == 'optional' then
           local e_tag = encodeTag(proto.type, proto.tag)
-          dump(e_tag, _name .. "'s tag")
+          local proto = protos[_name]
+          if Pomelo.debug.encoder then
+            dump(e_tag, _name .. "'s tag")
+          end
           offset = writeBytes(buffer, offset, e_tag)
           offset = encodeProp(_data, proto.type, offset, buffer, protos)
         elseif proto.option == 'repeated' then
@@ -128,11 +148,12 @@ EncoderFactory.getEncoder = function()
       codec.encodeStr(buffer, offset, value)
       offset = offset + length
     else
-      if protos.__messages[type] then
+      local message = protos.__messages[type] or Encoder.protos['message ' .. type]
+      if message then
         -- Use a tmp buffer to build an internal msg
         local tmpBuffer = {}
         local length = 1
-        length = encodeMsg(tmpBuffer, length, protos.__messages[type], value)
+        length = encodeMsg(tmpBuffer, length, message, value)
         -- Encode length
         offset = writeBytes(buffer, offset, codec.encodeUInt32(length))
         -- contact the object

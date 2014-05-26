@@ -41,6 +41,8 @@ end
 
 function Pomelo:ctor(WebSocketClass)
   self.super.ctor(self)
+
+  self.protoVersion = 0
   
   self.Protobuf = ProtobufFactory.getProtobuf()
   
@@ -78,7 +80,8 @@ function Pomelo:ctor(WebSocketClass)
 	self.handshakeBuffer = {
 		sys = {
 			type = JS_WS_CLIENT_TYPE,
-			version = JS_WS_CLIENT_VERSION
+			version = JS_WS_CLIENT_VERSION,
+			protoVersion = self.protoVersion,
 		},
 		user = {
 		}
@@ -97,6 +100,17 @@ function Pomelo:init(params, cb)
 	if Pomelo.debug.pomelo then
 		dump(params, "[Pomelo:init] params =>")
 	end
+
+	self.handshakeBuffer = {
+		sys = {
+			type = JS_WS_CLIENT_TYPE,
+			version = JS_WS_CLIENT_VERSION,
+			protoVersion = self.protoVersion,
+		},
+		user = {
+		}
+	}
+
 	self.initCallback = cb
 	local host = params.host
 	local port = params.port
@@ -236,12 +250,12 @@ function Pomelo:sendMessage(reqId, route, msg)
 	end
 	if protos[route] then
 		if Pomelo.debug.pomelo then
-			dump(Protocol, '[Polemo:sendMessage] Protocol')
-			dump(msg, '[Polemo:sendMessage] msg before')
+			--dump(Protocol, '[Polemo:sendMessage] Protocol')
+			dump_bin(msg, '[Polemo:sendMessage] msg before')
 		end
 		msg = self.Protobuf.encode(route, msg)
 		if Pomelo.debug.pomelo then
-			dump(msg, '[Pomelo:sendMessage] msg after encoded')
+			dump_bin(Protocol.strdecode(msg), '[Pomelo:sendMessage] msg after encoded')
 		end
 	else
 --		print('msg => ', cjson.encode(msg))
@@ -250,8 +264,8 @@ function Pomelo:sendMessage(reqId, route, msg)
 	end
 	
 	local compressRoute = 0
-	if self.dict and self.dict[route] then
-		route = self.dict[route]
+	if self.data and self.data.dict and self.data.dict[route] then
+		route = self.data.dict[route]
 		compressRoute = 1
 	end
 	
@@ -426,7 +440,7 @@ function Pomelo:initData(data)
 	if not data or not data.sys then
 		do return end
 	end
-	
+
 	self.data = self.data or {}
 	local dict = data.sys.dict
 	local protos = data.sys.protos
@@ -444,13 +458,17 @@ function Pomelo:initData(data)
 	if protos then
 		self.data.protos = {
 			server = protos.server or {},
-			client = protos.client or {}
+			client = protos.client or {},
+			version = protos.version or 0
 		}
+
+		self.protoVersion = self.data.protos.version
 		
 		if self.Protobuf then
 			self.Protobuf.init({
 				encoderProtos = protos.client, 
-				decoderProtos = protos.server
+				decoderProtos = protos.server,
+				protoVersion = self.data.protos.version
 			})
 		end
 	end
