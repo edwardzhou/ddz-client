@@ -141,7 +141,7 @@ function LandingScene:connectToServer()
     ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
       if data.err == nil then
-        ddz.GlobalSettings.rooms = data
+        ddz.GlobalSettings.rooms = data.rooms
       end
     end)
   end

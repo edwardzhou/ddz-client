@@ -42,7 +42,7 @@ function WS:ctor(url, wsprotocol)
     end
 		--dump(message, 'websocket.message')
     if debugSetting and debugSetting.websocket and debugSetting.websocket.dumpReceived then
-      dump_bin(Protocol.strdecode(message), string.format('[Cocos2dxWebsocket] %p received: ', self.websocket))
+      dump_bin(Protocol.strdecode(message), string.format('[Cocos2dxWebsocket] %p received %d (0x%04x) bytes: ', self.websocket, #message, #message))
     end
 
     if type(_this.onmessage) == 'function' then
@@ -63,7 +63,7 @@ function WS:send(data)
 	end
 
   if debugSetting and debugSetting.websocket and debugSetting.websocket.dumpSent then
-    dump_bin(data, string.format('[Cocos2dxWebsocket] %p sent: ', self.websocket))
+    dump_bin(data, string.format('[Cocos2dxWebsocket] %p sent %d (0x%04x) bytes: ', self.websocket, #data, #data))
   end
 	self.websocket:sendString(data)
 end

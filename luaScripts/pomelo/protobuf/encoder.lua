@@ -26,14 +26,18 @@ EncoderFactory.getEncoder = function()
     -- Set the length of the buffer
     local json_str = cjson.encode(msg)
     local length = codec.byteLength(json_str)
-    print('length => ', length, json_str)
+    if Pomelo.debug.encoder then
+      print('length => ', length, json_str)
+    end
     
     -- Init buffer and offset
     local buffer = {}
     local offset = 1
     if protos ~= nil then
       offset = encodeMsg(buffer, offset, protos, msg)
-      print('encodeMsg return ', offset)
+      if Pomelo.debug.encoder then
+        print('encodeMsg return ', offset)
+      end
       if offset <= 1 then
         buffer = nil
       end
@@ -81,10 +85,14 @@ EncoderFactory.getEncoder = function()
   encodeMsg = function(buffer, offset, protos, msg)
     --print('[encodeMsg] ', buffer, offset, protos, msg)
     for _name, _data in pairs(msg) do
-      print('_name:', _name, '_data' , _data, " --- ", protos[_name])
+      if Pomelo.debug.encoder then
+        print('_name:', _name, '_data' , _data, " --- ", protos[_name])
+      end
       if protos[_name] then
         local proto = protos[_name]
-        print( _name .. ' proto:[option => ' .. proto.option .. ", type => " .. proto.type .. ', tag => ', proto.tag )
+        if Pomelo.debug.encoder then
+          print( _name .. ' proto:[option => ' .. proto.option .. ", type => " .. proto.type .. ', tag => ', proto.tag )
+        end
         if proto.option == 'required' or proto.option == 'optional' then
           local e_tag = encodeTag(proto.type, proto.tag)
           dump(e_tag, _name .. "'s tag")

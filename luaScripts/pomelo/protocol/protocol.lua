@@ -363,8 +363,9 @@ Message.decode = function(buffer)
 	copyArray(body, 1, buffer, offset, bodyLen)
 	body = body
 	
-	return {id = id, type = type, compressRoute = compressRoute,
+	local decodedMsg = {id = id, type = type, compressRoute = compressRoute,
 			route = route, body = body}
+  return decodedMsg
 end
  
 return Protocol

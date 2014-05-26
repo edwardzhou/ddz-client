@@ -21,6 +21,11 @@ local function getTime()
 end
 
 Pomelo = class('Pomelo', Emitter)
+Pomelo.debug = {
+	pomelo = true,
+	decoder = false,
+	encoder = false,
+}
 
 if setTimeout == nil then
 	setTimeout = function()
@@ -45,7 +50,9 @@ function Pomelo:ctor(WebSocketClass)
   else
     self.WebSocketClass = require('pomelo.lua_websocket')
   end
-	print('[Pomelo:ctor] self=> ', self, 'self.socket =>', self.socket)
+  if Pomelo.debug.pomelo then
+		print('[Pomelo:ctor] self=> ', self, 'self.socket =>', self.socket)
+	end
 	self.reqId = 0
 	self.callbacks = {}
 	self.handlers = {}
@@ -87,7 +94,9 @@ function Pomelo:ctor(WebSocketClass)
 end
 
 function Pomelo:init(params, cb)
-	dump(params, "[Pomelo:init] params =>")
+	if Pomelo.debug.pomelo then
+		dump(params, "[Pomelo:init] params =>")
+	end
 	self.initCallback = cb
 	local host = params.host
 	local port = params.port
@@ -134,7 +143,9 @@ function Pomelo:initWebSocket(url, cb)
 			return
 		end
 
-    dump(event, '[Pomelo] local onclose, event => ')
+		if Pomelo.debug.pomelo then
+    	dump(event, '[Pomelo] local onclose, event => ')
+    end
 		if self.socket then
 			self.socket.onopen = nil
 			self.socket.onerror = nil
@@ -224,10 +235,14 @@ function Pomelo:sendMessage(reqId, route, msg)
 		protos = self.data.protos.client
 	end
 	if protos[route] then
-		dump(Protocol, '[Polemo:sendMessage] Protocol')
-		dump(msg, '[Polemo:sendMessage] msg before')
+		if Pomelo.debug.pomelo then
+			dump(Protocol, '[Polemo:sendMessage] Protocol')
+			dump(msg, '[Polemo:sendMessage] msg before')
+		end
 		msg = self.Protobuf.encode(route, msg)
-		dump(msg, '[Pomelo:sendMessage] msg after encoded')
+		if Pomelo.debug.pomelo then
+			dump(msg, '[Pomelo:sendMessage] msg after encoded')
+		end
 	else
 --		print('msg => ', cjson.encode(msg))
 		msg = Protocol.strencode(cjson.encode(msg))
@@ -389,7 +404,9 @@ function Pomelo:deCompose(msg)
 end
 
 function Pomelo:handshakeInit(data)
-	dump(data, '[Pomelo:handshakeInit] data ==>')
+	if Pomelo.debug.pomelo then
+		dump(data, '[Pomelo:handshakeInit] data ==>')
+	end
 	if data.sys and data.sys.heartbeat then
 		self.heartbeatInterval = data.sys.heartbeat  -- heartbeat interval
 		self.heartbeatTimeout = self.heartbeatInterval * 2  -- max heartbeat timeout

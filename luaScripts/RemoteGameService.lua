@@ -29,9 +29,10 @@ function RemoteGameService:onServerPlayerJoinMsg(data)
   for i = 1, #data.players do
     table.insert(players, GamePlayer.new(data.players[i]))
   end
-  if self.msgReceiver.onServerPlayerJoin then
-    self.msgReceiver:onServerPlayerJoin(players)
-  end
+  utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players)
+  -- if self.msgReceiver.onServerPlayerJoin then
+  --   self.msgReceiver:onServerPlayerJoin(players)
+  -- end
 end
 
 function RemoteGameService:onServerPlayerReadyMsg(data)

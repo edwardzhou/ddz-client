@@ -33,15 +33,20 @@ DecoderFactory.getDecoder = function()
   end
   
   decodeMsg = function(msg, protos, length)
-    dump(protos, 'decodeMsg.protos')
+    if Pomelo.debug.decoder then
+      dump(protos, 'decodeMsg.protos')
+    end
+
     while offset < length do
-      print(string.format('[decodeMsg] offset: %d, length: %d', offset, length))
       local head = getHead()
       local type = head.type
       local tag = head.tag
-      print(string.format('type: %s, tag: %s', type, tag))
-      local name = protos.__tags[tag]
-      print('name: ', name)
+      local name = protos.__tags[tostring(tag)]
+      if Pomelo.debug.decoder then
+        print(string.format('[decodeMsg] offset: %d, length: %d', offset, length))
+        print(string.format('type: %s, tag: %s', type, tag))
+        print('name: ', name)
+      end
       if protos[name] then
         if protos[name].option == 'required' or protos[name].option == 'optional' then
           msg[name] = decodeProp(protos[name].type, protos)
@@ -85,11 +90,15 @@ DecoderFactory.getDecoder = function()
     elseif type == 'int32' or type == 'sInt32' then
       do return codec.decodeSInt32(getBytes()) end
     elseif type == 'float' then
-      local float = codec.decodeFloat(buffer, offset)
+      local hexBytes = {}
+      copyArray(hexBytes, 1, buffer, offset, 4)
+      local float = codec.decodeFloat(hexBytes)
       offset = offset + 4
       do return float end
     elseif type == 'double' then
-      local double = codec.decodeDouble(buffer, offset)
+      local hexBytes = {}
+      copyArray(hexBytes, 1, buffer, offset, 4)
+      local double = codec.decodeDouble(hexBytes)
       offset = offset + 8
       do return double end
     elseif type == 'string' then
@@ -101,7 +110,9 @@ DecoderFactory.getDecoder = function()
       if protos and protos.__messages[type] then
         local length = codec.decodeUInt32(getBytes()) - 1
         local msg = {}
-        print('[decodeProp] offset: ', offset, 'length:', length)
+        if Pomelo.debug.decoder then
+          print('[decodeProp] offset: ', offset, 'length:', length)
+        end
         decodeMsg(msg, protos.__messages[type], offset + length)
         do return msg end
       end
@@ -136,7 +147,9 @@ DecoderFactory.getDecoder = function()
       offset = pos
     end
     
-    print(string.format('getBytes: (len: %d, offset: %d ) bytes:', #bytes, offset), table.concat(bytes, ', '))
+    if Pomelo.debug.decoder then
+      print(string.format('getBytes: (len: %d, offset: %d ) bytes:', #bytes, offset), table.concat(bytes, ', '))
+    end
     
     return bytes
   end
