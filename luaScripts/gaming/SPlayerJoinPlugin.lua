@@ -1,3 +1,5 @@
+local GamePlayer = require('GamePlayer')
+
 local SPlayerJoinPlugin = {}
 
 function SPlayerJoinPlugin.bind(theClass)
@@ -9,17 +11,17 @@ function SPlayerJoinPlugin.bind(theClass)
     local this = self
     this.players = playersInfo
     if playersInfo[1].userId == this.selfUserId then
-      this.selfPlayerInfo = playersInfo[1]
-      this.nextPlayerInfo = playersInfo[2]
-      this.prevPlayerInfo = playersInfo[3]
+      this.selfPlayerInfo = GamePlayer.new(playersInfo[1])
+      this.nextPlayerInfo = GamePlayer.new(playersInfo[2])
+      this.prevPlayerInfo = GamePlayer.new(playersInfo[3])
     elseif playersInfo[2].userId == this.selfUserId then
-      this.selfPlayerInfo = playersInfo[2]
-      this.nextPlayerInfo = playersInfo[3]
-      this.prevPlayerInfo = playersInfo[1]
+      this.selfPlayerInfo = GamePlayer.new(playersInfo[2])
+      this.nextPlayerInfo = GamePlayer.new(playersInfo[3])
+      this.prevPlayerInfo = GamePlayer.new(playersInfo[1])
     elseif playersInfo[3].userId == this.selfUserId then
-      this.selfPlayerInfo = playersInfo[3]
-      this.nextPlayerInfo = playersInfo[1]
-      this.prevPlayerInfo = playersInfo[2]
+      this.selfPlayerInfo = GamePlayer.new(playersInfo[3])
+      this.nextPlayerInfo = GamePlayer.new(playersInfo[1])
+      this.prevPlayerInfo = GamePlayer.new(playersInfo[2])
     end
 
     this:doUpdatePlayersUI()

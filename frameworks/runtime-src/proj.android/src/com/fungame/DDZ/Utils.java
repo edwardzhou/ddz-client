@@ -18,12 +18,16 @@ public class Utils {
 		return dir.getAbsolutePath();
 	}
 	
-	public static String mkdir(String path) {
+	public static String mkdir(String path, boolean hasFilename) {
 		File file = null;
 		if (path.startsWith("/")) {
 			file = new File(path);
 		} else {
 			file = new File(Environment.getExternalStorageDirectory(), path);
+		}
+
+		if (hasFilename) {
+			file = file.getParentFile();
 		}
 		
 		if (file.isFile()) {

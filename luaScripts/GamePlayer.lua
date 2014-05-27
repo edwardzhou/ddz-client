@@ -27,6 +27,10 @@ function GamePlayer:isLord()
   return self.role == ddz.PlayerRoles.Lord
 end
 
+function GamePlayer:setPokeIdChars(chars)
+  self.pokeCards = PokeCard.getByPokeChars(chars)
+end
+
 function GamePlayer:analyzePokecards()
   self.analyzedCards = CardAnalyzer.analyze(self.pokeCards)
   -- if self.cardAnalyzer == nil then

@@ -70,7 +70,9 @@ function UIButtonsPlugin.bind( theClass )
     PokeCard.releaseAllCards()
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
-    self.gameService:readyGame(__bind(self.onServerGameStart, self))
+    self.gameService:readyGame(function(data)
+        self.ButtonReady:setVisible(false)
+      end)
   end
 
   function theClass:ButtonPass_onClicked(sender, event)

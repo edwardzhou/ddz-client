@@ -47,6 +47,7 @@ function GameScene:cleanup()
   self:stopAllActions()
   PokeCard.releaseAllCards()
   self.gameService:leaveGame()
+  self.gameService:cleanup()
 end
 
 function GameScene:init()
@@ -119,11 +120,12 @@ function GameScene:initPlayers()
   this.gameService:enterRoom(ddz.selectedRoomId, __bind(self.onServerPlayerJoin, self))
 end
 
-function GameScene:doServerGameStart(pokeGame, nextUserId)
+function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.selfPlayerInfo.lastCard = nil
   self.prevPlayerInfo.lastCard = nil
   self.nextPlayerInfo.lastCard = nil
   self.pokeGame = pokeGame
+  self.selfPlayerInfo:setPokeIdChars(pokeIdChars)
   self.pokeCards = self.selfPlayerInfo.pokeCards
   self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()

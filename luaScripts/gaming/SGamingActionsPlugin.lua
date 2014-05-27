@@ -3,8 +3,8 @@ local SGamingActionsPlugin = {}
 
 function SGamingActionsPlugin.bind(theClass)
 
-  function theClass:onStartNewGameMsg(pokeGame, nextUserId)
-    self:doServerGameStart(pokeGame, nextUserId)
+  function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId)
+    self:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   end
 
   function theClass:onGrabbingLordMsg(userId, nextUserId, isGiveup, isFinish)

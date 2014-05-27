@@ -294,9 +294,10 @@ ddz.getSDCardPath = function ()
   return sdcardPath
 end
 
-ddz.mkdir = function (dirPath)
+ddz.mkdir = function (dirPath, hasFilename)
+  hasFilename = hasFilename == true
   local luaj = require('luaj')
-  local ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {dirPath}, "(Ljava/lang/String;)Ljava/lang/String;")
+  local ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {dirPath, hasFilename}, "(Ljava/lang/String;Z)Ljava/lang/String;")
   print('ddzPath => ', ok, fungamePath)
   return fungamePath
 end
@@ -333,11 +334,38 @@ ddz.loadSessionInfo = function()
   return sessionInfo
 end
 
-ddz.saveSessionInfo = function(sessionInfo)
+ddz.saveSessionInfo = function(sessionInfo, filename)
+  filename = filename or 'userinfo.json'
   local cjson = require('cjson.safe')
-  local filepath = ddz.getDataStorePath() .. '/userinfo.json'
+  local filepath = ddz.getDataStorePath() .. '/' .. filename
   print('filepath => ', filepath)
   local file = io.open(filepath, 'w+')
   file:write(cjson.encode(sessionInfo))
   file:close()
+end
+
+ddz.saveSessionInfo = function(sessionInfo, filename)
+  filename = filename or 'userinfo.json'
+  local cjson = require('cjson.safe')
+  local filepath = ddz.getDataStorePath() .. '/' .. filename
+  print('filepath => ', filepath)
+  local file = io.open(filepath, 'w+')
+  file:write(cjson.encode(sessionInfo))
+  file:close()
+end
+
+ddz.writeToFile = function(filename, data)
+  local filepath = ddz.getDataStorePath() .. '/' .. filename
+  ddz.mkdir(filepath, true)
+  local file = io.open(filepath, 'w+')
+  file:write(data)
+  file:close()
+end
+
+ddz.readFromFile = function(filename)
+  local fu = cc.FileUtils:getInstance()
+  local filepath = ddz.getDataStorePath() .. '/' .. filename
+  print('filepath => ', filepath)
+  local data = fu:getStringFromFile(filepath)
+  return data
 end

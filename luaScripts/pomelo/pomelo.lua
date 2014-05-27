@@ -68,6 +68,21 @@ function Pomelo:ctor(WebSocketClass)
 			client = {}
 		}
 	}
+
+	local _protos = ddz.readFromFile('protos.json')
+	if _protos ~= nil and #_protos > 0 then
+		self.data.protos = cjson.decode(_protos)
+		self.protoVersion = self.data.protos.version
+		if self.Protobuf then
+			self.Protobuf.init({
+				encoderProtos = self.data.protos.client, 
+				decoderProtos = self.data.protos.server,
+				protoVersion = self.data.protos.version
+			})
+		end
+
+	end
+
 	
 	self.heartbeatInterval = 0
 	self.heartbeatTimeout = 0
@@ -77,15 +92,15 @@ function Pomelo:ctor(WebSocketClass)
 	self.heartbeatTimeoutId = nil
 	
 	self.handshakeCallback = nil
-	self.handshakeBuffer = {
-		sys = {
-			type = JS_WS_CLIENT_TYPE,
-			version = JS_WS_CLIENT_VERSION,
-			protoVersion = self.protoVersion,
-		},
-		user = {
-		}
-	}
+	-- self.handshakeBuffer = {
+	-- 	sys = {
+	-- 		type = JS_WS_CLIENT_TYPE,
+	-- 		version = JS_WS_CLIENT_VERSION,
+	-- 		protoVersion = self.protoVersion,
+	-- 	},
+	-- 	user = {
+	-- 	}
+	-- }
 	
 	self.initCallback = nil
 	
@@ -456,6 +471,9 @@ function Pomelo:initData(data)
 	
 	-- Init protobuf protos
 	if protos then
+
+		ddz.writeToFile('protos.json', cjson.encode(protos))
+
 		self.data.protos = {
 			server = protos.server or {},
 			client = protos.client or {},
