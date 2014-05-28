@@ -121,6 +121,10 @@ function GameScene:initPlayers()
 end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+  self.selfPlayerInfo = pokeGame:getPlayerInfo(self.selfUserId)
+  self.prevPlayerInfo = self.selfPlayerInfo.prevPlayer
+  self.nextPlayerInfo = self.selfPlayerInfo.nextPlayer
+
   self.selfPlayerInfo.lastCard = nil
   self.prevPlayerInfo.lastCard = nil
   self.nextPlayerInfo.lastCard = nil

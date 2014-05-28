@@ -70,7 +70,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     elseif userInfo.state == ddz.PlayerStatus.ReGrabLord then
       userUI.Status:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
     end
-    userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None)
+    userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None and userInfo.state ~= ddz.PlayerStatus.Playing)
 
     if userInfo.role == ddz.PlayerRoles.Farmer then
       userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)

@@ -7,17 +7,21 @@ function SGamingActionsPlugin.bind(theClass)
     self:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   end
 
-  function theClass:onGrabbingLordMsg(userId, nextUserId, isGiveup, isFinish)
+  function theClass:onGrabbingLordMsg(userId, nextUserId, pokeGame, isGiveup, isGrabLordFinish)
+    print('userId: ', userId, self.selfPlayerInfo.userId, self.prevPlayerInfo.userId, self.nextPlayerInfo.userId)
     if userId == self.selfPlayerInfo.userId then
+      --dump(self.selfPlayerInfo, 'selfPlayerInfo')
       self:updateSelfPlayerUI(self.selfPlayerInfo)
     elseif userId == self.prevPlayerInfo.userId then
+      --dump(self.prevPlayerInfo, 'self.prevPlayerInfo')
       self:updatePrevPlayerUI(self.prevPlayerInfo)
     elseif userId == self.nextPlayerInfo.userId then
+      --dump(self.nextPlayerInfo, 'self.nextPlayerInfo')
       self:updateNextPlayerUI(self.nextPlayerInfo)
     else
       -- error
     end
-    if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId and not isGiveup then
+    if nextUserId == self.selfPlayerInfo.userId and not isGiveup then
       self:showGrabLordButtonsPanel(true, self.pokeGame.grabbingLord.lordValue)
       --self:onGameOverMsg({})
     end
@@ -30,10 +34,17 @@ function SGamingActionsPlugin.bind(theClass)
       self:hideSelfPokecards()
     end
 
-    if isFinish then
+    if isGrabLordFinish then
       self.LordCard1:loadTexture(self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
       self.LordCard2:loadTexture(self.pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
       self.LordCard3:loadTexture(self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+
+      if pokeGame.lordPlayer.userId == self.selfPlayerInfo.userId then
+        table.append(self.selfPlayerInfo.pokeCards, pokeGame.lordPokeCards)
+        table.sort(self.selfPlayerInfo.pokeCards, sortDescBy('index'))
+        self.pokeCards = self.selfPlayerInfo.pokeCards
+      end
+
       self:doUpdatePlayersUI()
 
       self:showGrabLordButtonsPanel(false)

@@ -53,6 +53,7 @@ function RemoteGameService:onServerPlayerReadyMsg(data)
   dump(data, '[RemoteGameService:onServerPlayerReadyMsg] data => ')
   local players = {}
   for i = 1, #data.players do
+    --self.playersInfo
     table.insert(players, GamePlayer.new(data.players[i]))
   end
   utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players)
@@ -112,14 +113,41 @@ function RemoteGameService:playCard(userId, pokeIdChars, callback)
 end
 
 function RemoteGameService:onServerGrabbingLordMsg(data)
-
-  dump(data, '[RemoteGameService:onServerGrabbingLordMsg] data')
-  do return false end
-
   local this = self
   local userId = data.userId
-  local player = self.playersMap[userId]
+  -- local player = self.playersMap[userId]
   local pokeGame = self.pokeGame
+  pokeGame.currentSeqNo = data.seqNo
+
+  dump(data, '[RemoteGameService:onServerGrabbingLordMsg] data')
+
+  for i=1, #data.players do 
+    pokeGame:updatePlayerInfo(data.players[i])
+  end
+
+  --dump(pokeGame, '[RemoteGameService:onServerGrabbingLordMsg] pokeGame')
+
+  if data.lordValue > pokeGame.lordValue then
+    pokeGame.lordValue = data.lordValue
+    utils.invokeCallback(self.msgReceiver.onLordValueUpgrade, 
+      self.msgReceiver,
+      pokeGame.lordValue)
+  end
+
+  if data.lordUserId > 0 then
+    pokeGame.lordUserId = data.lordUserId
+    pokeGame.lordPokeCards = PokeCard.pokeCardsFromChars(data.lordPokeCards)
+    pokeGame.lordPlayer = pokeGame:getPlayerInfo(pokeGame.lordUserId)
+    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, pokeGame, false, true)
+  else
+    -- 未产生地主
+    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, pokeGame, false, false)
+
+  end
+
+
+  do return false end
+
   --player.lordValue = data.lordValue
   if pokeGame.grabbingLord.lordValue == 0 then
     if data.lordActionValue == ddz.Actions.GrabbingLord.None then
@@ -215,10 +243,11 @@ end
 function RemoteGameService:onServerGameStartMsg(data)
   dump(data, "[RemoteGameService:onServerGameStartMsg] data => ")
   local this = self
-  self.pokeGame = data.pokeGame
+  self.pokeGame = PokeGame.createWithGameData(data.pokeGame)
   local nextPlayerId = data.nextUserId
   local seqNo = data.seqNo
   self.pokeGame.currentSeqNo = seqNo
+  self.pokeGame.nextPlayerId = nextPlayerId
 
   if self.msgReceiver.onStartNewGameMsg then
     self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId)

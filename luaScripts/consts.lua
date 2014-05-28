@@ -12,7 +12,8 @@ ddz.PlayerStatus = {
   NoGrabLord = 2,       -- 不叫
   GrabLord = 3,         -- 叫地主
   PassGrabLord = 4,     -- 不抢
-  ReGrabLord = 5        -- 抢地主
+  ReGrabLord = 5,       -- 抢地主
+  Playing = 6
 }
 
 ddz.PlayerRoles = {

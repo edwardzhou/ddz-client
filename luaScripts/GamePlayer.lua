@@ -3,20 +3,24 @@ local CardAnalyzer = require('CardAnalyzer')
 local GamePlayer = class('GamePlayer')
 
 function GamePlayer:ctor(playerInfo)
+  self.pokeCards = {}
+  self.headIcon = nil
+  self:init(playerInfo)
+end
+
+function GamePlayer:init(playerInfo)
   playerInfo = playerInfo or {}
-  self.nickName = playerInfo.nickName
-  self.userId = playerInfo.userId
+  self.nickName = playerInfo.nickName or self.nickName
+  self.userId = playerInfo.userId or self.userId
   if playerInfo.pokeCards then
     self.pokeCards = playerInfo.pokeCards
   elseif playerInfo.pokeIdChars then
     self.pokeCards = PokeCard.getByPokeChars(playerInfo.pokeIdChars)
-  else
-    self.pokeCards = {}
   end
-  self.headIcon = playerInfo.headIcon
-  self.role = playerInfo.role
-  self.state = playerInfo.state
-  self.robot = playerInfo.robot or false
+  self.headIcon = playerInfo.headIcon or self.headIcon
+  self.role = playerInfo.role or self.role
+  self.state = playerInfo.state or self.state
+  self.robot = playerInfo.robot or self.robot
 end
 
 function GamePlayer:isFarmer()
