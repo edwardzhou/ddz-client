@@ -11,6 +11,7 @@ function RemoteGameService:ctor(msgReceiver)
   self._onServerPlayerJoinMsg = __bind(self.onServerPlayerJoinMsg, self)
   self._onServerPlayerReadyMsg = __bind(self.onServerPlayerReadyMsg, self)
   self._onServerGameStartMsg = __bind(self.onServerGameStartMsg, self)
+  self._onServerGrabLordMsg = __bind(self.onServerGrabbingLordMsg, self)
   self:setupPomeloEvents()
 end
 
@@ -22,12 +23,14 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onPlayerJoin', self._onServerPlayerJoinMsg)
   ddz.pomeloClient:on('onPlayerReady', self._onServerPlayerReadyMsg)
   ddz.pomeloClient:on('onGameStart', self._onServerGameStartMsg)
+  ddz.pomeloClient:on('onGrabLord', self._onServerGrabLordMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onPlayerJoin', self._onServerPlayerJoinMsg)
   ddz.pomeloClient:off('onPlayerReady', self._onServerPlayerReadyMsg)
   ddz.pomeloClient:off('onGameStart', self._onServerGameStartMsg)
+  ddz.pomeloClient:off('onGrabLord', self._onServerGrabLordMsg)
 end
 
 function RemoteGameService:onServerPlayerJoinMsg(data)
@@ -100,6 +103,7 @@ function RemoteGameService:grabLord(userId, lordActionValue)
   }
 
   ddz.pomeloClient:request('ddz.gameHandler.grabLord', params, function(data)
+      dump(data, '[RemoteGameService:grabLord] ddz.gameHandler.grabLord => ')
     end)
 end
 
@@ -108,6 +112,10 @@ function RemoteGameService:playCard(userId, pokeIdChars, callback)
 end
 
 function RemoteGameService:onServerGrabbingLordMsg(data)
+
+  dump(data, '[RemoteGameService:onServerGrabbingLordMsg] data')
+  do return false end
+
   local this = self
   local userId = data.userId
   local player = self.playersMap[userId]
