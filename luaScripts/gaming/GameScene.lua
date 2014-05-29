@@ -80,6 +80,8 @@ function GameScene:init()
   self:initPlayers()
   self:showButtonsPanel(false)
   self:showGrabLordButtonsPanel(false)
+
+  self.LabelBetBase:setStringValue(ddz.selectedRoom.ante)
 end
 
 function GameScene:initKeypadHandler()
@@ -117,7 +119,7 @@ function GameScene:initPlayers()
   self.selfUserId = ddz.GlobalSettings.userInfo.userId
   local this = self
 
-  this.gameService:enterRoom(ddz.selectedRoomId, __bind(self.onServerPlayerJoin, self))
+  this.gameService:enterRoom(ddz.selectedRoom.roomId, __bind(self.onServerPlayerJoin, self))
 end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
@@ -136,7 +138,7 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self:doUpdatePlayersUI()
   self.ButtonReady:setVisible(false)
   self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
-  self.LabelBetBase:setStringValue(pokeGame.betBase)
+  -- self.LabelBetBase:setStringValue(pokeGame.betBase)
   -- self:showButtonsPanel(nextUserId == self.selfUserId)
   self:showCards()
   self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)

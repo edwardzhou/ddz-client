@@ -87,7 +87,8 @@ function HallScene:init()
       dump(gameRoom, 'selected room: ')
       ddz.pomeloClient:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
           dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
-          ddz.selectedRoomId = gameRoom.roomId
+          --ddz.selectedRoomId = gameRoom.roomId
+          ddz.selectedRoom = gameRoom
           local createGameScene = require('gaming.GameScene')
           local gameScene = createGameScene()
           cc.Director:getInstance():replaceScene(gameScene)
