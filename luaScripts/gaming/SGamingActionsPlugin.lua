@@ -56,19 +56,19 @@ function SGamingActionsPlugin.bind(theClass)
 
   end
 
-  function theClass:onPlayCardMsg(userId, pokeIdChars)
-    local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
-    local card = Card.create(pokeCards)
-    local nextPlayer = nil
+  function theClass:onPlayCardMsg(userId, card, nextPlayer)
+    -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
+    -- local card = Card.create(pokeCards)
+    -- local nextPlayer = self.pokeGame:
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
-      nextPlayer = self.nextPlayerInfo
+      -- nextPlayer = self.nextPlayerInfo
     elseif userId == self.prevPlayerInfo.userId then
       self:onPrevPlayerPlayCard(card)
-      nextPlayer = self.selfPlayerInfo
+      -- nextPlayer = self.selfPlayerInfo
     elseif userId == self.nextPlayerInfo.userId then
       self:onNextPlayerPlayCard(card)
-      nextPlayer = self.prevPlayerInfo
+      -- nextPlayer = self.prevPlayerInfo
     else
       -- error
     end
@@ -77,7 +77,7 @@ function SGamingActionsPlugin.bind(theClass)
       self:hideCard(nextPlayer.lastCard)
     end
 
-    if self.pokeGame.currentPlayer.userId == self.selfPlayerInfo.userId then
+    if nextPlayer.userId == self.selfPlayerInfo.userId then
       self:showButtonsPanel(true)
     end
 
@@ -89,7 +89,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:selfPlayCardEffect(card)
     self:updateSelfPlayerUI(self.selfPlayerInfo)
     self.selfPlayerInfo.lastCard = card
-    self.selfPlayerInfo:analyzePokecards()
+    --self.selfPlayerInfo:analyzePokecards()
   end
 
   function theClass:onPrevPlayerPlayCard(card)

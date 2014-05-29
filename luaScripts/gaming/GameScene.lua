@@ -25,7 +25,7 @@ end
 
 function GameScene:ctor(...)
 
-  self.gameService = GameService.new(self)
+  self.gameService = GameService.new(self, ddz.GlobalSettings.userInfo.userId)
 
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
   self.origin = cc.Director:getInstance():getVisibleOrigin()
@@ -131,6 +131,7 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.pokeGame = pokeGame
   self.selfPlayerInfo:setPokeIdChars(pokeIdChars)
   self.pokeCards = self.selfPlayerInfo.pokeCards
+  table.sort(self.pokeCards, sortDescBy('index'))
   self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
   self.ButtonReady:setVisible(false)

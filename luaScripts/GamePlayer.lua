@@ -16,7 +16,9 @@ function GamePlayer:init(playerInfo)
     self.pokeCards = playerInfo.pokeCards
   elseif playerInfo.pokeIdChars then
     self.pokeCards = PokeCard.getByPokeChars(playerInfo.pokeIdChars)
+    table.sort(self.pokeCards, sortDescBy('index'))
   end
+  self.pokeCount = playerInfo.pokeCount or self.pokeCount
   self.headIcon = playerInfo.headIcon or self.headIcon
   self.role = playerInfo.role or self.role
   self.state = playerInfo.state or self.state

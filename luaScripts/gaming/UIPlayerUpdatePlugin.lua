@@ -79,7 +79,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
     userUI.Role:setVisible(userInfo.role and userInfo.role ~= ddz.PlayerRoles.None)
 
-    userUI.PokeCount:setText(#userInfo.pokeCards)
+    userUI.PokeCount:setText(userInfo.pokeCount)
 
   end
 end

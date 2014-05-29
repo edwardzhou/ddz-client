@@ -6,12 +6,14 @@ local utils = require('utils.utils')
 
 RemoteGameService = class('GameService')
 
-function RemoteGameService:ctor(msgReceiver)
+function RemoteGameService:ctor(msgReceiver, selfUserId)
+  self.selfUserId = selfUserId
   self.msgReceiver = msgReceiver or {}
   self._onServerPlayerJoinMsg = __bind(self.onServerPlayerJoinMsg, self)
   self._onServerPlayerReadyMsg = __bind(self.onServerPlayerReadyMsg, self)
   self._onServerGameStartMsg = __bind(self.onServerGameStartMsg, self)
   self._onServerGrabLordMsg = __bind(self.onServerGrabbingLordMsg, self)
+  self._onServerPlayCardMsg = __bind(self.onServerPlayCardMsg, self)
   self:setupPomeloEvents()
 end
 
@@ -24,6 +26,7 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onPlayerReady', self._onServerPlayerReadyMsg)
   ddz.pomeloClient:on('onGameStart', self._onServerGameStartMsg)
   ddz.pomeloClient:on('onGrabLord', self._onServerGrabLordMsg)
+  ddz.pomeloClient:on('onPlayCard', self._onServerPlayCardMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
@@ -31,6 +34,7 @@ function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onPlayerReady', self._onServerPlayerReadyMsg)
   ddz.pomeloClient:off('onGameStart', self._onServerGameStartMsg)
   ddz.pomeloClient:off('onGrabLord', self._onServerGrabLordMsg)
+  ddz.pomeloClient:off('onPlayCard', self._onServerPlayCardMsg)
 end
 
 function RemoteGameService:onServerPlayerJoinMsg(data)
@@ -109,7 +113,14 @@ function RemoteGameService:grabLord(userId, lordActionValue)
 end
 
 function RemoteGameService:playCard(userId, pokeIdChars, callback)
-  self:onServerPlayCardMsg({userId = userId, pokeIdChars = pokeIdChars})
+  --self:onServerPlayCardMsg({userId = userId, pokeIdChars = pokeIdChars})
+  local params = {
+    card = pokeIdChars,
+    seqNo = self.pokeGame.currentSeqNo
+  }
+  ddz.pomeloClient:request('ddz.gameHandler.playCard', params, function(data)
+      dump(data, '[RemoteGameService:playCard] ddz.gameHandler.playCard response ')
+    end)
 end
 
 function RemoteGameService:onServerGrabbingLordMsg(data)
@@ -142,102 +153,7 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
   else
     -- 未产生地主
     self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, pokeGame, false, false)
-
   end
-
-
-  do return false end
-
-  --player.lordValue = data.lordValue
-  if pokeGame.grabbingLord.lordValue == 0 then
-    if data.lordActionValue == ddz.Actions.GrabbingLord.None then
-      player.status = ddz.PlayerStatus.NoGrabLord
-    else
-      player.status = ddz.PlayerStatus.GrabLord
-      pokeGame.grabbingLord.lordValue = 3
-      pokeGame.grabbingLord.firstLordPlayer = player
-      pokeGame.grabbingLord.lordPlayer = player
-      self.msgReceiver:onLordValueUpgrade(pokeGame.grabbingLord.lordValue)
-    end
-  else
-    if data.lordActionValue == ddz.Actions.GrabbingLord.None then
-      player.status = ddz.PlayerStatus.PassGrabLord
-    else
-      player.status = ddz.PlayerStatus.ReGrabLord
-      pokeGame.grabbingLord.lordValue = pokeGame.grabbingLord.lordValue * 2
-      pokeGame.grabbingLord.lordPlayer = player
-      self.msgReceiver:onLordValueUpgrade(pokeGame.grabbingLord.lordValue)
-    end
-  end
-
-  local nextPlayer = self.pokeGame:setToNextPlayer()
-  if nextPlayer.status == ddz.PlayerStatus.NoGrabLord then
-    nextPlayer = self.pokeGame:setToNextPlayer()
-  end
-
-  local isGiveup = (self.pokeGame.grabbingLord.firstPlayer == nextPlayer) and 
-                    (self.pokeGame.grabbingLord.lordValue == 0)
-  local isGrabLordFinish = false
-  if self.pokeGame.grabbingLord.lordValue == 3 then
-    isGrabLordFinish = self.pokeGame.grabbingLord.firstPlayer == nextPlayer
-  elseif self.pokeGame.grabbingLord.lordValue > 3 then
-    isGrabLordFinish = self.pokeGame.grabbingLord.firstLordPlayer == player
-  end
-
-  if isGrabLordFinish then
-    self.pokeGame.lordValue = self.pokeGame.grabbingLord.lordValue
-    local lordPlayer = self.pokeGame.grabbingLord.lordPlayer
-    self.pokeGame:setNextPlayer(lordPlayer)
-    dump(self.pokeGame.lordPokeCards, 'lordPokeCards')
-    --dump(lordPlayer, 'lordPlayer')
-    table.append(lordPlayer.pokeCards, self.pokeGame.lordPokeCards)
-    table.sort(lordPlayer.pokeCards, sortDescBy('index'))
-    --dump(lordPlayer.pokeCards, 'lordPlayer.pokeCards')
-    lordPlayer.role = ddz.PlayerRoles.Lord 
-    lordPlayer.nextPlayer.role = ddz.PlayerRoles.Farmer
-    lordPlayer.prevPlayer.role = ddz.PlayerRoles.Farmer
-    self.pokeGame.lordPlayer = lordPlayer
-    lordPlayer:analyzePokecards()
-    self.playersInfo[1].status = ddz.PlayerStatus.None
-    self.playersInfo[2].status = ddz.PlayerStatus.None
-    self.playersInfo[3].status = ddz.PlayerStatus.None
-  end
-
-  if self.msgReceiver.onGrabbingLordMsg then
-    self.msgReceiver:onGrabbingLordMsg(userId, nextPlayer.userId, isGiveup, isGrabLordFinish)
-  end
-
-  if isGiveup then
-    -- 流局
-    scheduler.performWithDelayGlobal(function() 
-        this.pokeGame:restart()
-        this:onServerStartNewGameMsg({pokeGame = self.pokeGame})
-      end, 0.7)
-
-    return
-  end
-
-  if isGrabLordFinish then
-    if self.pokeGame.lordPlayer.robot then
-      local this = self
-      scheduler.performWithDelayGlobal( 
-        AI.playCard, 
-        {this, this, this.pokeGame.lordPlayer},
-        math.random() * 10 % 2)
-      -- AI.playCard(self, self.pokeGame, self.pokeGame.lordPlayer)
-    end
-
-    return
-  end
-
-  if nextPlayer.robot then
-    AI.grabLord(self, self.pokeGame, nextPlayer)
-      -- scheduler.performWithDelayGlobal( 
-      --   AI.playCard, 
-      --   {self, self.pokeGame, nextPlayer},
-      --   math.random() * 10 % 2)
-  end  
-
 end
 
 function RemoteGameService:onServerGameStartMsg(data)
@@ -252,64 +168,88 @@ function RemoteGameService:onServerGameStartMsg(data)
   if self.msgReceiver.onStartNewGameMsg then
     self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId)
   end
-
-  -- if nextPlayer.robot then
-  --   AI.grabLord(self, self.pokeGame, nextPlayer)
-  -- end
-
-  -- if nextPlayer.robot then
-  --   scheduler.performWithDelayGlobal(function() 
-  --     local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
-  --     this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-  --   end, math.random(5) - 0.5)
-  -- end
 end
 
 function RemoteGameService:onServerPlayCardMsg(data)
+  dump(data, "[RemoteGameService:onServerPlayCardMsg] data => ")
   local this = self
-  local userId = data.userId
-  local pokeIdChars = data.pokeIdChars
-  local player = self.playersMap[userId]
-  local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
-  table.removeItems(player.pokeCards, pokeCards)
-  player:analyzePokecards()
-  local nextPlayer = self.pokeGame:setToNextPlayer()
+  local MR = self.msgReceiver
+  local pokeGame = self.pokeGame
+  local player = pokeGame:getPlayerInfo(data.player.userId)
+  local nextPlayer = pokeGame:getPlayerInfo(data.nextUserId)
+  local pokeChars = data.pokeChars
+  player:init(data.player)
+  if (data.nextUserId == self.selfUserId) then
+    pokeGame.currentSeqNo = data.seqNo
+  end
 
+  local pokeCards = PokeCard.getByPokeChars(pokeChars)
   local card = Card.create(pokeCards)
-  if card:isBomb() or card:isRocket() then
-    self.pokeGame.bombs = self.pokeGame.bombs + 1
-    self.pokeGame.lordValue = self.pokeGame.lordValue * 2
-    self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
+
+  if self.selfUserId == player.userId then
+    table.removeItems(player.pokeCards, pokeCards)
+    player:analyzePokecards()
   end
 
-  self.pokeGame.prevPlay = {player = player, card = card}
+  --local nextPlayer = self.pokeGame:setToNextPlayer()
+
+  -- if card:isBomb() or card:isRocket() then
+  --   self.pokeGame.bombs = self.pokeGame.bombs + 1
+  --   self.pokeGame.lordValue = self.pokeGame.lordValue * 2
+  --   self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
+  -- end
+
+  pokeGame.prevPlay = {player = player, card = card}
   if card:isValid() then
-    self.pokeGame.lastPlay = {player = player, card = card}
+    pokeGame.lastPlay = {player = player, card = card}
   end
 
-  if self.msgReceiver.onPlayCardMsg then
-    self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
-  end
+  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer)
 
-  if #player.pokeCards == 0 then
-    local balance = self:getGameBalance(self.pokeGame, player)
-    scheduler.performWithDelayGlobal(function ()
-        this:onServerGameOverMsg({balance = balance})
-      end, 0.3)
+  -- local this = self
+  -- local userId = data.userId
+  -- local pokeIdChars = data.pokeIdChars
+  -- local player = self.playersMap[userId]
+  -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
+  -- table.removeItems(player.pokeCards, pokeCards)
+  -- player:analyzePokecards()
+  -- local nextPlayer = self.pokeGame:setToNextPlayer()
 
-    return
-  end
+  -- local card = Card.create(pokeCards)
+  -- if card:isBomb() or card:isRocket() then
+  --   self.pokeGame.bombs = self.pokeGame.bombs + 1
+  --   self.pokeGame.lordValue = self.pokeGame.lordValue * 2
+  --   self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
+  -- end
 
-  if nextPlayer.robot then
-    scheduler.performWithDelayGlobal(
-      AI.playCard, 
-      {this, this.pokeGame, nextPlayer},
-      math.random()*10 % 2)
-    -- scheduler.performWithDelayGlobal(function() 
-    --   local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
-    --   this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-    -- end, math.random(2) - 0.5)
-  end
+  -- self.pokeGame.prevPlay = {player = player, card = card}
+  -- if card:isValid() then
+  --   self.pokeGame.lastPlay = {player = player, card = card}
+  -- end
+
+  -- if self.msgReceiver.onPlayCardMsg then
+  --   self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
+  -- end
+
+  -- if #player.pokeCards == 0 then
+  --   local balance = self:getGameBalance(self.pokeGame, player)
+  --   scheduler.performWithDelayGlobal(function ()
+  --       this:onServerGameOverMsg({balance = balance})
+  --     end, 0.3)
+
+  --   return
+  -- end
+
+  -- if nextPlayer.robot then
+  --   scheduler.performWithDelayGlobal(
+  --     AI.playCard, 
+  --     {this, this.pokeGame, nextPlayer},
+  --     math.random()*10 % 2)
+  --   -- scheduler.performWithDelayGlobal(function() 
+  --   --   local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
+  --   --   this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
+  --   -- end, math.random(2) - 0.5)
+  -- end
 end
 
 function RemoteGameService:onServerGameOverMsg(data)
