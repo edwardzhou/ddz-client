@@ -14,6 +14,7 @@ function RemoteGameService:ctor(msgReceiver, selfUserId)
   self._onServerGameStartMsg = __bind(self.onServerGameStartMsg, self)
   self._onServerGrabLordMsg = __bind(self.onServerGrabbingLordMsg, self)
   self._onServerPlayCardMsg = __bind(self.onServerPlayCardMsg, self)
+  self._onServerLordValueUpgradeMsg = __bind(self.onServerLordValueUpgradeMsg, self)
   self:setupPomeloEvents()
 end
 
@@ -27,6 +28,7 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onGameStart', self._onServerGameStartMsg)
   ddz.pomeloClient:on('onGrabLord', self._onServerGrabLordMsg)
   ddz.pomeloClient:on('onPlayCard', self._onServerPlayCardMsg)
+  ddz.pomeloClient:on('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
@@ -35,6 +37,7 @@ function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onGameStart', self._onServerGameStartMsg)
   ddz.pomeloClient:off('onGrabLord', self._onServerGrabLordMsg)
   ddz.pomeloClient:off('onPlayCard', self._onServerPlayCardMsg)
+  ddz.pomeloClient:off('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
 end
 
 function RemoteGameService:onServerPlayerJoinMsg(data)
@@ -61,6 +64,15 @@ function RemoteGameService:onServerPlayerReadyMsg(data)
     table.insert(players, GamePlayer.new(data.players[i]))
   end
   utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players)
+  -- if self.msgReceiver.onServerPlayerJoin then
+  --   self.msgReceiver:onServerPlayerJoin(players)
+  -- end
+end
+
+function RemoteGameService:onServerLordValueUpgradeMsg(data)
+  dump(data, '[RemoteGameService:onServerLordValueUpgrade] data => ')
+  self.pokeGame.lordValue = data.lordValue;
+  utils.invokeCallback(self.msgReceiver.onServerLordValueUpgrade, self.msgReceiver, data.lordValue)
   -- if self.msgReceiver.onServerPlayerJoin then
   --   self.msgReceiver:onServerPlayerJoin(players)
   -- end
