@@ -26,6 +26,8 @@ THE SOFTWARE.
 ****************************************************************************/
 package com.fungame.DDZ;
 
+import java.io.File;
+
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
@@ -53,6 +55,10 @@ public class AppActivity extends Cocos2dxActivity {
 				System.out.println("Signature CharsString: " + sign.toCharsString());
 				System.out.println("Signature toString: " + sign.toString());
 			}
+//			File f = new File("/mnt/sdcard-ext");
+//			System.out.println(f.getAbsolutePath() + " writable " + f.canWrite());
+//			f = new File("/mnt/sdcard-ext/fungame/DDZ");
+//			System.out.println(f.getAbsolutePath() + " mkdirs " + f.mkdirs());
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

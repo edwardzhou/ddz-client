@@ -70,9 +70,9 @@ function RemoteGameService:onServerPlayerReadyMsg(data)
 end
 
 function RemoteGameService:onServerLordValueUpgradeMsg(data)
-  dump(data, '[RemoteGameService:onServerLordValueUpgrade] data => ')
+  dump(data, '[RemoteGameService:onServerLordValueUpgradeMsg] data => ')
   self.pokeGame.lordValue = data.lordValue;
-  utils.invokeCallback(self.msgReceiver.onServerLordValueUpgrade, self.msgReceiver, data.lordValue)
+  utils.invokeCallback(self.msgReceiver.onLordValueUpgrade, self.msgReceiver, data.lordValue)
   -- if self.msgReceiver.onServerPlayerJoin then
   --   self.msgReceiver:onServerPlayerJoin(players)
   -- end
@@ -131,7 +131,8 @@ function RemoteGameService:playCard(userId, pokeIdChars, callback)
     seqNo = self.pokeGame.currentSeqNo
   }
   ddz.pomeloClient:request('ddz.gameHandler.playCard', params, function(data)
-      dump(data, '[RemoteGameService:playCard] ddz.gameHandler.playCard response ')
+      dump(data, '[RemoteGameService:playCard] ddz.gameHandler.playCard response')
+      utils.invokeCallback(callback, data)
     end)
 end
 
@@ -150,12 +151,12 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
 
   --dump(pokeGame, '[RemoteGameService:onServerGrabbingLordMsg] pokeGame')
 
-  if data.lordValue > pokeGame.lordValue then
-    pokeGame.lordValue = data.lordValue
-    utils.invokeCallback(self.msgReceiver.onLordValueUpgrade, 
-      self.msgReceiver,
-      pokeGame.lordValue)
-  end
+  -- if data.lordValue > pokeGame.lordValue then
+  --   pokeGame.lordValue = data.lordValue
+  --   utils.invokeCallback(self.msgReceiver.onLordValueUpgrade, 
+  --     self.msgReceiver,
+  --     pokeGame.lordValue)
+  -- end
 
   if data.lordUserId > 0 then
     pokeGame.lordUserId = data.lordUserId

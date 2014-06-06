@@ -149,7 +149,11 @@ function UIButtonsPlugin.bind( theClass )
     end
 
     self:showButtonsPanel(false)
-    self.gameService:playCard(self.selfUserId, pokeIdChars)
+    self.gameService:playCard(self.selfUserId, pokeIdChars, function(data)
+        if data.result.retCode ~= 0 then
+          self:showButtonsPanel(true)
+        end
+      end)
   end
 
   function theClass:ButtonNoGrabLord_onClicked(sender, event)

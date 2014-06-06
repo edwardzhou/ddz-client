@@ -123,6 +123,7 @@ function GameScene:initPlayers()
 end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+  self:hideSelfPokecards()
   self.selfPlayerInfo = pokeGame:getPlayerInfo(self.selfUserId)
   self.prevPlayerInfo = self.selfPlayerInfo.prevPlayer
   self.nextPlayerInfo = self.selfPlayerInfo.nextPlayer
