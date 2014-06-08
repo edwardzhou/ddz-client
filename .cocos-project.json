@@ -1,1 +1,5 @@
-{"has_native": true, "project_type": "lua"}
+{
+  "has_native": true, 
+  "project_type": "lua",
+  "custom_step_script": "custom_build.py"
+}

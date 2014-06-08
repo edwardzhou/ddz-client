@@ -55,6 +55,10 @@ class CustomBuilder(object):
 
 def handle_event(event, tp, args):
   print('__handle_event', event, tp, args)
-  lua_src_dir = os.path.normpath(os.path.join(args["project-path"], "../../../luaScripts"))
-  assets_dir = args["assets-dir"]
-  print 'lua_src_dir: %s      \n assets_dir : %s ', %(lua_src_dir, assets_dir)
+  if event == 'post-copy-assets':
+    platform_proj_dir = args['platform-project-path']
+    lua_src_dir = os.path.normpath(os.path.join(args["project-path"], "luaScripts"))
+    print('lua_src_dir: ' , lua_src_dir)
+    assets_dir = args['assets-dir']
+    compile_resources(lua_src_dir, assets_dir)
+    generate_app_version(platform_proj_dir, assets_dir)
