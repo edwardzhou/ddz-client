@@ -41,24 +41,12 @@ def generate_app_version(proj_path, assets_dir):
   read_xml(proj_path, assets_dir)
 
 
-class CustomBuilder(object):
-  def __init__(self, builder):
-    self.builder = builder
-
-  def after_copy_assets(self):
-    print "Hi~, app_android_root is %s" % (self.builder.app_android_root)
-    lua_src_dir = os.path.normpath(os.path.join(self.builder.app_android_root, "../../../luaScripts"))
-    assets_dir = os.path.normpath(os.path.join(self.builder.app_android_root, 'assets'))
-    compile_resources(lua_src_dir, assets_dir)
-    generate_app_version(self.builder.app_android_root, assets_dir) 
-
-
 def handle_event(event, tp, args):
-  print('__handle_event', event, tp, args)
+  #print('__handle_event', event, tp, args)
   if event == 'post-copy-assets':
     platform_proj_dir = args['platform-project-path']
     lua_src_dir = os.path.normpath(os.path.join(args["project-path"], "luaScripts"))
-    print('lua_src_dir: ' , lua_src_dir)
+    #print('lua_src_dir: ' , lua_src_dir)
     assets_dir = args['assets-dir']
     compile_resources(lua_src_dir, assets_dir)
     generate_app_version(platform_proj_dir, assets_dir)

@@ -6,6 +6,9 @@ require 'consts'
 require 'GlobalSettings'
 require 'DebugSetting'
 
+cc.KeyCode.KEY_BACKSPACE    = 0x0006
+cc.KeyCode.KEY_MENU             = 0x000F
+
 -- cclog
 cclog = function(...)
     print(string.format(...))

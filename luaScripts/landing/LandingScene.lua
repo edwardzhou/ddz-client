@@ -1,4 +1,4 @@
-require 'CCBReaderLoad'
+--require 'CCBReaderLoad'
 require 'GuiConstants'
 require 'PokeCard'
 
@@ -35,7 +35,7 @@ function LandingScene:init()
   self:registerScriptHandler(function(event)
     print('event => ', event)
     if event == "enterTransitionFinish" then
-      --self:init()
+      self:initKeypadHandler()
     elseif event == 'exit' then
       -- umeng:stopSession()
     end
@@ -44,6 +44,7 @@ function LandingScene:init()
   local rootLayer = cc.Layer:create()
 
   self:addChild(rootLayer)
+  self.rootLayer = rootLayer
   
   local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing.json')
   print( 'uiRoot => ', uiRoot)
@@ -89,20 +90,28 @@ function LandingScene:init()
         cc.Director:getInstance():pushScene(scene)
       elseif buttonName == 'v_ButtonConnect' then
         self:connectToServer()
+      elseif buttonName == 'v_ButtonSignIn' then
+        cc.Director:getInstance():endToLua()
       end
     end
   end
   
   local buttonS = ccui.Helper:seekWidgetByName(uiRoot, 'ButtonS')
   buttonS:addTouchEventListener(touchEvent)
+  self.buttonS = buttonS
   
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonStart')
   buttonHolder:addTouchEventListener(touchEvent)
 
   local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonConnect')
   buttonConnect:addTouchEventListener(touchEvent)
+
+  local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignIn')
+  buttonConnect:addTouchEventListener(touchEvent)
   
-  self:initKeypadHandler()
+  buttonS:setVisible(false)
+
+  -- self:initKeypadHandler()
   
 --  local proxy = cc.CCBReader
   self:runAction(cc.Sequence:create(
@@ -142,6 +151,7 @@ function LandingScene:connectToServer()
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
+        self.buttonS:setVisible(true)
       end
     end)
   end
@@ -175,11 +185,12 @@ function LandingScene:connectToServer()
   if ddz.pomeloClient then
     ddz.pomeloClient:disconnect()
   end
-  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  self:connectTo('192.168.0.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
 end
 
 function LandingScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
+    print('[LandingScene:initKeypadHandler] keyCode : ', keyCode, 'event: ', event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
       --      if type(self.onMainMenu) == 'function' then
       --        self.onMainMenu()
@@ -195,8 +206,6 @@ function LandingScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
-
-
 
 end
 
