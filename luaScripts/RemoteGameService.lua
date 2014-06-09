@@ -15,6 +15,7 @@ function RemoteGameService:ctor(msgReceiver, selfUserId)
   self._onServerGrabLordMsg = __bind(self.onServerGrabbingLordMsg, self)
   self._onServerPlayCardMsg = __bind(self.onServerPlayCardMsg, self)
   self._onServerLordValueUpgradeMsg = __bind(self.onServerLordValueUpgradeMsg, self)
+  self._onServerGameOverMsg= __bind(self.onServerGameOverMsg, self)
   self:setupPomeloEvents()
 end
 
@@ -29,6 +30,7 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onGrabLord', self._onServerGrabLordMsg)
   ddz.pomeloClient:on('onPlayCard', self._onServerPlayCardMsg)
   ddz.pomeloClient:on('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
+  ddz.pomeloClient:on('onGameOver', self._onServerGameOverMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
@@ -38,6 +40,7 @@ function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onGrabLord', self._onServerGrabLordMsg)
   ddz.pomeloClient:off('onPlayCard', self._onServerPlayCardMsg)
   ddz.pomeloClient:off('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
+  ddz.pomeloClient:off('onGameOver', self._onServerGameOverMsg)
 end
 
 function RemoteGameService:onServerPlayerJoinMsg(data)
@@ -266,11 +269,17 @@ function RemoteGameService:onServerPlayCardMsg(data)
 end
 
 function RemoteGameService:onServerGameOverMsg(data)
-  local balance = data.balance
-  dump(balance, '[RemoteGameService:onServerGameOverMsg] balance', false, 3)
-  if self.msgReceiver.onGameOverMsg then
-    self.msgReceiver:onGameOverMsg(balance)
-  end
+  local balance = data
+  dump(data, '[RemoteGameService:onServerGameOverMsg] data')
+  local players = {}
+  players[data.players[1].userId] = data.players[1]
+  players[data.players[2].userId] = data.players[2]
+  players[data.players[3].userId] = data.players[3]
+  data.players = players
+  utils.invokeCallback(self.msgReceiver.onGameOverMsg, self.msgReceiver, balance)
+  -- if self.msgReceiver.onGameOverMsg then
+  --   self.msgReceiver:onGameOverMsg(balance)
+  -- end
 end
 
 function RemoteGameService:getGameBalance(pokeGame, winner)

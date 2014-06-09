@@ -77,7 +77,11 @@ function UIButtonsPlugin.bind( theClass )
 
   function theClass:ButtonPass_onClicked(sender, event)
     self:showButtonsPanel(false)
-    self.gameService:playCard(self.selfUserId, '')
+    self.gameService:playCard(self.selfUserId, '', function(data)
+        if data.result.retCode ~= 0 then
+          self:showButtonsPanel(true)
+        end
+      end)
   end
 
   function theClass:ButtonReset_onClicked(sender, event)

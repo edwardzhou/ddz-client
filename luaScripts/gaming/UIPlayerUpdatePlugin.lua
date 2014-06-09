@@ -52,7 +52,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
 
     userInfo =  userInfo or {}
-    userUI.Name:setText(userInfo.nickName or '')
+    userUI.Name:setString(userInfo.nickName or '')
     userUI.Name:setVisible(userInfo.nickName and userInfo.nickName ~= '')
     if userInfo.headIcon then
       userUI.Head:loadTexture(Res.Images.HeadIcons[userInfo.headIcon], ccui.TextureResType.localType)
@@ -79,7 +79,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
     userUI.Role:setVisible(userInfo.role and userInfo.role ~= ddz.PlayerRoles.None)
 
-    userUI.PokeCount:setText(userInfo.pokeCount)
+    userUI.PokeCount:setString(userInfo.pokeCount)
 
   end
 end

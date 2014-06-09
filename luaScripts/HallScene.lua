@@ -125,8 +125,8 @@ function HallScene:init()
     local labelRoomName = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomName'), 'ccui.Text')
     local labelRoomDesc = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomDesc'), 'ccui.Text')
 
-    labelRoomName:setText(gameRoom.roomName)
-    labelRoomDesc:setText(gameRoom.roomDesc)
+    labelRoomName:setString(gameRoom.roomName)
+    labelRoomDesc:setString(gameRoom.roomDesc)
 
     local roomArea = item:getChildByName('Image_RoomArea')
     roomArea:setTag(n)

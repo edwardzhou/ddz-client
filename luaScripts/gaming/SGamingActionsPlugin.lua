@@ -107,7 +107,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onLordValueUpgrade(newLordValue)
-    self.LabelLordValue:setStringValue(newLordValue)
+    self.LabelLordValue:setString(newLordValue)
     local scaleBy = cc.ScaleBy:create(0.15, 2.5)
     self.LabelLordValue:runAction(cc.Sequence:create(
         scaleBy,

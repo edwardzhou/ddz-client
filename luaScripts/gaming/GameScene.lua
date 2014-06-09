@@ -81,7 +81,7 @@ function GameScene:init()
   self:showButtonsPanel(false)
   self:showGrabLordButtonsPanel(false)
 
-  self.LabelBetBase:setStringValue(ddz.selectedRoom.ante)
+  self.LabelBetBase:setString(ddz.selectedRoom.ante)
 end
 
 function GameScene:initKeypadHandler()
@@ -109,7 +109,7 @@ function GameScene:showSysTime()
   self.timerAction = self:runAction(cc.RepeatForever:create(cc.Sequence:create(
     cc.CallFunc:create(function()
       local tm = os.date("*t")
-      self.SysTime:setText( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
+      self.SysTime:setString( string.format("%02d:%02d:%02d", tm.hour, tm.min, tm.sec) )
     end),
     cc.DelayTime:create(1.0)
   )))  
@@ -145,7 +145,7 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
-  self.LabelLordValue:setStringValue('0')
+  self.LabelLordValue:setString('0')
   self:showPlaycardClock()
 end
 

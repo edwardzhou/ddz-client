@@ -185,7 +185,7 @@ function LandingScene:connectToServer()
   if ddz.pomeloClient then
     ddz.pomeloClient:disconnect()
   end
-  self:connectTo('192.168.0.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
 end
 
 function LandingScene:initKeypadHandler()
