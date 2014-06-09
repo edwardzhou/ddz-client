@@ -17,7 +17,38 @@ function GameResultDialog:init()
   self:addChild(widget)
   self.widget = widget
   self:hide()
+
+  self:registerScriptHandler(function(event)
+    print('event => ', event)
+    if event == "enter" then
+      self:initKeypadHandler()
+    elseif event == 'exit' then
+      self:cleanup()
+    end
+  end)
+
 end
+
+function GameResultDialog:initKeypadHandler()
+  local this = self
+  local function onKeyReleased(keyCode, event)
+    if not this:isVisible() then
+      return
+    end
+
+    if keyCode == cc.KeyCode.KEY_BACKSPACE then
+      self:hide()
+      self.onCloseCallback(self)
+      --cc.Director:getInstance():popScene()
+    elseif keyCode == cc.KeyCode.KEY_MENU  then
+    end
+  end
+
+  local listener = cc.EventListenerKeyboard:create()
+  listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
+  self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
 
 function GameResultDialog:show(balance, selfPlayer)
   -- 修改标题
