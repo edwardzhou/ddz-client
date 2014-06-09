@@ -4,7 +4,7 @@ function UIClockCountDownPlugin.bind(theClass)
   local function doTickCount(_self, timeoutCallback)
     return function()
       _self._countDownTimes = _self._countDownTimes - 1
-      _self.CountDownLabel:setText(tostring(_self._countDownTimes))
+      _self.CountDownLabel:setString(tostring(_self._countDownTimes))
       if _self._countDownTimes < 0 then
         _self._clockAction = nil
         _self.CountDownClock:setVisible(false)
@@ -24,7 +24,7 @@ function UIClockCountDownPlugin.bind(theClass)
     local this = self
     times = times or 30
     self:stopCountdown()
-    self.CountDownLabel:setText(tostring(times))
+    self.CountDownLabel:setString(tostring(times))
     self.CountDownLabel:setColor(cc.c3b(0,0,0))
     self.CountDownClock:setPosition(pos)
     self.CountDownClock:setVisible(true)

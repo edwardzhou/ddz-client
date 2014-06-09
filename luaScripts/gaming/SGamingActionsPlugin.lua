@@ -35,9 +35,9 @@ function SGamingActionsPlugin.bind(theClass)
     end
 
     if isGrabLordFinish then
-      self.LordCard1:loadTexture(self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
+      self.LordCard1:loadTexture(self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
       self.LordCard2:loadTexture(self.pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
-      self.LordCard3:loadTexture(self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+      self.LordCard3:loadTexture(self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
 
       if pokeGame.lordPlayer.userId == self.selfPlayerInfo.userId then
         table.append(self.selfPlayerInfo.pokeCards, pokeGame.lordPokeCards)
@@ -127,6 +127,14 @@ function SGamingActionsPlugin.bind(theClass)
     self:doUpdatePlayersUI()
     self:showButtonsPanel(false)
     self:startSelfPlayerCountdown(nil, 15)
+
+    local prevPokeChars = balance.players[self.prevPlayerInfo.userId].pokeCards
+    local nextPokeChars = balance.players[self.nextPlayerInfo.userId].pokeCards
+    local prevPokeCards = PokeCard.getByPokeChars(prevPokeChars)
+    local nextPokeCards = PokeCard.getByPokeChars(nextPokeChars)
+
+    self:showPrevPlayerRestPokecards(prevPokeCards)
+    self:showNextPlayerRestPokecards(nextPokeCards)
 
     --self.self
     local this = self

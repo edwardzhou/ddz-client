@@ -341,8 +341,8 @@ function UIPokecardsPlugin.bind( theClass )
     end
   end
 
-  function theClass:showPrevPlayerRestPokecards()
-    local pokeCards = self.prevPlayerInfo.pokeCards
+  function theClass:showPrevPlayerRestPokecards(pokeCards)
+    pokeCards = pokeCards or self.prevPlayerInfo.pokeCards
     if #pokeCards == 0 then
       return
     end
@@ -367,8 +367,8 @@ function UIPokecardsPlugin.bind( theClass )
     end
   end
 
-  function theClass:showNextPlayerRestPokecards()
-    local pokeCards = self.nextPlayerInfo.pokeCards
+  function theClass:showNextPlayerRestPokecards(pokeCards)
+    pokeCards = pokeCards or self.nextPlayerInfo.pokeCards
     if #pokeCards == 0 then
       return
     end

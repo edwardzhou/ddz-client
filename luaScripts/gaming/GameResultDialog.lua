@@ -80,6 +80,7 @@ function GameResultDialog:show(balance, selfPlayer)
 
   self.LabelBetBase:setString(balance.ante)
   self.LabelLordValue:setString(balance.lordValue)
+  self.LabelRakeValue:setString(balance.rakeValue)
 
   self:setPosition(0,0)
   self:setVisible(true)
