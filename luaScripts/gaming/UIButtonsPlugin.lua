@@ -171,14 +171,26 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonConfig_onClicked(sender, event)
-    for i=1, #self.pokeCards do
-      local pokeCard = self.pokeCards[i]
-      local x,y = pokeCard.card_sprite:getPosition()
-      local visible = pokeCard.card_sprite:isVisible()
-      local str = string.format('%d => %s, pos: (%d, %d), visible: ', i, pokeCard.id, x,y)
-      print(str, visible)
+    -- for i=1, #self.pokeCards do
+    --   local pokeCard = self.pokeCards[i]
+    --   local x,y = pokeCard.card_sprite:getPosition()
+    --   local visible = pokeCard.card_sprite:isVisible()
+    --   local str = string.format('%d => %s, pos: (%d, %d), visible: ', i, pokeCard.id, x,y)
+    --   print(str, visible)
+    -- end
+
+    if self.gameOverDialog == nil then
+      local onClose = function() end
+      local onNewGame = function() end
+      self.gameOverDialog = require('gaming.GameResultDialog').new(onClose, onNewGame)
+      self:addChild(self.gameOverDialog)      
     end
+
+    self.gameOverDialog:setPosition(0,0)
+    self.gameOverDialog:setVisible(true)
+    self.gameOverDialog.keypadListener:setEnabled(true)
   end
+
 end
 
 return UIButtonsPlugin
