@@ -275,7 +275,7 @@ function RemoteGameService:onServerGameOverMsg(data)
   players[data.players[1].userId] = data.players[1]
   players[data.players[2].userId] = data.players[2]
   players[data.players[3].userId] = data.players[3]
-  data.players = players
+  data.playersMap = players
   utils.invokeCallback(self.msgReceiver.onGameOverMsg, self.msgReceiver, balance)
   -- if self.msgReceiver.onGameOverMsg then
   --   self.msgReceiver:onGameOverMsg(balance)

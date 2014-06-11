@@ -122,14 +122,14 @@ function SGamingActionsPlugin.bind(theClass)
     self:stopCountdown()
 
     self.selfPlayerInfo.status = ddz.PlayerStatus.None
-    self.prevPlayerInfo.status = ddz.PlayerStatus.Ready
-    self.nextPlayerInfo.status = ddz.PlayerStatus.Ready
+    self.prevPlayerInfo.status = ddz.PlayerStatus.None
+    self.nextPlayerInfo.status = ddz.PlayerStatus.None
     self:doUpdatePlayersUI()
     self:showButtonsPanel(false)
     self:startSelfPlayerCountdown(nil, 15)
 
-    local prevPokeChars = balance.players[self.prevPlayerInfo.userId].pokeCards
-    local nextPokeChars = balance.players[self.nextPlayerInfo.userId].pokeCards
+    local prevPokeChars = balance.playersMap[self.prevPlayerInfo.userId].pokeCards
+    local nextPokeChars = balance.playersMap[self.nextPlayerInfo.userId].pokeCards
     local prevPokeCards = PokeCard.getByPokeChars(prevPokeChars)
     local nextPokeCards = PokeCard.getByPokeChars(nextPokeChars)
 
@@ -153,10 +153,10 @@ function SGamingActionsPlugin.bind(theClass)
       self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
       self:addChild(self.gameResultPanel)
     end
-    scheduler.performWithDelayGlobal(function() 
+    --scheduler.performWithDelayGlobal(function() 
         self.ButtonReady:setVisible(true)
         this.gameResultPanel:show(balance, this.selfPlayerInfo)
-      end, 1)
+      --end, 1)
   end
 
 end

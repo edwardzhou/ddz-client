@@ -78,21 +78,43 @@ function GameResultDialog:show(balance, selfPlayer)
     end
   end
 
+  local selfResult
+  local prevResult
+  local nextResult
+
+  if balance.players[1].userId == selfPlayer.userId then
+    selfResult = balance.players[1]
+    prevResult = balance.players[2]
+    nextResult = balance.players[3]
+  elseif balance.players[2].userId == selfPlayer.userId then
+    selfResult = balance.players[2]
+    prevResult = balance.players[1]
+    nextResult = balance.players[3]
+  else
+    selfResult = balance.players[3]
+    prevResult = balance.players[1]
+    nextResult = balance.players[2]    
+  end
+  -- local selfResult = balance.players[selfPlayer.userId].score
+  -- local prevPlayer = selfPlayer.prevPlayer
+  -- local nextPlayer = selfPlayer.nextPlayer
+
+
   -- 显示得分
-  local selfResult = balance.players[selfPlayer.userId].score
-  local prevResult = balance.players[selfPlayer.prevPlayer.userId].score
-  local nextResult = balance.players[selfPlayer.nextPlayer.userId].score
-  selfResult = string.format('%+d', selfResult)
-  prevResult = string.format('%+d', prevResult)
-  nextResult = string.format('%+d', nextResult)
-  self.LabelSelfPlayerResult:setString(selfResult)
-  self.LabelPrevPlayerResult:setString(prevResult)
-  self.LabelNextPlayerResult:setString(nextResult)
+  local selfScore = selfResult.score
+  local prevScore = prevResult.score
+  local nextScore = nextResult.score
+  selfScore = string.format('%+d', selfScore)
+  prevScore = string.format('%+d', prevScore)
+  nextScore = string.format('%+d', nextScore)
+  self.LabelSelfPlayerResult:setString(selfScore)
+  self.LabelPrevPlayerResult:setString(prevScore)
+  self.LabelNextPlayerResult:setString(nextScore)
 
   -- 显示昵称
   self.LabelSelfPlayerName:setString(selfPlayer.nickName)
-  self.LabelPrevPlayerName:setString(selfPlayer.prevPlayer.nickName)
-  self.LabelNextPlayerName:setString(selfPlayer.nextPlayer.nickName)
+  self.LabelPrevPlayerName:setString(prevResult.nickName)
+  self.LabelNextPlayerName:setString(nextResult.nickName)
 
   -- 显示底数、倍数和佣金
   self.LabelBetBase:setString(balance.ante)
