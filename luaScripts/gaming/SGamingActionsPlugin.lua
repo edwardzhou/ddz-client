@@ -126,6 +126,7 @@ function SGamingActionsPlugin.bind(theClass)
     self.nextPlayerInfo.status = ddz.PlayerStatus.None
     self:doUpdatePlayersUI()
     self:showButtonsPanel(false)
+    self:showGrabLordButtonsPanel(false)
     self:startSelfPlayerCountdown(nil, 15)
 
     local prevPokeChars = balance.playersMap[self.prevPlayerInfo.userId].pokeCards

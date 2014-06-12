@@ -144,6 +144,7 @@ function LandingScene:connectToServer()
   local this = self
 
   local sessionInfo = ddz.loadSessionInfo() or {}
+  local sessionToken = sessionInfo.sessionToken
   local userId = sessionInfo.userId
 
   local function queryRooms()
@@ -167,7 +168,7 @@ function LandingScene:connectToServer()
     end
 
     local userId = ddz.GlobalSettings.session.userId    
-    local sessionToken = ddz.GlobalSettings.session.sessionToken
+    --local sessionToken = ddz.GlobalSettings.session.sessionToken
     local serverInfo = ddz.GlobalSettings.serverInfo
     self:connectTo(serverInfo.host, serverInfo.port, userId, sessionToken, onGameServerConnected)
   end
@@ -178,7 +179,16 @@ function LandingScene:connectToServer()
     elseif data.needSignIn then
       this:signIn(sessionInfo, connectToGameServer)
     else
-      queryEntry(sender, pomelo, data.user, data.server)
+      local userInfo = respData.user
+      local serverInfo = respData.server
+      ddz.GlobalSettings.userInfo = userInfo
+      ddz.GlobalSettings.session.userId = userInfo.userId
+      ddz.GlobalSettings.session.authToken = userInfo.authToken
+      ddz.GlobalSettings.session.sessionToken = respData.sessionToken
+      ddz.GlobalSettings.serverInfo = table.dup(respData.server)
+      userInfo.sessionToken = respData.sessionToken
+      ddz.saveSessionInfo(userInfo)
+      connectToGameServer(true, userInfo, serverInfo)
     end
   end
 

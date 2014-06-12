@@ -17,6 +17,7 @@ function SignInPlugin.bind(theClass)
     ddz.GlobalSettings.session.authToken = userInfo.authToken
     ddz.GlobalSettings.session.sessionToken = respData.sessionToken
     ddz.GlobalSettings.serverInfo = table.dup(respData.server)
+    userInfo.sessionToken = respData.sessionToken
     ddz.saveSessionInfo(userInfo)
     callback(true, userInfo, serverInfo)
   end
