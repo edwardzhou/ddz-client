@@ -145,6 +145,7 @@ function LandingScene:connectToServer()
 
   local sessionInfo = ddz.loadSessionInfo() or {}
   local sessionToken = sessionInfo.sessionToken
+  local lastSessionToken = sessionInfo.sessionToken
   local userId = sessionInfo.userId
 
   local function queryRooms()
@@ -167,28 +168,33 @@ function LandingScene:connectToServer()
       return
     end
 
-    local userId = ddz.GlobalSettings.session.userId    
-    --local sessionToken = ddz.GlobalSettings.session.sessionToken
+    local userId = ddz.GlobalSettings.session.userId
+    if ddz.GlobalSettings.session and ddz.GlobalSettings.session.sessionToken then
+      sessionToken = ddz.GlobalSettings.session.sessionToken 
+    else
+      sessionToken = lastSessionToken
+    end
     local serverInfo = ddz.GlobalSettings.serverInfo
     self:connectTo(serverInfo.host, serverInfo.port, userId, sessionToken, onGameServerConnected)
   end
 
   local onConnectionReady = function(sender, pomelo, data)
-    if userId == nil then
+    if userId == nil or data.needSignUp == true then
       this:signUp(connectToGameServer)
-    elseif data.needSignIn then
+    elseif data.needSignIn == true then
       this:signIn(sessionInfo, connectToGameServer)
     else
-      local userInfo = respData.user
-      local serverInfo = respData.server
-      ddz.GlobalSettings.userInfo = userInfo
-      ddz.GlobalSettings.session.userId = userInfo.userId
-      ddz.GlobalSettings.session.authToken = userInfo.authToken
-      ddz.GlobalSettings.session.sessionToken = respData.sessionToken
-      ddz.GlobalSettings.serverInfo = table.dup(respData.server)
-      userInfo.sessionToken = respData.sessionToken
-      ddz.saveSessionInfo(userInfo)
-      connectToGameServer(true, userInfo, serverInfo)
+      local newUserInfo = data.user
+      local serverInfo = data.server
+      ddz.GlobalSettings.userInfo = newUserInfo
+      ddz.GlobalSettings.session.userId = newUserInfo.userId
+      ddz.GlobalSettings.session.authToken = newUserInfo.authToken
+      ddz.GlobalSettings.session.sessionToken = data.sessionToken
+      ddz.GlobalSettings.serverInfo = table.dup(data.server)
+      newUserInfo.sessionToken = data.sessionToken
+      sessionToken = data.sessionToken
+      ddz.saveSessionInfo(newUserInfo)
+      connectToGameServer(true, newUserInfo, serverInfo)
     end
   end
 
