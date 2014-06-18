@@ -344,14 +344,27 @@ ddz.saveSessionInfo = function(sessionInfo, filename)
   file:close()
 end
 
-ddz.saveSessionInfo = function(sessionInfo, filename)
-  filename = filename or 'userinfo.json'
-  local cjson = require('cjson.safe')
-  local filepath = ddz.getDataStorePath() .. '/' .. filename
-  print('filepath => ', filepath)
-  local file = io.open(filepath, 'w+')
-  file:write(cjson.encode(sessionInfo))
-  file:close()
+-- ddz.saveSessionInfo = function(sessionInfo, filename)
+--   filename = filename or 'userinfo.json'
+--   local cjson = require('cjson.safe')
+--   local filepath = ddz.getDataStorePath() .. '/' .. filename
+--   print('filepath => ', filepath)
+--   local file = io.open(filepath, 'w+')
+--   file:write(cjson.encode(sessionInfo))
+--   file:close()
+-- end
+
+ddz.updateUserSession = function(respData)
+  local userInfo = respData.user
+  ddz.GlobalSettings.userInfo = userInfo
+  ddz.GlobalSettings.session.userId = userInfo.userId
+  ddz.GlobalSettings.session.authToken = userInfo.authToken
+  ddz.GlobalSettings.session.sessionToken = respData.sessionToken
+  if respData.server then
+    ddz.GlobalSettings.serverInfo = table.dup(respData.server)
+  end
+  userInfo.sessionToken = respData.sessionToken
+  ddz.saveSessionInfo(userInfo)
 end
 
 ddz.writeToFile = function(filename, data)

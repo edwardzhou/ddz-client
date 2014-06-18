@@ -25,7 +25,10 @@ function ConnectionPlugin.bind(theClass, websocketClass)
         userId = userId,
         sessionToken = sessionToken
         }, function(data)
-        readyCallback(this, pomeloClient, data)
+          -- if data.needSignIn then
+          --   signinCallback(this, pomeloClient, data)
+          -- end
+          readyCallback(this, pomeloClient, data)
       end)
     end
 

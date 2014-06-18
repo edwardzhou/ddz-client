@@ -191,6 +191,10 @@ function UIButtonsPlugin.bind( theClass )
     self.gameOverDialog.keypadListener:setEnabled(true)
   end
 
+  function theClass:ButtonBack_onClicked(sender, event)
+    
+  end
+
 end
 
 return UIButtonsPlugin

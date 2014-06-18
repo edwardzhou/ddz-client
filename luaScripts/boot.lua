@@ -42,6 +42,7 @@ local function main()
     ddz.GlobalSettings.sdcardPath = ddz.getSDCardPath()
     ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')
     ddz.GlobalSettings.appPrivatePath = cc.FileUtils:getInstance():getWritablePath()
+    ddz.GlobalSettings.session = ddz.loadSessionInfo() or {}
     
     dump(ddz.GlobalSettings, 'GlobalSettings')
 

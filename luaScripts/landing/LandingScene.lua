@@ -198,10 +198,20 @@ function LandingScene:connectToServer()
     end
   end
 
-  if ddz.pomeloClient then
-    ddz.pomeloClient:disconnect()
-  end
-  self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  -- if ddz.pomeloClient then
+  --   ddz.pomeloClient:disconnect()
+  -- end
+
+
+
+  --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+
+  require('network.GameConnection'):connectToServer({
+    host = '192.168.1.165',
+    port = 4001,
+    readyCallback = queryRooms
+    });
+
 end
 
 function LandingScene:initKeypadHandler()
@@ -225,9 +235,9 @@ function LandingScene:initKeypadHandler()
 
 end
 
-require('network.ConnectionPlugin').bind(LandingScene)
-require('landing.SignInPlugin').bind(LandingScene)
-require('landing.SignUpPlugin').bind(LandingScene)
+-- require('network.ConnectionPlugin').bind(LandingScene)
+-- require('landing.SignInPlugin').bind(LandingScene)
+-- require('landing.SignUpPlugin').bind(LandingScene)
 
 local function createScene()
   local scene = cc.Scene:create()
