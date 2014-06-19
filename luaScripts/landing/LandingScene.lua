@@ -90,6 +90,8 @@ function LandingScene:init()
         cc.Director:getInstance():pushScene(scene)
       elseif buttonName == 'v_ButtonConnect' then
         self:connectToServer()
+      elseif buttonName == 'v_ButtonSignUp' then
+        self:reconnectToServer()
       elseif buttonName == 'v_ButtonSignIn' then
         cc.Director:getInstance():endToLua()
       end
@@ -106,8 +108,11 @@ function LandingScene:init()
   local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonConnect')
   buttonConnect:addTouchEventListener(touchEvent)
 
-  local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignIn')
-  buttonConnect:addTouchEventListener(touchEvent)
+  local buttonSignIn = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignIn')
+  buttonSignIn:addTouchEventListener(touchEvent)
+
+  local buttonSignUp = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignUp')
+  buttonSignUp:addTouchEventListener(touchEvent)
   
   buttonS:setVisible(false)
 
@@ -138,6 +143,10 @@ function LandingScene:init()
 --  print('c.isBomb? ', c:isBomb(), '\n', c:toString())
 --  dump(c:getPokeValues(true))
   
+end
+
+function LandingScene:reconnectToServer()
+  self.connection:reconnect()
 end
 
 function LandingScene:connectToServer()
@@ -205,12 +214,17 @@ function LandingScene:connectToServer()
 
 
   --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
+  if self.connection == nil then
+    self.connection = require('network.GameConnection')
+    self.connection:on('connectionReady', function()
+        queryRooms()
+      end)
+  end
 
-  require('network.GameConnection'):connectToServer({
+  self.connection:connectToServer({
     host = '192.168.1.165',
-    port = 4001,
-    readyCallback = queryRooms
-    });
+    port = 4001
+  });
 
 end
 

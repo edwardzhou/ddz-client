@@ -1,9 +1,11 @@
 require('extern')
 require('pomelo.pomelo')
+local Emitter = require('pomelo.emitter')
 
-local GameConnection = class('GameConnection')
+local GameConnection = class('GameConnection', Emitter)
 
 function GameConnection:ctor(userId, sessionToken)
+  self.super.ctor(self)
   self.userId = userId or ddz.GlobalSettings.session.userId
   self.sessionToken = sessionToken or ddz.GlobalSettings.session.sessionToken
 end
@@ -48,23 +50,38 @@ function GameConnection:authConnection()
             userId = data.user.userId, 
             sessionToken = data.sessionToken})
         else
-          if this.readyCallback then
-            this.readyCallback(this, this.pomeloClient, data)
-          end
+          this:emit('connectionReady', this, this.pomeloClient, data)
+          -- if this.readyCallback then
+          --   this.readyCallback(this, this.pomeloClient, data)
+          -- end
         end
       end
+  end)
+end
+
+function GameConnection:reconnect()
+  local this = self
+
+  local serverParams = {
+    host = ddz.GlobalSettings.serverInfo.host,
+    port = ddz.GlobalSettings.serverInfo.port
+  }
+
+  print('[GameConnection:reconnect] ......................')
+
+  this.pomeloClient:init(serverParams, function()
+    this:authConnection()
   end)
 end
 
 function GameConnection:connectToServer(params)
   local this = self
 
-
-  self.signinCallback = params.signinCallback
-  self.signupCallback = params.signupCallback
-  if params.readyCallback then
-    self.readyCallback = params.readyCallback
-  end
+  -- self.signinCallback = params.signinCallback
+  -- self.signupCallback = params.signupCallback
+  -- if params.readyCallback then
+  --   self.readyCallback = params.readyCallback
+  -- end
 
   if websocketClass == nil then
     websocketClass = require('pomelo.cocos2dx_websocket')

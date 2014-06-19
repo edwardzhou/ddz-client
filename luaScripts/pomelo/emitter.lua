@@ -84,7 +84,11 @@ function Emitter:emit(event, ...)
 	
 	if callbacks ~= nil then
 		for _i, fn in ipairs(callbacks) do
-			fn(...)
+			local result, err = pcall(fn, ...)
+			if not result then
+				print('[Emitter.emit] Error to call fn for event "' .. event .. '"')
+			end
+			--fn(...)
 		end
 	end
 	
