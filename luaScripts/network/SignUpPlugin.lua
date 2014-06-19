@@ -12,7 +12,7 @@ function SignUpPlugin.bind(theClass)
 
     local userInfo = respData.user
     local serverInfo = respData.server
-    ddz.updateUserSession(userInfo, serverInfo)
+    ddz.updateUserSession(respData)
     -- ddz.GlobalSettings.userInfo = userInfo
     -- ddz.GlobalSettings.session.userId = userInfo.userId
     -- ddz.GlobalSettings.session.authToken = userInfo.authToken

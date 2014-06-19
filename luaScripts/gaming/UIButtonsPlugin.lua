@@ -192,7 +192,8 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonBack_onClicked(sender, event)
-    
+    local gameConn = require('network.GameConnection')
+    gameConn:reconnect()
   end
 
 end
