@@ -43,6 +43,7 @@ function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onGameOver', self._onServerGameOverMsg)
 end
 
+
 function RemoteGameService:onServerPlayerJoinMsg(data)
 
   dump(data, '[RemoteGameService:onServerPlayerJoinMsg] data => ')
@@ -75,6 +76,7 @@ end
 function RemoteGameService:onServerLordValueUpgradeMsg(data)
   dump(data, '[RemoteGameService:onServerLordValueUpgradeMsg] data => ')
   self.pokeGame.lordValue = data.lordValue;
+  self.pokeGame.currentMsgNo = data.msgNo
   utils.invokeCallback(self.msgReceiver.onLordValueUpgrade, self.msgReceiver, data.lordValue)
   -- if self.msgReceiver.onServerPlayerJoin then
   --   self.msgReceiver:onServerPlayerJoin(players)
@@ -87,6 +89,16 @@ function RemoteGameService:enterRoom(roomId, callback)
   ddz.pomeloClient:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
       dump(data, '[RemoteGameService:enterRoom] ddz.entryHandler.enterRoom =>')
     end)
+end
+
+function RemoteGameService:restoreGame(callback)
+  local this = self
+  local params = {msgNo = self.pokeGame.currentMsgNo}
+  dump(params, "[RemoteGameService:restoreGame] params")
+  ddz.pomeloClient:request('ddz.gameHandler.restoreGame', params, function(data)
+      dump(data, '[RemoteGameService:restoreGame] data' )
+    end)
+
 end
 
 function RemoteGameService:readyGame(callback)
@@ -145,6 +157,7 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
   -- local player = self.playersMap[userId]
   local pokeGame = self.pokeGame
   pokeGame.currentSeqNo = data.seqNo
+  pokeGame.currentMsgNo = data.msgNo
 
   dump(data, '[RemoteGameService:onServerGrabbingLordMsg] data')
 
@@ -179,6 +192,7 @@ function RemoteGameService:onServerGameStartMsg(data)
   local nextPlayerId = data.nextUserId
   local seqNo = data.seqNo
   self.pokeGame.currentSeqNo = seqNo
+  self.pokeGame.currentMsgNo = data.msgNo
   self.pokeGame.nextPlayerId = nextPlayerId
 
   if self.msgReceiver.onStartNewGameMsg then
@@ -194,6 +208,7 @@ function RemoteGameService:onServerPlayCardMsg(data)
   local player = pokeGame:getPlayerInfo(data.player.userId)
   local nextPlayer = pokeGame:getPlayerInfo(data.nextUserId)
   local pokeChars = data.pokeChars
+  pokeGame.currentMsgNo = data.msgNo
   player:init(data.player)
   if (data.nextUserId == self.selfUserId) then
     pokeGame.currentSeqNo = data.seqNo

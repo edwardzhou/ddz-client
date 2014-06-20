@@ -5,6 +5,8 @@ local GamePlayer = require('GamePlayer')
 --local GameService = require('LocalGameService')
 local GameService = require('RemoteGameService')
 
+local gameConnection = require('network.GameConnection')
+
 local GameScene = class('GameScene', function()
   return cc.Scene:create()
 end)
@@ -82,6 +84,12 @@ function GameScene:init()
   self:showGrabLordButtonsPanel(false)
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
+
+  gameConnection:on('connectionReady', self.onReconnected)
+end
+
+function GameScene.onReconnected()
+  self.gameService:restoreGame()
 end
 
 function GameScene:initKeypadHandler()

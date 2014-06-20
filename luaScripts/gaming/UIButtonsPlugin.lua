@@ -171,16 +171,17 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonConfig_onClicked(sender, event)
-    if self.gameOverDialog == nil then
-      local onClose = function() end
-      local onNewGame = function() end
-      self.gameOverDialog = require('gaming.GameResultDialog').new(onClose, onNewGame)
-      self:addChild(self.gameOverDialog)      
-    end
+    -- if self.gameOverDialog == nil then
+    --   local onClose = function() end
+    --   local onNewGame = function() end
+    --   self.gameOverDialog = require('gaming.GameResultDialog').new(onClose, onNewGame)
+    --   self:addChild(self.gameOverDialog)      
+    -- end
 
-    self.gameOverDialog:setPosition(0,0)
-    self.gameOverDialog:setVisible(true)
-    self.gameOverDialog.keypadListener:setEnabled(true)
+    -- self.gameOverDialog:setPosition(0,0)
+    -- self.gameOverDialog:setVisible(true)
+    -- self.gameOverDialog.keypadListener:setEnabled(true)
+    ddz.pomeloClient:disconnect()
   end
 
   function theClass:ButtonBack_onClicked(sender, event)
