@@ -87,6 +87,7 @@ function Emitter:emit(event, ...)
 			local result, err = pcall(fn, ...)
 			if not result then
 				print('[Emitter.emit] Error to call fn for event "' .. event .. '"')
+				dump(err)
 			end
 			--fn(...)
 		end

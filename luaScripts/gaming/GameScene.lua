@@ -40,6 +40,8 @@ function GameScene:ctor(...)
       self:cleanup()
     end
   end)
+
+  self._onReconnected = __bind(self.onReconnected, self)
 end
 
 function GameScene:cleanup()
@@ -50,6 +52,7 @@ function GameScene:cleanup()
   PokeCard.releaseAllCards()
   self.gameService:leaveGame()
   self.gameService:cleanup()
+  gameConnection:off('connectionReady', self._onReconnected)
 end
 
 function GameScene:init()
@@ -85,10 +88,10 @@ function GameScene:init()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
 
-  gameConnection:on('connectionReady', self.onReconnected)
+  gameConnection:on('connectionReady', self._onReconnected)
 end
 
-function GameScene.onReconnected()
+function GameScene:onReconnected()
   self.gameService:restoreGame()
 end
 
