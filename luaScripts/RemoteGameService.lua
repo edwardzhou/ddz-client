@@ -88,12 +88,17 @@ function RemoteGameService:enterRoom(roomId, callback)
 
   ddz.pomeloClient:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
       dump(data, '[RemoteGameService:enterRoom] ddz.entryHandler.enterRoom =>')
+      utils.invokeCallback(callback, data)
     end)
 end
 
 function RemoteGameService:restoreGame(callback)
   local this = self
-  local params = {msgNo = self.pokeGame.currentMsgNo}
+  local params = {
+    gameId = self.pokeGame.gameId,
+    msgNo = self.pokeGame.currentMsgNo
+  }
+
   dump(params, "[RemoteGameService:restoreGame] params")
   ddz.pomeloClient:request('ddz.gameHandler.restoreGame', params, function(data)
       dump(data, '[RemoteGameService:restoreGame] data' )

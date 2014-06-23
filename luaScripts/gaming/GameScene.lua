@@ -130,7 +130,13 @@ function GameScene:initPlayers()
   self.selfUserId = ddz.GlobalSettings.userInfo.userId
   local this = self
 
-  this.gameService:enterRoom(ddz.selectedRoom.roomId, __bind(self.onServerPlayerJoin, self))
+  this.gameService:enterRoom(ddz.selectedRoom.roomId, function(data) 
+      if data.timing then
+        this:startSelfPlayerCountdown(function()
+            this:ButtonReady_onClicked(this.ButtonReady, 0)
+          end, data.timing)
+      end
+    end)
 end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
