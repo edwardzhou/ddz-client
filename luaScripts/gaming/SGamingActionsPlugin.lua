@@ -24,6 +24,8 @@ function SGamingActionsPlugin.bind(theClass)
     if nextUserId == self.selfPlayerInfo.userId and not isGiveup then
       self:showGrabLordButtonsPanel(true, self.pokeGame.grabbingLord.lordValue)
       --self:onGameOverMsg({})
+    else
+      self:showGrabLordButtonsPanel(false, self.pokeGame.grabbingLord.lordValue)
     end
 
     --self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)

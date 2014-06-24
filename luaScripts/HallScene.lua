@@ -104,9 +104,9 @@ function HallScene:init()
     listItemSelected = moveTimes < 20
   end
 
-  local scrollCast = tolua.cast(listview, 'ccui.ScrollView')
-  scrollCast:addEventListener( scrollViewEvent )
-  --listview:addEventListenerScrollView(scrollViewEvent)
+  --local scrollCast = tolua.cast(listview, 'ccui.ScrollView')
+  --scrollCast:addEventListener( scrollViewEvent )
+  listview:addScrollViewEventListener(scrollViewEvent)
   listview:addEventListenerListView(listViewEvent)
 
   local items = listview:getItems()
