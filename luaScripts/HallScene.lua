@@ -106,7 +106,7 @@ function HallScene:init()
 
   --local scrollCast = tolua.cast(listview, 'ccui.ScrollView')
   --scrollCast:addEventListener( scrollViewEvent )
-  listview:addScrollViewEventListener(scrollViewEvent)
+  --listview:addScrollViewEventListener(scrollViewEvent)
   listview:addEventListenerListView(listViewEvent)
 
   local items = listview:getItems()
