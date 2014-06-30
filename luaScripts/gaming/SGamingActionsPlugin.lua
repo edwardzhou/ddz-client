@@ -5,9 +5,10 @@ function SGamingActionsPlugin.bind(theClass)
 
   function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId)
     self:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+    self:showPlaycardClock(nil, nextTimeout)
   end
 
-  function theClass:onGrabbingLordMsg(userId, nextUserId, pokeGame, isGiveup, isGrabLordFinish)
+  function theClass:onGrabbingLordMsg(userId, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish)
     print('userId: ', userId, self.selfPlayerInfo.userId, self.prevPlayerInfo.userId, self.nextPlayerInfo.userId)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
@@ -30,7 +31,7 @@ function SGamingActionsPlugin.bind(theClass)
 
     --self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
 
-    self:showPlaycardClock()
+    self:showPlaycardClock(nil, nextTimeout)
 
     if isGiveup then
       self:hideSelfPokecards()
@@ -58,7 +59,7 @@ function SGamingActionsPlugin.bind(theClass)
 
   end
 
-  function theClass:onPlayCardMsg(userId, card, nextPlayer)
+  function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout)
     -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
     -- local card = Card.create(pokeCards)
     -- local nextPlayer = self.pokeGame:
@@ -83,7 +84,7 @@ function SGamingActionsPlugin.bind(theClass)
       self:showButtonsPanel(true)
     end
 
-    self:showPlaycardClock()
+    self:showPlaycardClock(nil, nextTimeout)
   end
 
   function theClass:onSelfPlayerPlayCard(card)

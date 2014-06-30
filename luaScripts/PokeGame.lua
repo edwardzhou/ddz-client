@@ -117,8 +117,13 @@ function PokeGame:getPlayerInfo(playerId)
   return self.playersMap[playerId]
 end
 
+function PokeGame:setNextPlayerById(nextPlayerId)
+  return self:setNextPlayer(self:getPlayerInfo(nextPlayerId))
+end
+
 function PokeGame:setNextPlayer(nextPlayer)
   self.currentPlayer = nextPlayer
+  return self.currentPlayer
 end
 
 function PokeGame:getNextPlayer(curPlayer)

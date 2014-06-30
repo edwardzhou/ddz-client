@@ -170,6 +170,9 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
     pokeGame:updatePlayerInfo(data.players[i])
   end
 
+  --pokeGame:setNextPlayerById(data.nextUserId)
+  pokeGame.nextPlayerId = data.nextUserId
+
   --dump(pokeGame, '[RemoteGameService:onServerGrabbingLordMsg] pokeGame')
 
   -- if data.lordValue > pokeGame.lordValue then
@@ -183,10 +186,10 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
     pokeGame.lordUserId = data.lordUserId
     pokeGame.lordPokeCards = PokeCard.pokeCardsFromChars(data.lordPokeCards)
     pokeGame.lordPlayer = pokeGame:getPlayerInfo(pokeGame.lordUserId)
-    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, pokeGame, false, true)
+    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, data.timing, pokeGame, false, true)
   else
     -- 未产生地主
-    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, pokeGame, false, false)
+    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, data.timing, pokeGame, false, false)
   end
 end
 
@@ -234,13 +237,14 @@ function RemoteGameService:onServerPlayCardMsg(data)
   --   self.pokeGame.lordValue = self.pokeGame.lordValue * 2
   --   self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
   -- end
+  pokeGame.nextPlayerId = data.nextUserId
 
   pokeGame.prevPlay = {player = player, card = card}
   if card:isValid() then
     pokeGame.lastPlay = {player = player, card = card}
   end
 
-  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer)
+  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing)
 
   -- local this = self
   -- local userId = data.userId

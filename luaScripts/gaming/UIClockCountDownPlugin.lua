@@ -58,13 +58,13 @@ function UIClockCountDownPlugin.bind(theClass)
     self:startCountdown(pos, timeoutCallback, times)
   end
 
-  function theClass:showPlaycardClock()
-    if self.pokeGame.currentPlayer == self.selfPlayerInfo then
-      self:startSelfPlayerCountdown()
-    elseif self.pokeGame.currentPlayer == self.prevPlayerInfo then
-      self:startPrevPlayerCountdown()
-    elseif self.pokeGame.currentPlayer == self.nextPlayerInfo then
-      self:startNextPlayerCountdown()
+  function theClass:showPlaycardClock(fn, timeout)
+    if self.pokeGame.nextPlayerId == self.selfPlayerInfo.userId then
+      self:startSelfPlayerCountdown(fn, timeout)
+    elseif self.pokeGame.nextPlayerId == self.prevPlayerInfo.userId then
+      self:startPrevPlayerCountdown(fn, timeout)
+    elseif self.pokeGame.nextPlayerId == self.nextPlayerInfo.userId then
+      self:startNextPlayerCountdown(fn, timeout)
     end
   end
 end
