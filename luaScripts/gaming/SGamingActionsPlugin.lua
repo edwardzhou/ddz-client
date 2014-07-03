@@ -59,7 +59,7 @@ function SGamingActionsPlugin.bind(theClass)
 
   end
 
-  function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout)
+  function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout, isDelegating)
     -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
     -- local card = Card.create(pokeCards)
     -- local nextPlayer = self.pokeGame:
@@ -67,6 +67,9 @@ function SGamingActionsPlugin.bind(theClass)
 
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
+      if isDelegating then
+        self.ButtonDelegate:setVisible(true)
+      end
       -- nextPlayer = self.nextPlayerInfo
     elseif userId == self.prevPlayerInfo.userId then
       self:onPrevPlayerPlayCard(card)

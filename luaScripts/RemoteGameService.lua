@@ -244,7 +244,7 @@ function RemoteGameService:onServerPlayCardMsg(data)
     pokeGame.lastPlay = {player = player, card = card}
   end
 
-  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing)
+  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing, data.delegating)
 
   -- local this = self
   -- local userId = data.userId

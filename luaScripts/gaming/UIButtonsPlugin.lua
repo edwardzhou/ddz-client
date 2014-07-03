@@ -189,6 +189,10 @@ function UIButtonsPlugin.bind( theClass )
     gameConn:reconnect()
   end
 
+  function theClass:ButtonDelegate_onClicked( sender, event )
+    self.ButtonDelegate:setVisible(false)
+  end
+
 end
 
 return UIButtonsPlugin
