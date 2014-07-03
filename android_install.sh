@@ -24,6 +24,6 @@ do
   echo "adb -s $sid uninstall $pkg"
   adb -s $sid uninstall $pkg
   echo "adb -s $sid install -r $apk"
-  adb -s $sid install -r $apk &
+  adb -s $sid install -r $apk 
 done
 

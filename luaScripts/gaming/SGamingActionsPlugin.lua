@@ -63,6 +63,8 @@ function SGamingActionsPlugin.bind(theClass)
     -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
     -- local card = Card.create(pokeCards)
     -- local nextPlayer = self.pokeGame:
+
+
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
       -- nextPlayer = self.nextPlayerInfo
@@ -80,9 +82,9 @@ function SGamingActionsPlugin.bind(theClass)
       self:hideCard(nextPlayer.lastCard)
     end
 
-    if nextPlayer.userId == self.selfPlayerInfo.userId then
-      self:showButtonsPanel(true)
-    end
+    --if nextPlayer.userId == self.selfPlayerInfo.userId then
+      self:showButtonsPanel(nextPlayer.userId == self.selfPlayerInfo.userId)
+    --end
 
     self:showPlaycardClock(nil, nextTimeout)
   end
