@@ -46,6 +46,17 @@ local function main()
     
     dump(ddz.GlobalSettings, 'GlobalSettings')
 
+    local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
+    local function onNetworkChanged(event)
+        print('[onNetworkChanged] ', event:getEventName())
+    end
+
+    local listener1 = cc.EventListenerCustom:create("on_network_change_available",onNetworkChanged)
+    eventDispatcher:addEventListenerWithFixedPriority(listener1, 1)
+
+    local listener2 = cc.EventListenerCustom:create("on_network_change_disable",onNetworkChanged)
+    eventDispatcher:addEventListenerWithFixedPriority(listener2, 2)
+
     -- run
     local createLoginScene = require('landing.LandingScene')
     local sceneGame = createLoginScene()

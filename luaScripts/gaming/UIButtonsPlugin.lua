@@ -190,7 +190,10 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonDelegate_onClicked( sender, event )
-    self.ButtonDelegate:setVisible(false)
+    print("[ButtonDelegate_onClicked] start to call cancel delegate" )
+    self.gameService:cancelDelegate(function(data)
+        self.ButtonDelegate:setVisible(false)
+      end)
   end
 
 end

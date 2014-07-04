@@ -156,6 +156,13 @@ function RemoteGameService:playCard(userId, pokeIdChars, callback)
     end)
 end
 
+function RemoteGameService:cancelDelegate(callback)
+  ddz.pomeloClient:request('ddz.gameHandler.cancelDelegate', {}, function(data) 
+      dump(data, '[RemoteGameService:cancelDelegate] ddz.gameHandler.cancelDelegate response')
+      utils.invokeCallback(callback, data)
+    end)
+end
+
 function RemoteGameService:onServerGrabbingLordMsg(data)
   local this = self
   local userId = data.userId

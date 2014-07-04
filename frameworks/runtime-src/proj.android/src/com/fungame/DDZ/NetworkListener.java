@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager;
 public class NetworkListener extends BroadcastReceiver {
 	
 	private static NetworkState last_state = null;
+	private static native void messageCpp(String event, String data);
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -36,6 +37,18 @@ public class NetworkListener extends BroadcastReceiver {
 		if (is_connected) {
 			str = "on_network_change_available";
 		}
+		
+		final String eventName = str;
+		
+		AppActivity.activity.runOnGLThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				messageCpp(eventName, "");
+			}
+		});
+		
 		if (isAppForeground(context)) {
 			//DDZJniHelper.messageToCpp(str);
 		} else {

@@ -130,6 +130,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:showPrevPlayerRestPokecards()
     self:showNextPlayerRestPokecards()
     self:stopCountdown()
+    self.ButtonDelegate:setVisible(false)
 
     self.selfPlayerInfo.status = ddz.PlayerStatus.None
     self.prevPlayerInfo.status = ddz.PlayerStatus.None

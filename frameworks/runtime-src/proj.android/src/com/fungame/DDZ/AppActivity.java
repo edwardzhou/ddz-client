@@ -26,27 +26,32 @@ THE SOFTWARE.
 ****************************************************************************/
 package com.fungame.DDZ;
 
-import java.io.File;
-
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.umeng.analytics.MobclickAgent;
 
 public class AppActivity extends Cocos2dxActivity {
+	private NetworkListener networkListener = new NetworkListener();
+	public boolean appInForeground = true;
+	public static AppActivity activity = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		activity = this;
 		
 		try {
 			PackageInfo info = this.getContext().getPackageManager().getPackageInfo(this.getContext().getPackageName(), PackageManager.GET_SIGNATURES);
@@ -55,10 +60,12 @@ public class AppActivity extends Cocos2dxActivity {
 				System.out.println("Signature CharsString: " + sign.toCharsString());
 				System.out.println("Signature toString: " + sign.toString());
 			}
-//			File f = new File("/mnt/sdcard-ext");
-//			System.out.println(f.getAbsolutePath() + " writable " + f.canWrite());
-//			f = new File("/mnt/sdcard-ext/fungame/DDZ");
-//			System.out.println(f.getAbsolutePath() + " mkdirs " + f.mkdirs());
+			
+			IntentFilter intentFilter = new IntentFilter();
+			intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			System.out.println("register network listener");
+			this.registerReceiver(networkListener, intentFilter);
+			
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,6 +74,13 @@ public class AppActivity extends Cocos2dxActivity {
 		
 		//MobileInfoGetter.mContext = AppActivity.getContext();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		System.out.println("unregister network listener");
+		unregisterReceiver(networkListener);
+	};
 
 	@Override
     public Cocos2dxGLSurfaceView onCreateView() {
@@ -89,6 +103,14 @@ public class AppActivity extends Cocos2dxActivity {
     public void onPause() {
       super.onPause();
       MobclickAgent.onPause(this);
+    }
+    
+    public static void enterBackground() {
+    	activity.appInForeground = false;
+    }
+    
+    public static void enterForground() {
+    	activity.appInForeground = true;
     }
 
 

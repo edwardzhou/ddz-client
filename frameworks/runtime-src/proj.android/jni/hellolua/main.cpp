@@ -24,3 +24,25 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     MobClickCpp::initJniForCocos2dx3((void*)vm, (void*)activity);
     //PluginJniHelper::setJavaVM(vm);
 }
+
+
+extern "C" {
+void Java_com_fungame_DDZ_NetworkListener_messageCpp(JNIEnv* env, jobject thiz,
+		jstring text, jstring data) {
+
+	auto dispatcher = Director::getInstance()->getEventDispatcher();
+
+	CCLog("[Java_cn_com_m123_DDZ_DDZJniHelper_test] enter.");
+
+	std::string myText = JniHelper::jstring2string(text);
+	std::string myData = JniHelper::jstring2string(data);
+
+	EventCustom event(myText);
+	dispatcher->dispatchEvent(&event);
+
+	CCLog("[Java_cn_com_m123_DDZ_DDZJniHelper_test] pText: %s.", myText.c_str());
+
+	CCLog("[Java_cn_com_m123_DDZ_DDZJniHelper_test] return.");
+}
+}
+
