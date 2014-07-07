@@ -192,14 +192,17 @@ function SGamingActionsPlugin.bind(theClass)
     statusUI:setVisible(false)
     statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
 
-    statusUI:getOpacity(0);
     statusUI:setVisible(true)
+    statusUI:setOpacity(0);
 
     statusUI:runAction(cc.Sequence:create(
-        cc.FadeIn:create(1.5),
-        cc.DelayTime:create(1.5),
-        cc.FadeOut:create(1.5),
-        cc.Hide:create()
+        cc.FadeIn:create(0.5),
+        cc.DelayTime:create(1.0),
+        cc.FadeOut:create(0.5),
+        cc.CallFunc:create(function()
+            statusUI:setVisible(false)
+            statusUI:setOpacity(255)
+          end)
       ))
   end
 end
