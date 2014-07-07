@@ -1,6 +1,8 @@
 local scheduler = require('framework.scheduler')
 local SGamingActionsPlugin = {}
 
+local Res = require('Resources')
+
 function SGamingActionsPlugin.bind(theClass)
 
   function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId)
@@ -50,6 +52,10 @@ function SGamingActionsPlugin.bind(theClass)
 
       self:doUpdatePlayersUI()
 
+      self.NextUserStatus:setVisible(false)
+      self.SelfUserStatus:setVisible(false)
+      self.PrevUserStatus:setVisible(false)
+
       self:showGrabLordButtonsPanel(false)
       if self.pokeGame.lordPlayer == self.selfPlayerInfo then
         self:showCards()
@@ -97,6 +103,9 @@ function SGamingActionsPlugin.bind(theClass)
     self:selfPlayCardEffect(card)
     self:updateSelfPlayerUI(self.selfPlayerInfo)
     self.selfPlayerInfo.lastCard = card
+    if not card:isValid() then
+      self:showPlayPassInfo(self.SelfUserStatus)
+    end
     --self.selfPlayerInfo:analyzePokecards()
   end
 
@@ -105,6 +114,9 @@ function SGamingActionsPlugin.bind(theClass)
     self:prevPlayCardEffect(card)
     self:updatePrevPlayerUI(self.prevPlayerInfo)
     self.prevPlayerInfo.lastCard = card
+    if not card:isValid() then
+      self:showPlayPassInfo(self.PrevUserStatus)
+    end
   end
 
   function theClass:onNextPlayerPlayCard(card)
@@ -112,6 +124,9 @@ function SGamingActionsPlugin.bind(theClass)
     self:nextPlayCardEffect(card)
     self:updateNextPlayerUI(self.nextPlayerInfo)
     self.nextPlayerInfo.lastCard = card
+    if not card:isValid() then
+      self:showPlayPassInfo(self.NextUserStatus)
+    end
   end
 
   function theClass:onLordValueUpgrade(newLordValue)
@@ -171,6 +186,22 @@ function SGamingActionsPlugin.bind(theClass)
       --end, 1)
   end
 
+  function theClass:showPlayPassInfo(statusUI)
+    print('show Player Pass')
+    local pos = cc.p(statusUI:getPosition())
+    statusUI:setVisible(false)
+    statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
+
+    statusUI:getOpacity(0);
+    statusUI:setVisible(true)
+
+    statusUI:runAction(cc.Sequence:create(
+        cc.FadeIn:create(1.5),
+        cc.DelayTime:create(1.5),
+        cc.FadeOut:create(1.5),
+        cc.Hide:create()
+      ))
+  end
 end
 
 return SGamingActionsPlugin

@@ -23,7 +23,8 @@ Resources.Images = {
     NoGrabLord = imgPath .. 'game21.png',       -- 不叫
     GrabLord = imgPath .. 'game22.png',         -- 叫地主
     PassGrabLord = imgPath .. 'game23.png',     -- 不抢
-    ReGrabLord = imgPath .. 'game24.png'        -- 抢地主
+    ReGrabLord = imgPath .. 'game24.png',       -- 抢地主
+    PassPlay = imgPath .. 'game11.png',     -- 不抢
   }
 }
 

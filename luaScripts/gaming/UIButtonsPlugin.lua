@@ -71,7 +71,8 @@ function UIButtonsPlugin.bind( theClass )
     PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
     self.gameService:readyGame(function(data)
-        self.ButtonReady:setVisible(false)
+        this.ButtonReady:setVisible(false)
+        this:stopCountdown()
       end)
   end
 

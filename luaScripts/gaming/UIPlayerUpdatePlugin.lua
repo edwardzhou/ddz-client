@@ -44,11 +44,15 @@ function UIPlayerUpdatePlugin.bind(theClass)
     self:updatePlayerUI(userUI, userInfo)
   end
 
-  function theClass:updatePlayerUI(userUI, userInfo)
+  function theClass:updatePlayerUI(userUI, userInfo, updateStatus)
 
     userUI.Panel:setVisible(userInfo ~= nil)
     if userInfo == nil then
       return
+    end
+
+    if updateStatus == nil then
+      updateStatus = true
     end
 
     userInfo =  userInfo or {}
@@ -59,18 +63,20 @@ function UIPlayerUpdatePlugin.bind(theClass)
     end
     userUI.Head:setVisible(userInfo.headIcon ~= nil)
 
-    if userInfo.state == ddz.PlayerStatus.Ready then
-      userUI.Status:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
-    elseif userInfo.state == ddz.PlayerStatus.NoGrabLord then
-      userUI.Status:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
-    elseif userInfo.state == ddz.PlayerStatus.GrabLord then
-      userUI.Status:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
-    elseif userInfo.state == ddz.PlayerStatus.PassGrabLord then
-      userUI.Status:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
-    elseif userInfo.state == ddz.PlayerStatus.ReGrabLord then
-      userUI.Status:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+    if userInfo.state ~= ddz.PlayerStatus.Playing then
+      if userInfo.state == ddz.PlayerStatus.Ready then
+        userUI.Status:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+      elseif userInfo.state == ddz.PlayerStatus.NoGrabLord then
+        userUI.Status:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+      elseif userInfo.state == ddz.PlayerStatus.GrabLord then
+        userUI.Status:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+      elseif userInfo.state == ddz.PlayerStatus.PassGrabLord then
+        userUI.Status:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+      elseif userInfo.state == ddz.PlayerStatus.ReGrabLord then
+        userUI.Status:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+      end
+      userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None and userInfo.state ~= ddz.PlayerStatus.Playing)
     end
-    userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None and userInfo.state ~= ddz.PlayerStatus.Playing)
 
     if userInfo.role == ddz.PlayerRoles.Farmer then
       userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)

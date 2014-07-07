@@ -269,5 +269,9 @@ void AppDelegate::applicationWillEnterForeground()
     MobClickCpp::applicationWillEnterForeground();
 
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    Director::getInstance()->getScheduler()->schedule([](float dt) {
+            cocos2d::EventCustom foregroundEvent(EVENT_COME_TO_FOREGROUND);
+            cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&foregroundEvent);
+    }, this, 0.0, 0, 0.0, false, "EVENT_COME_TO_FOREGROUND");
 }
 

@@ -57,6 +57,19 @@ local function main()
     local listener2 = cc.EventListenerCustom:create("on_network_change_disable",onNetworkChanged)
     eventDispatcher:addEventListenerWithFixedPriority(listener2, 2)
 
+    local function onEventComeToForeground()
+        print("[onEventComeToForeground] ...")
+    end
+    local function onEventComeToBackground()
+        print("[onEventComeToBackground] ...")
+    end
+
+    local listener3 = cc.EventListenerCustom:create("event_come_to_background", onEventComeToBackground)
+    eventDispatcher:addEventListenerWithFixedPriority(listener3, 3)
+
+    local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
+    eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
+
     -- run
     local createLoginScene = require('landing.LandingScene')
     local sceneGame = createLoginScene()
