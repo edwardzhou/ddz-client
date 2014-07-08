@@ -267,7 +267,15 @@ function LoginScene:init()
 --  dump(c)
 --  print('c.isBomb? ', c:isBomb(), '\n', c:toString())
 --  dump(c:getPokeValues(true))
-  
+
+    local imageView = ccui.ImageView:create()
+    imageView:setScale9Enabled(true)
+    imageView:loadTexture("images/sound.9.png")
+    imageView:setContentSize(cc.size(200, 40))
+    imageView:setPosition(cc.p(500, 370))
+    imageView:setLocalZOrder(100)
+    uiRoot:addChild(imageView)
+
 end
 
 function LoginScene:initKeypadHandler()
