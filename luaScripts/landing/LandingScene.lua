@@ -1,5 +1,6 @@
 --require 'CCBReaderLoad'
 require 'GuiConstants'
+
 require 'PokeCard'
 
 local cjson = require('cjson.safe')
@@ -49,6 +50,7 @@ function LandingScene:init()
   local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing.json')
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
+  self.uiRoot = uiRoot
   local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonHolder')
   local loadingBar = ccui.Helper:seekWidgetByName(uiRoot, 'loadingBar')
   loadingBar = tolua.cast(loadingBar, 'ccui.LoadingBar')
@@ -91,7 +93,7 @@ function LandingScene:init()
       elseif buttonName == 'v_ButtonConnect' then
         self:connectToServer()
       elseif buttonName == 'v_ButtonSignUp' then
-        self:reconnectToServer()
+        self:generatePokecards()
       elseif buttonName == 'v_ButtonSignIn' then
         cc.Director:getInstance():endToLua()
       end
@@ -118,6 +120,7 @@ function LandingScene:init()
 
   -- self:initKeypadHandler()
   
+
 --  local proxy = cc.CCBReader
   self:runAction(cc.Sequence:create(
     cc.DelayTime:create(0.3),
@@ -137,63 +140,63 @@ function LandingScene:init()
     end)
   ))
 
-  cc.SpriteFrameCache:getInstance():addSpriteFrames('pokecards.plist')
 
-  local batchNode = cc.SpriteBatchNode:createWithTexture(
-    cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
-  
-  local poke = {
-    value = PokeCardValue.THREE,
-    cardType = PokeCardType.DIAMOND,
-    valueChar = '3'
-  }
-
-  batchNode:setLocalZOrder(100)
-
-  local cardSprite = self:createPokecard(poke)
-  cardSprite:setPosition(50, 100)
-  batchNode:addChild(cardSprite)
-
-  poke = {
-    value = PokeCardValue.KING,
-    cardType = PokeCardType.SPADE,
-    valueChar = 'K'
-  }
-  cardSprite = self:createPokecard(poke)
-  cardSprite:setPosition(150, 100)
-  batchNode:addChild(cardSprite)
-
-  poke = {
-    value = PokeCardValue.SMALL_JOKER,
-    cardType = PokeCardType.SPADE,
-    valueChar = 'w'
-  }
-  cardSprite = self:createPokecard(poke)
-  cardSprite:setPosition(250, 100)
-  batchNode:addChild(cardSprite)
-
-  poke = {
-    value = PokeCardValue.BIG_JOKER,
-    cardType = PokeCardType.SPADE,
-    valueChar = 'W'
-  }
-  cardSprite = self:createPokecard(poke)
-  cardSprite:setPosition(350, 100)
-  batchNode:addChild(cardSprite)
-
-  poke = {
-    value = PokeCardValue.TEN,
-    cardType = PokeCardType.CLUB,
-    valueChar = '0'
-  }
-  cardSprite = self:createPokecard(poke)
-  cardSprite:setPosition(450, 100)
-  batchNode:addChild(cardSprite)
-
-  uiRoot:addChild(batchNode)
-
+ 
 
   
+end
+
+function LandingScene:generatePokecards()
+  local this = self
+  local function screenCap()
+      local renderTexture = cc.RenderTexture:create(1024, 1024, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
+      this.renderTexture = renderTexture
+      renderTexture:retain()
+
+      renderTexture:begin()
+
+      for row=0, 5 do
+        for col=1, 10 do
+          if row == 5 and col >4 then
+            break
+          end
+
+          local index = row * 10 + col
+          local poke = g_shared_cards[index]
+          local sprite = poke.card_sprite
+          sprite:setVisible(true)
+          sprite:setPosition((col-1) * 100, row * 140)
+        end
+      end
+
+      g_pokecards_node:visit()
+
+      renderTexture:endToLua()
+
+      --local this = self
+      this:runAction(cc.Sequence:create(
+          cc.DelayTime:create(0.01),
+          cc.CallFunc:create(function() 
+            --renderTexture:saveToFile(ddz.getDataStorePath() .. '/pc.png', cc.IMAGE_FORMAT_PNG)
+            local pImage = renderTexture:newImage()
+            pImage:saveToFile(ddz.getDataStorePath() .. '/pc.png', false);
+
+            local tex = cc.Director:getInstance():getTextureCache():addUIImage(pImage, 'test')
+
+            pImage:release()
+
+            local sprite = cc.Sprite:createWithTexture(tex)
+            sprite:setAnchorPoint(0,0)
+            sprite:setPosition(0, 0)
+            sprite:setLocalZOrder(200)
+            this.uiRoot:addChild(sprite)
+            renderTexture:release()
+          end)
+        ))
+  end
+
+  screenCap()
+
 end
 
 function LandingScene:createPokecard(poke)
