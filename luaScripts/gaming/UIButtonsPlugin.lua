@@ -67,8 +67,9 @@ function UIButtonsPlugin.bind( theClass )
 
   function theClass:ButtonReady_onClicked(sender, event)
     local this = self
-    PokeCard.releaseAllCards()
-    PokeCard.reloadAllCardSprites(self.pokeCardsLayer)
+    --PokeCard.releaseAllCards()
+    --PokeCard.reloadAllCardSprites(self.pokeCardsBatchNode)
+    PokeCard.resetAll()
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
     self.gameService:readyGame(function(data)
         this.ButtonReady:setVisible(false)

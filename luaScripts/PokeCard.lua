@@ -1,5 +1,6 @@
 g_shared_cards = {}
 
+g_pokecards_node = nil
 
 
 PokeCardState = {
@@ -159,12 +160,91 @@ function PokeCard:ctor(container, filename, scaleFactor)
 --	container:addChild(self.card_sprite)
 end
 
+function createPokecardSprite(poke)
+  local cardSprite = cc.Sprite:createWithSpriteFrameName('poke_bg_l.png')
+  cardSprite:setAnchorPoint(cc.p(0, 0))
+  cardSprite:setPosition(cc.p(-150, -150))
+  dump(poke, '[createPokecardSprite] poke =>')
+
+  if poke.value <= PokeCardValue.TEN or poke.value == PokeCardValue.TWO or poke.value == PokeCardValue.ACE then
+    local pbfFrameName = 'pbf_l_' .. poke.pokeType .. '.png'
+    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    pbfSprite:setPosition(50, 45)
+    cardSprite:addChild(pbfSprite)
+
+    local pvFrameName = 'pv_l_'
+    local colorName = 'b_'
+    if poke.pokeType == PokeCardType.DIAMOND or poke.pokeType == PokeCardType.HEART then
+      colorName = 'r_'
+    end
+    pvFrameName = pvFrameName .. colorName .. poke.valueChar .. '.png'
+    local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
+    numSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    numSprite:setPosition(18, 140 - 23)
+    cardSprite:addChild(numSprite)
+
+    local psfFrameName = 'psf_l_' .. poke.pokeType .. '.png'
+    local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
+    psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    psfSprite:setPosition(18, 80)
+    cardSprite:addChild(psfSprite)
+
+  elseif poke.value >= PokeCardValue.JACK and poke.value <= PokeCardValue.KING then
+    local pbfFrameName = 'pbf_l_' .. poke.valueChar .. '.png'
+    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    pbfSprite:setPosition(50, 70)
+    cardSprite:addChild(pbfSprite)
+
+    local pvFrameName = 'pv_l_'
+    local colorName = 'b_'
+    if poke.pokeType == PokeCardType.DIAMOND or poke.pokeType == PokeCardType.HEART then
+      colorName = 'r_'
+    end
+    pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
+    local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
+    numSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    numSprite:setPosition(18, 140 - 23)
+    cardSprite:addChild(numSprite)
+
+    local psfFrameName = 'psf_l_' .. poke.pokeType .. '.png'
+    local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
+    psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    psfSprite:setPosition(18, 80)
+    cardSprite:addChild(psfSprite)
+  else
+    local pbfFrameName = 'pbf_l_'
+    if poke.value == PokeCardValue.BIG_JOKER then
+      pbfFrameName = pbfFrameName .. 'BIG_JOKER'
+    else
+      pbfFrameName = pbfFrameName .. 'SMALL_JOKER'
+    end
+    pbfFrameName = pbfFrameName .. '.png'
+
+    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+    pbfSprite:setPosition(50, 70)
+    cardSprite:addChild(pbfSprite)
+
+  end
+
+  return cardSprite
+ end
+
 function PokeCard:loadCardSprite(container)
-  self.card_sprite = cc.Sprite:createWithSpriteFrameName(self.image_filename)
+  -- self.card_sprite = cc.Sprite:createWithSpriteFrameName(self.image_filename)
+  -- self.card_sprite:setAnchorPoint(cc.p(0,0))
+  -- self.card_sprite:setPosition(cc.p(-150, -150))
+  -- self.card_sprite:setVisible(false)
+  --self.card_sprite:retain()
+
+  self.card_sprite = createPokecardSprite(self)
   self.card_sprite:setAnchorPoint(cc.p(0,0))
   self.card_sprite:setPosition(cc.p(-150, -150))
   self.card_sprite:setVisible(false)
-  --self.card_sprite:retain()
+  self.card_sprite:setLocalZOrder(54-self.pokeIndex)
+
   container:addChild(self.card_sprite)
 end
 
@@ -346,31 +426,38 @@ end
 
 
 PokeCard.releaseAllCards = function() 
-	for _, value in pairs(g_shared_cards) do
---	  dump(value, 'poke card')
---	  print(value.card_sprite.cname)
-		local pokeSprite = value.card_sprite
-		if pokeSprite and pokeSprite:getParent() then
-			pokeSprite:removeFromParent(true)
-		end
-		pokeSprite = nil
-		value.card_sprite = nil
-	end
+-- 	for _, value in pairs(g_shared_cards) do
+-- --	  dump(value, 'poke card')
+-- --	  print(value.card_sprite.cname)
+-- 		local pokeSprite = value.card_sprite
+-- 		if pokeSprite and pokeSprite:getParent() then
+-- 			pokeSprite:removeFromParent(true)
+-- 		end
+-- 		pokeSprite = nil
+-- 		value.card_sprite = nil
+-- 	end
+
 	
 --	g_shared_cards = {}
 --	g_PokeCardMap = {}	
 end
 
 PokeCard.reloadAllCardSprites = function(container)
-  for _, pokeCard in pairs(g_shared_cards) do
+  for i=#g_shared_cards, 1, -1 do
+    local pokeCard = g_shared_cards[i]
     pokeCard:loadCardSprite(container)
-  end  
+  end
+  -- for _, pokeCard in pairs(g_shared_cards) do
+  --   pokeCard:loadCardSprite(container)
+  -- end  
 end
 
 PokeCard.resetAll = function(container)
-  if g_shared_cards[1].card_sprite == nil then
-    PokeCard.reloadAllCardSprites(container)
-  end
+  -- if g_shared_cards[1].card_sprite == nil then
+  --   PokeCard.reloadAllCardSprites(container)
+  -- end
+
+  
 
   for _, pokeCard in pairs(g_shared_cards) do
     pokeCard.picked = false
@@ -443,6 +530,13 @@ PokeCard.sharedPokeCard = function(container)
 	table.insert(g_shared_cards, pokeCard)
 	g_PokeCardMap[pokeId] = pokeCard
 	cclog("g_shared_cards.length => %d" , #g_shared_cards)
+
+  g_pokecards_node = cc.SpriteBatchNode:createWithTexture(
+    cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
+  g_pokecards_node:retain()
+
+  PokeCard.reloadAllCardSprites(g_pokecards_node)
+
 end
 
 PokeCard.getCard = function(card_value)

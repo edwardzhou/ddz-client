@@ -49,7 +49,7 @@ function GameScene:cleanup()
   umeng.MobClickCpp:endLogPageView('page_gaming')
   umeng.MobClickCpp:endScene('gaming')
   self:stopAllActions()
-  PokeCard.releaseAllCards()
+  --PokeCard.releaseAllCards()
   self.gameService:leaveGame()
   self.gameService:cleanup()
   gameConnection:off('connectionReady', self._onReconnected)
@@ -75,8 +75,14 @@ function GameScene:init()
   self:bindControlsVariables()
 
   local pokeCardsLayer = cc.Layer:create()
+  -- local pokeCardsBatchNode = cc.SpriteBatchNode:createWithTexture(
+  --   cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
+  
   self.SelfPokeCards:addChild(pokeCardsLayer)
+  PokeCard.resetAll()
+  pokeCardsLayer:addChild(g_pokecards_node)
   self.pokeCardsLayer = pokeCardsLayer
+  -- self.pokeCardsBatchNode = pokeCardsBatchNode
   
   self.selfUserId = 1
 

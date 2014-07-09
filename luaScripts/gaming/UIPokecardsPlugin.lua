@@ -184,13 +184,13 @@ function UIPokecardsPlugin.bind( theClass )
       return
     end
     
-    local p = cc.p(0, 0) 
+    local p = cc.p(0, 10) 
     local cardWidth = self.cardContentSize.width --* GlobalSetting.content_scale_factor
     --print("cardWidth", cardWidth)
     -- 计算牌之间的覆盖位置，最少遮盖30% 即显示面积最多为70%
-    local step = (self.visibleSize.width) / (#pokeCards + 1)
-    if step > cardWidth * 0.7 then
-      step = cardWidth * 0.7
+    local step = (self.visibleSize.width - 40) / (#pokeCards + 1)
+    if step > cardWidth * 0.6 then
+      step = cardWidth * 0.6
     end
   
     -- 计算中心点
