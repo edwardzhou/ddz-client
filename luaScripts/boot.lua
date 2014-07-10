@@ -70,6 +70,9 @@ local function main()
     local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
     eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
 
+    cc.FileUtils:getInstance():addSearchPath(ddz.getDataStorePath())
+    ddz.GlobalSettings.scaleFactor = cc.Director:getInstance():getContentScaleFactor()
+
     -- run
     local createLoginScene = require('landing.LandingScene')
     local sceneGame = createLoginScene()

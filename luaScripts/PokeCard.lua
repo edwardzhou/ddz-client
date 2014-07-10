@@ -75,8 +75,8 @@ PokeCardTypeString[PokeCardType.BIG_JOKER] = "大王"
 local PokeCardTypeId = {}
 PokeCardTypeId[""] = PokeCardType.NONE
 PokeCardTypeId["d"] = PokeCardType.DIAMOND
-PokeCardTypeId["c"] = PokeCardType.HEART
 PokeCardTypeId["b"] = PokeCardType.CLUB
+PokeCardTypeId["c"] = PokeCardType.HEART
 PokeCardTypeId["a"] = PokeCardType.SPADE
 PokeCardTypeId["w"] = PokeCardType.SMALL_JOKER
 PokeCardTypeId["W"] = PokeCardType.BIG_JOKER
@@ -144,7 +144,7 @@ function PokeCard:ctor(container, filename, scaleFactor)
 	self.value = 0
 	self.pokeIndex = 0
 	self.id = ""
-	self.scaleFactor = 1.0
+	self.scaleFactor = scaleFactor or 1.0
 	self.state = PokeCardState.NORMAL
 	self.picked = false
 	
@@ -263,7 +263,7 @@ function PokeCard:getPokeString()
 end
 
 function PokeCard:toString()
-    return "PokeCard[" + PokeCardTypeString[self.pokeType] ..
+    return "PokeCard[" .. PokeCardTypeString[self.pokeType] ..
     		PokeCardString[self.value] .. "]"
 end
 
@@ -476,8 +476,9 @@ PokeCard.sharedPokeCard = function(container)
 		--g_shared_cards = {}
 	end
 	
+  local scaleFactor = ddz.GlobalSettings.scaleFactor or 1.0
 	--CCSpriteFrameCache:sharedSpriteFrameCache():addSpriteFramesWithFile(Res.s_cards_plist)
-	local types = {"d", "c", "b", "a"}
+	local types = {"d", "b", "c", "a"}
 	local card_indexes = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2}
 	local ci = 1
 	for card_index, index in pairs(card_indexes) do
@@ -487,7 +488,7 @@ PokeCard.sharedPokeCard = function(container)
 			pokeId = string.format('%s%02d', t, index)
 			local card_image_file_name = pokeId .. ".png"
 			
-			local pokeCard = PokeCard.new(container, card_image_file_name)
+			local pokeCard = PokeCard.new(container, card_image_file_name, scaleFactor)
 			pokeCard.index = ci
 			ci = ci + 1
 			pokeCard.value = tonumber(card_index) + 2
@@ -531,12 +532,68 @@ PokeCard.sharedPokeCard = function(container)
 	g_PokeCardMap[pokeId] = pokeCard
 	cclog("g_shared_cards.length => %d" , #g_shared_cards)
 
-  g_pokecards_node = cc.SpriteBatchNode:createWithTexture(
+end
+
+PokeCard.createRawPokecardTextures = function()
+  local pokecards_node = cc.SpriteBatchNode:createWithTexture(
     cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
+  PokeCard.reloadAllCardSprites(pokecards_node)
+  return pokecards_node
+end
+
+PokeCard.createPokecardsFrames = function(tex)
+  local width, height = 1024, 1024
+  local row, col, x, y
+  local frameCache = cc.SpriteFrameCache:getInstance()
+  for index = #g_shared_cards, 1, -1 do
+    row = math.floor((index-1) / 10)
+    col = (index-1) % 10
+
+    x = col * 100
+    y = height - (row+1) * 140
+    local rect = cc.rect(x, y, 100, 140)
+    dump(rect, 'rect for index ' .. index)
+    local spriteFrame = cc.SpriteFrame:createWithTexture(tex, rect)
+    frameCache:addSpriteFrame(spriteFrame, g_shared_cards[index].image_filename)
+  end
+end
+
+PokeCard.createPokecardsWithFrames = function(tex)
+  local scaleFactor = ddz.GlobalSettings.scaleFactor or 1.0
+  g_pokecards_node = cc.SpriteBatchNode:createWithTexture(tex)
+  g_pokecards_node:retain()
+  for index = #g_shared_cards, 1, -1 do
+    local pokeCard = g_shared_cards[index]
+    pokeCard.card_sprite = cc.Sprite:createWithSpriteFrameName(pokeCard.image_filename)
+    pokeCard.card_sprite:setAnchorPoint(cc.p(0, 0))
+    pokeCard.card_sprite:setPosition(cc.p(-150, -150))
+    pokeCard.card_sprite:setVisible(false)
+    --pokeCard.card_sprite:setScale(scaleFactor)
+    g_pokecards_node:addChild(pokeCard.card_sprite)
+  end
+end
+
+PokeCard.createPokecardsFromTexture = function(tex)
+  g_pokecards_node = cc.SpriteBatchNode:createWithTexture(tex)
   g_pokecards_node:retain()
 
-  PokeCard.reloadAllCardSprites(g_pokecards_node)
+  local width, height = 1024, 1024
+  local row, col, x, y
+  for index = #g_shared_cards, 1, -1 do
+    row = math.floor((index-1) / 10)
+    col = (index-1) % 10
 
+    x = col * 100
+    y = height - (row+1) * 140
+    local rect = cc.rect(x, y, 100, 140)
+    dump(rect, 'rect for index ' .. index)
+    local sprite = cc.Sprite:createWithTexture(tex, rect)
+    sprite:setAnchorPoint(cc.p(0, 0))
+    sprite:setPosition(-150, -150)
+    sprite:setVisible(false)
+    g_pokecards_node:addChild(sprite)
+    g_shared_cards[index].card_sprite = sprite
+  end
 end
 
 PokeCard.getCard = function(card_value)

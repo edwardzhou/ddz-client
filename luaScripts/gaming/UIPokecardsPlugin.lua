@@ -284,7 +284,7 @@ function UIPokecardsPlugin.bind( theClass )
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:runAction(cc.Spawn:create(
         cc.MoveTo:create(0.2, cc.p(startX, centerPoint.y)),
-        cc.ScaleTo:create(0.1, 0.7)
+        cc.ScaleTo:create(0.1, 0.5)
       ))
       startX = startX + 35 * 0.7
       pokeSprite:setLocalZOrder(30 - index)
@@ -311,7 +311,7 @@ function UIPokecardsPlugin.bind( theClass )
 
       pokeSprite:runAction(cc.Spawn:create(
         cc.MoveTo:create(0.2, endPoint),
-        cc.ScaleTo:create(0.1, 0.7)
+        cc.ScaleTo:create(0.1, 0.5)
       ))
       endPoint.x = endPoint.x + 35 * 0.7
     end
@@ -335,7 +335,7 @@ function UIPokecardsPlugin.bind( theClass )
 
       pokeSprite:runAction(cc.Spawn:create(
         cc.MoveTo:create(0.2, endPoint),
-        cc.ScaleTo:create(0.1, 0.7)
+        cc.ScaleTo:create(0.1, 0.5)
       ))
       endPoint.x = endPoint.x - 35 * 0.7
     end

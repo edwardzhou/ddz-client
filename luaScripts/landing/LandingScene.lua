@@ -134,9 +134,24 @@ function LandingScene:init()
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()
-      cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
-      cc.SpriteFrameCache:getInstance():addSpriteFrames('pokecards.plist')
       PokeCard.sharedPokeCard()
+      local pokefile = 'pc.png'
+      if not cc.FileUtils:getInstance():isFileExist(pokefile) then
+        cc.SpriteFrameCache:getInstance():addSpriteFrames('pokecards.plist')
+        this:generatePokecards()
+      else
+        local tex = cc.Director:getInstance():getTextureCache():addImage(pokefile)
+        PokeCard.createPokecardsFrames(tex)
+        PokeCard.createPokecardsWithFrames(tex)
+        -- g_pokecards_node:setLocalZOrder(200)
+        -- this.uiRoot:addChild(g_pokecards_node)
+        -- local poke = PokeCard.getCardById('a03')
+        -- local sprite = poke.card_sprite
+        -- print('a03 => ' .. poke:toString())
+        -- sprite:setPosition(0, 0)
+        -- sprite:setVisible(true)
+      end
+      --cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
     end)
   ))
 
@@ -149,8 +164,11 @@ end
 function LandingScene:generatePokecards()
   local this = self
   local function screenCap()
+      local batchNode = PokeCard.createRawPokecardTextures()
       local renderTexture = cc.RenderTexture:create(1024, 1024, cc.TEXTURE2_D_PIXEL_FORMAT_RGB_A8888)
       this.renderTexture = renderTexture
+
+      batchNode:retain()
       renderTexture:retain()
 
       renderTexture:begin()
@@ -169,7 +187,7 @@ function LandingScene:generatePokecards()
         end
       end
 
-      g_pokecards_node:visit()
+      batchNode:visit()
 
       renderTexture:endToLua()
 
@@ -181,17 +199,26 @@ function LandingScene:generatePokecards()
             local pImage = renderTexture:newImage()
             pImage:saveToFile(ddz.getDataStorePath() .. '/pc.png', false);
 
-            local tex = cc.Director:getInstance():getTextureCache():addUIImage(pImage, 'test')
+            local tex = cc.Director:getInstance():getTextureCache():addUIImage(pImage, 'pc.png')
 
             pImage:release()
 
-            local sprite = cc.Sprite:createWithTexture(tex)
-            sprite:setAnchorPoint(0,0)
-            sprite:setPosition(0, 0)
-            sprite:setLocalZOrder(200)
-            this.uiRoot:addChild(sprite)
+            -- local sprite = cc.Sprite:createWithTexture(tex, cc.rect(0, 1024-140, 100, 140))
+            -- sprite:setAnchorPoint(0,0)
+            -- sprite:setPosition(0, 0)
+            -- sprite:setLocalZOrder(200)
+            -- this.uiRoot:addChild(sprite)
             renderTexture:release()
-          end)
+            batchNode:release()
+            PokeCard.createPokecardsFrames(tex)
+            PokeCard.createPokecardsWithFrames(tex)
+
+            -- g_pokecards_node:setLocalZOrder(200)
+            -- this.uiRoot:addChild(g_pokecards_node)
+            -- local sprite = PokeCard.getCardById('b03').card_sprite
+            -- sprite:setPosition(0, 0)
+            -- sprite:setVisible(true)
+           end)
         ))
   end
 
@@ -199,76 +226,76 @@ function LandingScene:generatePokecards()
 
 end
 
-function LandingScene:createPokecard(poke)
-  local cardSprite = cc.Sprite:createWithSpriteFrameName('poke_bg_l.png')
-  cardSprite:setAnchorPoint(cc.p(0, 0))
-  cardSprite:setPosition(cc.p(150, 150))
+-- function LandingScene:createPokecard(poke)
+--   local cardSprite = cc.Sprite:createWithSpriteFrameName('poke_bg_l.png')
+--   cardSprite:setAnchorPoint(cc.p(0, 0))
+--   cardSprite:setPosition(cc.p(150, 150))
 
-  if poke.value <= PokeCardValue.TEN or poke.value == PokeCardValue.TWO or poke.value == PokeCardValue.ACE then
-    local pbfFrameName = 'pbf_l_' .. poke.cardType .. '.png'
-    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
-    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    pbfSprite:setPosition(50, 45)
-    cardSprite:addChild(pbfSprite)
+--   if poke.value <= PokeCardValue.TEN or poke.value == PokeCardValue.TWO or poke.value == PokeCardValue.ACE then
+--     local pbfFrameName = 'pbf_l_' .. poke.cardType .. '.png'
+--     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+--     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     pbfSprite:setPosition(50, 45)
+--     cardSprite:addChild(pbfSprite)
 
-    local pvFrameName = 'pv_l_'
-    local colorName = 'b_'
-    if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
-      colorName = 'r_'
-    end
-    pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
-    local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
-    numSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    numSprite:setPosition(18, 140 - 23)
-    cardSprite:addChild(numSprite)
+--     local pvFrameName = 'pv_l_'
+--     local colorName = 'b_'
+--     if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
+--       colorName = 'r_'
+--     end
+--     pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
+--     local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
+--     numSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     numSprite:setPosition(18, 140 - 23)
+--     cardSprite:addChild(numSprite)
 
-    local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
-    local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
-    psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    psfSprite:setPosition(18, 80)
-    cardSprite:addChild(psfSprite)
+--     local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
+--     local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
+--     psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     psfSprite:setPosition(18, 80)
+--     cardSprite:addChild(psfSprite)
 
-  elseif poke.value >= PokeCardValue.JACK and poke.value <= PokeCardValue.KING then
-    local pbfFrameName = 'pbf_l_' .. poke.valueChar .. '.png'
-    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
-    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    pbfSprite:setPosition(50, 70)
-    cardSprite:addChild(pbfSprite)
+--   elseif poke.value >= PokeCardValue.JACK and poke.value <= PokeCardValue.KING then
+--     local pbfFrameName = 'pbf_l_' .. poke.valueChar .. '.png'
+--     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+--     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     pbfSprite:setPosition(50, 70)
+--     cardSprite:addChild(pbfSprite)
 
-    local pvFrameName = 'pv_l_'
-    local colorName = 'b_'
-    if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
-      colorName = 'r_'
-    end
-    pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
-    local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
-    numSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    numSprite:setPosition(18, 140 - 23)
-    cardSprite:addChild(numSprite)
+--     local pvFrameName = 'pv_l_'
+--     local colorName = 'b_'
+--     if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
+--       colorName = 'r_'
+--     end
+--     pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
+--     local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
+--     numSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     numSprite:setPosition(18, 140 - 23)
+--     cardSprite:addChild(numSprite)
 
-    local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
-    local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
-    psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    psfSprite:setPosition(18, 80)
-    cardSprite:addChild(psfSprite)
-  else
-    local pbfFrameName = 'pbf_l_'
-    if poke.value == PokeCardValue.BIG_JOKER then
-      pbfFrameName = pbfFrameName .. 'BIG_JOKER'
-    else
-      pbfFrameName = pbfFrameName .. 'SMALL_JOKER'
-    end
-    pbfFrameName = pbfFrameName .. '.png'
+--     local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
+--     local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
+--     psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     psfSprite:setPosition(18, 80)
+--     cardSprite:addChild(psfSprite)
+--   else
+--     local pbfFrameName = 'pbf_l_'
+--     if poke.value == PokeCardValue.BIG_JOKER then
+--       pbfFrameName = pbfFrameName .. 'BIG_JOKER'
+--     else
+--       pbfFrameName = pbfFrameName .. 'SMALL_JOKER'
+--     end
+--     pbfFrameName = pbfFrameName .. '.png'
 
-    local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
-    pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
-    pbfSprite:setPosition(50, 70)
-    cardSprite:addChild(pbfSprite)
+--     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
+--     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
+--     pbfSprite:setPosition(50, 70)
+--     cardSprite:addChild(pbfSprite)
 
-  end
+--   end
 
-  return cardSprite
- end
+--   return cardSprite
+--  end
 
 function LandingScene:reconnectToServer()
   self.connection:reconnect()
