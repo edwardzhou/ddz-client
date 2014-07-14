@@ -146,29 +146,29 @@ AppDelegate::~AppDelegate()
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
-    auto director = Director::getInstance();
-    auto glview = director->getOpenGLView();
-    if(!glview) {
-        glview = GLView::create("My Game");
-        director->setOpenGLView(glview);
-    }
+    // auto director = Director::getInstance();
+    // auto glview = director->getOpenGLView();
+    // if(!glview) {
+    //     glview = GLView::create("My Game");
+    //     director->setOpenGLView(glview);
+    // }
 
-    glview->setDesignResolutionSize(800, 480, ResolutionPolicy::EXACT_FIT);
+    // glview->setDesignResolutionSize(800, 480, ResolutionPolicy::EXACT_FIT);
 
-    // turn on display FPS
-    director->setDisplayStats(true);
+    // // turn on display FPS
+    // director->setDisplayStats(true);
 
-    // set FPS. the default value is 1.0/60 if you don't call this
-    director->setAnimationInterval(1.0 / 30);
+    // // set FPS. the default value is 1.0/60 if you don't call this
+    // director->setAnimationInterval(1.0 / 30);
 
-    FileUtils::getInstance()->addSearchPath("src");
-    FileUtils::getInstance()->addSearchPath("luaScripts");
-    FileUtils::getInstance()->addSearchPath("res");
-    auto searchPaths = FileUtils::getInstance()->getSearchPaths();
-    auto begin = searchPaths.begin();
-    auto writablePath = FileUtils::getInstance()->getWritablePath();
-    searchPaths.insert(begin, writablePath);
-    FileUtils::getInstance()->setSearchPaths(searchPaths);
+    // FileUtils::getInstance()->addSearchPath("src");
+    // FileUtils::getInstance()->addSearchPath("luaScripts");
+    // FileUtils::getInstance()->addSearchPath("res");
+    // auto searchPaths = FileUtils::getInstance()->getSearchPaths();
+    // auto begin = searchPaths.begin();
+    // auto writablePath = FileUtils::getInstance()->getWritablePath();
+    // searchPaths.insert(begin, writablePath);
+    // FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     // register lua engine
     auto engine = LuaEngine::getInstance();
@@ -246,7 +246,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     getApkSign();
 
-    engine->executeString("require 'boot.lua'");
+    engine->executeScriptFile("boot.lua");
     
     return true;
 }

@@ -14,7 +14,8 @@ local TypeMapping = {
   Text = 'ccui.Text',
   TextBMFont = 'ccui.TextBMFont',
   TextAtlas = 'ccui.TextAtlas',
-  Button = 'ccui.Button'
+  Button = 'ccui.Button',
+  TextField = 'ccui.TextField'
 }
 
 function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
@@ -36,23 +37,53 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget
       end
-      if widget and eventContainer and wtype == 'Button' then
+      --if widget and eventContainer and wtype == 'Button' then
+      if widget and eventContainer then
         local eventHandlerName = vname .. '_onEvent'
         local eventHandler = eventContainer[eventHandlerName]
+        local eventTouchHandlerName = vname .. '_onTouchEvent'
+        local eventTouchHandler = eventContainer[eventTouchHandlerName]
         local onclickName = vname .. '_onClicked'
         local onclickHandler = eventContainer[onclickName]
-        print('[bind event]', vname, eventHandlerName, ' eventHandler:', eventHandler , ' onclickHandler: ', onclickHandler)
-        
-        if type(eventHandler) == 'function' or type(onclickHandler) == 'function' then
+        -- print('[bind event]', vname, eventHandlerName, ' eventHandler:', eventHandler , ' onclickHandler: ', onclickHandler)
+        if type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function' then
           widget:addTouchEventListener(function(sender, event)
-            if eventHandler then
-              eventHandler(eventContainer, sender, event)
-            end
-            if event == ccui.TouchEventType.ended and onclickHandler then
-              onclickHandler(eventContainer, sender, event)
-            end
-          end)
+              if eventHandler then
+                eventHandler(eventContainer, sender, event)
+              end
+              if event == ccui.TouchEventType.ended and onclickHandler then
+                onclickHandler(eventContainer, sender, event)
+              end
+            end)
         end
+
+        if type(eventHandler) == 'function' and widget.addEventListener ~= nil then
+          widget:addEventListener(function(sender, event)
+              eventHandler(eventContainer, sender, event)
+            end)
+        end
+
+
+        
+        -- if type(eventHandler) == 'function' or type(onclickHandler) == 'function' then
+        --   local listener = 'addTouchEventListener'
+        --   if wtype == 'CheckBox' 
+        --     or wtype == 'Slider' 
+        --     or wtype == 'TextField' 
+        --     or wtype == 'ScrollView'
+        --     or wtype == 'ListView'
+        --     or wtype == 'PageView' then
+        --      listener = 'addEventListener'
+        --   end
+        --   widget[listener](widget, function(sender, event)
+        --     if eventHandler then
+        --       eventHandler(eventContainer, sender, event)
+        --     end
+        --     if event == ccui.TouchEventType.ended and onclickHandler then
+        --       onclickHandler(eventContainer, sender, event)
+        --     end
+        --   end)
+        -- end
       end
     end
     

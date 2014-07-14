@@ -26,8 +26,30 @@ local function main()
     -- avoid memory leak
     collectgarbage("setpause", 100)
     collectgarbage("setstepmul", 5000)
-    
+
     math.randomseed(os.time())
+
+    local director = cc.Director:getInstance()
+    local glview = director:getOpenGLView()
+    if nil == glview then
+        glview = cc.GLView:createWithRect("DDZ", cc.rect(0, 0, 800, 480))
+        director:setOpenGLView(glview)       
+    end
+
+    glview:setDesignResolutionSize(800, 480, cc.ResolutionPolicy.EXACT_FIT)
+
+    -- turn on display FPS
+    director:setDisplayStats(false)
+
+    --set FPS. the default value is 1.0/60 if you't call this
+    director:setAnimationInterval(1.0 / 60)
+
+    local fileUtils = cc.FileUtils:getInstance()
+    local searchPaths = fileUtils:getSearchPaths()
+    table.insert(searchPaths, 1, fileUtils:getWritablePath())
+    
+    fileUtils:setSearchPaths(searchPaths)
+    fileUtils:addSearchPath('src')
 
     --support debug
     local targetPlatform = cc.Application:getInstance():getTargetPlatform()
@@ -70,13 +92,14 @@ local function main()
     local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
     eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
 
-    cc.FileUtils:getInstance():addSearchPath(ddz.getDataStorePath())
-    ddz.GlobalSettings.scaleFactor = cc.Director:getInstance():getContentScaleFactor()
+    fileUtils:addSearchPath(ddz.getDataStorePath())
+
+    ddz.GlobalSettings.scaleFactor = director:getContentScaleFactor()
 
     -- run
     local createLoginScene = require('landing.LandingScene')
     local sceneGame = createLoginScene()
-    cc.Director:getInstance():runWithScene(sceneGame)
+    director:runWithScene(sceneGame)
 end
 
 xpcall(main, __G__TRACKBACK__)

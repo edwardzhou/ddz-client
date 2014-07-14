@@ -164,7 +164,7 @@ function createPokecardSprite(poke)
   local cardSprite = cc.Sprite:createWithSpriteFrameName('poke_bg_l.png')
   cardSprite:setAnchorPoint(cc.p(0, 0))
   cardSprite:setPosition(cc.p(-150, -150))
-  dump(poke, '[createPokecardSprite] poke =>')
+  --dump(poke, '[createPokecardSprite] poke =>')
 
   if poke.value <= PokeCardValue.TEN or poke.value == PokeCardValue.TWO or poke.value == PokeCardValue.ACE then
     local pbfFrameName = 'pbf_l_' .. poke.pokeType .. '.png'
@@ -552,7 +552,7 @@ PokeCard.createPokecardsFrames = function(tex)
     x = col * 100
     y = height - (row+1) * 140
     local rect = cc.rect(x, y, 100, 140)
-    dump(rect, 'rect for index ' .. index)
+    --dump(rect, 'rect for index ' .. index)
     local spriteFrame = cc.SpriteFrame:createWithTexture(tex, rect)
     frameCache:addSpriteFrame(spriteFrame, g_shared_cards[index].image_filename)
   end
@@ -586,7 +586,7 @@ PokeCard.createPokecardsFromTexture = function(tex)
     x = col * 100
     y = height - (row+1) * 140
     local rect = cc.rect(x, y, 100, 140)
-    dump(rect, 'rect for index ' .. index)
+    --dump(rect, 'rect for index ' .. index)
     local sprite = cc.Sprite:createWithTexture(tex, rect)
     sprite:setAnchorPoint(cc.p(0, 0))
     sprite:setPosition(-150, -150)

@@ -96,17 +96,6 @@ function HallScene:init()
     end
   end
 
-  local function scrollViewEvent(sender, eventType)
-    print('[scrollViewEvent] eventType => ', eventType)
-    --listItemSelected = false
-
-    moveTimes = moveTimes + 1
-    listItemSelected = moveTimes < 20
-  end
-
-  --local scrollCast = tolua.cast(listview, 'ccui.ScrollView')
-  --scrollCast:addEventListener( scrollViewEvent )
-  --listview:addScrollViewEventListener(scrollViewEvent)
   listview:addEventListenerListView(listViewEvent)
 
   local items = listview:getItems()
@@ -142,9 +131,12 @@ function HallScene:init()
   snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
-  
+
+  require('utils.UIVariableBinding').bind(ui, self, self)
   
 end
+
+
 
 function HallScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
@@ -153,6 +145,7 @@ function HallScene:initKeypadHandler()
 --        self.onMainMenu()
 --      end
       cc.Director:getInstance():popScene() 
+      event:stopPropagation()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
@@ -161,6 +154,12 @@ function HallScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function HallScene:ButtonHead_onClicked(sender, event)
+  print('[HallScene:ButtonHead_onClicked]')
+  local userProfile = require('profile.UserProfileScene')()
+  cc.Director:getInstance():pushScene(userProfile)
 end
 
 function HallScene:onRoomTouchEvent(sender, event)
