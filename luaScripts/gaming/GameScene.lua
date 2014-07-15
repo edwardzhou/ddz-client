@@ -69,7 +69,7 @@ function GameScene:init()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
 
-  local ui = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Gaming.json')
+  local ui = ccs.GUIReader:getInstance():widgetFromBinaryFile('UI/Gaming.csb')
   rootLayer:addChild(ui)
   self.uiWidget = ui
   self:bindControlsVariables()

@@ -33,7 +33,7 @@ function HallScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   
-  local ui = guiReader:widgetFromJsonFile('UI/Hall.json')
+  local ui = guiReader:widgetFromBinaryFile('UI/Hall.csb')
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
@@ -96,7 +96,12 @@ function HallScene:init()
     end
   end
 
-  listview:addEventListenerListView(listViewEvent)
+  local function listViewScrollEvent(sender, eventType)
+    print('[listViewScrollEvent] eventType => ', eventType)
+  end
+
+  listview:addEventListener(listViewEvent)
+  listview:addScrollViewEventListener(listViewScrollEvent)
 
   local items = listview:getItems()
   for i=1, #(items) do

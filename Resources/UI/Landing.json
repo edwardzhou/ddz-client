@@ -56,11 +56,11 @@
     "images/npstarbg.9.png",
     "images/sound.9.png",
     "images/logo.png",
-    "GUI/loadingbar.png",
+    "C:\\Program Files (x86)\\CocoStudio\\EditorDefaultRes\\GUI/loadingbar.png",
     "images/start.png",
-    "GUI/button.png"
+    "C:\\Program Files (x86)\\CocoStudio\\EditorDefaultRes\\GUI/button.png"
   ],
-  "version": "1.5.0.0",
+  "version": "1.5.0.1",
   "widgetTree": {
     "classname": "Panel",
     "name": null,

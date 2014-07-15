@@ -47,7 +47,7 @@ function LandingScene:init()
   self:addChild(rootLayer)
   self.rootLayer = rootLayer
   
-  local uiRoot = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/Landing.json')
+  local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('UI/Landing.csb')
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
