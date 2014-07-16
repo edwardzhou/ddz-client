@@ -33,7 +33,11 @@ function LoginScene:init()
 
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
   self:bindPanelInput(self.PanelPassword, self.InputPassword)
-  self.LabelTest:enableOutline(cc.c4b(255,0,255,255))
+
+  if ddz.GlobalSettings.userInfo.userId ~= nil then
+    self.InputUserId:setText(ddz.GlobalSettings.userInfo.userId)
+    self.InputPassword:setText('********')
+  end
 
 end
 
