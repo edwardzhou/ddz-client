@@ -106,6 +106,7 @@ function UserProfileScene:initKeypadHandler()
 --      if type(self.onMainMenu) == 'function' then
 --        self.onMainMenu()
 --      end
+      event:stopPropagation()
       cc.Director:getInstance():popScene() 
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")

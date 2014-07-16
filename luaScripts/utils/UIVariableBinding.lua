@@ -29,7 +29,7 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
     local tmpParent = varHodler
     local widget = nil
     if vtype ~= nil and vname ~= nil and wtype ~= nil then
-      print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
+      --print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
       if vtype == 'v' then
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget
@@ -62,28 +62,6 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
               eventHandler(eventContainer, sender, event)
             end)
         end
-
-
-        
-        -- if type(eventHandler) == 'function' or type(onclickHandler) == 'function' then
-        --   local listener = 'addTouchEventListener'
-        --   if wtype == 'CheckBox' 
-        --     or wtype == 'Slider' 
-        --     or wtype == 'TextField' 
-        --     or wtype == 'ScrollView'
-        --     or wtype == 'ListView'
-        --     or wtype == 'PageView' then
-        --      listener = 'addEventListener'
-        --   end
-        --   widget[listener](widget, function(sender, event)
-        --     if eventHandler then
-        --       eventHandler(eventContainer, sender, event)
-        --     end
-        --     if event == ccui.TouchEventType.ended and onclickHandler then
-        --       onclickHandler(eventContainer, sender, event)
-        --     end
-        --   end)
-        -- end
       end
     end
     

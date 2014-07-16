@@ -26,7 +26,8 @@ def compile_lua(src, dst):
       dst_file = os.path.join(dst, item)
       cmd = '/usr/local/bin/luajit -bg -t raw %s %s' % (path, dst_file)
       print cmd
-      os.system(cmd)
+      if os.system(cmd) != 0:
+        raise RuntimeError("Couldn't compile lua")
     if os.path.isdir(path):
       new_dst = os.path.join(dst, item)
       os.mkdir(new_dst)

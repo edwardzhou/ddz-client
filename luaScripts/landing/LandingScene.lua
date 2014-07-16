@@ -93,7 +93,8 @@ function LandingScene:init()
       elseif buttonName == 'v_ButtonConnect' then
         self:connectToServer()
       elseif buttonName == 'v_ButtonSignUp' then
-        self:generatePokecards()
+        local scene = require('login.LoginScene')()
+        cc.Director:getInstance():pushScene(scene)
       elseif buttonName == 'v_ButtonSignIn' then
         cc.Director:getInstance():endToLua()
       end
