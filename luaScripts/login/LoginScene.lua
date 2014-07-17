@@ -82,8 +82,9 @@ end
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
   local params = {
     title = '请输入',
-    msg = '请输入ID和密码',
+    msg = '111请输入ID和密码请输入ID和密码请输入ID和密码',
     grayBackground = false,
+    showingTime = 5,
     closeOnClickOutside = true
   }
   require('UICommon.ToastBox').showToastBox(self.rootLayer, params)

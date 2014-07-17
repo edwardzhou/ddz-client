@@ -29,6 +29,18 @@ local function main()
 
     math.randomseed(os.time())
 
+    local fileUtils = cc.FileUtils:getInstance()
+    local searchPaths = fileUtils:getSearchPaths()
+    local sdpath = ddz.getSDCardPath()
+    sdpath = sdpath .. '/fungame/DDZ'
+    table.insert(searchPaths, 1, fileUtils:getWritablePath())
+    table.insert(searchPaths, 1, sdpath .. '/lua')
+    table.insert(searchPaths, 1, sdpath .. '/res')
+    --fileUtils:addSearchPath()
+    
+    fileUtils:setSearchPaths(searchPaths)
+    fileUtils:addSearchPath('src')
+
     local director = cc.Director:getInstance()
     local glview = director:getOpenGLView()
     if nil == glview then
@@ -43,13 +55,6 @@ local function main()
 
     --set FPS. the default value is 1.0/60 if you't call this
     director:setAnimationInterval(1.0 / 60)
-
-    local fileUtils = cc.FileUtils:getInstance()
-    local searchPaths = fileUtils:getSearchPaths()
-    table.insert(searchPaths, 1, fileUtils:getWritablePath())
-    
-    fileUtils:setSearchPaths(searchPaths)
-    fileUtils:addSearchPath('src')
 
     --support debug
     local targetPlatform = cc.Application:getInstance():getTargetPlatform()
@@ -67,6 +72,7 @@ local function main()
     ddz.GlobalSettings.session = ddz.loadSessionInfo() or {}
     
     dump(ddz.GlobalSettings, 'GlobalSettings')
+
 
     local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
     local function onNetworkChanged(event)
@@ -92,7 +98,6 @@ local function main()
     local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
     eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
 
-    fileUtils:addSearchPath(ddz.getDataStorePath())
 
     ddz.GlobalSettings.scaleFactor = director:getContentScaleFactor()
 
