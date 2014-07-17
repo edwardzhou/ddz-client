@@ -92,6 +92,9 @@ function LandingScene:init()
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()
+
+      cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
+      
       PokeCard.sharedPokeCard()
       local pokefile = 'pc.png'
       if not cc.FileUtils:getInstance():isFileExist(pokefile) then

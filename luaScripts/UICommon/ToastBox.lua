@@ -56,43 +56,55 @@ function ToastBox:init()
 
   self.PanelBg:setVisible(self.grayBackground)
 
+  local animCache = cc.AnimationCache:getInstance()
+  local animation = animCache:getAnimation('loading')
+  if animation == nil then
+    local frameCache = cc.SpriteFrameCache:getInstance()
+    local frames = {}
+    for i=1, 10 do
+      local frameName = string.format('load%02d.png', i)
+      local frame = frameCache:getSpriteFrame(frameName)
+      table.insert(frames, frame)
+    end
+    animation = cc.Animation:createWithSpriteFrames(frames, 0.05)
+    animCache:addAnimation(animation, 'loading')
+  end
+
+  local sprite = cc.Sprite:createWithSpriteFrameName('load01.png')
+  sprite:setAnchorPoint(1.0, 0.5)
+  self.PanelBox:addChild(sprite)
+  self.sprite = sprite
+
   self:registerScriptHandler(function(event)
     --print('event => ', event)
 
     if event == "enter" then
-      this.ImageBox:runAction(
-          cc.Sequence:create(
-              cc.ScaleTo:create(0.15, 5),
-              cc.CallFunc:create(function() 
-                  this.ImageBox:setVisible(false)
-                  this.MsgPanel:setVisible(true)
-                end)
-            )
-        )
+      local rect = self.LabelMsg:getBoundingBox()
+      local size = self.PanelBox:getContentSize()      
+      local pos = cc.p(rect.x - 20, size.height / 2)
+      this.sprite:setPosition(pos)      
+
+      local animation = animCache:getAnimation('loading')
+      this.sprite:runAction(cc.RepeatForever:create(cc.Animate:create(animation)))
+      this.PanelBox:setOpacity(0)
+      this.PanelBox:runAction(cc.FadeIn:create(0.4))
+
+      this:runAction(cc.Sequence:create(
+          cc.DelayTime:create(this.showingTime),
+          cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
+          cc.CallFunc:create(function() this:close() end)
+        ))
+
     elseif event == 'exit' then
     end
   end)
 
   self.LabelMsg:setString(self.msg)
-  local rect = self.LabelMsg:getBoundingBox()
-
-  local pos = cc.p(self.Loading:getPosition())
-  pos.x = rect.x - 20
-  self.Loading:setPosition(pos)
-
 end
 
 function ToastBox:close()
   local this = self
-  --self.uiRoot:setOpacity(0)
-  self.MsgPanel:setVisible(false)
-  self.ImageBox:setVisible(true)
-  self.ImageBox:runAction( 
-    cc.Sequence:create(
-      cc.ScaleTo:create(0.15, 1),
-      cc.TargetedAction:create(this, cc.RemoveSelf:create())
-    )
-  )
+  self:removeFromParent()
 end
 
 function ToastBox:initKeypadHandler()
@@ -113,26 +125,8 @@ function ToastBox:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
-function ToastBox:ButtonCancel_onClicked(sender, eventType)
-  if utils.invokeCallback(self.onCancelCallback) == false then
-    return
-  else
-    self:close()
-  end
-end
-
-function ToastBox:ButtonOk_onClicked(sender, eventType)
-  if utils.invokeCallback(self.onOkCallback) == false then
-    return
-  else
-    self:close()
-  end
-end
-
-function ToastBox:RootBox_onClicked(sender, eventType)
-  if self.closeOnClickOutside then
-    self:ButtonCancel_onClicked(sender, eventType)
-  end
+function ToastBox:PanelRoot_onClicked(sender, eventType)
+  self:close()
 end
 
 local function showToastBox(container, params)

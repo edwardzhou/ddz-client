@@ -86,7 +86,7 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
     grayBackground = false,
     closeOnClickOutside = true
   }
-  require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+  require('UICommon.ToastBox').showToastBox(self.rootLayer, params)
 end
 
 
