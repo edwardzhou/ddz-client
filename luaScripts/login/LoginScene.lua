@@ -34,9 +34,12 @@ function LoginScene:init()
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
   self:bindPanelInput(self.PanelPassword, self.InputPassword)
 
-  if ddz.GlobalSettings.userInfo.userId ~= nil then
+  if ddz.GlobalSettings.userInfo and ddz.GlobalSettings.userInfo.userId ~= nil then
     self.InputUserId:setText(ddz.GlobalSettings.userInfo.userId)
     self.InputPassword:setText('********')
+  else
+    self.InputPassword:setText('')
+    self.InputPassword:setText('')
   end
 
 end
@@ -68,8 +71,24 @@ function LoginScene:initKeypadHandler()
 end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
-  require('UICommon.MessageBox').showMessageBox(self.rootLayer, '请输入', '请输入ID和密码')
+  local params = {
+    title = '请输入',
+    msg = '请输入ID和密码',
+    closeOnClickOutside = false
+  }
+  require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
 end
+
+function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
+  local params = {
+    title = '请输入',
+    msg = '请输入ID和密码',
+    grayBackground = false,
+    closeOnClickOutside = true
+  }
+  require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+end
+
 
 
 local function createScene()

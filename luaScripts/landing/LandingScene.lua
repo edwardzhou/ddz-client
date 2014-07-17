@@ -51,9 +51,9 @@ function LandingScene:init()
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
-  local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonHolder')
-  local loadingBar = ccui.Helper:seekWidgetByName(uiRoot, 'loadingBar')
-  loadingBar = tolua.cast(loadingBar, 'ccui.LoadingBar')
+
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
+
   local percent = 0
   uiRoot:runAction( cc.Sequence:create(
     cc.Repeat:create(
@@ -61,12 +61,11 @@ function LandingScene:init()
         cc.DelayTime:create(0.02),
         cc.CallFunc:create(function()
           percent = percent + 1
-          loadingBar:setPercent(percent) 
+          this.LoadingBar:setPercent(percent) 
         end)), 
       100),
     cc.CallFunc:create(function()
-        loadingBar:setVisible(false)
-        buttonHolder:setVisible(true)
+        this.LoadingBar:setVisible(false)
         umeng.MobClickCpp:endEvent('test')
       end)
   ))
@@ -78,49 +77,7 @@ function LandingScene:init()
   snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
-  
-  local function touchEvent(sender, eventType)
-    local buttonName = sender:getName()
-    if eventType == ccui.TouchEventType.ended then
-      if buttonName == 'ButtonS' then
-        print('button clicked')
-        local scene = require('HallScene')()
-        cc.Director:getInstance():pushScene(scene)
-      elseif buttonName == 'buttonStart' then
-        print('button holder clicked!')
-        local scene = require('gaming.GameScene')()
-        cc.Director:getInstance():pushScene(scene)
-      elseif buttonName == 'v_ButtonConnect' then
-        self:connectToServer()
-      elseif buttonName == 'v_ButtonSignUp' then
-        local scene = require('login.LoginScene')()
-        cc.Director:getInstance():pushScene(scene)
-      elseif buttonName == 'v_ButtonSignIn' then
-        cc.Director:getInstance():endToLua()
-      end
-    end
-  end
-  
-  local buttonS = ccui.Helper:seekWidgetByName(uiRoot, 'ButtonS')
-  buttonS:addTouchEventListener(touchEvent)
-  self.buttonS = buttonS
-  
-  local buttonHolder = ccui.Helper:seekWidgetByName(uiRoot, 'buttonStart')
-  buttonHolder:addTouchEventListener(touchEvent)
-
-  local buttonConnect = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonConnect')
-  buttonConnect:addTouchEventListener(touchEvent)
-
-  local buttonSignIn = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignIn')
-  buttonSignIn:addTouchEventListener(touchEvent)
-
-  local buttonSignUp = ccui.Helper:seekWidgetByName(uiRoot, 'v_ButtonSignUp')
-  buttonSignUp:addTouchEventListener(touchEvent)
-  
-  buttonS:setVisible(false)
-
-  -- self:initKeypadHandler()
-  
+    
 
 --  local proxy = cc.CCBReader
   self:runAction(cc.Sequence:create(
@@ -144,22 +101,28 @@ function LandingScene:init()
         local tex = cc.Director:getInstance():getTextureCache():addImage(pokefile)
         PokeCard.createPokecardsFrames(tex)
         PokeCard.createPokecardsWithFrames(tex)
-        -- g_pokecards_node:setLocalZOrder(200)
-        -- this.uiRoot:addChild(g_pokecards_node)
-        -- local poke = PokeCard.getCardById('a03')
-        -- local sprite = poke.card_sprite
-        -- print('a03 => ' .. poke:toString())
-        -- sprite:setPosition(0, 0)
-        -- sprite:setVisible(true)
       end
-      --cc.SpriteFrameCache:getInstance():addSpriteFrames('poke_cards.plist')
     end)
   ))
-
-
- 
-
   
+end
+
+function LandingScene:ButtonStart_onClicked(sender, eventType)
+  local scene = require('HallScene')()
+  cc.Director:getInstance():pushScene(scene)
+end
+
+function LandingScene:ButtonSignIn_onClicked(sender, eventType)
+  cc.Director:getInstance():endToLua()
+end
+
+function LandingScene:ButtonSignUp_onClicked(sender, eventType)
+  local scene = require('login.LoginScene')()
+  cc.Director:getInstance():pushScene(scene)
+end
+
+function LandingScene:ButtonConnect_onClicked(sender, eventType)
+  self:connectToServer()
 end
 
 function LandingScene:generatePokecards()
@@ -227,77 +190,6 @@ function LandingScene:generatePokecards()
 
 end
 
--- function LandingScene:createPokecard(poke)
---   local cardSprite = cc.Sprite:createWithSpriteFrameName('poke_bg_l.png')
---   cardSprite:setAnchorPoint(cc.p(0, 0))
---   cardSprite:setPosition(cc.p(150, 150))
-
---   if poke.value <= PokeCardValue.TEN or poke.value == PokeCardValue.TWO or poke.value == PokeCardValue.ACE then
---     local pbfFrameName = 'pbf_l_' .. poke.cardType .. '.png'
---     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
---     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     pbfSprite:setPosition(50, 45)
---     cardSprite:addChild(pbfSprite)
-
---     local pvFrameName = 'pv_l_'
---     local colorName = 'b_'
---     if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
---       colorName = 'r_'
---     end
---     pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
---     local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
---     numSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     numSprite:setPosition(18, 140 - 23)
---     cardSprite:addChild(numSprite)
-
---     local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
---     local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
---     psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     psfSprite:setPosition(18, 80)
---     cardSprite:addChild(psfSprite)
-
---   elseif poke.value >= PokeCardValue.JACK and poke.value <= PokeCardValue.KING then
---     local pbfFrameName = 'pbf_l_' .. poke.valueChar .. '.png'
---     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
---     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     pbfSprite:setPosition(50, 70)
---     cardSprite:addChild(pbfSprite)
-
---     local pvFrameName = 'pv_l_'
---     local colorName = 'b_'
---     if poke.cardType == PokeCardType.DIAMOND or poke.cardType == PokeCardType.HEART then
---       colorName = 'r_'
---     end
---     pvFrameName = pvFrameName .. colorName .. poke.valueChar  .. '.png'
---     local numSprite = cc.Sprite:createWithSpriteFrameName(pvFrameName) 
---     numSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     numSprite:setPosition(18, 140 - 23)
---     cardSprite:addChild(numSprite)
-
---     local psfFrameName = 'psf_l_' .. poke.cardType .. '.png'
---     local psfSprite = cc.Sprite:createWithSpriteFrameName(psfFrameName)
---     psfSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     psfSprite:setPosition(18, 80)
---     cardSprite:addChild(psfSprite)
---   else
---     local pbfFrameName = 'pbf_l_'
---     if poke.value == PokeCardValue.BIG_JOKER then
---       pbfFrameName = pbfFrameName .. 'BIG_JOKER'
---     else
---       pbfFrameName = pbfFrameName .. 'SMALL_JOKER'
---     end
---     pbfFrameName = pbfFrameName .. '.png'
-
---     local pbfSprite = cc.Sprite:createWithSpriteFrameName(pbfFrameName)
---     pbfSprite:setAnchorPoint(cc.p(0.5, 0.5))
---     pbfSprite:setPosition(50, 70)
---     cardSprite:addChild(pbfSprite)
-
---   end
-
---   return cardSprite
---  end
-
 function LandingScene:reconnectToServer()
   self.connection:reconnect()
 end
@@ -315,7 +207,7 @@ function LandingScene:connectToServer()
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
-        self.buttonS:setVisible(true)
+        this.ButtonStart:setVisible(true)
       end
     end)
   end

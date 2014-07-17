@@ -1,5 +1,5 @@
 local MessageBox = class('MessageBox')
-
+local utils = require('utils.utils')
 
 function MessageBox.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -15,9 +15,21 @@ function MessageBox.extend(target, ...)
   return target
 end
 
-function MessageBox:ctor(title, msg, width, height)
-  self.title = title
-  self.msg = msg
+function MessageBox:ctor(params)
+
+  self.title = params.title
+  self.msg = params.msg
+
+  self.onCancelCallback = params.onCancel
+  self.onOkCallback = params.onOk
+  self.grayBackground = true
+  self.closeOnClickOutside = true
+  if params.closeOnClickOutside ~= nil then
+    self.closeOnClickOutside = params.closeOnClickOutside
+  end
+  if params.grayBackground ~= nil then
+    self.grayBackground = params.grayBackground
+  end
 
   self:init()
 end
@@ -29,40 +41,53 @@ function MessageBox:init()
   local this = self
   local rootLayer = self
 
+  -- this:setAnchorPoint(0.5, 0.5)
+  -- this:setPosition(400, 240)
+
   local guiReader = ccs.GUIReader:getInstance()
   local uiRoot = guiReader:widgetFromBinaryFile('UI/MessageBox.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
+--  self.uiRoot:setOpacity(0)
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
 
-  self.LabelTitle:setString(self.title)
-  self.LabelMessage:setString(self.msg)
+  self.PanelGray:setVisible(self.grayBackground)
 
-  --self.MsgPanel:setScale(0.01)
+  this.MsgPanel:setVisible(false)
 
   self:registerScriptHandler(function(event)
-    print('event => ', event)
+    --print('event => ', event)
+
     if event == "enter" then
-      local pos = cc.p(self.MsgPanel:getPosition())
-      --self.MsgPanel:setAnchorPoint(0, 0)
-      --this.MsgPanel:setPosition(cc.p(pos.x, 480))
-      --this.MsgPanel:runAction(cc.MoveBy:create(0.1, cc.p(0, -340)))
+      this.ImageBox:runAction(
+          cc.Sequence:create(
+              cc.ScaleTo:create(0.15, 5),
+              cc.CallFunc:create(function() 
+                  this.ImageBox:setVisible(false)
+                  this.MsgPanel:setVisible(true)
+                end)
+            )
+        )
     elseif event == 'exit' then
     end
   end)
+
+  self.LabelTitle:setString(self.title)
+  self.LabelMessage:setString(self.msg)
 
 end
 
 function MessageBox:close()
   local this = self
-  self.MsgPanel:runAction( 
+  --self.uiRoot:setOpacity(0)
+  self.MsgPanel:setVisible(false)
+  self.ImageBox:setVisible(true)
+  self.ImageBox:runAction( 
     cc.Sequence:create(
-      --cc.MoveBy:create(0.1, cc.p(0, 340)),
-      cc.CallFunc:create( function()
-          this:removeFromParent()
-        end)
+      cc.ScaleTo:create(0.15, 1),
+      cc.TargetedAction:create(this, cc.RemoveSelf:create())
     )
   )
 end
@@ -85,10 +110,31 @@ function MessageBox:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
+function MessageBox:ButtonCancel_onClicked(sender, eventType)
+  if utils.invokeCallback(self.onCancelCallback) == false then
+    return
+  else
+    self:close()
+  end
+end
 
-local function showMessageBox(container, title, message, width, height)
+function MessageBox:ButtonOk_onClicked(sender, eventType)
+  if utils.invokeCallback(self.onOkCallback) == false then
+    return
+  else
+    self:close()
+  end
+end
+
+function MessageBox:RootBox_onClicked(sender, eventType)
+  if self.closeOnClickOutside then
+    self:ButtonCancel_onClicked(sender, eventType)
+  end
+end
+
+local function showMessageBox(container, params)
   local layer = cc.Layer:create()
-  local msgBox = MessageBox.extend(layer, title, message, width, height)
+  local msgBox = MessageBox.extend(layer, params)
 
   msgBox:setLocalZOrder(1000)
   container:addChild(msgBox)
