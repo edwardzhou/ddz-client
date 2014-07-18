@@ -34,8 +34,8 @@ local function main()
     local sdpath = ddz.getSDCardPath()
     sdpath = sdpath .. '/fungame/DDZ'
     table.insert(searchPaths, 1, fileUtils:getWritablePath())
-    table.insert(searchPaths, 1, sdpath .. '/lua')
-    table.insert(searchPaths, 1, sdpath .. '/res')
+    table.insert(searchPaths, 1, sdpath .. '/luaScripts')
+    table.insert(searchPaths, 1, sdpath .. '/Resources')
     --fileUtils:addSearchPath()
     
     fileUtils:setSearchPaths(searchPaths)

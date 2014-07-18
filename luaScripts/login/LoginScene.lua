@@ -15,6 +15,7 @@ function LoginScene.extend(target, ...)
 end
 
 function LoginScene:ctor(...)
+
   self:init()
 end
 
@@ -72,22 +73,38 @@ end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
   local params = {
-    title = '请输入',
     msg = '请输入ID和密码',
-    closeOnClickOutside = false
   }
   require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
-  local params = {
-    title = '请输入',
-    msg = '111请输入ID和密码请输入ID和密码请输入ID和密码',
-    grayBackground = false,
-    showingTime = 5,
-    closeOnClickOutside = true
-  }
-  require('UICommon.ToastBox').showToastBox(self.rootLayer, params)
+  local this = self
+  local msg = '请输入ID和密码请输入ID和密码码....'
+  local n = 1
+  this:runAction(cc.Repeat:create(cc.Sequence:create(
+      cc.CallFunc:create(function() 
+          local closeOnTouch = math.random(10000) % 2
+          local params = {
+            msg = msg .. n .. ' closeOnTouch => ' .. closeOnTouch,
+            showingTime = 3,
+            grayBackground = math.random(10000) % 2 == 1,
+            showLoading = math.random(10000) % 2 == 1,
+            closeOnTouch = closeOnTouch == 1,
+          }
+          require('UICommon.ToastBox').showToastBox(this.rootLayer, params)
+          n = n + 1
+        end),
+      cc.DelayTime:create(2)
+    ), 10))
+          -- local params = {
+          --   msg = msg .. n,
+          --   showingTime = 3,
+          --   grayBackground = math.random(10000) % 2 == 1,
+          --   showLoading = math.random(10000) % 2 == 1,
+          -- }
+          -- require('UICommon.ToastBox').showToastBox(this.rootLayer, params)
+          -- n = n + 1
 end
 
 

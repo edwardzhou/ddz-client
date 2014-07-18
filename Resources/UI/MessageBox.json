@@ -7,8 +7,8 @@
     "actionlist": []
   },
   "dataScale": 1,
-  "designHeight": 230,
-  "designWidth": 400,
+  "designHeight": 480,
+  "designWidth": 800,
   "textures": [],
   "texturesPng": [
     "images/npbox.9.png",

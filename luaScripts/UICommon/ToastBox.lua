@@ -3,6 +3,9 @@
 local ToastBox = class('ToastBox')
 local utils = require('utils.utils')
 
+local TOAST_BOX_ACTION_TAG = 0x10001
+local LOADING_ACTION_TAG = 0x10002
+
 function ToastBox.extend(target, ...)
   local t = tolua.getpeer(target)
   if not t then
@@ -18,27 +21,8 @@ function ToastBox.extend(target, ...)
 end
 
 function ToastBox:ctor(params)
-
-  self.msg = params.msg
-
-  self.grayBackground = true
+  self.showing = false
   self.closeOnTouch = true
-
-  self.showingTime = params.showingTime or 2
-  self.showLoading = false
-  
-  if params.closeOnTouch ~= nil then
-    self.closeOnTouch = params.closeOnTouch
-  end
-
-  if params.showLoading ~= nil then
-    self.showLoading = params.showLoading
-  end
-
-  if params.grayBackground ~= nil then
-    self.grayBackground = params.grayBackground
-  end
-
   self:init()
 end
 
@@ -54,69 +38,121 @@ function ToastBox:init()
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
 
-  self.PanelBg:setVisible(self.grayBackground)
-
-  local animCache = cc.AnimationCache:getInstance()
-  local animation = animCache:getAnimation('loading')
-  if animation == nil then
-    local frameCache = cc.SpriteFrameCache:getInstance()
-    local frames = {}
-    for i=1, 10 do
-      local frameName = string.format('load%02d.png', i)
-      local frame = frameCache:getSpriteFrame(frameName)
-      table.insert(frames, frame)
-    end
-    animation = cc.Animation:createWithSpriteFrames(frames, 0.05)
-    animCache:addAnimation(animation, 'loading')
-  end
-
-  local sprite = cc.Sprite:createWithSpriteFrameName('load01.png')
-  sprite:setAnchorPoint(1.0, 0.5)
-  self.PanelBox:addChild(sprite)
-  self.sprite = sprite
-
   self:registerScriptHandler(function(event)
     --print('event => ', event)
 
-    if event == "enter" then
-      local rect = self.LabelMsg:getBoundingBox()
-      local size = self.PanelBox:getContentSize()      
-      local pos = cc.p(rect.x - 20, size.height / 2)
-      this.sprite:setPosition(pos)      
-
-      local animation = animCache:getAnimation('loading')
-      this.sprite:runAction(cc.RepeatForever:create(cc.Animate:create(animation)))
-      this.PanelBox:setOpacity(0)
-      this.PanelBox:runAction(cc.FadeIn:create(0.4))
-
-      this:runAction(cc.Sequence:create(
-          cc.DelayTime:create(this.showingTime),
-          cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
-          cc.CallFunc:create(function() this:close() end)
-        ))
-
+    if event == "enter" then      
     elseif event == 'exit' then
     end
   end)
 
-  self.LabelMsg:setString(self.msg)
+end
+
+function ToastBox:doShow(params)
+  local this = self
+
+  self.LabelMsg:setString(params.msg)
+  local showingLoading = false
+  local grayBackground = false
+  local closeOnTouch = true
+  local showingTime = params.showingTime or 3
+
+  if params.showLoading ~= nil then
+    showLoading = params.showLoading
+  end
+
+  if params.grayBackground ~= nil then
+    grayBackground = params.grayBackground
+  end
+
+  if params.closeOnTouch ~= nil then
+    closeOnTouch = params.closeOnTouch
+  end
+
+  self.closeOnTouch = closeOnTouch
+
+  self.PanelBg:setVisible(grayBackground)
+
+  if showLoading then
+    local animCache = cc.AnimationCache:getInstance()
+    local animation = animCache:getAnimation('loading')
+    if animation == nil then
+      local frameCache = cc.SpriteFrameCache:getInstance()
+      local frames = {}
+      for i=1, 10 do
+        local frameName = string.format('load%02d.png', i)
+        local frame = frameCache:getSpriteFrame(frameName)
+        table.insert(frames, frame)
+      end
+      animation = cc.Animation:createWithSpriteFrames(frames, 0.05)
+      animCache:addAnimation(animation, 'loading')
+    end
+
+    if this.loadingSprite == nil then
+      local sprite = cc.Sprite:createWithSpriteFrameName('load01.png')
+      sprite:setAnchorPoint(1.0, 0.5)
+      self.PanelBox:addChild(sprite)
+      this.loadingSprite = sprite
+      sprite:setVisible(false)
+    end
+
+    local rect = self.LabelMsg:getBoundingBox()
+    local size = self.PanelBox:getContentSize()      
+    local pos = cc.p(rect.x - 20, size.height / 2)
+    this.loadingSprite:setPosition(pos)
+    this.loadingSprite:setVisible(true)
+
+    this.loadingSprite:stopActionByTag(LOADING_ACTION_TAG)
+    local action = this.loadingSprite:runAction(cc.RepeatForever:create(cc.Animate:create(animation)))
+    action:setTag(LOADING_ACTION_TAG)
+  else
+    if this.loadingSprite ~= nil then
+      this.loadingSprite:stopActionByTag(LOADING_ACTION_TAG)
+      this.loadingSprite:setVisible(false)
+    end
+  end
+
+  this:stopActionByTag(TOAST_BOX_ACTION_TAG)
+
+  this:setVisible(true)
+  this.PanelBox:setOpacity(0)
+  this.PanelBox:runAction(cc.FadeIn:create(0.4))
+  this.showing = true
+
+  if showingTime > 0 then
+    local action = this:runAction(cc.Sequence:create(
+        cc.DelayTime:create(showingTime),
+        cc.CallFunc:create(function() this:close() end)
+      ))
+    action:setTag(TOAST_BOX_ACTION_TAG)
+  end
 end
 
 function ToastBox:close()
   local this = self
-  self:removeFromParent()
+  this.showing = false
+
+  this:stopActionByTag(TOAST_BOX_ACTION_TAG)
+  local action = this:runAction(cc.Sequence:create(
+      cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
+      cc.Hide:create()
+    ))
+  action:setTag(TOAST_BOX_ACTION_TAG)
+  if this.loadingSprite ~= nil then
+    this.loadingSprite:stopActionByTag(LOADING_ACTION_TAG)
+  end
 end
 
 function ToastBox:initKeypadHandler()
+  local this = self
   local function onKeyReleased(keyCode, event)
-    if keyCode == cc.KeyCode.KEY_BACKSPACE then
---      if type(self.onMainMenu) == 'function' then
---        self.onMainMenu()
---      end
-      event:stopPropagation()
-      self:close()
-    elseif keyCode == cc.KeyCode.KEY_MENU  then
-      --label:setString("MENU clicked!")
+    if this.showing then
+      if keyCode == cc.KeyCode.KEY_BACKSPACE and this.closeOnTouch then
+        event:stopPropagation()
+        self:close()
+      elseif keyCode == cc.KeyCode.KEY_MENU then
+        --label:setString("MENU clicked!")
+      end
     end
   end
 
@@ -126,15 +162,23 @@ function ToastBox:initKeypadHandler()
 end
 
 function ToastBox:PanelRoot_onClicked(sender, eventType)
-  self:close()
+  if self.closeOnTouch then
+    self:close()
+  end
 end
 
 local function showToastBox(container, params)
-  local layer = cc.Layer:create()
-  local msgBox = ToastBox.extend(layer, params)
+  if container.taostBox == nil then
+    local layer = cc.Layer:create()
+    local msgBox = ToastBox.extend(layer)
 
-  msgBox:setLocalZOrder(1000)
-  container:addChild(msgBox)
+    msgBox:setLocalZOrder(1000)
+    container:addChild(msgBox)
+    container.taostBox = msgBox
+  end
+
+  container.taostBox:doShow(params)
+
 end
 
 return {

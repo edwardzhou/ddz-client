@@ -8,3 +8,5 @@ lint.xml
 *.pyc
 cocos2d.bak
 runtime
+lua.zip
+res.zip

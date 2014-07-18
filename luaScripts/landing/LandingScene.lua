@@ -77,13 +77,12 @@ function LandingScene:init()
   snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
-    
 
---  local proxy = cc.CCBReader
+  cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
+
   self:runAction(cc.Sequence:create(
     cc.DelayTime:create(0.3),
     cc.CallFunc:create(function()
-      local cjson = require('cjson.safe')
       print('start to load allCardTypes.json')
       local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
       print('start to decode allCardTypes.json')
@@ -92,9 +91,6 @@ function LandingScene:init()
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()
-
-      cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
-      
       PokeCard.sharedPokeCard()
       local pokefile = 'pc.png'
       if not cc.FileUtils:getInstance():isFileExist(pokefile) then
