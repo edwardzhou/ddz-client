@@ -147,7 +147,8 @@ function ToastBox:initKeypadHandler()
   local this = self
   local function onKeyReleased(keyCode, event)
     if this.showing then
-      if keyCode == cc.KeyCode.KEY_BACKSPACE and this.closeOnTouch then
+      print('[ToastBox - onKeyReleased]')
+      if keyCode == cc.KeyCode.KEY_BACKSPACE then
         event:stopPropagation()
         self:close()
       elseif keyCode == cc.KeyCode.KEY_MENU then
@@ -172,7 +173,7 @@ local function showToastBox(container, params)
     local layer = cc.Layer:create()
     local msgBox = ToastBox.extend(layer)
 
-    msgBox:setLocalZOrder(1000)
+    msgBox:setLocalZOrder(1100)
     container:addChild(msgBox)
     container.taostBox = msgBox
   end

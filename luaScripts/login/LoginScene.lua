@@ -88,14 +88,14 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
           local params = {
             msg = msg .. n .. ' closeOnTouch => ' .. closeOnTouch,
             showingTime = 3,
-            grayBackground = math.random(10000) % 2 == 1,
+            --grayBackground = math.random(10000) % 2 == 1,
             showLoading = math.random(10000) % 2 == 1,
             closeOnTouch = closeOnTouch == 1,
           }
           require('UICommon.ToastBox').showToastBox(this.rootLayer, params)
           n = n + 1
         end),
-      cc.DelayTime:create(2)
+      cc.DelayTime:create(3.2)
     ), 10))
           -- local params = {
           --   msg = msg .. n,
