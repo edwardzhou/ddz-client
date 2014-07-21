@@ -93,13 +93,19 @@ function LandingScene:init()
     cc.CallFunc:create(function()
       PokeCard.sharedPokeCard()
       local pokefile = 'pc.png'
+      local filepath = cc.FileUtils:getInstance():fullPathForFilename(pokefile)
+      print('filepath =>' , filepath)
       if not cc.FileUtils:getInstance():isFileExist(pokefile) then
+        print('pokecards generating')
         cc.SpriteFrameCache:getInstance():addSpriteFrames('pokecards.plist')
         this:generatePokecards()
+        print('pokecards generated')
       else
+        print('pokecards loading')
         local tex = cc.Director:getInstance():getTextureCache():addImage(pokefile)
         PokeCard.createPokecardsFrames(tex)
         PokeCard.createPokecardsWithFrames(tex)
+        print('pokecards loaded')
       end
     end)
   ))
@@ -162,7 +168,7 @@ function LandingScene:generatePokecards()
             local pImage = renderTexture:newImage()
             pImage:saveToFile(ddz.getDataStorePath() .. '/pc.png', false);
 
-            local tex = cc.Director:getInstance():getTextureCache():addUIImage(pImage, 'pc.png')
+            local tex = cc.Director:getInstance():getTextureCache():addImage(pImage, 'pc.png')
 
             pImage:release()
 

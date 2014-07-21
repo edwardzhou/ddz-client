@@ -1,6 +1,7 @@
 require('extern')
 require('pomelo.pomelo')
 local Emitter = require('pomelo.emitter')
+local SignInType = require('consts').SignInType
 
 local GameConnection = class('GameConnection', Emitter)
 
@@ -8,19 +9,26 @@ function GameConnection:ctor(userId, sessionToken)
   self.super.ctor(self)
   self.userId = userId or ddz.GlobalSettings.session.userId
   self.sessionToken = sessionToken or ddz.GlobalSettings.session.sessionToken
+  self.autoSignUp = true
 end
 
 function GameConnection:authConnection()
   local this = self
 
-  local function onSignResult(success, userInfo, server)
+  local function onSignResult(success, userInfo, server, signParams)
     if success then
       this:connectToServer({
         host = server.host,
         port = server.port
       });
     else
-      this:signUp(onSignResult);
+      local msg = userInfo.message
+      local params = {
+        title = '无法登录',
+        msg = msg
+      }
+      require('UICommon.ToastBox').showToastBox(cc.Director:getInstance():getRunningScene(), params)
+      -- this:signUp(onSignResult);
     end
   end
 
@@ -34,7 +42,7 @@ function GameConnection:authConnection()
       --   if goSignIn then
       --     this:doSignIn(signParams)
       --   end
-      elseif data.needSignUp then
+      elseif data.needSignUp and this.autoSignUp then
         this:signUp(onSignResult)
         -- local goSignUp, signParams = self.signupCallback(this, pomeloClient, data)
         -- if goSignUp then

@@ -6,7 +6,7 @@ function SignInPlugin.bind(theClass)
     dump(respData, '[handleSignInResponse][auth.userHandler.signIn] response')
     if respData.err then
       -- sign in failed
-      callback(false, respData)
+      callback(false, respData, signInParams)
       return
     end
 
@@ -20,7 +20,7 @@ function SignInPlugin.bind(theClass)
     -- ddz.GlobalSettings.serverInfo = table.dup(respData.server)
     -- userInfo.sessionToken = respData.sessionToken
     -- ddz.saveSessionInfo(userInfo)
-    callback(true, userInfo, serverInfo)
+    callback(true, userInfo, serverInfo, signInParams)
   end
 
   function theClass:signIn(sessionInfo, userId, password, callback)

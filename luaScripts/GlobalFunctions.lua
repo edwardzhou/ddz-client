@@ -364,6 +364,7 @@ ddz.updateUserSession = function(respData)
     ddz.GlobalSettings.serverInfo = table.dup(respData.server)
   end
   userInfo.sessionToken = respData.sessionToken
+
   ddz.saveSessionInfo(userInfo)
 end
 

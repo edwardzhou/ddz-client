@@ -37,9 +37,9 @@ function LoginScene:init()
 
   if ddz.GlobalSettings.userInfo and ddz.GlobalSettings.userInfo.userId ~= nil then
     self.InputUserId:setText(ddz.GlobalSettings.userInfo.userId)
-    self.InputPassword:setText('********')
+    self.InputPassword:setText(ddz.GlobalSettings.userInfo.authToken or '')
   else
-    self.InputPassword:setText('')
+    self.InputUserId:setText('')
     self.InputPassword:setText('')
   end
 
@@ -72,10 +72,22 @@ function LoginScene:initKeypadHandler()
 end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
-  local params = {
-    msg = '请输入ID和密码',
-  }
-  require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+  local params = {buttonType = 'ok'}
+
+  local userId = string.trim(self.InputUserId:getStringValue())
+  local password = string.trim(self.InputPassword:getStringValue())
+  if #userId == 0 and #password == 0 then
+    params.msg = '请输入账户ID和密码'
+  elseif #userId == 0 then
+    params.msg = '请输入账户ID'
+  elseif #password == 0 then
+    params.msg = '请输入密码'
+  end
+
+  if params.msg then
+    require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+    return
+  end
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
@@ -107,6 +119,47 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
           -- n = n + 1
 end
 
+function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)  local userIds = {'11111111', '22222222', '33333333', '44444444', '55555555', '666666666', '7777777'}
+  if #self.ListViewAccounts:getItems() == 0 then
+    local panelSpan = ccui.Layout:create()
+    panelSpan:setContentSize(cc.size(180, 5))
+    --self.ListViewAccounts:pushBackCustomItem(panelSpan)
+    for _, userId in ipairs(userIds) do 
+      print('[LoginScene:ButtonSwitchAccount_onClicked] userId => ', userId)
+      local button = self.ButtonModel:clone()
+      button:setTitleText(userId)
+      button:setVisible(true)
+      button:setTouchEnabled(true)
+      button:setScale9Enabled(true)
+      button:setContentSize(cc.size(180, 40))
+      button:setTitleFontSize(22)
+
+      button:addTouchEventListener(__bind(self.Account_onClicked, self))
+
+      self.ListViewAccounts:pushBackCustomItem(button)
+    end
+  end
+
+  self.PanelAccounts:setVisible(true)
+end
+
+function LoginScene:Account_onClicked(sender, eventType)
+  local btn = sender
+  if eventType == ccui.TouchEventType.ended then
+    print('[LoginScene:Account_onClicked] userId => ' , btn:getTitleText())
+    self.InputUserId:setText(btn:getTitleText())
+  end
+end
+
+function LoginScene:PanelAccounts_onClicked(sender, eventType)
+  self.PanelAccounts:setVisible(false)
+end
+
+function LoginScene:ListViewAccounts_onEvent(sender, eventType)
+  if eventType == 1 then
+    self.PanelAccounts:setVisible(false)
+  end
+end
 
 
 local function createScene()

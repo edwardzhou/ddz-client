@@ -20,6 +20,8 @@ function MessageBox:ctor(params)
   self.title = params.title
   self.msg = params.msg
 
+  self.buttonType = params.buttonType or 'ok'
+
   self.onCancelCallback = params.onCancel
   self.onOkCallback = params.onOk
   self.grayBackground = true
@@ -77,6 +79,24 @@ function MessageBox:init()
   self.LabelTitle:setString(self.title)
   self.LabelMessage:setString(self.msg)
 
+  local showOk = string.find(self.buttonType, 'ok') ~= nil
+  local showCancel = string.find(self.buttonType, 'cancel') ~= nil
+
+  self.ButtonOk:setVisible(showOk)
+  self.ButtonCancel:setVisible(showCancel)
+
+  if showOk and showCancel then
+    --
+  elseif showOk then
+    local pos = self.ButtonOk:getPositionPercent()
+    pos.x = 0.5
+    self.ButtonOk:setPositionPercent(pos)
+  elseif showCancel then
+    local pos = self.ButtonCancel:getPositionPercent()
+    pos.x = 0.5
+    self.ButtonCancel:setPositionPercent(pos)
+  end
+
 end
 
 function MessageBox:close()
@@ -95,11 +115,12 @@ end
 function MessageBox:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
---      if type(self.onMainMenu) == 'function' then
---        self.onMainMenu()
---      end
       event:stopPropagation()
-      self:close()
+      if self.ButtonCancel:isVisible() then
+        self:ButtonCancel_onClicked(self.ButtonCancel)
+      elseif self.ButtonOk:isVisible() then
+        self:ButtonOk_onClicked(self.ButtonOk)
+      end
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
