@@ -1,4 +1,6 @@
 local LoginScene = class('LoginScene')
+local gameConnection = require('network.GameConnection')
+local SignInType = require('consts').SignInType
 
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -37,7 +39,7 @@ function LoginScene:init()
 
   if ddz.GlobalSettings.userInfo and ddz.GlobalSettings.userInfo.userId ~= nil then
     self.InputUserId:setText(ddz.GlobalSettings.userInfo.userId)
-    self.InputPassword:setText(ddz.GlobalSettings.userInfo.authToken or '')
+    self.InputPassword:setText('**TOKEN**')
   else
     self.InputUserId:setText('')
     self.InputPassword:setText('')
@@ -88,6 +90,21 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
     require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
     return
   end
+
+  local signInParam = {}
+  signInParam.signType = SignInType.BY_PASSWORD
+  signInParam.userId = userId
+  signInParam.password = password
+
+  gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
+      print('signIn result ', success)
+      dump(userInfo, 'userInfo')
+      if not success then
+        params.msg = userInfo.message
+        require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+      end
+    end)
+
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)

@@ -37,13 +37,17 @@ function GameConnection:authConnection()
     sessionToken = ddz.GlobalSettings.session.sessionToken
     }, function(data)
       if data.needSignIn then
-        this:signIn(ddz.GlobalSettings.session, onSignResult)
+        print('[auth.connHandler.authConn] server request to sign in')
+        this:emit('signInRequired', data)
+      --  this:signIn(ddz.GlobalSettings.session, onSignResult)
       --   local goSignIn, signParams = self.signinCallback(this, pomeloClient, data)
       --   if goSignIn then
       --     this:doSignIn(signParams)
       --   end
       elseif data.needSignUp and this.autoSignUp then
-        this:signUp(onSignResult)
+        print('[auth.connHandler.authConn] server request to sign up')
+        this:emit('signUpRequired', data)
+      --  this:signUp(onSignResult)
         -- local goSignUp, signParams = self.signupCallback(this, pomeloClient, data)
         -- if goSignUp then
         --   this:doSignUp(signParams)
