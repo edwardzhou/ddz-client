@@ -83,6 +83,17 @@ function RemoteGameService:onServerLordValueUpgradeMsg(data)
   -- end
 end
 
+function RemoteGameService:queryRooms(callback)
+  ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
+    dump(data, 'queryRooms => ')
+    if data.err == nil then
+      ddz.GlobalSettings.rooms = data.rooms
+      utils.invokeCallback(callback, data.rooms)
+    end
+  end)
+end
+
+
 function RemoteGameService:enterRoom(roomId, callback)
   local this = self
 

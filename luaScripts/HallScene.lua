@@ -73,7 +73,7 @@ function HallScene:init()
 
   local function listViewEvent(sender, eventType)
     print('[listViewEvent] eventType => ', eventType)
-    if eventType == ccui.ListViewEventType.onsSelectedItem then
+    if eventType == ccui.ListViewEventType.ONSELECTEDITEM_START then
       listItemSelected = true
       moveTimes = 0
       selectedIndex = sender:getCurSelectedIndex()
@@ -81,7 +81,7 @@ function HallScene:init()
       -- local item = sender:getItem(itemIndex)
       -- local gameRoom = item.gameRoom
       -- dump(gameRoom, 'selected room: ')
-    elseif eventType == 1 and listItemSelected and selectedIndex >=0 then
+    elseif eventType == ccui.ListViewEventType.ONSELECTEDITEM_END and listItemSelected and selectedIndex >=0 then
       local item = sender:getItem(selectedIndex)
       local gameRoom = item.gameRoom
       dump(gameRoom, 'selected room: ')

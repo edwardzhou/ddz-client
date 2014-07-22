@@ -32,12 +32,23 @@ function SessionInfo.save(filename)
   local filepath = ddz.getDataStorePath() .. '/' .. filename
   print('filepath => ', filepath)
   local file = io.open(filepath, 'w+')
-  file:write(cjson.encode(sessionInfo))
+  file:write(cjson.encode(_info))
   file:close()
 end
 
 function SessionInfo.getAccounts()
   return _info.accounts
+end
+
+function SessionInfo.getAccountByUserId(userId)
+  for _,account in ipairs(_info.accounts) do
+    print('account.userId => ', account.userId , '  userId => ', userId, account.userId == userId)
+    if tonumber(account.userId) == tonumber(userId) then
+      return account
+    end
+  end
+
+  return nil
 end
 
 function SessionInfo.getCurrentUser()
@@ -46,14 +57,14 @@ end
 
 function SessionInfo.setCurrentUser(session)
   for n=#_info.accounts, 1, -1 do
-    if _info.accounts[n].userId == session.user.userId then
+    if tonumber(_info.accounts[n].userId) == tonumber(session.user.userId) then
       table.remove(_info.accounts, n)
     end
   end
 
   local newSession = {
     userId = session.user.userId, 
-    authToken = session.user.auth,
+    authToken = session.user.authToken,
     sessionToken = session.sessionToken
   }
 
@@ -61,8 +72,11 @@ function SessionInfo.setCurrentUser(session)
 
   _info.currentUser = table.dup( session.user )
   _info.currentUser.sessionToken = session.sessionToken
+  ddz.GlobalSettings.userInfo = _info.currentUser
 
   SessionInfo.save()
 end
+
+SessionInfo.create()
 
 return SessionInfo

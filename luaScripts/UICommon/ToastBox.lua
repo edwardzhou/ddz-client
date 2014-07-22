@@ -56,6 +56,12 @@ function ToastBox:doShow(params)
   local grayBackground = false
   local closeOnTouch = true
   local showingTime = params.showingTime or 3
+  local fadeInTime = params.fadeInTime or 0.4
+  this.closeOnBack = true
+
+  if params.closeOnBack ~= nil then
+    this.closeOnBack = params.closeOnBack
+  end
 
   if params.showLoading ~= nil then
     showLoading = params.showLoading
@@ -116,7 +122,7 @@ function ToastBox:doShow(params)
 
   this:setVisible(true)
   this.PanelBox:setOpacity(0)
-  this.PanelBox:runAction(cc.FadeIn:create(0.4))
+  this.PanelBox:runAction(cc.FadeIn:create(fadeInTime))
   this.showing = true
 
   if showingTime > 0 then
@@ -150,7 +156,9 @@ function ToastBox:initKeypadHandler()
       print('[ToastBox - onKeyReleased]')
       if keyCode == cc.KeyCode.KEY_BACKSPACE then
         event:stopPropagation()
-        self:close()
+        if this.closeOnBack then
+          self:close()
+        end
       elseif keyCode == cc.KeyCode.KEY_MENU then
         --label:setString("MENU clicked!")
       end
@@ -179,7 +187,7 @@ local function showToastBox(container, params)
   end
 
   container.taostBox:doShow(params)
-
+  return taostBox
 end
 
 return {

@@ -35,11 +35,16 @@ function LandingScene:init()
 
   self:registerScriptHandler(function(event)
     print('event => ', event)
-    if event == "enterTransitionFinish" then
-      self:initKeypadHandler()
-    elseif event == 'exit' then
-      -- umeng:stopSession()
+    local on_event = 'on_' .. event
+    if type(this[on_event]) == 'function' then
+      this[on_event](this)
     end
+    -- if event == "enterTransitionFinish" then
+    --   self:initKeypadHandler()
+    --   self:onEnter()
+    -- elseif event == 'exit' then
+    --   -- umeng:stopSession()
+    -- end
   end)
 
   local rootLayer = cc.Layer:create()
@@ -110,6 +115,23 @@ function LandingScene:init()
     end)
   ))
   
+end
+
+function LandingScene:on_enterTransitionFinish()
+  -- body
+  print('[LandingScene:on_enterTransitionFinish]')
+  self:initKeypadHandler()
+end
+
+function LandingScene:on_exit()
+  if self.connection == nil then
+    return
+  end
+
+  self.connection:off('connectionReady', self._onConnectionReady)
+  self.connection:off('signInRequired', self._onSignInUpRequired)
+  self.connection:off('signUpRequired', self._onSignInUpRequired)
+
 end
 
 function LandingScene:ButtonStart_onClicked(sender, eventType)
@@ -213,6 +235,8 @@ function LandingScene:connectToServer()
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
         this.ButtonStart:setVisible(true)
+        local scene = require('HallScene')()
+        cc.Director:getInstance():replaceScene(scene)
       end
     end)
   end
@@ -261,14 +285,23 @@ function LandingScene:connectToServer()
   --   ddz.pomeloClient:disconnect()
   -- end
 
-
-
   --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
   if self.connection == nil then
     self.connection = require('network.GameConnection')
-    self.connection:on('connectionReady', function()
+    if self._onConnectionReady == nil then
+      self._onConnectionReady = function()
         queryRooms()
-      end)
+      end
+    end
+    if self._onSignInUpRequired == nil then
+      self._onSignInUpRequired = function()
+        local scene = require('login.LoginScene')()
+        cc.Director:getInstance():replaceScene(scene)
+      end
+    end
+    self.connection:on('connectionReady', self._onConnectionReady)
+    self.connection:on('signInRequired', self._onSignInUpRequired)
+    self.connection:on('signUpRequired', self._onSignInUpRequired)
   end
 
   self.connection:connectToServer({
@@ -277,6 +310,7 @@ function LandingScene:connectToServer()
   });
 
 end
+
 
 function LandingScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)

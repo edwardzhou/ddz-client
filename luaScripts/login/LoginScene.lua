@@ -1,6 +1,9 @@
 local LoginScene = class('LoginScene')
 local gameConnection = require('network.GameConnection')
 local SignInType = require('consts').SignInType
+local sessionInfo = require('sessionInfo')
+
+local showToastBox = require('UICommon.ToastBox').showToastBox;
 
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -17,8 +20,23 @@ function LoginScene.extend(target, ...)
 end
 
 function LoginScene:ctor(...)
+  local this = self
+  self:registerScriptHandler(function(event)
+    print('[LoginScene] event => ', event)
+    local on_event = 'on_' .. event
+    if type(this[on_event]) == 'function' then
+      this[on_event](this)
+    end
+    -- if event == "enterTransitionFinish" then
+    --   self:initKeypadHandler()
+    --   self:onEnter()
+    -- elseif event == 'exit' then
+    --   -- umeng:stopSession()
+    -- end
+  end)
 
   self:init()
+
 end
 
 function LoginScene:init()
@@ -37,14 +55,35 @@ function LoginScene:init()
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
   self:bindPanelInput(self.PanelPassword, self.InputPassword)
 
-  if ddz.GlobalSettings.userInfo and ddz.GlobalSettings.userInfo.userId ~= nil then
-    self.InputUserId:setText(ddz.GlobalSettings.userInfo.userId)
+  local lastUser = sessionInfo.getCurrentUser()
+  if lastUser and lastUser.userId ~= nil then
+    self.InputUserId:setText(lastUser.userId)
     self.InputPassword:setText('**TOKEN**')
   else
     self.InputUserId:setText('')
     self.InputPassword:setText('')
   end
 
+end
+
+function LoginScene:on_enterTransitionFinish()
+  local this = self
+  self._onConnectionReady = function()
+    ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
+      dump(data, 'queryRooms => ')
+      if data.err == nil then
+        this:showSignInProgress(false)
+        ddz.GlobalSettings.rooms = data.rooms
+        local scene = require('HallScene')()
+        cc.Director:getInstance():replaceScene(scene)
+      end
+    end)
+  end
+  gameConnection:on('connectionReady', self._onConnectionReady)
+end
+
+function LoginScene:on_exit()
+  gameConnection:off('connectionReady', self._onConnectionReady)
 end
 
 function LoginScene:bindPanelInput(panel, input)
@@ -74,6 +113,7 @@ function LoginScene:initKeypadHandler()
 end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
+  local this = self
   local params = {buttonType = 'ok'}
 
   local userId = string.trim(self.InputUserId:getStringValue())
@@ -92,9 +132,19 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
   end
 
   local signInParam = {}
-  signInParam.signType = SignInType.BY_PASSWORD
   signInParam.userId = userId
-  signInParam.password = password
+  local account = sessionInfo.getAccountByUserId(userId)
+  dump(account, 'accout for ' .. userId)
+  if account and password == '**TOKEN**' then
+    signInParam.signType = SignInType.BY_AUTH_TOKEN
+    signInParam.authToken = account.authToken
+    password = nil
+  else
+    signInParam.signType = SignInType.BY_PASSWORD
+    signInParam.password = password
+  end
+
+  self:showSignInProgress(true)
 
   gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
       print('signIn result ', success)
@@ -102,9 +152,30 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
       if not success then
         params.msg = userInfo.message
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+      else
+        gameConnection:connectToServer(server)
       end
     end)
 
+end
+
+function LoginScene:showSignInProgress(show)
+  local this = self
+  if show then
+    local param = {
+      msg = '努力登录中...',
+      showingTime = 0,
+      showLoading = true,
+      closeOnTouch = false,
+      closeOnBack = false,
+      fadeInTime = 0.03
+    }
+    showToastBox(this.rootLayer, param)
+  else
+    if this.rootLayer.taostBox then
+      this.rootLayer.taostBox:close()
+    end
+  end
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
@@ -136,15 +207,19 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
           -- n = n + 1
 end
 
-function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)  local userIds = {'11111111', '22222222', '33333333', '44444444', '55555555', '666666666', '7777777'}
+function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
+
+  local userIds = {'11111111', '22222222', '33333333', '44444444', '55555555', '666666666', '7777777'}
+  local accounts = sessionInfo.getAccounts()
+
   if #self.ListViewAccounts:getItems() == 0 then
     local panelSpan = ccui.Layout:create()
     panelSpan:setContentSize(cc.size(180, 5))
     --self.ListViewAccounts:pushBackCustomItem(panelSpan)
-    for _, userId in ipairs(userIds) do 
-      print('[LoginScene:ButtonSwitchAccount_onClicked] userId => ', userId)
+    for _, account in ipairs(accounts) do 
+      print('[LoginScene:ButtonSwitchAccount_onClicked] userId => ', account.userId)
       local button = self.ButtonModel:clone()
-      button:setTitleText(userId)
+      button:setTitleText(account.userId)
       button:setVisible(true)
       button:setTouchEnabled(true)
       button:setScale9Enabled(true)
@@ -165,6 +240,7 @@ function LoginScene:Account_onClicked(sender, eventType)
   if eventType == ccui.TouchEventType.ended then
     print('[LoginScene:Account_onClicked] userId => ' , btn:getTitleText())
     self.InputUserId:setText(btn:getTitleText())
+    self.InputPassword:setText('**TOKEN**')
   end
 end
 

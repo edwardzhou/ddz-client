@@ -2,7 +2,7 @@ require('extern')
 require('pomelo.pomelo')
 local Emitter = require('pomelo.emitter')
 local SignInType = require('consts').SignInType
-
+local sessionInfo = require('sessionInfo')
 local GameConnection = class('GameConnection', Emitter)
 
 function GameConnection:ctor(userId, sessionToken)
@@ -10,6 +10,8 @@ function GameConnection:ctor(userId, sessionToken)
   self.userId = userId or ddz.GlobalSettings.session.userId
   self.sessionToken = sessionToken or ddz.GlobalSettings.session.sessionToken
   self.autoSignUp = true
+  self.isConnectionReady = false
+  self.isAuthed = false
 end
 
 function GameConnection:authConnection()
@@ -32,10 +34,13 @@ function GameConnection:authConnection()
     end
   end
 
+  local currentUser = sessionInfo.getCurrentUser() or {}
+
   this.pomeloClient:request('auth.connHandler.authConn', {
-    userId = ddz.GlobalSettings.session.userId,
-    sessionToken = ddz.GlobalSettings.session.sessionToken
+    userId = currentUser.userId,
+    sessionToken = currentUser.sessionToken
     }, function(data)
+      this.isAuthed = true
       if data.needSignIn then
         print('[auth.connHandler.authConn] server request to sign in')
         this:emit('signInRequired', data)
@@ -53,7 +58,8 @@ function GameConnection:authConnection()
         --   this:doSignUp(signParams)
         -- end
       else
-        ddz.updateUserSession(data)
+        --ddz.updateUserSession(data)
+        sessionInfo.setCurrentUser(data)
         --this:saveSessionInfo(data)
         if data.server then
           this:connectToServer({
@@ -62,6 +68,7 @@ function GameConnection:authConnection()
             userId = data.user.userId, 
             sessionToken = data.sessionToken})
         else
+          this.isConnectionReady = true
           this:emit('connectionReady', this, this.pomeloClient, data)
           -- if this.readyCallback then
           --   this.readyCallback(this, this.pomeloClient, data)
@@ -110,6 +117,8 @@ function GameConnection:connectToServer(params)
     port = params.port
   }
 
+  this.isAuthed = false
+  this.isConnectionReady = false
   this.pomeloClient:init(serverParams, function()
     this:authConnection()
   end)

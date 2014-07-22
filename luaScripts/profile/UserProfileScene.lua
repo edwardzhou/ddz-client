@@ -1,5 +1,6 @@
 
 local UserProfileScene = class('UserProfileScene')
+local sessionInfo = require('sessionInfo')
 
 function UserProfileScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -33,7 +34,7 @@ function UserProfileScene:init()
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
 
-  local userInfo = ddz.GlobalSettings.userInfo
+  local userInfo = sessionInfo.getCurrentUser()
 
   self.UserId:setString(userInfo.userId)
   self.UserNickname:setText(userInfo.nickName)
