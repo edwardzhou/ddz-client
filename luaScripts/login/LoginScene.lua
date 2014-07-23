@@ -151,6 +151,7 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
       dump(userInfo, 'userInfo')
       if not success then
         params.msg = userInfo.message
+        this:showSignInProgress(false)
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
       else
         gameConnection:connectToServer(server)
@@ -167,7 +168,7 @@ function LoginScene:showSignInProgress(show)
       showingTime = 0,
       showLoading = true,
       closeOnTouch = false,
-      closeOnBack = false,
+      --closeOnBack = false,
       fadeInTime = 0.03
     }
     showToastBox(this.rootLayer, param)

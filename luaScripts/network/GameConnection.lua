@@ -38,6 +38,7 @@ function GameConnection:authConnection()
 
   this.pomeloClient:request('auth.connHandler.authConn', {
     userId = currentUser.userId,
+    authToken = currentUser.authToken,
     sessionToken = currentUser.sessionToken
     }, function(data)
       this.isAuthed = true
