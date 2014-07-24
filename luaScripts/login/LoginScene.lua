@@ -160,11 +160,12 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
 
 end
 
-function LoginScene:showSignInProgress(show)
+function LoginScene:showSignInProgress(show, msg)
   local this = self
+  msg = msg or '努力登录中...'
   if show then
     local param = {
-      msg = '努力登录中...',
+      msg = msg,
       showingTime = 0,
       showLoading = true,
       closeOnTouch = false,
@@ -180,37 +181,24 @@ function LoginScene:showSignInProgress(show)
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
-  local this = self
-  local msg = '请输入ID和密码请输入ID和密码码....'
-  local n = 1
-  this:runAction(cc.Repeat:create(cc.Sequence:create(
-      cc.CallFunc:create(function() 
-          local closeOnTouch = math.random(10000) % 2
-          local params = {
-            msg = msg .. n .. ' closeOnTouch => ' .. closeOnTouch,
-            showingTime = 3,
-            --grayBackground = math.random(10000) % 2 == 1,
-            showLoading = math.random(10000) % 2 == 1,
-            closeOnTouch = closeOnTouch == 1,
-          }
-          require('UICommon.ToastBox').showToastBox(this.rootLayer, params)
-          n = n + 1
-        end),
-      cc.DelayTime:create(3.2)
-    ), 10))
-          -- local params = {
-          --   msg = msg .. n,
-          --   showingTime = 3,
-          --   grayBackground = math.random(10000) % 2 == 1,
-          --   showLoading = math.random(10000) % 2 == 1,
-          -- }
-          -- require('UICommon.ToastBox').showToastBox(this.rootLayer, params)
-          -- n = n + 1
+
+  self:showSignInProgress(true, '快速注册中...')
+
+  gameConnection:signUp(function(success, userInfo, server, signParams)
+      print('signUp result ', success)
+      dump(userInfo, 'userInfo')
+      if not success then
+        params.msg = userInfo.message
+        this:showSignInProgress(false)
+        require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+      else
+        gameConnection:connectToServer(server)
+      end
+    end)
 end
 
 function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
 
-  local userIds = {'11111111', '22222222', '33333333', '44444444', '55555555', '666666666', '7777777'}
   local accounts = AccountInfo.getAccounts()
 
   if #self.ListViewAccounts:getItems() == 0 then
