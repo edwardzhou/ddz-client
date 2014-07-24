@@ -1,4 +1,5 @@
 require 'GuiConstants'
+local AccountInfo = require('AccountInfo')
 
 local HallScene = class('HallScene')
 
@@ -91,7 +92,7 @@ function HallScene:init()
           ddz.selectedRoom = gameRoom
           local createGameScene = require('gaming.GameScene')
           local gameScene = createGameScene()
-          cc.Director:getInstance():replaceScene(gameScene)
+          cc.Director:getInstance():pushScene(gameScene)
         end)
     end
   end
@@ -138,7 +139,11 @@ function HallScene:init()
   rootLayer:addChild(snow)
 
   require('utils.UIVariableBinding').bind(ui, self, self)
+
+  local user = AccountInfo.getCurrentUser();
   
+  self.LabelUserId:setString(user.nickName)
+
 end
 
 
