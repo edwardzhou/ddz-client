@@ -1,7 +1,7 @@
 local LoginScene = class('LoginScene')
 local gameConnection = require('network.GameConnection')
 local SignInType = require('consts').SignInType
-local sessionInfo = require('sessionInfo')
+local AccountInfo = require('AccountInfo')
 
 local showToastBox = require('UICommon.ToastBox').showToastBox;
 
@@ -55,7 +55,7 @@ function LoginScene:init()
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
   self:bindPanelInput(self.PanelPassword, self.InputPassword)
 
-  local lastUser = sessionInfo.getCurrentUser()
+  local lastUser = AccountInfo.getCurrentUser()
   if lastUser and lastUser.userId ~= nil then
     self.InputUserId:setText(lastUser.userId)
     self.InputPassword:setText('**TOKEN**')
@@ -133,7 +133,7 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
 
   local signInParam = {}
   signInParam.userId = userId
-  local account = sessionInfo.getAccountByUserId(userId)
+  local account = AccountInfo.getAccountByUserId(userId)
   dump(account, 'accout for ' .. userId)
   if account and password == '**TOKEN**' then
     signInParam.signType = SignInType.BY_AUTH_TOKEN
@@ -211,7 +211,7 @@ end
 function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
 
   local userIds = {'11111111', '22222222', '33333333', '44444444', '55555555', '666666666', '7777777'}
-  local accounts = sessionInfo.getAccounts()
+  local accounts = AccountInfo.getAccounts()
 
   if #self.ListViewAccounts:getItems() == 0 then
     local panelSpan = ccui.Layout:create()

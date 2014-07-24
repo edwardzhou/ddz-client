@@ -1,6 +1,6 @@
 local SignInType = require('consts').SignInType
 local SignInPlugin = {}
-local sessionInfo = require('sessionInfo');
+local AccountInfo = require('AccountInfo');
 
 function SignInPlugin.bind(theClass)
   local function handleSignInResponse(signInParams, respData, callback)
@@ -14,7 +14,7 @@ function SignInPlugin.bind(theClass)
     local userInfo = respData.user
     local serverInfo = respData.server
     --ddz.updateUserSession(respData)
-    sessionInfo.setCurrentUser(respData)
+    AccountInfo.setCurrentUser(respData)
     -- ddz.GlobalSettings.userInfo = userInfo
     -- ddz.GlobalSettings.session.userId = userInfo.userId
     -- ddz.GlobalSettings.session.authToken = userInfo.authToken
@@ -25,15 +25,15 @@ function SignInPlugin.bind(theClass)
     callback(true, userInfo, serverInfo, signInParams)
   end
 
-  function theClass:signIn(sessionInfo, userId, password, callback)
+  function theClass:signIn(signInInfo, userId, password, callback)
     local this = self
     local signInType
     if callback == nil and password == nil then
       callback = userId
       signInType = SignInType.BY_AUTH_TOKEN
-      userId = sessionInfo.userId
+      userId = signInInfo.userId
     elseif callback ~= nil and password == nil then
-      userId = userId or sessionInfo.userId
+      userId = userId or signInInfo.userId
       signInType = SignInType.BY_AUTH_TOKEN
     else
       signInType = SignInType.BY_PASSWORD
@@ -43,7 +43,7 @@ function SignInPlugin.bind(theClass)
     signInParams.appVersion = ddz.GlobalSettings.appInfo.appVersion
     signInParams.resVersion = ddz.GlobalSettings.appInfo.resVersion
     signInParams.handsetInfo = ddz.GlobalSettings.handsetInfo
-    signInParams.authToken = sessionInfo.authToken
+    signInParams.authToken = signInInfo.authToken
     signInParams.userId = userId
     signInParams.signInType = signInType
     signInParams.password = password

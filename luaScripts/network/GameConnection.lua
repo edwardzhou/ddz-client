@@ -2,7 +2,7 @@ require('extern')
 require('pomelo.pomelo')
 local Emitter = require('pomelo.emitter')
 local SignInType = require('consts').SignInType
-local sessionInfo = require('sessionInfo')
+local AccountInfo = require('AccountInfo')
 local GameConnection = class('GameConnection', Emitter)
 
 function GameConnection:ctor(userId, sessionToken)
@@ -34,13 +34,19 @@ function GameConnection:authConnection()
     end
   end
 
-  local currentUser = sessionInfo.getCurrentUser() or {}
+  local currentUser = AccountInfo.getCurrentUser() or {}
 
-  this.pomeloClient:request('auth.connHandler.authConn', {
+  local authParams = {
+    appVersion = ddz.GlobalSettings.appInfo.appVersion,
+    resVersion = ddz.GlobalSettings.appInfo.resVersion,
+--    handsetInfo = ddz.GlobalSettings.handsetInfo,
+    mac = ddz.GlobalSettings.handsetInfo.mac,
     userId = currentUser.userId,
     authToken = currentUser.authToken,
     sessionToken = currentUser.sessionToken
-    }, function(data)
+  }
+
+  this.pomeloClient:request('auth.connHandler.authConn', authParams, function(data)
       this.isAuthed = true
       if data.needSignIn then
         print('[auth.connHandler.authConn] server request to sign in')
@@ -60,7 +66,7 @@ function GameConnection:authConnection()
         -- end
       else
         --ddz.updateUserSession(data)
-        sessionInfo.setCurrentUser(data)
+        AccountInfo.setCurrentUser(data)
         --this:saveSessionInfo(data)
         if data.server then
           this:connectToServer({

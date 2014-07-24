@@ -1,9 +1,9 @@
 local cjson = require('cjson.safe')
-local SessionInfo = class('SessionInfo')
+local AccountInfo = class('AccountInfo')
 
 local _info = {}
 
-function SessionInfo.create()
+function AccountInfo.create()
   _info = {
     currentUser = {},
     accounts = {}
@@ -27,7 +27,7 @@ function SessionInfo.create()
   return _info
 end
 
-function SessionInfo.save(filename)
+function AccountInfo.save(filename)
   filename = filename or 'userinfo.json'
   local filepath = ddz.getDataStorePath() .. '/' .. filename
   print('filepath => ', filepath)
@@ -36,11 +36,11 @@ function SessionInfo.save(filename)
   file:close()
 end
 
-function SessionInfo.getAccounts()
+function AccountInfo.getAccounts()
   return _info.accounts
 end
 
-function SessionInfo.getAccountByUserId(userId)
+function AccountInfo.getAccountByUserId(userId)
   for _,account in ipairs(_info.accounts) do
     print('account.userId => ', account.userId , '  userId => ', userId, account.userId == userId)
     if tonumber(account.userId) == tonumber(userId) then
@@ -51,11 +51,11 @@ function SessionInfo.getAccountByUserId(userId)
   return nil
 end
 
-function SessionInfo.getCurrentUser()
+function AccountInfo.getCurrentUser()
   return _info.currentUser
 end
 
-function SessionInfo.setCurrentUser(session)
+function AccountInfo.setCurrentUser(session)
   for n=#_info.accounts, 1, -1 do
     if tonumber(_info.accounts[n].userId) == tonumber(session.user.userId) then
       table.remove(_info.accounts, n)
@@ -73,10 +73,16 @@ function SessionInfo.setCurrentUser(session)
   _info.currentUser = table.dup( session.user )
   _info.currentUser.sessionToken = session.sessionToken
   ddz.GlobalSettings.userInfo = _info.currentUser
+  ddz.GlobalSettings.session.userId = _info.currentUser.userId
+  ddz.GlobalSettings.session.authToken = _info.currentUser.authToken
+  ddz.GlobalSettings.session.sessionToken = _info.currentUser.sessionToken
+  if session.server then
+    ddz.GlobalSettings.serverInfo = table.dup(session.server)
+  end
 
-  SessionInfo.save()
+  AccountInfo.save()
 end
 
-SessionInfo.create()
+AccountInfo.create()
 
-return SessionInfo
+return AccountInfo

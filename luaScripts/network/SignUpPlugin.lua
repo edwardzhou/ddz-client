@@ -1,5 +1,6 @@
 local SignUpType = require('consts').SignUpType
 local SignUpPlugin = {}
+local AccountInfo = require('AccountInfo')
 
 function SignUpPlugin.bind(theClass)
   local function handleSignUpResponse(signUpParams, respData, callback)
@@ -12,8 +13,9 @@ function SignUpPlugin.bind(theClass)
 
     local userInfo = respData.user
     local serverInfo = respData.server
-    ddz.updateUserSession(respData)
-    -- ddz.GlobalSettings.userInfo = userInfo
+    --ddz.updateUserSession(respData)
+    AccountInfo.setCurrentUser(respData)
+   -- ddz.GlobalSettings.userInfo = userInfo
     -- ddz.GlobalSettings.session.userId = userInfo.userId
     -- ddz.GlobalSettings.session.authToken = userInfo.authToken
     -- ddz.GlobalSettings.session.sessionToken = respData.sessionToken
@@ -21,6 +23,7 @@ function SignUpPlugin.bind(theClass)
     -- userInfo.sessionToken = respData.sessionToken
     -- ddz.saveSessionInfo(userInfo)
     callback(true, userInfo, serverInfo)
+
   end
 
   function theClass:signUp(callback)

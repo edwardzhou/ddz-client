@@ -365,7 +365,7 @@ ddz.updateUserSession = function(respData)
   end
   userInfo.sessionToken = respData.sessionToken
 
-  ddz.saveSessionInfo(userInfo)
+  --ddz.saveSessionInfo(userInfo)
 end
 
 ddz.writeToFile = function(filename, data)

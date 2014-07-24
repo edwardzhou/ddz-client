@@ -1,7 +1,9 @@
 --require 'CCBReaderLoad'
 require 'GuiConstants'
-
 require 'PokeCard'
+
+local AccountInfo = require('AccountInfo')
+local SignInType = require('consts').SignInType
 
 local cjson = require('cjson.safe')
 
@@ -186,29 +188,17 @@ function LandingScene:generatePokecards()
       this:runAction(cc.Sequence:create(
           cc.DelayTime:create(0.01),
           cc.CallFunc:create(function() 
-            --renderTexture:saveToFile(ddz.getDataStorePath() .. '/pc.png', cc.IMAGE_FORMAT_PNG)
-            local pImage = renderTexture:newImage()
+             local pImage = renderTexture:newImage()
             pImage:saveToFile(ddz.getDataStorePath() .. '/pc.png', false);
 
             local tex = cc.Director:getInstance():getTextureCache():addImage(pImage, 'pc.png')
 
             pImage:release()
 
-            -- local sprite = cc.Sprite:createWithTexture(tex, cc.rect(0, 1024-140, 100, 140))
-            -- sprite:setAnchorPoint(0,0)
-            -- sprite:setPosition(0, 0)
-            -- sprite:setLocalZOrder(200)
-            -- this.uiRoot:addChild(sprite)
             renderTexture:release()
             batchNode:release()
             PokeCard.createPokecardsFrames(tex)
             PokeCard.createPokecardsWithFrames(tex)
-
-            -- g_pokecards_node:setLocalZOrder(200)
-            -- this.uiRoot:addChild(g_pokecards_node)
-            -- local sprite = PokeCard.getCardById('b03').card_sprite
-            -- sprite:setPosition(0, 0)
-            -- sprite:setVisible(true)
            end)
         ))
   end
@@ -224,10 +214,12 @@ end
 function LandingScene:connectToServer()
   local this = self
 
-  local sessionInfo = ddz.loadSessionInfo() or {}
-  local sessionToken = sessionInfo.sessionToken
-  local lastSessionToken = sessionInfo.sessionToken
-  local userId = sessionInfo.userId
+  local currentUser = AccountInfo.getCurrentUser()
+  local signInInfo = {}
+  --sign
+  local sessionToken = currentUser.sessionToken
+  local lastSessionToken = currentUser.sessionToken
+  local userId = currentUser.userId
 
   local function queryRooms()
     ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
@@ -269,14 +261,14 @@ function LandingScene:connectToServer()
     else
       local newUserInfo = data.user
       local serverInfo = data.server
-      ddz.GlobalSettings.userInfo = newUserInfo
-      ddz.GlobalSettings.session.userId = newUserInfo.userId
-      ddz.GlobalSettings.session.authToken = newUserInfo.authToken
-      ddz.GlobalSettings.session.sessionToken = data.sessionToken
-      ddz.GlobalSettings.serverInfo = table.dup(data.server)
+      -- ddz.GlobalSettings.userInfo = newUserInfo
+      -- ddz.GlobalSettings.session.userId = newUserInfo.userId
+      -- ddz.GlobalSettings.session.authToken = newUserInfo.authToken
+      -- ddz.GlobalSettings.session.sessionToken = data.sessionToken
+      -- ddz.GlobalSettings.serverInfo = table.dup(data.server)
       newUserInfo.sessionToken = data.sessionToken
       sessionToken = data.sessionToken
-      ddz.saveSessionInfo(newUserInfo)
+      --ddz.saveSessionInfo(newUserInfo)
       connectToGameServer(true, newUserInfo, serverInfo)
     end
   end
@@ -284,6 +276,45 @@ function LandingScene:connectToServer()
   -- if ddz.pomeloClient then
   --   ddz.pomeloClient:disconnect()
   -- end
+
+  local function doSignIn()
+    local currentUser = AccountInfo.getCurrentUser()
+    local signInParam = {}
+    signInParam.userId = currentUser.userId
+    signInParam.signType = SignInType.BY_AUTH_TOKEN
+    signInParam.authToken = currentUser.authToken
+    password = nil
+    this.connection:signIn(signInParam, function(success, userInfo, serverInfo, signInParams)
+        dump(userInfo, 'sign result ' .. tostring(success))
+        if success then
+          this.connection:connectToServer(serverInfo)
+          return
+        end
+        local boxParams = {
+          title = '无法自动登录',
+          msg = userInfo.message,
+          onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
+        }
+        require('UICommon.MessageBox').showMessageBox(this, boxParams)
+      end)
+  end
+
+  local function doSignUp()
+    this.connection:signUp(function(success, userInfo, serverInfo, signUpParams)
+        if success then
+          this.connection:connectToServer(serverInfo)
+          return
+        end
+
+        local boxParams = {
+          title = '无法自动注册',
+          msg = userInfo.message,
+          onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
+        }
+        require('UICommon.MessageBox').showMessageBox(this, boxParams)
+
+      end)
+  end
 
   --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
   if self.connection == nil then
@@ -294,9 +325,14 @@ function LandingScene:connectToServer()
       end
     end
     if self._onSignInUpRequired == nil then
-      self._onSignInUpRequired = function()
-        local scene = require('login.LoginScene')()
-        cc.Director:getInstance():replaceScene(scene)
+      self._onSignInUpRequired = function(data)
+        if data.needSignIn then
+          doSignIn()
+        else
+          doSignUp()
+        end
+        -- local scene = require('login.LoginScene')()
+        -- cc.Director:getInstance():replaceScene(scene)
       end
     end
     self.connection:on('connectionReady', self._onConnectionReady)

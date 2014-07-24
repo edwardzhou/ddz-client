@@ -149,7 +149,11 @@ end
 
 function MessageBox:RootBox_onClicked(sender, eventType)
   if self.closeOnClickOutside then
-    self:ButtonCancel_onClicked(sender, eventType)
+    if self.ButtonCancel:isVisible() then
+      self:ButtonCancel_onClicked(self.ButtonCancel)
+    elseif self.ButtonOk:isVisible() then
+      self:ButtonOk_onClicked(self.ButtonOk)
+    end
   end
 end
 
