@@ -26,6 +26,7 @@ function GameScene.extend(target, ...)
 end
 
 function GameScene:ctor(...)
+  local this = self
 
   self.gameService = GameService.new(self, ddz.GlobalSettings.userInfo.userId)
 
@@ -33,18 +34,26 @@ function GameScene:ctor(...)
   self.origin = cc.Director:getInstance():getVisibleOrigin()
 
   self:registerScriptHandler(function(event)
-    print('event => ', event)
-    if event == "enterTransitionFinish" then
-      self:init()
-    elseif event == 'exit' then
-      self:cleanup()
+    print('[GameScene] event => ', event)
+    local on_event = 'on_' .. event
+    if type(this[on_event]) == 'function' then
+      this[on_event](this)
     end
+   -- if event == "enterTransitionFinish" then
+    --   self:init()
+    -- elseif event == 'exit' then
+    --   self:cleanup()
+    -- end
   end)
 
   self._onReconnected = __bind(self.onReconnected, self)
 end
 
-function GameScene:cleanup()
+function GameScene:on_enterTransitionFinish()
+  self:init()
+end
+
+function GameScene:on_cleanup()
   umeng.MobClickCpp:finishLevel('base_200')
   umeng.MobClickCpp:endLogPageView('page_gaming')
   umeng.MobClickCpp:endScene('gaming')

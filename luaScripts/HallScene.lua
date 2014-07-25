@@ -18,13 +18,32 @@ function HallScene.extend(target, ...)
 end
 
 function HallScene:ctor(...)
+  local this = self
   self:registerScriptHandler(function(event)
-    print('event => ', event)
-    if event == "enterTransitionFinish" then
-      self:init()
-    elseif event == 'exit' then
-     end
+    print('[HallScene] event => ', event)
+    local on_event = 'on_' .. event
+    if type(this[on_event]) == 'function' then
+      this[on_event](this)
+    end
+    -- print('event => ', event)
+    -- if event == "enterTransitionFinish" then
+    --   self:init()
+    -- elseif event == 'exit' then
+    --  end
   end)
+
+  self:init()
+
+end
+
+function HallScene:on_enter()
+  self:updateUserInfo()
+end
+
+function HallScene:on_enterTransitionFinish()
+end
+
+function HallScene:on_cleanup()
 end
 
 function HallScene:init()
@@ -38,6 +57,7 @@ function HallScene:init()
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
+  require('utils.UIVariableBinding').bind(ui, self, self)
   
   local textureCache = cc.Director:getInstance():getTextureCache()
   
@@ -54,10 +74,9 @@ function HallScene:init()
   textureCache:addImage('images/room15.png')
   
   local modelPanel = ccui.Helper:seekWidgetByName(ui, 'model_Panel')
-  local model = modelPanel:clone()
-  modelPanel:setVisible(false)
-  local listview = ccui.Helper:seekWidgetByName(ui, 'ListView_53')
-  listview = tolua.cast(listview, 'ccui.ListView')
+  local model = self.PanelRoomModel:clone()
+  self.PanelRoomModel:setVisible(false)
+  local listview = self.ListViewRooms
   listview:setItemModel(model)
 
   local gameRooms = ddz.GlobalSettings.rooms
@@ -65,44 +84,6 @@ function HallScene:init()
   for i=1, #gameRooms do
     listview:pushBackDefaultItem()
   end
-
-  local touchEventHandler = __bind(self.onRoomTouchEvent, self)
-
-  local listItemSelected = true
-  local selectedIndex = -1
-  local moveTimes = 0
-
-  local function listViewEvent(sender, eventType)
-    print('[listViewEvent] eventType => ', eventType)
-    if eventType == ccui.ListViewEventType.ONSELECTEDITEM_START then
-      listItemSelected = true
-      moveTimes = 0
-      selectedIndex = sender:getCurSelectedIndex()
-      -- print("select child index = ", itemIndex)
-      -- local item = sender:getItem(itemIndex)
-      -- local gameRoom = item.gameRoom
-      -- dump(gameRoom, 'selected room: ')
-    elseif eventType == ccui.ListViewEventType.ONSELECTEDITEM_END and listItemSelected and selectedIndex >=0 then
-      local item = sender:getItem(selectedIndex)
-      local gameRoom = item.gameRoom
-      dump(gameRoom, 'selected room: ')
-      ddz.pomeloClient:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
-          dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
-          --ddz.selectedRoomId = gameRoom.roomId
-          ddz.selectedRoom = gameRoom
-          local createGameScene = require('gaming.GameScene')
-          local gameScene = createGameScene()
-          cc.Director:getInstance():pushScene(gameScene)
-        end)
-    end
-  end
-
-  local function listViewScrollEvent(sender, eventType)
-    print('[listViewScrollEvent] eventType => ', eventType)
-  end
-
-  listview:addEventListener(listViewEvent)
-  listview:addScrollViewEventListener(listViewScrollEvent)
 
   local items = listview:getItems()
   for i=1, #(items) do
@@ -140,22 +121,37 @@ function HallScene:init()
 
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  local user = AccountInfo.getCurrentUser();
-  
-  self.LabelUserId:setString(user.nickName)
-
 end
 
+function HallScene:updateUserInfo()
+  local user = AccountInfo.getCurrentUser();
+  
+  self.LabelNickName:setString(user.nickName)
+  self.LabelCoins:setString(3200)
+end
 
+function HallScene:ListViewRooms_onEvent(sender, eventType)
+  local this = self
+  local curIndex = this.ListViewRooms:getCurSelectedIndex()
+  if eventType == ccui.ListViewEventType.ONSELECTEDITEM_END and curIndex >= 0 then
+    local item = this.ListViewRooms:getItem(curIndex)
+    local gameRoom = item.gameRoom
+    dump(gameRoom, 'selected room: ')
+    ddz.pomeloClient:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
+      dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
+      ddz.selectedRoom = gameRoom
+      local createGameScene = require('gaming.GameScene')
+      local gameScene = createGameScene()
+      cc.Director:getInstance():pushScene(gameScene)
+    end)
+  end
+end
 
 function HallScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
---      if type(self.onMainMenu) == 'function' then
---        self.onMainMenu()
---      end
-      cc.Director:getInstance():popScene() 
       event:stopPropagation()
+      cc.Director:getInstance():popScene() 
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
@@ -170,11 +166,6 @@ function HallScene:ButtonHead_onClicked(sender, event)
   print('[HallScene:ButtonHead_onClicked]')
   local userProfile = require('profile.UserProfileScene')()
   cc.Director:getInstance():pushScene(userProfile)
-end
-
-function HallScene:onRoomTouchEvent(sender, event)
-  dump(sender, '[HallScene:onRoomTouchEvent] sender ')
-  dump(event, '[HallScene:onRoomTouchEvent] event ')
 end
 
 local function createScene()

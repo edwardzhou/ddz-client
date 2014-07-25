@@ -17,6 +17,21 @@ function UserProfileScene.extend(target, ...)
 end
 
 function UserProfileScene:ctor(...)
+  local this = self
+  self:registerScriptHandler(function(event)
+    print('[UserProfileScene] event => ', event)
+    local on_event = 'on_' .. event
+    if type(this[on_event]) == 'function' then
+      this[on_event](this)
+    end
+    -- if event == "enterTransitionFinish" then
+    --   self:initKeypadHandler()
+    --   self:onEnter()
+    -- elseif event == 'exit' then
+    --   -- umeng:stopSession()
+    -- end
+  end)
+
   self:init()
 end
 
@@ -62,16 +77,20 @@ end
 
 function UserProfileScene:ButtonBindMobile_onClicked()
   print('[UserProfileScene:ButtonBindMobile_onClicked]')
-  local data = {}
-  data.nickName = self.UserNickname:getStringValue()
+  local reqParams = {}
+  reqParams.nickName = self.UserNickname:getStringValue()
   if self.CheckboxMale:getSelectedState() then
-    data.gender = '男'
+    reqParams.gender = '男'
   else
-    data.gender = '女'
+    reqParams.gender = '女'
   end
 
-  ddz.pomeloClient:request('ddz.entryHandler.updateUserInfo', data, function(data) 
+  ddz.pomeloClient:request('ddz.entryHandler.updateUserInfo', reqParams, function(data) 
       dump(data, 'ddz.entryHandler.updateUserInfo -> resp')
+      local userInfo = AccountInfo.getCurrentUser()
+      userInfo.gender = reqParams.gender;
+      userInfo.nickName = reqParams.nickName
+      AccountInfo.save()
     end)
 end
 
@@ -108,7 +127,7 @@ function UserProfileScene:initKeypadHandler()
 --        self.onMainMenu()
 --      end
       event:stopPropagation()
-      cc.Director:getInstance():popScene() 
+      cc.Director:getInstance():popScene()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end

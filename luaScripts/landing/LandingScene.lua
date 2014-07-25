@@ -36,7 +36,7 @@ function LandingScene:init()
 
 
   self:registerScriptHandler(function(event)
-    print('event => ', event)
+    print('[LandingScene] event => ', event)
     local on_event = 'on_' .. event
     if type(this[on_event]) == 'function' then
       this[on_event](this)
