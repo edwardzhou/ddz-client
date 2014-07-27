@@ -1,6 +1,7 @@
 --require 'CCBReaderLoad'
 require 'GuiConstants'
 require 'PokeCard'
+require 'socket'
 
 local AccountInfo = require('AccountInfo')
 local SignInType = require('consts').SignInType
@@ -90,11 +91,26 @@ function LandingScene:init()
   self:runAction(cc.Sequence:create(
     cc.DelayTime:create(0.3),
     cc.CallFunc:create(function()
+      local s1, s2, s3
       print('start to load allCardTypes.json')
+      s1 = socket.gettime() 
       local jsonStr = cc.FileUtils:getInstance():getStringFromFile('allCardTypes.json')
+      s2 = socket.gettime()
       print('start to decode allCardTypes.json')
       AllCardTypes = cjson.decode(jsonStr)
+      s3 = socket.gettime()
       print('decode allCardTypes.json finished')
+
+      print('load json => ' , s2 - s1)
+      print('decode json => ', s3 - s2)
+      print('total => ', s3 - s1)
+
+      print('start to load allCardTypes.lua')
+      s1 = socket.gettime()
+      require('allCardTypes2')
+      s2 = socket.gettime()
+      print('finish to load allCardTypes.lua')
+      print('lua load => ', s2 - s1)
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()

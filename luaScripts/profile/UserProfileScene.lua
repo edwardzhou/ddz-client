@@ -2,6 +2,8 @@
 local UserProfileScene = class('UserProfileScene')
 local AccountInfo = require('AccountInfo')
 
+local showMessageBox = require('UICommon.MessageBox').showMessageBox;
+
 function UserProfileScene.extend(target, ...)
   local t = tolua.getpeer(target)
   if not t then
@@ -95,7 +97,35 @@ function UserProfileScene:ButtonBindMobile_onClicked()
 end
 
 function UserProfileScene:ButtonChangePassword_onClicked()
+  local this = self
+  local password = string.trim(self.InputPassword:getStringValue())
+  local password2 = string.trim(self.InputPassword2:getStringValue())
 
+  if #password < 6 then
+    local msgParam = {
+      msg = '请输入六到8位长度的密码。'
+    }
+    showMessageBox(self, msgParam)
+    return
+  end
+
+  if password ~= password2 then
+    local msgParam = {
+      msg = '输入的两个密码不一致。'
+    }
+    showMessageBox(self, msgParam)
+    return
+  end
+
+  local reqParams = {}
+  reqParams.password = password
+  ddz.pomeloClient:request('auth.userHandler.updatePassword', reqParams, function(data) 
+      if data.retCode == 0 then
+        showMessageBox(this, {msg = '密码修改成功!'})
+      else
+        showMessageBox(this, {msg = '密码修改失败!'})
+      end
+    end);
 end
 
 function UserProfileScene:ButtonCancelPassword_onClicked()
