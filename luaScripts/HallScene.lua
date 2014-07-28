@@ -168,6 +168,11 @@ function HallScene:ButtonHead_onClicked(sender, event)
   cc.Director:getInstance():pushScene(userProfile)
 end
 
+function HallScene:ButtonBack_onClicked(sender, eventType)
+  cc.Director:getInstance():replaceScene(require('login.LoginScene')())
+  -- body
+end
+
 local function createScene()
   local scene = cc.Scene:create()
   return HallScene.extend(scene)

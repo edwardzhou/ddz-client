@@ -63,6 +63,15 @@ function UserProfileScene:init()
     self.CheckboxFemale:setSelectedState(true)
   end
 
+  local headIcon_event = __bind(self.HeadIcon_onEvent, self) 
+
+  for i = 0, 7 do 
+    local headName = 'HeadIcon_' .. i
+    local head = self[headName]
+    print('headName => ', headName, ' ==> ', head)
+    --head:setTouchEnabled(true)
+    head:addTouchEventListener(headIcon_event)
+  end
 end
 
 function UserProfileScene:PanelNickname_onClicked()
@@ -168,7 +177,41 @@ function UserProfileScene:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
+function UserProfileScene:ButtonTest_onClicked()
+  local this = self
+  local img = self.ImageTips
+  local panelSize = self.PanelHolder:getContentSize()
 
+  img:setScale(0.3)
+  img:setPosition(cc.p(panelSize.width / 2.0, -40))
+  --img:runAction(cc.ScaleTo:create(0.8, 1.0))
+  img:runAction( cc.Sequence:create(
+      cc.Spawn:create(
+          cc.MoveTo:create(0.4, cc.p(panelSize.width / 2.0, panelSize.height / 2.0)),
+          cc.ScaleTo:create(0.4, 1.0)
+        ),
+      cc.DelayTime:create(2),
+      cc.Spawn:create(
+          cc.MoveBy:create(0.3, cc.p(0, panelSize.height + 20)),
+          cc.ScaleTo:create(0.4, 0.3)
+        )
+    ))
+end
+
+function UserProfileScene:HeadIcon_onEvent(sender, eventType)
+  local btnName = sender:getName()
+  print(btnName , 'eventType:', eventType)
+  if eventType == ccui.TouchEventType.ended then
+
+    local boundingBox = sender:getParent():getBoundingBox()
+    self.ImageCheck:setPosition( boundingBox.x + boundingBox.width + 5, boundingBox.y - 5)
+  end
+end
+
+
+function UserProfileScene:HeadTest_onTouchEvent(sender, eventType)
+  print('[head test] touch event => ', eventType)
+end
 
 
 local function createScene()

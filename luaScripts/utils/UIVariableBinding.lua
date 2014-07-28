@@ -48,8 +48,8 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
         -- print('[bind event]', vname, eventHandlerName, ' eventHandler:', eventHandler , ' onclickHandler: ', onclickHandler)
         if type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function' then
           widget:addTouchEventListener(function(sender, event)
-              if eventHandler then
-                eventHandler(eventContainer, sender, event)
+              if eventTouchHandler then
+                eventTouchHandler(eventContainer, sender, event)
               end
               if event == ccui.TouchEventType.ended and onclickHandler then
                 onclickHandler(eventContainer, sender, event)
