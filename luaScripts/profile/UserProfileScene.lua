@@ -160,13 +160,11 @@ function UserProfileScene:CheckboxFemale_onEvent(sender, eventType)
 end
 
 function UserProfileScene:initKeypadHandler()
+  local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
---      if type(self.onMainMenu) == 'function' then
---        self.onMainMenu()
---      end
       event:stopPropagation()
-      cc.Director:getInstance():popScene()
+      this:close()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
@@ -175,6 +173,10 @@ function UserProfileScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function UserProfileScene:close()
+  cc.Director:getInstance():popScene()
 end
 
 function UserProfileScene:ButtonTest_onClicked()
@@ -211,6 +213,10 @@ end
 
 function UserProfileScene:HeadTest_onTouchEvent(sender, eventType)
   print('[head test] touch event => ', eventType)
+end
+
+function UserProfileScene:ButtonBack_onClicked()
+  self:close()
 end
 
 

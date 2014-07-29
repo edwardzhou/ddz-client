@@ -35,8 +35,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
                     $(LOCAL_PATH)/../../Classes/lua-binding/auto \
                     
 
-LOCAL_WHOLE_STATIC_LIBRARIES := cocos_lua_static \
-PluginProtocolStatic UMengStatic
+LOCAL_WHOLE_STATIC_LIBRARIES := cocos_lua_static UMengStatic
 
 LOCAL_SHARED_LIBRARIES := UMengPatcher-prebuilt
 
@@ -45,12 +44,8 @@ include $(BUILD_SHARED_LIBRARY)
 COCOS2DX_PATH := /Users/edwardzhou/develop/cocos2d-x-3.0
 
 $(call import-add-path, $(LOCAL_PATH)/../../3rdLibs/umeng)
-#$(call import-add-path,$(COCOS2DX_PATH)/plugin/publish)
-#$(call import-add-path,$(COCOS2DX_PATH)/cocos)
-#$(call import-add-path,$(COCOS2DX_PATH)/external)
 
 $(call import-module, scripting/lua-bindings)
 
-#$(call import-module, protocols/android)
 $(call import-module, platforms/android)
 $(call import-module, platforms/android/patch)

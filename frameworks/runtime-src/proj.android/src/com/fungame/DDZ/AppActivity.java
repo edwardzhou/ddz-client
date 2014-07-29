@@ -26,6 +26,12 @@ THE SOFTWARE.
 ****************************************************************************/
 package com.fungame.DDZ;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
@@ -56,10 +62,38 @@ public class AppActivity extends Cocos2dxActivity {
 		try {
 			PackageInfo info = this.getContext().getPackageManager().getPackageInfo(this.getContext().getPackageName(), PackageManager.GET_SIGNATURES);
 			System.out.println("PackageName: " + this.getContext().getPackageName());
-			for (Signature sign : info.signatures) {
+			   final String strName = info.applicationInfo.loadLabel(this.getContext().getPackageManager()).toString();
+			    final String strVendor = info.packageName;
+			    StringBuffer sb = new StringBuffer();
+			    sb.append("<br>" + strName + " / " + strVendor + "<br>");
+
+			    for (Signature sign : info.signatures) {
 				System.out.println("Signature CharsString: " + sign.toCharsString());
 				System.out.println("Signature toString: " + sign.toString());
+				this.printHex(sign.toByteArray());
+				
+		        final byte[] rawCert = sign.toByteArray();
+		        InputStream certStream = new ByteArrayInputStream(rawCert);
+
+		        final CertificateFactory certFactory;
+		        final X509Certificate x509Cert;
+		        try {
+		            certFactory = CertificateFactory.getInstance("X509");
+		            x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
+
+		            sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
+		            sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
+		            sb.append("Certificate serial number: " + x509Cert.getSerialNumber() + "\n");
+		            sb.append("\n");
+		        }
+		        catch (CertificateException e) {
+		            // e.printStackTrace();
+		        }
+		        
+		        System.out.println("Certficate: \n" + sb.toString());
+			    
 			}
+		
 			
 			IntentFilter intentFilter = new IntentFilter();
 			intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -142,6 +176,34 @@ public class AppActivity extends Cocos2dxActivity {
           e.printStackTrace();
         }
       return null;
+    }
+
+    private void printHex(byte[] buffer) {
+      StringBuilder sb = new StringBuilder();
+      StringBuilder sbAscii = new StringBuilder();
+      for(int i=0; i<buffer.length; i++) {
+    	  sb.append(String.format("%02x ", buffer[i]));
+    	  if (buffer[i]<0x20 || buffer[i]>127) {
+    		  sbAscii.append('.');
+    	  } else {
+    		  sbAscii.append(String.format("%c", buffer[i]));
+    	  }
+        
+    	  if ((i+1) % 16 == 0) {
+    		  sb.append(" |  ").append(sbAscii);
+    		  System.out.println(sb.toString());
+    		  sb = new StringBuilder();
+    		  sbAscii = new StringBuilder();
+    	  }
+      }
+      
+      int n = 16 - buffer.length % 16;
+      for(int i=0;i<n;i++) {
+    	  sb.append("   ");
+      }
+      sb.append(" |  ").append(sbAscii);
+	  System.out.println(sb.toString());
+     
     }
                  
 

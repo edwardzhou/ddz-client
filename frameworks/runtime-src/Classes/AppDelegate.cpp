@@ -125,10 +125,13 @@ std::string getApkSign() {
     j_packageInfo = env->CallObjectMethod(j_packageManager, _mi_getPackageInfo.methodID, j_packageName, 64);
     j_signatures = (jobjectArray) env->GetObjectField(j_packageInfo, _fi_signatures.fieldID);
 
-    j_signature = env->GetObjectArrayElement(j_signatures, 0);
-    jstring j_signStr = (jstring) env->CallObjectMethod(j_signature, _mi_toCharsString.methodID);
-    apkSign = JniHelper::jstring2string(j_signStr);
-    CCLOG("[getApkInfo] Signature: %s", apkSign.c_str());
+    jsize length = env->GetArrayLength(j_signatures);
+    for (jsize index=0; index < length; index++) {
+        j_signature = env->GetObjectArrayElement(j_signatures, index);
+        jstring j_signStr = (jstring) env->CallObjectMethod(j_signature, _mi_toCharsString.methodID);
+        apkSign = JniHelper::jstring2string(j_signStr);
+        CCLOG("[getApkInfo] Signature[%d]: %s", index, apkSign.c_str());
+    }
 
     return apkSign;
 }
