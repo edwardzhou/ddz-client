@@ -123,7 +123,8 @@ function HallScene:updateUserInfo()
   local user = AccountInfo.getCurrentUser();
   
   self.LabelNickName:setString(user.nickName)
-  self.LabelCoins:setString(3200)
+  local coins = user.ddzProfile.coins or 0
+  self.LabelCoins:setString(coins)
 
   if user.headIcon then
     self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
