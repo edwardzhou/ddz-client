@@ -28,4 +28,8 @@ Resources.Images = {
   }
 }
 
+function Resources.getHeadIconPath(headIcon)
+  return 'images/' .. headIcon .. '.png'
+end
+
 return Resources

@@ -65,7 +65,7 @@ public class AppActivity extends Cocos2dxActivity {
 			   final String strName = info.applicationInfo.loadLabel(this.getContext().getPackageManager()).toString();
 			    final String strVendor = info.packageName;
 			    StringBuffer sb = new StringBuffer();
-			    sb.append("<br>" + strName + " / " + strVendor + "<br>");
+			    sb.append("\n" + strName + " / " + strVendor + "\n");
 
 			    for (Signature sign : info.signatures) {
 				System.out.println("Signature CharsString: " + sign.toCharsString());

@@ -1,5 +1,6 @@
 require 'GuiConstants'
 local AccountInfo = require('AccountInfo')
+local Resources = require('Resources')
 
 local HallScene = class('HallScene')
 
@@ -25,11 +26,6 @@ function HallScene:ctor(...)
     if type(this[on_event]) == 'function' then
       this[on_event](this)
     end
-    -- print('event => ', event)
-    -- if event == "enterTransitionFinish" then
-    --   self:init()
-    -- elseif event == 'exit' then
-    --  end
   end)
 
   self:init()
@@ -128,6 +124,10 @@ function HallScene:updateUserInfo()
   
   self.LabelNickName:setString(user.nickName)
   self.LabelCoins:setString(3200)
+
+  if user.headIcon then
+    self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
+  end
 end
 
 function HallScene:ListViewRooms_onEvent(sender, eventType)

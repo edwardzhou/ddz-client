@@ -1,7 +1,7 @@
 
 local UserProfileScene = class('UserProfileScene')
 local AccountInfo = require('AccountInfo')
-
+local Resources = require('Resources')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox;
 
 function UserProfileScene.extend(target, ...)
@@ -63,14 +63,12 @@ function UserProfileScene:init()
     self.CheckboxFemale:setSelectedState(true)
   end
 
-  local headIcon_event = __bind(self.HeadIcon_onEvent, self) 
+end
 
-  for i = 0, 7 do 
-    local headName = 'HeadIcon_' .. i
-    local head = self[headName]
-    print('headName => ', headName, ' ==> ', head)
-    --head:setTouchEnabled(true)
-    head:addTouchEventListener(headIcon_event)
+function UserProfileScene:on_enter()
+  local user = AccountInfo.getCurrentUser()
+  if user.headIcon then
+    self.ButtonChangeHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
   end
 end
 
@@ -78,12 +76,8 @@ function UserProfileScene:PanelNickname_onClicked()
   self.UserNickname:attachWithIME()
 end
 
-function UserProfileScene:PanelPassword_onClicked()
-  self.InputPassword:attachWithIME()
-end
-
-function UserProfileScene:PanelPassword2_onClicked()
-  self.InputPassword2:attachWithIME()
+function UserProfileScene:ButtonPassword_onClicked()
+  cc.Director:getInstance():pushScene(require('profile.PasswordScene')())
 end
 
 function UserProfileScene:ButtonBindMobile_onClicked()
@@ -105,42 +99,6 @@ function UserProfileScene:ButtonBindMobile_onClicked()
     end)
 end
 
-function UserProfileScene:ButtonChangePassword_onClicked()
-  local this = self
-  local password = string.trim(self.InputPassword:getStringValue())
-  local password2 = string.trim(self.InputPassword2:getStringValue())
-
-  if #password < 6 then
-    local msgParam = {
-      msg = '请输入六到8位长度的密码。'
-    }
-    showMessageBox(self, msgParam)
-    return
-  end
-
-  if password ~= password2 then
-    local msgParam = {
-      msg = '输入的两个密码不一致。'
-    }
-    showMessageBox(self, msgParam)
-    return
-  end
-
-  local reqParams = {}
-  reqParams.password = password
-  ddz.pomeloClient:request('auth.userHandler.updatePassword', reqParams, function(data) 
-      if data.retCode == 0 then
-        showMessageBox(this, {msg = '密码修改成功!'})
-      else
-        showMessageBox(this, {msg = '密码修改失败!'})
-      end
-    end);
-end
-
-function UserProfileScene:ButtonCancelPassword_onClicked()
-  self.InputPassword:setText('')
-  self.InputPassword2:setText('')
-end
 
 function UserProfileScene:CheckboxMale_onEvent(sender, eventType)
   if self.CheckboxFemale:getSelectedState() then
@@ -200,22 +158,16 @@ function UserProfileScene:ButtonTest_onClicked()
     ))
 end
 
-function UserProfileScene:HeadIcon_onEvent(sender, eventType)
-  local btnName = sender:getName()
-  print(btnName , 'eventType:', eventType)
-  if eventType == ccui.TouchEventType.ended then
 
-    local boundingBox = sender:getParent():getBoundingBox()
-    self.ImageCheck:setPosition( boundingBox.x + boundingBox.width + 5, boundingBox.y - 5)
-  end
-end
-
-
-function UserProfileScene:HeadTest_onTouchEvent(sender, eventType)
-  print('[head test] touch event => ', eventType)
+function UserProfileScene:ButtonChangeHead_onClicked(sender, eventType)
+  cc.Director:getInstance():pushScene(require('profile.HeadIconScene')())
 end
 
 function UserProfileScene:ButtonBack_onClicked()
+  self:close()
+end
+
+function UserProfileScene:ButtonTopBack_onClicked()
   self:close()
 end
 

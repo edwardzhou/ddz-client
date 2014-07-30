@@ -4,6 +4,7 @@ gen/
 .project
 lint.xml
 *~
+.~*
 *.DS*
 *.pyc
 cocos2d.bak

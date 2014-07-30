@@ -5,6 +5,7 @@ require 'GlobalFunctions'
 require 'consts'
 require 'GlobalSettings'
 require 'DebugSetting'
+require 'GuiConstants'
 
 cc.KeyCode.KEY_BACKSPACE    = 0x0006
 cc.KeyCode.KEY_MENU         = 0x000F
