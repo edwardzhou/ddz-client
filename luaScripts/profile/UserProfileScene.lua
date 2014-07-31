@@ -70,6 +70,20 @@ function UserProfileScene:on_enter()
   if user.headIcon then
     self.ButtonChangeHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
   end
+
+  if user.ddzProfile then
+    self.LabelCoins:setString(user.ddzProfile.coins)
+    local rate = '-'
+    local won = user.ddzProfile.gameStat.won
+    local lose = user.ddzProfile.gameStat.lose
+    local totalGames = won + lose
+    if totalGames > 0 then
+      rate = math.floor(won * 10000.0 / totalGames) / 100 .. '%'
+    end
+
+    local winRate = string.format('%-10s 胜 %d, 负 %d', rate, won, lose)
+    self.LabelWinRate:setString(winRate)
+  end
 end
 
 function UserProfileScene:PanelNickname_onClicked()
