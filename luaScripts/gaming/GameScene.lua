@@ -91,6 +91,7 @@ function GameScene:init()
   PokeCard.resetAll()
   pokeCardsLayer:addChild(g_pokecards_node)
   self.pokeCardsLayer = pokeCardsLayer
+  self.cardContentSize = g_shared_cards[1].card_sprite:getContentSize()
   -- self.pokeCardsBatchNode = pokeCardsBatchNode
   
   self.selfUserId = 1
@@ -98,12 +99,28 @@ function GameScene:init()
   self:initPokeCardsLayerTouchHandler()
   self:showSysTime()
   self:initPlayers()
-  self:showButtonsPanel(false)
-  self:showGrabLordButtonsPanel(false)
+
+  self:resetScene()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
 
+
+
   gameConnection:on('connectionReady', self._onReconnected)
+end
+
+function GameScene:resetScene()
+  self:showButtonsPanel(false)
+  self:showGrabLordButtonsPanel(false)
+  self.ButtonReady:setVisible(false)
+  local emptyUserInfo = {
+    nickName = '',
+    state = ddz.PlayerStatus.None,    
+  }
+  self:updateNextPlayerUI(emptyUserInfo)
+  self:updatePrevPlayerUI(emptyUserInfo)
+  self:stopCountdown()
+  self.LabelLordValue:setString(0)
 end
 
 function GameScene:onReconnected()
@@ -111,11 +128,13 @@ function GameScene:onReconnected()
 end
 
 function GameScene:initKeypadHandler()
+  local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
       --      if type(self.onMainMenu) == 'function' then
       --        self.onMainMenu()
       --      end
+      --this.gameService:leaveGame()
       cc.Director:getInstance():popScene()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
     end

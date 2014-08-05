@@ -249,6 +249,27 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     getApkSign();
 
+    Quaternion q;
+    q.x = 100;
+    q.y = 100;
+    q.z = 1;
+
+    Mat4 m1, m2;
+    m1.m[12] = 100;
+    m1.m[13] = 100;
+    m1.m[14] = 1;
+
+    m2.m[12] = 100;
+    m2.m[13] = 50;
+    m1.m[14] = 0;
+
+    Mat4 m3;
+    Vec3 v(50, 50, 0);
+    m2.rotateY( CC_DEGREES_TO_RADIANS(45) , &m3);
+
+    CCLOG("q => [x: %0.4f, y: %0.4f, z: %0.4f] ", m3.m[12], m3.m[13], m3.m[14]);
+
+
     engine->executeScriptFile("boot.lua");
     
     return true;
