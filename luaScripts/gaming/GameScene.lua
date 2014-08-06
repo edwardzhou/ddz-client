@@ -1,5 +1,6 @@
 require 'GuiConstants'
 require 'PokeCard'
+local AccountInfo = require('AccountInfo')
 local mobdebug = require('src.mobdebug')
 local GamePlayer = require('GamePlayer')
 --local GameService = require('LocalGameService')
@@ -104,8 +105,6 @@ function GameScene:init()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
 
-
-
   gameConnection:on('connectionReady', self._onReconnected)
 end
 
@@ -121,6 +120,16 @@ function GameScene:resetScene()
   self:updatePrevPlayerUI(emptyUserInfo)
   self:stopCountdown()
   self.LabelLordValue:setString(0)
+
+  local thisUser = AccountInfo.getCurrentUser()
+  local selfUserInfo = {
+    userId = thisUser.userId,
+    nickName = thisUser.nickName,
+    headIcon = thisUser.headIcon,
+    state = ddz.PlayerStatus.None
+  }
+  self:updateSelfPlayerUI(selfUserInfo)
+
 end
 
 function GameScene:onReconnected()
