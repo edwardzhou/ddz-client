@@ -104,13 +104,6 @@ function LandingScene:init()
       print('load json => ' , s2 - s1)
       print('decode json => ', s3 - s2)
       print('total => ', s3 - s1)
-
-      print('start to load allCardTypes.lua')
-      s1 = socket.gettime()
-      require('allCardTypes2')
-      s2 = socket.gettime()
-      print('finish to load allCardTypes.lua')
-      print('lua load => ', s2 - s1)
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()
