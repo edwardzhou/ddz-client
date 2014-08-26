@@ -5,6 +5,7 @@ local UIButtonsPlugin = {}
 function UIButtonsPlugin.bind( theClass )
   function theClass:showGrabLordButtonsPanel(show, currentLordValue)
     currentLordValue = currentLordValue or 0
+    --print('[theClass:showGrabLordButtonsPanel] currentLordValue: ', currentLordValue)
     self.GrabLordButtonsPanel:setVisible(show)
     if show then
       if currentLordValue == 0 then

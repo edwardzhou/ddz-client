@@ -79,6 +79,8 @@ function UIPlayerUpdatePlugin.bind(theClass)
       userUI.Status:setVisible(userInfo.state and userInfo.state ~= ddz.PlayerStatus.None and userInfo.state ~= ddz.PlayerStatus.Playing)
     end
 
+    userUI.Status:setVisible(false)
+
     if userInfo.role == ddz.PlayerRoles.Farmer then
       userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)
     elseif userInfo.role == ddz.PlayerRoles.Lord then
@@ -89,6 +91,42 @@ function UIPlayerUpdatePlugin.bind(theClass)
     userUI.PokeCount:setString(userInfo.pokeCount)
 
   end
+
+  function theClass:animateStatus(statusUI)
+    print('show Player Pass')
+    local parentSize = statusUI:getParent():getContentSize()
+    local statusUISize = statusUI:getContentSize()
+    local pos = cc.p(statusUI:getPosition())
+    statusUI:setVisible(false)
+--    statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
+
+    statusUI:setVisible(true)
+    statusUI:setOpacity(0);
+
+    statusUI:setPosition(cc.p(pos.x, parentSize.height))
+    statusUI:runAction(cc.Sequence:create(
+        cc.Spawn:create(
+          cc.FadeIn:create(0.5),
+          cc.MoveTo:create(0.5, cc.p(pos.x, parentSize.height / 2.0))
+        ),
+        cc.DelayTime:create(1.5),
+        cc.CallFunc:create(function()
+            statusUI:setVisible(false)
+            statusUI:setOpacity(255)
+          end)
+      ))
+
+    -- statusUI:runAction(cc.Sequence:create(
+    --     cc.FadeIn:create(0.5),
+    --     cc.DelayTime:create(1.0),
+    --     cc.FadeOut:create(0.5),
+    --     cc.CallFunc:create(function()
+    --         statusUI:setVisible(false)
+    --         statusUI:setOpacity(255)
+    --       end)
+    --   ))
+  end
+
 end
 
 return UIPlayerUpdatePlugin

@@ -44,7 +44,7 @@ function UIClockCountDownPlugin.bind(theClass)
   end
 
   function theClass:startSelfPlayerCountdown(timeoutCallback, times)
-    local pos = cc.p(130, 180)
+    local pos = cc.p(420, 260)
     self:startCountdown(pos, timeoutCallback, times)
   end
 

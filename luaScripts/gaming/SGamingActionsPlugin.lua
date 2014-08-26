@@ -1,5 +1,6 @@
 local scheduler = require('framework.scheduler')
 local SGamingActionsPlugin = {}
+local AccountInfo = require('AccountInfo')
 
 local Res = require('Resources')
 
@@ -15,12 +16,15 @@ function SGamingActionsPlugin.bind(theClass)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
       self:updateSelfPlayerUI(self.selfPlayerInfo)
+      self:animateStatus(self.SelfUserStatus)
     elseif userId == self.prevPlayerInfo.userId then
       --dump(self.prevPlayerInfo, 'self.prevPlayerInfo')
       self:updatePrevPlayerUI(self.prevPlayerInfo)
+      self:animateStatus(self.PrevUserStatus)
     elseif userId == self.nextPlayerInfo.userId then
       --dump(self.nextPlayerInfo, 'self.nextPlayerInfo')
       self:updateNextPlayerUI(self.nextPlayerInfo)
+      self:animateStatus(self.NextUserStatus)
     else
       -- error
     end
@@ -163,47 +167,102 @@ function SGamingActionsPlugin.bind(theClass)
     self:showPrevPlayerRestPokecards(prevPokeCards)
     self:showNextPlayerRestPokecards(nextPokeCards)
 
-    --self.self
-    local this = self
-    if self.gameResultPanel == nil then
-      --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
-      local onClose = function ( ... )
-        -- body
-      end
-      local onNewGame = function()
-        --PokeCard.resetAll(this.pokeCardsLayer)
-        --PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
-        --this.gameService:
-        self:ButtonReady_onClicked(self.ButtonReady, ccui.TouchEventType.ended)
-      end
+    local currentUser = AccountInfo.getCurrentUser()
+    local selfDdzProfile = balance.playersMap[currentUser.userId].ddzProfile
+    table.merge(currentUser.ddzProfile, selfDdzProfile)
 
-      self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
-      self:addChild(self.gameResultPanel)
-    end
+    self:showPlayerWinCoins(self.SelfUserCoins, balance.playersMap[self.selfPlayerInfo.userId].score)
+    self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
+    self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score)
+
+
+    -- --self.self
+    -- local this = self
+    -- if self.gameResultPanel == nil then
+    --   --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
+    --   local onClose = function ( ... )
+    --     -- body
+    --   end
+    --   local onNewGame = function()
+    --     --PokeCard.resetAll(this.pokeCardsLayer)
+    --     --PokeCard.reloadAllCardSprites(this.pokeCardsLayer)
+    --     --this.gameService:
+    --     self:ButtonReady_onClicked(self.ButtonReady, ccui.TouchEventType.ended)
+    --   end
+
+    --   self.gameResultPanel = require('gaming.GameResultDialog').new(onClose, onNewGame)
+    --   self:addChild(self.gameResultPanel)
+    -- end
     --scheduler.performWithDelayGlobal(function() 
         self.ButtonReady:setVisible(true)
-        this.gameResultPanel:show(balance, this.selfPlayerInfo)
+        --this.gameResultPanel:show(balance, this.selfPlayerInfo)
       --end, 1)
+  end
+
+  function theClass:showPlayerWinCoins(coinLabel, coins)
+    local pos = cc.p(coinLabel:getPosition())
+    coinLabel:setVisible(false)
+    coinLabel:setString(string.format('%+d', coins))
+    coinLabel:setPosition( pos.x, pos.y - 60 )
+
+    if coins > 0 then
+      coinLabel:setColor(cc.c4b(0xff, 0xff, 0xff, 0xff))
+    else
+      coinLabel:setColor(cc.c4b(0xff, 0xed, 0x92, 0xed))
+    end
+
+    coinLabel:setVisible(true)
+    coinLabel:setOpacity(0)
+
+    coinLabel:runAction(
+      cc.Sequence:create(
+        cc.Spawn:create(
+          cc.FadeIn:create(0.5),
+          cc.MoveBy:create(0.8, cc.p(0, 60))
+        )
+        , cc.DelayTime:create(2.5)
+        , cc.CallFunc:create(function() 
+          coinLabel:setVisible(false)
+          coinLabel:setOpacity(0)
+        end)
+      )
+    )
   end
 
   function theClass:showPlayPassInfo(statusUI)
     print('show Player Pass')
-    local pos = cc.p(statusUI:getPosition())
+    -- local parentSize = statusUI:getParent():getContentSize()
+    -- local statusUISize = statusUI:getContentSize()
+    -- local pos = cc.p(statusUI:getPosition())
     statusUI:setVisible(false)
     statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
+    self:animateStatus(statusUI)
 
-    statusUI:setVisible(true)
-    statusUI:setOpacity(0);
+    -- statusUI:setVisible(true)
+    -- statusUI:setOpacity(0);
 
-    statusUI:runAction(cc.Sequence:create(
-        cc.FadeIn:create(0.5),
-        cc.DelayTime:create(1.0),
-        cc.FadeOut:create(0.5),
-        cc.CallFunc:create(function()
-            statusUI:setVisible(false)
-            statusUI:setOpacity(255)
-          end)
-      ))
+    -- statusUI:setPosition(cc.p(pos.x, parentSize.height))
+    -- statusUI:runAction(cc.Sequence:create(
+    --     cc.Spawn:create(
+    --       cc.FadeIn:create(0.5),
+    --       cc.MoveTo:create(0.5, cc.p(pos.x, parentSize.height / 2.0))
+    --     ),
+    --     cc.DelayTime:create(1.5),
+    --     cc.CallFunc:create(function()
+    --         statusUI:setVisible(false)
+    --         statusUI:setOpacity(255)
+    --       end)
+    --   ))
+
+    -- statusUI:runAction(cc.Sequence:create(
+    --     cc.FadeIn:create(0.5),
+    --     cc.DelayTime:create(1.0),
+    --     cc.FadeOut:create(0.5),
+    --     cc.CallFunc:create(function()
+    --         statusUI:setVisible(false)
+    --         statusUI:setOpacity(255)
+    --       end)
+    --   ))
   end
 end
 

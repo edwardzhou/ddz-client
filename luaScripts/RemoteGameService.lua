@@ -181,6 +181,7 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
   local pokeGame = self.pokeGame
   pokeGame.currentSeqNo = data.seqNo
   pokeGame.currentMsgNo = data.msgNo
+  pokeGame.grabbingLord.lordValue = data.lordValue
 
   dump(data, '[RemoteGameService:onServerGrabbingLordMsg] data')
 
