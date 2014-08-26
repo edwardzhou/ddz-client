@@ -123,6 +123,8 @@ function LandingScene:init()
         PokeCard.createPokecardsWithFrames(tex)
         print('pokecards loaded')
       end
+
+      this:ButtonConnect_onClicked()
     end)
   ))
   
