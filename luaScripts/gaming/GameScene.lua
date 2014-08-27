@@ -84,6 +84,12 @@ function GameScene:init()
   self.uiWidget = ui
   self:bindControlsVariables()
 
+  self.CountDownLabel:setFontName('')
+  self.SysTime:setFontName('')
+  self.PrevUserPokeCount:setFontName('')
+  self.NextUserPokeCount:setFontName('')
+  self.PrevUserPokeCount:setFontName('')
+
   local pokeCardsLayer = cc.Layer:create()
   -- local pokeCardsBatchNode = cc.SpriteBatchNode:createWithTexture(
   --   cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
@@ -129,6 +135,11 @@ function GameScene:resetScene()
     state = ddz.PlayerStatus.None
   }
   self:updateSelfPlayerUI(selfUserInfo)
+
+  self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LabelLordValue:setString('0')
 
 end
 
@@ -220,5 +231,6 @@ require('gaming.UIPokecardsPlugin').bind(GameScene)
 require('gaming.UIButtonsPlugin').bind(GameScene)
 require('gaming.SGamingActionsPlugin').bind(GameScene)
 require('gaming.UIClockCountDownPlugin').bind(GameScene)
+require('gaming.SoundEffectPlugin').bind(GameScene)
 
 return createScene

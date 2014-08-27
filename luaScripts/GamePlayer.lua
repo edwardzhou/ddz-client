@@ -20,6 +20,7 @@ function GamePlayer:init(playerInfo)
   end
   self.pokeCount = playerInfo.pokeCount or self.pokeCount
   self.headIcon = playerInfo.headIcon or self.headIcon
+  self.gender = playerInfo.gender or self.gender
   self.role = playerInfo.role or self.role
   self.state = playerInfo.state or self.state
   self.robot = playerInfo.robot or self.robot

@@ -11,20 +11,23 @@ function SGamingActionsPlugin.bind(theClass)
     self:showPlaycardClock(nil, nextTimeout)
   end
 
-  function theClass:onGrabbingLordMsg(userId, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish)
+  function theClass:onGrabbingLordMsg(userId, grabState, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish)
     print('userId: ', userId, self.selfPlayerInfo.userId, self.prevPlayerInfo.userId, self.nextPlayerInfo.userId)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
       self:updateSelfPlayerUI(self.selfPlayerInfo)
       self:animateStatus(self.SelfUserStatus)
+      self:playGrabLordEffect(self.selfPlayerInfo, grabState)
     elseif userId == self.prevPlayerInfo.userId then
       --dump(self.prevPlayerInfo, 'self.prevPlayerInfo')
       self:updatePrevPlayerUI(self.prevPlayerInfo)
       self:animateStatus(self.PrevUserStatus)
+      self:playGrabLordEffect(self.prevPlayerInfo, grabState)
     elseif userId == self.nextPlayerInfo.userId then
       --dump(self.nextPlayerInfo, 'self.nextPlayerInfo')
       self:updateNextPlayerUI(self.nextPlayerInfo)
       self:animateStatus(self.NextUserStatus)
+      self:playGrabLordEffect(self.nextPlayerInfo, grabState)
     else
       -- error
     end
@@ -56,9 +59,9 @@ function SGamingActionsPlugin.bind(theClass)
 
       self:doUpdatePlayersUI()
 
-      self.NextUserStatus:setVisible(false)
-      self.SelfUserStatus:setVisible(false)
-      self.PrevUserStatus:setVisible(false)
+      -- self.NextUserStatus:setVisible(false)
+      -- self.SelfUserStatus:setVisible(false)
+      -- self.PrevUserStatus:setVisible(false)
 
       self:showGrabLordButtonsPanel(false)
       if self.pokeGame.lordPlayer == self.selfPlayerInfo then
@@ -70,11 +73,6 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout, isDelegating)
-    -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
-    -- local card = Card.create(pokeCards)
-    -- local nextPlayer = self.pokeGame:
-
-
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
       if isDelegating then
@@ -103,6 +101,8 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onSelfPlayerPlayCard(card)
+    self:playCardEffect(self.selfPlayerInfo, card)
+
     self:hideCard(self.selfPlayerInfo.lastCard)
     self:selfPlayCardEffect(card)
     self:updateSelfPlayerUI(self.selfPlayerInfo)
@@ -114,6 +114,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onPrevPlayerPlayCard(card)
+    self:playCardEffect(self.prevPlayerInfo, card)
     self:hideCard(self.prevPlayerInfo.lastCard)
     self:prevPlayCardEffect(card)
     self:updatePrevPlayerUI(self.prevPlayerInfo)
@@ -124,6 +125,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onNextPlayerPlayCard(card)
+    self:playCardEffect(self.nextPlayerInfo, card)
     self:hideCard(self.nextPlayerInfo.lastCard)
     self:nextPlayCardEffect(card)
     self:updateNextPlayerUI(self.nextPlayerInfo)
@@ -148,7 +150,6 @@ function SGamingActionsPlugin.bind(theClass)
     -- self:hideCard(self.selfPlayerInfo.lastCard)
     self:showPrevPlayerRestPokecards()
     self:showNextPlayerRestPokecards()
-    self:stopCountdown()
     self.ButtonDelegate:setVisible(false)
 
     self.selfPlayerInfo.status = ddz.PlayerStatus.None
@@ -157,7 +158,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:doUpdatePlayersUI()
     self:showButtonsPanel(false)
     self:showGrabLordButtonsPanel(false)
-    self:startSelfPlayerCountdown(nil, 15)
+    --self:startSelfPlayerCountdown(nil, 15)
 
     local prevPokeChars = balance.playersMap[self.prevPlayerInfo.userId].pokeCards
     local nextPokeChars = balance.playersMap[self.nextPlayerInfo.userId].pokeCards
@@ -171,9 +172,17 @@ function SGamingActionsPlugin.bind(theClass)
     local selfDdzProfile = balance.playersMap[currentUser.userId].ddzProfile
     table.merge(currentUser.ddzProfile, selfDdzProfile)
 
+    if balance.playersMap[self.selfPlayerInfo.userId].score > 0 then
+      self:playWinEffect()
+    else
+      self:playLoseEffect()
+    end
+
     self:showPlayerWinCoins(self.SelfUserCoins, balance.playersMap[self.selfPlayerInfo.userId].score)
     self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
     self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score)
+
+    self:stopCountdown()
 
 
     -- --self.self

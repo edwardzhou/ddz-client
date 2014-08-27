@@ -93,7 +93,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
   end
 
   function theClass:animateStatus(statusUI)
-    print('show Player Pass')
+    --print('show Player Pass')
     local parentSize = statusUI:getParent():getContentSize()
     local statusUISize = statusUI:getContentSize()
     local pos = cc.p(statusUI:getPosition())

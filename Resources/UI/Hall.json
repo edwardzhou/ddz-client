@@ -45,6 +45,7 @@
     "images/game21.png",
     "images/game22.png",
     "images/robot.png",
+    "images/rocket2.png",
     "images/back2.9.png",
     "images/back2_high.9.png",
     "images/bg.png",
@@ -60,7 +61,7 @@
     "images/nproombg.9.png",
     "images/npstarbg.9.png"
   ],
-  "version": "1.5.0.1",
+  "version": "1.6.0.0",
   "widgetTree": {
     "classname": "Panel",
     "name": null,

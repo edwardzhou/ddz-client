@@ -177,6 +177,7 @@ end
 function RemoteGameService:onServerGrabbingLordMsg(data)
   local this = self
   local userId = data.userId
+  local grabState = data.grabState
   -- local player = self.playersMap[userId]
   local pokeGame = self.pokeGame
   pokeGame.currentSeqNo = data.seqNo
@@ -205,10 +206,10 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
     pokeGame.lordUserId = data.lordUserId
     pokeGame.lordPokeCards = PokeCard.pokeCardsFromChars(data.lordPokeCards)
     pokeGame.lordPlayer = pokeGame:getPlayerInfo(pokeGame.lordUserId)
-    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, data.timing, pokeGame, false, true)
+    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, true)
   else
     -- 未产生地主
-    self.msgReceiver:onGrabbingLordMsg(userId, data.nextUserId, data.timing, pokeGame, false, false)
+    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, false)
   end
 end
 

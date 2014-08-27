@@ -109,6 +109,8 @@ function PokeGame:restart()
 end
 
 function PokeGame:updatePlayerInfo(player)
+  print('[PokeGame:updatePlayerInfo] player.userId => ', player.userId)
+  dump(self.playersMap, '[PokeGame:updatePlayerInfo] self.playersMap', 2)
   local p = self.playersMap[player.userId]
   p:init(player)
 end

@@ -33,7 +33,10 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:enableButtonReset(enabled)
-    self.ButtonReset:setEnabled(enabled)
+    self.ButtonReset:setBright(enabled)
+    self.ButtonReset:setTouchEnabled(enabled)
+
+    --self.ButtonReset:setEnabled(enabled)
     local imgPath = 'images/game12.png'
     if not enabled then
       imgPath = 'images/game16.png'
@@ -42,7 +45,9 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:enableButtonTip(enabled)
-    self.ButtonTip:setEnabled(enabled)
+    self.ButtonTip:setBright(enabled)
+    self.ButtonTip:setTouchEnabled(enabled)
+    --self.ButtonTip:setEnabled(enabled)
     local imgPath = 'images/game13.png'
     if not enabled then
       imgPath = 'images/game17.png'
@@ -51,7 +56,8 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:enableButtonPlay(enabled)
-    self.ButtonPlay:setEnabled(enabled)
+    self.ButtonPlay:setBright(enabled)
+    self.ButtonPlay:setTouchEnabled(enabled)
     local imgPath = 'images/game14.png'
     if not enabled then
       imgPath = 'images/game18.png'
@@ -185,7 +191,8 @@ function UIButtonsPlugin.bind( theClass )
     -- self.gameOverDialog:setPosition(0,0)
     -- self.gameOverDialog:setVisible(true)
     -- self.gameOverDialog.keypadListener:setEnabled(true)
-    ddz.pomeloClient:disconnect()
+    -- ddz.pomeloClient:disconnect()
+    self:playBombEffect()
   end
 
   function theClass:ButtonBack_onClicked(sender, event)
