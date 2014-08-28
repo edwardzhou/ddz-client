@@ -108,6 +108,11 @@ function GameScene:init()
   self:initPlayers()
 
   self:resetScene()
+  self.SelfUserStatus:setVisible(false)
+  self.PrevUserStatus:setVisible(false)
+  self.NextUserStatus:setVisible(false)
+
+  self:startWaitingEffect()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
 
@@ -195,6 +200,7 @@ end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self:hideSelfPokecards()
+  self:stopWaitingEffect()
   self.selfPlayerInfo = pokeGame:getPlayerInfo(self.selfUserId)
   self.prevPlayerInfo = self.selfPlayerInfo.prevPlayer
   self.nextPlayerInfo = self.selfPlayerInfo.nextPlayer
@@ -218,6 +224,10 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LabelLordValue:setString('0')
   self:showPlaycardClock()
+
+  self.SelfUserStatus:setVisible(false)
+  self.PrevUserStatus:setVisible(false)
+  self.NextUserStatus:setVisible(false)
 end
 
 local function createScene()

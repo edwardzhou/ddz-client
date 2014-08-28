@@ -100,16 +100,31 @@ function SoundEffectPlugin.bind( theClass )
     self.bombSprite:runAction(
       cc.Sequence:create(
         cc.DelayTime:create(0.3),
+        cc.CallFunc:create(function () AudioEngine.playEffect('sounds/Bomb.mp3') end),
         cc.Show:create(),
         cc.Blink:create(0.2, 3),
-        cc.CallFunc:create(function ()
-          AudioEngine.playEffect('sounds/Bomb.mp3')
-        end),
         cc.Animate:create(bombAnamination),
         cc.FadeOut:create(0.2),
         cc.Hide:create()
       )
     )
+  end
+
+  function theClass:playPlaneEffect()
+    self.PlaneImage:setPosition(cc.p(480, 320))
+    self.PlaneImage:setVisible(false)
+
+    self.PlaneImage:runAction(
+      cc.Sequence:create(
+        cc.DelayTime:create(0.2),
+        cc.CallFunc:create(function() AudioEngine.playEffect('sounds/Aircraft.mp3') end),
+        cc.Show:create(),
+        cc.Blink:create(0.2, 2),
+        cc.MoveBy:create(1.2, cc.p(-800, 0)),
+        cc.Hide:create()
+      )
+    )
+
   end
 
   function theClass:playCardEffect(playerInfo, card)
@@ -118,10 +133,31 @@ function SoundEffectPlugin.bind( theClass )
       self:playRocketEffect()
     elseif card.cardType == CardType.BOMB then
       self:playBombEffect()
+    elseif card.cardType == CardType.THREE_STRAIGHT
+        or card.cardType == CardType.PLANE
+        or card.cardType == CardType.PLANE_WITH_WING then
+      self:playPlaneEffect()
     end
   end
 
-  function theClass:playGrabLordEffect(playerInfo, grabState)
+  function theClass:playGrabLordEffect(playerInfo, statusUI, grabState)
+
+    if grabState == ddz.PlayerStatus.Ready then
+      statusUI:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+    elseif grabState == ddz.PlayerStatus.NoGrabLord then
+      statusUI:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+    elseif grabState == ddz.PlayerStatus.GrabLord then
+      statusUI:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+    elseif grabState == ddz.PlayerStatus.PassGrabLord then
+      statusUI:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+    elseif grabState == ddz.PlayerStatus.ReGrabLord then
+      statusUI:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+    end
+
+    statusUI:setVisible(false)
+
+    self:animateStatus(statusUI)
+
     local filename = 'Man_'
     if playerInfo.gender ~= '男' then
       filename = 'Woman_'
@@ -151,6 +187,35 @@ function SoundEffectPlugin.bind( theClass )
   function theClass:playLoseEffect()
     local filename = 'sounds/game_lose.mp3'
     AudioEngine.playEffect(filename)
+  end
+
+
+  function theClass:startWaitingEffect()
+    local text = '等待牌局开始'
+    local dot_text = '......'
+    self.WaitingLabel:setString(text)
+    local n = 1
+
+    self.WaitingLabel:setVisible(true)
+    self.WaitingLabel:runAction(
+      cc.RepeatForever:create(
+        cc.Sequence:create(
+          cc.DelayTime:create(1.0)
+          , cc.CallFunc:create(function()
+            self.WaitingLabel:setString(text .. string.sub(dot_text, -1 * n))
+            n = n +1
+            if n > 6 then
+              n = 1
+            end
+          end)
+        )
+      )
+    )
+  end
+
+  function theClass:stopWaitingEffect()
+    self.WaitingLabel:stopAllActions()
+    self.WaitingLabel:setVisible(false)
   end
 
 end

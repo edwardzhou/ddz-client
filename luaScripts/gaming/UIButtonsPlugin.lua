@@ -82,6 +82,11 @@ function UIButtonsPlugin.bind( theClass )
     self.gameService:readyGame(function(data)
         this.ButtonReady:setVisible(false)
         this:stopCountdown()
+        self:startWaitingEffect()
+
+        -- this.SelfUserStatus:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+        -- this.SelfUserStatus:setVisible(false)
+        -- this:animateStatus(this.SelfUserStatus)
       end)
   end
 
@@ -192,7 +197,8 @@ function UIButtonsPlugin.bind( theClass )
     -- self.gameOverDialog:setVisible(true)
     -- self.gameOverDialog.keypadListener:setEnabled(true)
     -- ddz.pomeloClient:disconnect()
-    self:playBombEffect()
+
+    self:playCardEffect({gender='女'}, {cardType = 10})
   end
 
   function theClass:ButtonBack_onClicked(sender, event)

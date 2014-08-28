@@ -16,18 +16,18 @@ function SGamingActionsPlugin.bind(theClass)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
       self:updateSelfPlayerUI(self.selfPlayerInfo)
-      self:animateStatus(self.SelfUserStatus)
-      self:playGrabLordEffect(self.selfPlayerInfo, grabState)
+      --self:animateStatus(self.SelfUserStatus)
+      self:playGrabLordEffect(self.selfPlayerInfo, self.SelfUserStatus, grabState)
     elseif userId == self.prevPlayerInfo.userId then
       --dump(self.prevPlayerInfo, 'self.prevPlayerInfo')
       self:updatePrevPlayerUI(self.prevPlayerInfo)
-      self:animateStatus(self.PrevUserStatus)
-      self:playGrabLordEffect(self.prevPlayerInfo, grabState)
+      --self:animateStatus(self.PrevUserStatus)
+      self:playGrabLordEffect(self.prevPlayerInfo, self.PrevUserStatus, grabState)
     elseif userId == self.nextPlayerInfo.userId then
       --dump(self.nextPlayerInfo, 'self.nextPlayerInfo')
       self:updateNextPlayerUI(self.nextPlayerInfo)
-      self:animateStatus(self.NextUserStatus)
-      self:playGrabLordEffect(self.nextPlayerInfo, grabState)
+      --self:animateStatus(self.NextUserStatus)
+      self:playGrabLordEffect(self.nextPlayerInfo, self.NextUserStatus, grabState)
     else
       -- error
     end
@@ -247,31 +247,6 @@ function SGamingActionsPlugin.bind(theClass)
     statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
     self:animateStatus(statusUI)
 
-    -- statusUI:setVisible(true)
-    -- statusUI:setOpacity(0);
-
-    -- statusUI:setPosition(cc.p(pos.x, parentSize.height))
-    -- statusUI:runAction(cc.Sequence:create(
-    --     cc.Spawn:create(
-    --       cc.FadeIn:create(0.5),
-    --       cc.MoveTo:create(0.5, cc.p(pos.x, parentSize.height / 2.0))
-    --     ),
-    --     cc.DelayTime:create(1.5),
-    --     cc.CallFunc:create(function()
-    --         statusUI:setVisible(false)
-    --         statusUI:setOpacity(255)
-    --       end)
-    --   ))
-
-    -- statusUI:runAction(cc.Sequence:create(
-    --     cc.FadeIn:create(0.5),
-    --     cc.DelayTime:create(1.0),
-    --     cc.FadeOut:create(0.5),
-    --     cc.CallFunc:create(function()
-    --         statusUI:setVisible(false)
-    --         statusUI:setOpacity(255)
-    --       end)
-    --   ))
   end
 end
 
