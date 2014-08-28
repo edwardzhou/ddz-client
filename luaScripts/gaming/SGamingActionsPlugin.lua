@@ -1,6 +1,7 @@
 local scheduler = require('framework.scheduler')
 local SGamingActionsPlugin = {}
 local AccountInfo = require('AccountInfo')
+local utils = require('utils.utils')
 
 local Res = require('Resources')
 
@@ -180,7 +181,9 @@ function SGamingActionsPlugin.bind(theClass)
 
     self:showPlayerWinCoins(self.SelfUserCoins, balance.playersMap[self.selfPlayerInfo.userId].score)
     self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
-    self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score)
+    self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score, function() 
+        self.ButtonReady:setVisible(true)
+      end)
 
     self:stopCountdown()
 
@@ -203,12 +206,12 @@ function SGamingActionsPlugin.bind(theClass)
     --   self:addChild(self.gameResultPanel)
     -- end
     --scheduler.performWithDelayGlobal(function() 
-        self.ButtonReady:setVisible(true)
+        --self.ButtonReady:setVisible(true)
         --this.gameResultPanel:show(balance, this.selfPlayerInfo)
       --end, 1)
   end
 
-  function theClass:showPlayerWinCoins(coinLabel, coins)
+  function theClass:showPlayerWinCoins(coinLabel, coins, cb)
     local pos = cc.p(coinLabel:getPosition())
     coinLabel:setVisible(false)
     coinLabel:setString(string.format('%+d', coins))
@@ -233,6 +236,7 @@ function SGamingActionsPlugin.bind(theClass)
         , cc.CallFunc:create(function() 
           coinLabel:setVisible(false)
           coinLabel:setOpacity(0)
+          utils.invokeCallback(cb)
         end)
       )
     )
