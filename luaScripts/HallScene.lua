@@ -174,6 +174,11 @@ function HallScene:ButtonBack_onClicked(sender, eventType)
   -- body
 end
 
+function HallScene:ButtonStore_onClicked(sender, eventType)
+  local scene = require('shop.ShopScene')()
+  cc.Director:getInstance():pushScene(scene)
+end
+
 local function createScene()
   local scene = cc.Scene:create()
   return HallScene.extend(scene)
