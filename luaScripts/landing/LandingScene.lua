@@ -352,8 +352,9 @@ function LandingScene:connectToServer()
   end
 
   self.connection:connectToServer({
-    host = '118.26.229.45',
-    port = 4001
+    --host = '118.26.229.45',
+    host = '192.168.1.165'
+    , port = 4001
   });
 
 end
