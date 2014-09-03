@@ -127,7 +127,8 @@ function ShopScene:ButtonBuy_onClicked(sender, eventType)
       title = '购买道具',
       msg = string.format('购买 %s\n%s\n价格 %d 元', pkg.packageName, pkg.packageDesc, pkg.price / 100),
       closeOnClickOutside = false,
-      buttonType = 'ok|cancel'
+      buttonType = 'ok|cancel',
+      onOk = function() return this:buyPackage(pkg) end
     }
     showMessageBox(this, msgParams)
   end
@@ -135,6 +136,16 @@ end
 
 function ShopScene:ButtonBack_onClicked(sender, eventType)
   cc.Director:getInstance():popScene()
+end
+
+function ShopScene:buyPackage(pkg)
+  local params = {
+    pkgId = pkg.packageId
+  }
+  ddz.pomeloClient:request('ddz.hallHandler.buyItem', params, function(data)
+      dump(data, '[ShopScene:buyPackage] ddz.hallHandler.buyItem =>')
+      return true
+    end)
 end
 
 local function createScene()
