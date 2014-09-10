@@ -42,6 +42,7 @@ end
 function Pomelo:ctor(WebSocketClass)
   self.super.ctor(self)
 
+  self.connected = false
   self.protoVersion = 0
   
   self.Protobuf = ProtobufFactory.getProtobuf()
@@ -146,7 +147,6 @@ function Pomelo:initWebSocket(url, cb)
     self:disconnect()
   end
   
-	print('connect to ' .. url)
 	local _this = self
 	local onopen = function( event)
 		self.selfDisconnected = false
@@ -165,6 +165,12 @@ function Pomelo:initWebSocket(url, cb)
 		_this:emit('io-error', event)
 		print('[error] socket error: ', event)
 	end
+
+	self.url = url
+	self.maxRetries = self.maxRetries or 10
+	self.retries = 0
+	self.connected = false
+	local doConnect
 	
 	local onclose = function(event)
 		if self.selfDisconnected then
@@ -190,14 +196,53 @@ function Pomelo:initWebSocket(url, cb)
 			self.heartbeatTimeoutId = nil
 		end	
 		_this:emit('close', event)
+
+		if _this.retries <= _this.maxRetries then
+			if _this.connectTimeout then
+				clearTimeout(_this.connectTimeout)
+				_this.connectTimeout = nil
+			end
+			local delayTime = 2 * (_this.retries -1)
+			print(string.format('[pomelo] connection closed, delay %d seconds to retry', delayTime))
+			setTimeout(doConnect, delayTime)
+		end
+
 	end
-	
-	self.socket = self.WebSocketClass.new(url)
-	self.binaryType = 'arraybuffer'
-	self.socket.onopen = onopen
-	self.socket.onmessage = onmessage
-	self.socket.onerror = onerror
-	self.socket.onclose = onclose
+
+
+	doConnect = function()	
+		print(string.format('[pomelo] #%d, connect to %s', _this.retries, url))
+		_this.socket = _this.WebSocketClass.new(url)
+		_this.binaryType = 'arraybuffer'
+		_this.socket.onopen = onopen
+		_this.socket.onmessage = onmessage
+		_this.socket.onerror = onerror
+		_this.socket.onclose = onclose
+		_this.retries = _this.retries + 1
+
+		local timeoutCb = function()
+			print(string.format('[pomelo] #%d, connect to [%s] timeout', _this.retries, _this.url))
+			_this.connectTimeout = nil
+			_this:disconnect()
+			if _this.socket then
+				_this.socket.onopen = nil
+				_this.socket.onerror = nil
+				_this.socket.onopen = nil
+				_this.socket.onmessage = nil
+				_this.socket = nil
+			end
+
+			if _this.retries <= _this.maxRetries then
+				doConnect()
+			end
+		end
+
+		_this.connectTimeout = setTimeout(timeoutCb, 10)
+	end
+
+	doConnect()
+
+
 end
 
 function Pomelo:disconnect(isTimeout)
@@ -356,6 +401,11 @@ function Pomelo:handshake(data)
 	
 	local obj = Package.encode(Package.TYPE_HANDSHAKE_ACK)
 	self:send(obj)
+	self.connected = true
+	if self.connectTimeout then
+		clearTimeout(self.connectTimeout)
+		self.connectTimeout = nil
+	end
 	if self.initCallback then
 		self.initCallback(self)
 		self.initCallback = nil

@@ -79,15 +79,18 @@ function UIButtonsPlugin.bind( theClass )
     self:resetScene()
     PokeCard.resetAll()
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
-    self.gameService:readyGame(function(data)
-        this.ButtonReady:setVisible(false)
-        this:stopCountdown()
-        self:startWaitingEffect()
+    this:runAction(
+      cc.CallFunc:create( function() 
+        self.gameService:readyGame(function(data)
+          this.ButtonReady:setVisible(false)
+          this:stopCountdown()
+          self:startWaitingEffect()
+        end)
 
         -- this.SelfUserStatus:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
         -- this.SelfUserStatus:setVisible(false)
         -- this:animateStatus(this.SelfUserStatus)
-      end)
+      end))
   end
 
   function theClass:ButtonPass_onClicked(sender, event)
