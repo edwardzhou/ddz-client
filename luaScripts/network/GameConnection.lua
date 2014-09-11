@@ -76,6 +76,7 @@ function GameConnection:authConnection()
             sessionToken = data.sessionToken})
         else
           this.isConnectionReady = true
+          this:emit('connected')
           this:emit('connectionReady', this, this.pomeloClient, data)
           -- if this.readyCallback then
           --   this.readyCallback(this, this.pomeloClient, data)
@@ -118,6 +119,22 @@ function GameConnection:connectToServer(params)
   end
 
   this.pomeloClient = ddz.pomeloClient
+
+  if not this._connectionEventHooked then
+    this._connectionEventHooked = true
+    this.pomeloClient:on('connecting', function(event) 
+        dump(event, '[GameConnection:connectToServer] on connecting')
+        this:emit('connecting', event)
+      end)
+    this.pomeloClient:on('connected', function() 
+        print('[GameConnection:connectToServer] on connected')
+        this:emit('connected')
+      end)
+    this.pomeloClient:on('connection_failure', function() 
+        print('[GameConnection:connectToServer] on connection_failure')
+        this:emit('connection_failure')
+      end)
+  end
 
   local serverParams = {
     host = params.host,

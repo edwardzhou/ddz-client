@@ -137,13 +137,13 @@ function LandingScene:on_enterTransitionFinish()
 end
 
 function LandingScene:on_exit()
-  if self.connection == nil then
+  if self.gameConnection == nil then
     return
   end
 
-  self.connection:off('connectionReady', self._onConnectionReady)
-  self.connection:off('signInRequired', self._onSignInUpRequired)
-  self.connection:off('signUpRequired', self._onSignInUpRequired)
+  self.gameConnection:off('connectionReady', self._onConnectionReady)
+  self.gameConnection:off('signInRequired', self._onSignInUpRequired)
+  self.gameConnection:off('signUpRequired', self._onSignInUpRequired)
 
 end
 
@@ -219,7 +219,7 @@ function LandingScene:generatePokecards()
 end
 
 function LandingScene:reconnectToServer()
-  self.connection:reconnect()
+  self.gameConnection:reconnect()
 end
 
 function LandingScene:connectToServer()
@@ -295,10 +295,10 @@ function LandingScene:connectToServer()
     signInParam.signType = SignInType.BY_AUTH_TOKEN
     signInParam.authToken = currentUser.authToken
     password = nil
-    this.connection:signIn(signInParam, function(success, userInfo, serverInfo, signInParams)
+    this.gameConnection:signIn(signInParam, function(success, userInfo, serverInfo, signInParams)
         dump(userInfo, 'sign result ' .. tostring(success))
         if success then
-          this.connection:connectToServer(serverInfo)
+          this.gameConnection:connectToServer(serverInfo)
           return
         end
         local boxParams = {
@@ -311,9 +311,9 @@ function LandingScene:connectToServer()
   end
 
   local function doSignUp()
-    this.connection:signUp(function(success, userInfo, serverInfo, signUpParams)
+    this.gameConnection:signUp(function(success, userInfo, serverInfo, signUpParams)
         if success then
-          this.connection:connectToServer(serverInfo)
+          this.gameConnection:connectToServer(serverInfo)
           return
         end
 
@@ -328,8 +328,8 @@ function LandingScene:connectToServer()
   end
 
   --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
-  if self.connection == nil then
-    self.connection = require('network.GameConnection')
+  if self.gameConnection == nil then
+    self.gameConnection = require('network.GameConnection')
     if self._onConnectionReady == nil then
       self._onConnectionReady = function()
         queryRooms()
@@ -346,13 +346,15 @@ function LandingScene:connectToServer()
         -- cc.Director:getInstance():replaceScene(scene)
       end
     end
-    self.connection:on('connectionReady', self._onConnectionReady)
-    self.connection:on('signInRequired', self._onSignInUpRequired)
-    self.connection:on('signUpRequired', self._onSignInUpRequired)
+    self.gameConnection:on('connectionReady', self._onConnectionReady)
+    self.gameConnection:on('signInRequired', self._onSignInUpRequired)
+    self.gameConnection:on('signUpRequired', self._onSignInUpRequired)
+
+    self:hookConnectionEvents()
   end
 
-  self.connection:connectToServer({
-    --host = '118.26.229.45',
+  self.gameConnection:connectToServer({
+    --host = '118.26.229.45'
     host = '192.168.1.165'
     , port = 4001
   });
@@ -389,5 +391,7 @@ local function createScene()
   local scene = cc.Scene:create()
   return LandingScene.extend(scene)
 end
+
+require('network.ConnectionStatusPlugin').bind(LandingScene)
 
 return createScene

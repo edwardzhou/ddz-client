@@ -173,6 +173,7 @@ function Pomelo:initWebSocket(url, cb)
 	local doConnect
 	
 	local onclose = function(event)
+		self.connected = false
 		if self.selfDisconnected then
 			_this:emit('close', event)
 			return
@@ -197,6 +198,7 @@ function Pomelo:initWebSocket(url, cb)
 		end	
 		_this:emit('close', event)
 
+		print('[pomelo] onclose event')
 		if _this.retries <= _this.maxRetries then
 			if _this.connectTimeout then
 				clearTimeout(_this.connectTimeout)
@@ -205,10 +207,11 @@ function Pomelo:initWebSocket(url, cb)
 			local delayTime = 2 * (_this.retries -1)
 			print(string.format('[pomelo] connection closed, delay %d seconds to retry', delayTime))
 			setTimeout(doConnect, delayTime)
+		else
+			_this:emit('connection_failure')
 		end
 
 	end
-
 
 	doConnect = function()	
 		print(string.format('[pomelo] #%d, connect to %s', _this.retries, url))
@@ -220,10 +223,12 @@ function Pomelo:initWebSocket(url, cb)
 		_this.socket.onclose = onclose
 		_this.retries = _this.retries + 1
 
+		_this:emit('connecting', {retries = _this.retries})
+
 		local timeoutCb = function()
 			print(string.format('[pomelo] #%d, connect to [%s] timeout', _this.retries, _this.url))
 			_this.connectTimeout = nil
-			_this:disconnect()
+			_this:disconnect(true)
 			if _this.socket then
 				_this.socket.onopen = nil
 				_this.socket.onerror = nil
@@ -248,6 +253,7 @@ end
 function Pomelo:disconnect(isTimeout)
 	print('[Pomelo:disconnect]')
 	self.selfDisconnected = true
+	self.connected = false
 	if self.socket then
 		if self.socket.disconnect then
 			self.socket:disconnect()
@@ -402,13 +408,14 @@ function Pomelo:handshake(data)
 	local obj = Package.encode(Package.TYPE_HANDSHAKE_ACK)
 	self:send(obj)
 	self.connected = true
+	self.retries = 0
 	if self.connectTimeout then
 		clearTimeout(self.connectTimeout)
 		self.connectTimeout = nil
 	end
 	if self.initCallback then
-		self.initCallback(self)
-		self.initCallback = nil
+		self.initCallback(self)	
+		--self.initCallback = nil
 	end
 end
 

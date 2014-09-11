@@ -134,19 +134,29 @@ function ToastBox:doShow(params)
   end
 end
 
-function ToastBox:close()
+function ToastBox:close(fadeOut)
   local this = self
   this.showing = false
 
-  this:stopActionByTag(TOAST_BOX_ACTION_TAG)
-  local action = this:runAction(cc.Sequence:create(
-      cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
-      cc.Hide:create()
-    ))
-  action:setTag(TOAST_BOX_ACTION_TAG)
+  if fadeOut == nil then
+    fadeOut = true
+  end
+
   if this.loadingSprite ~= nil then
     this.loadingSprite:stopActionByTag(LOADING_ACTION_TAG)
   end
+  this:stopActionByTag(TOAST_BOX_ACTION_TAG)
+
+  if fadeOut then
+    local action = this:runAction(cc.Sequence:create(
+        cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
+        cc.Hide:create()
+      ))
+    action:setTag(TOAST_BOX_ACTION_TAG)
+  else
+    this:setVisible(false)
+  end
+
 end
 
 function ToastBox:initKeypadHandler()
@@ -177,19 +187,26 @@ function ToastBox:PanelRoot_onClicked(sender, eventType)
 end
 
 local function showToastBox(container, params)
-  if container.taostBox == nil then
+  if container.toastBox == nil then
     local layer = cc.Layer:create()
     local msgBox = ToastBox.extend(layer)
 
     msgBox:setLocalZOrder(1100)
     container:addChild(msgBox)
-    container.taostBox = msgBox
+    container.toastBox = msgBox
   end
 
-  container.taostBox:doShow(params)
-  return taostBox
+  container.toastBox:doShow(params)
+  return container.toastBox
+end
+
+local function hideToastBox(container, fadeOut)
+  if container.toastBox then
+    container.toastBox:close(fadeOut)
+  end
 end
 
 return {
-  showToastBox = showToastBox
+  showToastBox = showToastBox,
+  hideToastBox = hideToastBox
 }

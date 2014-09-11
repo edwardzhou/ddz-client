@@ -47,6 +47,8 @@ function HallScene:init()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
 
+  self.gameConnection = require('network.GameConnection')
+
   local guiReader = ccs.GUIReader:getInstance()
   
   local ui = guiReader:widgetFromBinaryFile('UI/Hall.csb')
@@ -183,5 +185,7 @@ local function createScene()
   local scene = cc.Scene:create()
   return HallScene.extend(scene)
 end
+
+require('network.ConnectionStatusPlugin').bind(HallScene)
 
 return createScene
