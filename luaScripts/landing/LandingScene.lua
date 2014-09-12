@@ -2,6 +2,7 @@
 require 'GuiConstants'
 require 'PokeCard'
 require 'socket'
+require 'GlobalSettings'
 
 local AccountInfo = require('AccountInfo')
 local SignInType = require('consts').SignInType
@@ -233,7 +234,7 @@ function LandingScene:connectToServer()
   local userId = currentUser.userId
 
   local function queryRooms()
-    ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
+    self.gameConnection:request('ddz.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
@@ -353,10 +354,12 @@ function LandingScene:connectToServer()
     self:hookConnectionEvents()
   end
 
+  dump(ddz.GlobalSettings, '[LandingScene:connectToServer] ddz.GlobalSettings')
+
   self.gameConnection:connectToServer({
     --host = '118.26.229.45'
-    host = '192.168.1.165'
-    , port = 4001
+    host = ddz.GlobalSettings.servers.host
+    , port = ddz.GlobalSettings.servers.port
   });
 
 end

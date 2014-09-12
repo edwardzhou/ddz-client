@@ -140,7 +140,7 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
     local item = this.ListViewRooms:getItem(curIndex)
     local gameRoom = item.gameRoom
     dump(gameRoom, 'selected room: ')
-    ddz.pomeloClient:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
+    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
       ddz.selectedRoom = gameRoom
       local createGameScene = require('gaming.GameScene')

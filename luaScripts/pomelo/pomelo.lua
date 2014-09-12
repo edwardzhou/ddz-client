@@ -44,6 +44,7 @@ function Pomelo:ctor(WebSocketClass)
 
   self.connected = false
   self.protoVersion = 0
+  self.dictVersion = 0
   
   self.Protobuf = ProtobufFactory.getProtobuf()
   
@@ -80,6 +81,18 @@ function Pomelo:ctor(WebSocketClass)
 				decoderProtos = self.data.protos.server,
 				protoVersion = self.data.protos.version
 			})
+		end
+
+	end
+
+	local _dict = ddz.readFromFile('dicts.json')
+	if _dict ~= nil and #_dict > 0 then
+		self.data.dict = cjson.decode(_dict)
+		self.dictVersion = self.data.dict.version
+
+		self.data.abbrs = {}
+		for _k, _v in pairs(self.data.dict) do
+			self.data.abbrs[_v] = _k
 		end
 
 	end
@@ -122,6 +135,7 @@ function Pomelo:init(params, cb)
 			type = JS_WS_CLIENT_TYPE,
 			version = JS_WS_CLIENT_VERSION,
 			protoVersion = self.protoVersion,
+			dictVersion = self.dictVersion,
 		},
 		user = {
 		}
@@ -149,7 +163,8 @@ function Pomelo:initWebSocket(url, cb)
   
 	local _this = self
 	local onopen = function( event)
-		self.selfDisconnected = false
+		_this.selfDisconnected = false
+		dump(_this.handshakeBuffer, '[Pomelo:InitWebSocket:onopen] _this.handshakeBuffer')
 		local obj = Package.encode(Package.TYPE_HANDSHAKE, Protocol.strencode(cjson.encode(_this.handshakeBuffer)))
 		_this:send(obj) 
 	end
@@ -227,6 +242,11 @@ function Pomelo:initWebSocket(url, cb)
 
 		local timeoutCb = function()
 			print(string.format('[pomelo] #%d, connect to [%s] timeout', _this.retries, _this.url))
+			if _this.connected then
+				print('[pomelo] already connected. return.')
+				return
+			end
+
 			_this.connectTimeout = nil
 			_this:disconnect(true)
 			if _this.socket then
@@ -519,11 +539,15 @@ function Pomelo:initData(data)
 	
 	-- Init compress dict
 	if dict then
+		self.dictVersion = dict.version
+		self.handshakeBuffer.sys.dictVersion = self.dictVersion
+
 		self.data.dict = dict
 		self.data.abbrs = {}
 		for _k, _v in pairs(dict) do
 			self.data.abbrs[_v] = _k
 		end
+		ddz.writeToFile('dicts.json', cjson.encode(dict))
 	end
 	
 	-- Init protobuf protos
@@ -538,6 +562,7 @@ function Pomelo:initData(data)
 		}
 
 		self.protoVersion = self.data.protos.version
+		self.handshakeBuffer.sys.protoVersion = self.protoVersion
 		
 		if self.Protobuf then
 			self.Protobuf.init({

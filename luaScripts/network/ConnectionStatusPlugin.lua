@@ -14,6 +14,10 @@ function ConnectionStatusPlugin.bind(theClass)
     if not this._onConnectingEvent then
       this._onConnectingEvent = function(event)
         dump(event, '[hookConnectionEvents] this._onConnectingEvent')
+        if event.retries < 2 then
+          return
+        end
+
         --print('[hookConnectionEvents] this._onConnectingEvent')
         local params = {
           showLoading = true,
@@ -24,7 +28,7 @@ function ConnectionStatusPlugin.bind(theClass)
           msg = '正在努力连接中...'
         }
 
-        if event.retries < 3 then
+        if event.retries < 4 then
           params.msg = '正在努力连接中... #' .. event.retries
         else
           params.msg = '网络不给力, 加倍努力连接中... #' .. event.retries
@@ -52,6 +56,8 @@ function ConnectionStatusPlugin.bind(theClass)
       end
     end
 
+    print('this.gameConnection => ', this.gameConnection, ' this.connectionEventHooked => ', this.connectionEventHooked)
+
     if this.gameConnection and not this.connectionEventHooked then
       this.connectionEventHooked = true
       this.gameConnection:on('connecting', this._onConnectingEvent)
@@ -65,10 +71,12 @@ function ConnectionStatusPlugin.bind(theClass)
 
   function theClass:unhookConnectionEvents()
     local this = self
+    print('[unhookConnectionEvents] start to unhook')
     if this.gameConnection and this.connectionEventHooked then
       this.gameConnection:off('connecting', this._onConnectingEvent)
       this.gameConnection:off('connected', this._onConnectedEvent)
       this.gameConnection:off('connection_failure', this._onConnectionFailureEvent)
+      this.connectionEventHooked = false
     end
   end
 

@@ -1,3 +1,7 @@
+require 'consts'
+require 'GlobalSettings'
+require 'DebugSetting'
+
 local function startup()
   local director = cc.Director:getInstance()
   local glview = director:getOpenGLView()

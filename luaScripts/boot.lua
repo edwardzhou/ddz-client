@@ -2,9 +2,6 @@ require "Cocos2d"
 require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
-require 'consts'
-require 'GlobalSettings'
-require 'DebugSetting'
 require 'GuiConstants'
 
 cc.KeyCode.KEY_BACKSPACE    = 0x0006

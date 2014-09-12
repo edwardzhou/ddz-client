@@ -39,6 +39,9 @@ end
 function ShopScene:init()
   local this = self
   local rootLayer = cc.Layer:create()
+
+  this.gameConnection = require('network.GameConnection')
+
   self.rootLayer = rootLayer
   self:addChild(rootLayer)
 
@@ -60,7 +63,7 @@ function ShopScene:init()
   self.ShopItemList:setItemModel(item_model)
   self.ShopItemModel:setVisible(false)
 
-  ddz.pomeloClient:request('ddz.hallHandler.getShopItems', {}, function(data) 
+  this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
     dump(data, '[ddz.hallHandler.getShopItems] data =>')
     for i=1, #data do
       local pkg = data[i]
@@ -139,10 +142,11 @@ function ShopScene:ButtonBack_onClicked(sender, eventType)
 end
 
 function ShopScene:buyPackage(pkg)
+  local this = self
   local params = {
     pkgId = pkg.packageId
   }
-  ddz.pomeloClient:request('ddz.hallHandler.buyItem', params, function(data)
+  this.gameConnection:request('ddz.hallHandler.buyItem', params, function(data)
       dump(data, '[ShopScene:buyPackage] ddz.hallHandler.buyItem =>')
       return true
     end)
@@ -153,6 +157,6 @@ local function createScene()
   return ShopScene.extend(scene)
 end
 
-
+require('network.ConnectionStatusPlugin').bind(ShopScene)
 
 return createScene

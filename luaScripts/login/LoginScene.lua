@@ -1,5 +1,4 @@
 local LoginScene = class('LoginScene')
-local gameConnection = require('network.GameConnection')
 local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')
 
@@ -21,6 +20,8 @@ end
 
 function LoginScene:ctor(...)
   local this = self
+  self.gameConnection = require('network.GameConnection')
+
   self:registerScriptHandler(function(event)
     print('[LoginScene] event => ', event)
     local on_event = 'on_' .. event
@@ -69,7 +70,7 @@ end
 function LoginScene:on_enterTransitionFinish()
   local this = self
   self._onConnectionReady = function()
-    ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
+    this.gameConnection:request('ddz.entryHandler.queryRooms', {}, function(data) 
       dump(data, 'queryRooms => ')
       if data.err == nil then
         this:showSignInProgress(false)
@@ -79,11 +80,12 @@ function LoginScene:on_enterTransitionFinish()
       end
     end)
   end
-  gameConnection:on('connectionReady', self._onConnectionReady)
+  this.gameConnection:on('connectionReady', self._onConnectionReady)
 end
 
 function LoginScene:on_exit()
-  gameConnection:off('connectionReady', self._onConnectionReady)
+  local this = self
+  this.gameConnection:off('connectionReady', self._onConnectionReady)
 end
 
 function LoginScene:bindPanelInput(panel, input)
@@ -146,7 +148,7 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
 
   self:showSignInProgress(true)
 
-  gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
+  this.gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
       print('signIn result ', success)
       dump(userInfo, 'userInfo')
       if not success then
@@ -154,7 +156,9 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
         this:showSignInProgress(false)
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
       else
-        gameConnection:connectToServer(server)
+        if server then
+          this.gameConnection:connectToServer(server)
+        end
       end
     end)
 
@@ -181,10 +185,10 @@ function LoginScene:showSignInProgress(show, msg)
 end
 
 function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
-
+  local this = self
   self:showSignInProgress(true, '快速注册中...')
 
-  gameConnection:signUp(function(success, userInfo, server, signParams)
+  this.gameConnection:signUp(function(success, userInfo, server, signParams)
       print('signUp result ', success)
       dump(userInfo, 'userInfo')
       if not success then
@@ -192,7 +196,7 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
         this:showSignInProgress(false)
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
       else
-        gameConnection:connectToServer(server)
+        this.gameConnection:connectToServer(server)
       end
     end)
 end

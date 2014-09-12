@@ -19,7 +19,8 @@ settings.handsetInfo = {
 }
 
 settings.servers = {
-  
+  host = '192.168.1.165',
+  port = '4001'
 }
 
 settings.mode = 'dev'

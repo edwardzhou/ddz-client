@@ -12,10 +12,40 @@ function GameConnection:ctor(userId, sessionToken)
   self.autoSignUp = true
   self.isConnectionReady = false
   self.isAuthed = false
+  self.isNotYetConnect = true
 end
 
 function GameConnection:authConnection()
   local this = self
+
+  local function doSignIn()
+    local currentUser = AccountInfo.getCurrentUser()
+    local signInParam = {}
+    signInParam.userId = currentUser.userId
+    signInParam.signType = SignInType.BY_AUTH_TOKEN
+    signInParam.authToken = currentUser.authToken
+    password = nil
+    print('[GameConnection:authConnection:doSignIn] start to auto signin by auth key')
+    this:signIn(signInParam, function(success, userInfo, serverInfo, signInParams, respData)
+        dump(userInfo, 'sign result ' .. tostring(success))
+        if success then
+          if serverInfo then
+            this:connectToServer(serverInfo)
+            return
+          end
+
+          return
+        end
+
+        local boxParams = {
+          title = '无法自动登录',
+          msg = userInfo.message,
+          onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
+        }
+        require('UICommon.MessageBox').showMessageBox(cc.Director:getInstance():getRunningScene(), boxParams)
+      end)
+  end
+
 
   local function onSignResult(success, userInfo, server, signParams)
     if success then
@@ -48,9 +78,12 @@ function GameConnection:authConnection()
 
   this.pomeloClient:request('auth.connHandler.authConn', authParams, function(data)
       this.isAuthed = true
+      this:emit('connected')
+      
       if data.needSignIn then
         print('[auth.connHandler.authConn] server request to sign in')
-        this:emit('signInRequired', data)
+        --this:emit('signInRequired', data)
+        doSignIn()
       --  this:signIn(ddz.GlobalSettings.session, onSignResult)
       --   local goSignIn, signParams = self.signinCallback(this, pomeloClient, data)
       --   if goSignIn then
@@ -76,8 +109,8 @@ function GameConnection:authConnection()
             sessionToken = data.sessionToken})
         else
           this.isConnectionReady = true
-          this:emit('connected')
           this:emit('connectionReady', this, this.pomeloClient, data)
+          this:emit('selfConnectionOk')
           -- if this.readyCallback then
           --   this.readyCallback(this, this.pomeloClient, data)
           -- end
@@ -148,6 +181,57 @@ function GameConnection:connectToServer(params)
   end)
 
 end
+
+function GameConnection:request(route, msg, cb)
+  local this = self
+  local status = self:checkConnection()
+
+  if not status.result then
+    if status.errorCode == 2 then
+      this:reconnect()
+      this:once('selfConnectionOk', function()
+          this:request(route, msg, cb)
+        end)
+    end
+
+    return false
+  end
+
+  this.pomeloClient:request(route, msg, cb)
+
+end
+
+function GameConnection:notify(route, msg)
+  local this = self
+  local status = self:checkConnection()
+
+  if not status.result then
+    if status.errorCode == 2 then
+      this:reconnect()
+      this:once('selfConnectionOk', function()
+          this:notify(route, msg)
+        end)
+    end
+
+    return false
+  end
+
+  this.pomeloClient:notify(route, msg)
+end
+
+function GameConnection:checkConnection()
+  if not self.pomeloClient then
+    return {result = false, errorCode=1, errorMsg = '尚未连接服务器'}
+  end
+
+  if not self.pomeloClient.connected then
+    return {result = false, errorCode=2, errorMsg = '连接被断开'}
+  end
+
+  return {result = true}
+end
+
+
 
 require('network.SignInPlugin').bind(GameConnection)
 require('network.SignUpPlugin').bind(GameConnection)
