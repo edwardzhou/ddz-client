@@ -29,6 +29,7 @@ end
 function GameScene:ctor(...)
   local this = self
 
+  self.gameConnection = require('network.GameConnection')
   self.gameService = GameService.new(self, ddz.GlobalSettings.userInfo.userId)
 
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
@@ -52,6 +53,8 @@ end
 
 function GameScene:on_enterTransitionFinish()
   self:init()
+  self.gameConnection.needReconnect = true
+
 end
 
 function GameScene:on_cleanup()

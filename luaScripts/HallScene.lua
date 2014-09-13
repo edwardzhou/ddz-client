@@ -34,6 +34,7 @@ end
 
 function HallScene:on_enter()
   self:updateUserInfo()
+  self.gameConnection.needReconnect = false
 end
 
 function HallScene:on_enterTransitionFinish()

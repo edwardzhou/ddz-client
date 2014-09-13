@@ -7,6 +7,7 @@ local utils = require('utils.utils')
 RemoteGameService = class('GameService')
 
 function RemoteGameService:ctor(msgReceiver, selfUserId)
+  self.gameConnection = require('network.GameConnection')
   self.selfUserId = selfUserId
   self.msgReceiver = msgReceiver or {}
   self._onServerPlayerJoinMsg = __bind(self.onServerPlayerJoinMsg, self)
@@ -84,7 +85,7 @@ function RemoteGameService:onServerLordValueUpgradeMsg(data)
 end
 
 function RemoteGameService:queryRooms(callback)
-  ddz.pomeloClient:request('ddz.entryHandler.queryRooms', {}, function(data) 
+  self.gameConnection:request('ddz.entryHandler.queryRooms', {}, function(data) 
     dump(data, 'queryRooms => ')
     if data.err == nil then
       ddz.GlobalSettings.rooms = data.rooms
@@ -97,7 +98,7 @@ end
 function RemoteGameService:enterRoom(roomId, callback)
   local this = self
 
-  ddz.pomeloClient:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
+  self.gameConnection:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
       dump(data, '[RemoteGameService:enterRoom] ddz.entryHandler.enterRoom =>')
       utils.invokeCallback(callback, data)
     end)
@@ -111,21 +112,21 @@ function RemoteGameService:restoreGame(callback)
   }
 
   dump(params, "[RemoteGameService:restoreGame] params")
-  ddz.pomeloClient:request('ddz.gameHandler.restoreGame', params, function(data)
+  self.gameConnection:request('ddz.gameHandler.restoreGame', params, function(data)
       dump(data, '[RemoteGameService:restoreGame] data' )
     end)
 
 end
 
 function RemoteGameService:readyGame(callback)
-  ddz.pomeloClient:request('ddz.gameHandler.ready', {}, function(data) 
+  self.gameConnection:request('ddz.gameHandler.ready', {}, function(data) 
       dump(data, '[RemoteGameService:readyGame] ddz.gameHandler.ready')
       utils.invokeCallback(callback, data)
     end)
 end
 
 function RemoteGameService:leaveGame(callback)
-  ddz.pomeloClient:request('ddz.entryHandler.leave', {}, function(data) 
+  self.gameConnection:request('ddz.entryHandler.leave', {}, function(data) 
       dump(data, '[RemoteGameService:leaveGame] ddz.entryHandler.leave')
     end)
 end
@@ -150,7 +151,7 @@ function RemoteGameService:grabLord(userId, lordActionValue)
     seqNo = self.pokeGame.currentSeqNo
   }
 
-  ddz.pomeloClient:request('ddz.gameHandler.grabLord', params, function(data)
+  self.gameConnection:request('ddz.gameHandler.grabLord', params, function(data)
       dump(data, '[RemoteGameService:grabLord] ddz.gameHandler.grabLord => ')
     end)
 end
@@ -161,14 +162,14 @@ function RemoteGameService:playCard(userId, pokeIdChars, callback)
     card = pokeIdChars,
     seqNo = self.pokeGame.currentSeqNo
   }
-  ddz.pomeloClient:request('ddz.gameHandler.playCard', params, function(data)
+  self.gameConnection:request('ddz.gameHandler.playCard', params, function(data)
       dump(data, '[RemoteGameService:playCard] ddz.gameHandler.playCard response')
       utils.invokeCallback(callback, data)
     end)
 end
 
 function RemoteGameService:cancelDelegate(callback)
-  ddz.pomeloClient:request('ddz.gameHandler.cancelDelegate', {}, function(data) 
+  self.gameConnection:request('ddz.gameHandler.cancelDelegate', {}, function(data) 
       dump(data, '[RemoteGameService:cancelDelegate] ddz.gameHandler.cancelDelegate response')
       utils.invokeCallback(callback, data)
     end)

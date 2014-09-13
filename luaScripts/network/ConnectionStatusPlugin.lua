@@ -10,11 +10,12 @@ function ConnectionStatusPlugin.bind(theClass)
 
   function theClass:hookConnectionEvents()
     local this = self
+    this.hidenRetries = this.hidenRetries or 3
     print('[hookConnectionEvents] start to hook')
     if not this._onConnectingEvent then
       this._onConnectingEvent = function(event)
         dump(event, '[hookConnectionEvents] this._onConnectingEvent')
-        if event.retries < 2 then
+        if event.retries < this.hidenRetries then
           return
         end
 

@@ -13,6 +13,7 @@ function GameConnection:ctor(userId, sessionToken)
   self.isConnectionReady = false
   self.isAuthed = false
   self.isNotYetConnect = true
+  self.needReconnect = false
 end
 
 function GameConnection:authConnection()
@@ -152,6 +153,7 @@ function GameConnection:connectToServer(params)
   end
 
   this.pomeloClient = ddz.pomeloClient
+  this.pomeloClient.onTryReconnect = __bind(this.onTryReconnect, this)
 
   if not this._connectionEventHooked then
     this._connectionEventHooked = true
@@ -197,6 +199,7 @@ function GameConnection:request(route, msg, cb)
     return false
   end
 
+  --this.inRequesting = true
   this.pomeloClient:request(route, msg, cb)
 
 end
@@ -229,6 +232,14 @@ function GameConnection:checkConnection()
   end
 
   return {result = true}
+end
+
+function GameConnection:onTryReconnect(retries)
+  if retires < 3 then
+    return true
+  end
+
+  return self.needReconnect
 end
 
 

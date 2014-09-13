@@ -219,6 +219,12 @@ function Pomelo:initWebSocket(url, cb)
 				clearTimeout(_this.connectTimeout)
 				_this.connectTimeout = nil
 			end
+
+			if _this.onTryReconnect and not _this.onTryReconnect(_this.retries) then
+				-- 不需要再重连 退出
+				return
+			end
+
 			local delayTime = 2 * (_this.retries -1)
 			print(string.format('[pomelo] connection closed, delay %d seconds to retry', delayTime))
 			setTimeout(doConnect, delayTime)
