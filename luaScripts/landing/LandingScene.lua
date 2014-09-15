@@ -32,6 +32,8 @@ end
 function LandingScene:init()
   local this = self
 
+  this.hidenRetries = 0
+
   umeng.MobClickCpp:beginScene('landing scene')
   umeng.MobClickCpp:beginEvent('test')
   umeng.MobClickCpp:pay(10, 2, 1000)
@@ -331,6 +333,7 @@ function LandingScene:connectToServer()
   --self:connectTo('192.168.1.165', '4001', sessionInfo.userId, sessionInfo.sessionToken, onConnectionReady)
   if self.gameConnection == nil then
     self.gameConnection = require('network.GameConnection')
+    self.gameConnection.needReconnect = true
     if self._onConnectionReady == nil then
       self._onConnectionReady = function()
         queryRooms()

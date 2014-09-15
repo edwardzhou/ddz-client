@@ -12,7 +12,7 @@ function GameConnection:ctor(userId, sessionToken)
   self.autoSignUp = true
   self.isConnectionReady = false
   self.isAuthed = false
-  self.isNotYetConnect = true
+  self.isStartConnecting = false
   self.needReconnect = false
 end
 
@@ -29,6 +29,7 @@ function GameConnection:authConnection()
     print('[GameConnection:authConnection:doSignIn] start to auto signin by auth key')
     this:signIn(signInParam, function(success, userInfo, serverInfo, signInParams, respData)
         dump(userInfo, 'sign result ' .. tostring(success))
+        this.isStartConnecting = false
         if success then
           if serverInfo then
             this:connectToServer(serverInfo)
@@ -109,6 +110,7 @@ function GameConnection:authConnection()
             userId = data.user.userId, 
             sessionToken = data.sessionToken})
         else
+          this.isStartConnecting = false
           this.isConnectionReady = true
           this:emit('connectionReady', this, this.pomeloClient, data)
           this:emit('selfConnectionOk')
@@ -122,6 +124,8 @@ end
 
 function GameConnection:reconnect()
   local this = self
+
+  self.isStartConnecting = true
 
   local serverParams = {
     host = ddz.GlobalSettings.serverInfo.host,
@@ -144,6 +148,8 @@ function GameConnection:connectToServer(params)
   --   self.readyCallback = params.readyCallback
   -- end
 
+  self.isStartConnecting = true
+
   if websocketClass == nil then
     websocketClass = require('pomelo.cocos2dx_websocket')
   end
@@ -159,15 +165,15 @@ function GameConnection:connectToServer(params)
     this._connectionEventHooked = true
     this.pomeloClient:on('connecting', function(event) 
         dump(event, '[GameConnection:connectToServer] on connecting')
-        this:emit('connecting', event)
+        this:emit('connecting', this, event)
       end)
     this.pomeloClient:on('connected', function() 
         print('[GameConnection:connectToServer] on connected')
-        this:emit('connected')
+        this:emit('connected', this)
       end)
     this.pomeloClient:on('connection_failure', function() 
         print('[GameConnection:connectToServer] on connection_failure')
-        this:emit('connection_failure')
+        this:emit('connection_failure', this)
       end)
   end
 
@@ -235,7 +241,9 @@ function GameConnection:checkConnection()
 end
 
 function GameConnection:onTryReconnect(retries)
-  if retires < 3 then
+  print('[GameConnection:onTryReconnect] self.isStartConnecting => ', self.isStartConnecting, 
+    ', retries => ', retries, ', self.needReconnect => ', self.needReconnect)
+  if self.isStartConnecting or retries < 3 then
     return true
   end
 

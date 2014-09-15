@@ -269,7 +269,7 @@ end
 
 function __bind(fn, this)
   return function(...)
-    fn(this, ...)
+    return fn(this, ...)
   end
 end
 

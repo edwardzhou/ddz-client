@@ -106,16 +106,7 @@ function Pomelo:ctor(WebSocketClass)
 	self.heartbeatTimeoutId = nil
 	
 	self.handshakeCallback = nil
-	-- self.handshakeBuffer = {
-	-- 	sys = {
-	-- 		type = JS_WS_CLIENT_TYPE,
-	-- 		version = JS_WS_CLIENT_VERSION,
-	-- 		protoVersion = self.protoVersion,
-	-- 	},
-	-- 	user = {
-	-- 	}
-	-- }
-	
+
 	self.initCallback = nil
 	
 	self.handlers[Package.TYPE_HANDSHAKE] = self.handshake
@@ -220,9 +211,14 @@ function Pomelo:initWebSocket(url, cb)
 				_this.connectTimeout = nil
 			end
 
-			if _this.onTryReconnect and not _this.onTryReconnect(_this.retries) then
+			if _this.onTryReconnect then
+				local noReconnect = _this.onTryReconnect(_this.retries) 
 				-- 不需要再重连 退出
-				return
+				print('[pomelo] onclose : noReconnect => ', noReconnect)
+				if not noReconnect then
+					print('[pomelo] onclose : no need to try to reconnect')
+					return
+				end
 			end
 
 			local delayTime = 2 * (_this.retries -1)

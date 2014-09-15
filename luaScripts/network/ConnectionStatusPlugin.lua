@@ -13,9 +13,11 @@ function ConnectionStatusPlugin.bind(theClass)
     this.hidenRetries = this.hidenRetries or 3
     print('[hookConnectionEvents] start to hook')
     if not this._onConnectingEvent then
-      this._onConnectingEvent = function(event)
+      this._onConnectingEvent = function(gameConn, event)
         dump(event, '[hookConnectionEvents] this._onConnectingEvent')
-        if event.retries < this.hidenRetries then
+        print('[hookConnectionEvents] this.hidenRetries => ', this.hidenRetries, 
+          ', gameConn.isStartConnecting => ', gameConn.isStartConnecting)
+        if event.retries <= this.hidenRetries then
           return
         end
 
