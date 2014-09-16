@@ -29,6 +29,9 @@ end
 function GameScene:ctor(...)
   local this = self
 
+  this.hidenRetries = 1
+  this.needReconnect = true
+
   self.gameConnection = require('network.GameConnection')
   self.gameService = GameService.new(self, ddz.GlobalSettings.userInfo.userId)
 
@@ -245,5 +248,7 @@ require('gaming.UIButtonsPlugin').bind(GameScene)
 require('gaming.SGamingActionsPlugin').bind(GameScene)
 require('gaming.UIClockCountDownPlugin').bind(GameScene)
 require('gaming.SoundEffectPlugin').bind(GameScene)
+
+require('network.ConnectionStatusPlugin').bind(GameScene)
 
 return createScene

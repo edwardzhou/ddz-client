@@ -127,9 +127,11 @@ function GameConnection:reconnect()
 
   self.isStartConnecting = true
 
+  local serverInfo = ddz.GlobalSettings.serverInfo or ddz.GlobalSettings.servers
+
   local serverParams = {
-    host = ddz.GlobalSettings.serverInfo.host,
-    port = ddz.GlobalSettings.serverInfo.port
+    host = serverInfo.host,
+    port = serverInfo.port
   }
 
   print('[GameConnection:reconnect] ......................')

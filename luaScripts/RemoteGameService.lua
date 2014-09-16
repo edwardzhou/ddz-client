@@ -106,6 +106,11 @@ end
 
 function RemoteGameService:restoreGame(callback)
   local this = self
+
+  if this.pokeGame and this.pokeGame.gameOver then
+    return
+  end
+
   local params = {
     gameId = self.pokeGame.gameId,
     msgNo = self.pokeGame.currentMsgNo
@@ -316,6 +321,7 @@ end
 function RemoteGameService:onServerGameOverMsg(data)
   local balance = data
   dump(data, '[RemoteGameService:onServerGameOverMsg] data')
+  self.pokeGame.gameOver = true
   local players = {}
   players[data.players[1].userId] = data.players[1]
   players[data.players[2].userId] = data.players[2]

@@ -84,6 +84,7 @@ function Emitter:emit(event, ...)
 	
 	if callbacks ~= nil then
 		for _i, fn in ipairs(callbacks) do
+			print(string.format('[Emitter:emit] invoke callback for [%s]', event))
 			local result, err = pcall(fn, ...)
 			if not result then
 				print('[Emitter.emit] Error to call fn for event "' .. event .. '"')

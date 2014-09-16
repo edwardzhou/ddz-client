@@ -5,6 +5,7 @@ local utils = require('utils.utils')
 
 local TOAST_BOX_ACTION_TAG = 0x20001
 local LOADING_ACTION_TAG = 0x20002
+local CONNECTING_DOT_TAG = 0x20003
 
 function ConnectingBox.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -30,12 +31,16 @@ function ConnectingBox:init()
   local this = self
   local rootLayer = self
 
+  this.showing = false
   local guiReader = ccs.GUIReader:getInstance()
   local uiRoot = guiReader:widgetFromBinaryFile('UI/NetworkConnecting.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
+
+  self.LabelMsg:setFontName('')
+
   self:initKeypadHandler()
 
   self:registerScriptHandler(function(event)
@@ -47,8 +52,9 @@ function ConnectingBox:init()
   end)
 
   self.ButtonNetworkSetup:setVisible(false)
-  self.ButtonTryAgain:setVisible(false)
-  self.ButtonQuit:setVisible(false)
+  -- self.ButtonTryAgain:setVisible(false)
+  -- self.ButtonQuit:setVisible(false)
+  self.PanelOption:setVisible(false)
 
   self.LabelMsg:setPosition(260, 0)
 end
@@ -56,6 +62,8 @@ end
 function ConnectingBox:doShow(params)
   local this = self
   this.retries = 1
+
+  this.onRetry = params.onRetry
 
   self.LabelMsg:setString(params.msg)
   local showingLoading = false
@@ -66,7 +74,7 @@ function ConnectingBox:doShow(params)
   this.closeOnBack = true
 
   if params.closeOnBack ~= nil then
-    this.closeOnBack = params.closeOnBack
+    --this.closeOnBack = params.closeOnBack
   end
 
   if params.showLoading ~= nil then
@@ -127,12 +135,13 @@ function ConnectingBox:doShow(params)
   this:stopActionByTag(TOAST_BOX_ACTION_TAG)
 
   this:setCurrentRetries(1)
+  this.PanelOption:setVisible(false)
 
   local n = 1
-  this.progressAction = this:runAction(
+  local progressAction = this:runAction(
     cc.RepeatForever:create(
       cc.Sequence:create(
-        cc.DelayTime:create(0.3),
+        cc.DelayTime:create(0.5),
         cc.CallFunc:create(function() 
             local msg = this.textMsg .. string.rep('.' , n)
             this.LabelMsg:setString(msg)
@@ -144,6 +153,8 @@ function ConnectingBox:doShow(params)
        )
     )
   )
+
+  progressAction:setTag(CONNECTING_DOT_TAG)
 
   this:setVisible(true)
   this.PanelBox:setOpacity(0)
@@ -171,15 +182,18 @@ function ConnectingBox:close(fadeOut)
     this.loadingSprite:stopActionByTag(LOADING_ACTION_TAG)
   end
   this:stopActionByTag(TOAST_BOX_ACTION_TAG)
+  this:stopActionByTag(CONNECTING_DOT_TAG)
 
   if fadeOut then
     local action = this:runAction(cc.Sequence:create(
         cc.TargetedAction:create(this.PanelBox, cc.FadeOut:create(0.3)),
         cc.Hide:create()
+        --,cc.RemoveSelf:create()
       ))
     action:setTag(TOAST_BOX_ACTION_TAG)
   else
     this:setVisible(false)
+    --this:runAction(cc.RemoveSelf:create())
   end
 
 end
@@ -217,23 +231,29 @@ function ConnectingBox:setCurrentRetries(retries)
   pos = cc.p(260, 40)
   this.retries = retries
 
+  print('[ConnectingBox:setCurrentRetries] --------------', retries)
+  cclog(debug.traceback())
+  print('[ConnectingBox:setCurrentRetries] --------------', retries)
+
   if retries <= 2 then
+    this.PanelOption:setVisible(false)
     this.ButtonNetworkSetup:setVisible(false)
-    this.ButtonTryAgain:setVisible(false)
-    this.ButtonQuit:setVisible(false)
+    -- this.ButtonTryAgain:setVisible(false)
+    -- this.ButtonQuit:setVisible(false)
     this.LabelMsg:setPosition(pos)
   elseif retries > 3 then    
     this.ButtonNetworkSetup:setVisible(true)
-    this.ButtonNetworkSetup:setPosition(590, 40)
-    pos = cc.p(220, 40)
+    --this.ButtonNetworkSetup:setPosition(590, 40)
+    pos = cc.p(200, 40)
+    this.LabelMsg:setPosition(pos)
   end
 
   this.loadingSprite:setPosition(pos.x - 20, pos.y)
 
   if this.retries < 4 then
-    this.textMsg = string.format('努力链接中 #%d ', this.retries)
+    this.textMsg = string.format('正在努力链接中 #%d ', this.retries)
   else
-    this.textMsg = string.format( '网络不给力，加倍努力链接中 #5d ' , this.retries)
+    this.textMsg = string.format( '网络不给力，加倍努力链接中 #%d ' , this.retries)
   end
 
 end
@@ -243,17 +263,39 @@ function ConnectingBox:setFailure()
   local rect, size, pos
 
   this.ButtonNetworkSetup:setVisible(true)
-  this.ButtonNetworkSetup:setPosition(470, 40)
-  this.ButtonTryAgain:setVisible(true)
-  this.ButtonTryAgain:setPosition(590, 40)
-  this.ButtonQuit:setVisible(true)
-  this.ButtonQuit:setPosition(710, 40)
-  this.LabelMsg:setPosition(160, 40)
+  this.textMsg = '网络无法连上，臣妾做不到啊~ \n请设置网络再试一次'
+  this.LabelMsg:setString(this.textMsg)
+  this:stopActionByTag(CONNECTING_DOT_TAG)
+  -- this.ButtonNetworkSetup:setPosition(470, 40)
+  -- this.ButtonTryAgain:setVisible(true)
+  -- this.ButtonTryAgain:setPosition(590, 40)
+  -- this.ButtonQuit:setVisible(true)
+  -- this.ButtonQuit:setPosition(710, 40)
+  -- this.LabelMsg:setPosition(160, 40)
 
   this.loadingSprite:setPosition(140, 40)
+
+  this.PanelOption:setVisible(true)
+end
+
+function ConnectingBox:ButtonNetworkSetup_onClicked(sender, event)
+  local luaj = require('luaj')
+  local ok = luaj.callStaticMethod("com/fungame/DDZ/Utils", "wifiSetting", {}, "()V")
+end
+
+function ConnectingBox:ButtonQuit_onClicked(sender, event)
+  cc.Director:getInstance():endToLua()
+end
+
+function ConnectingBox:ButtonTryAgain_onClicked(sender, event)
+  local this = self
+  if this.onRetry then
+    this.onRetry()
+  end
 end
 
 local function showConnectingBox(container, params)
+
   if container.connectingBox == nil then
     local layer = cc.Layer:create()
     local msgBox = ConnectingBox.extend(layer)
@@ -263,13 +305,18 @@ local function showConnectingBox(container, params)
     container.connectingBox = msgBox
   end
 
-  container.connectingBox:doShow(params)
+  if not container.connectingBox.showing then
+    container.connectingBox:doShow(params)
+  end
+
   return container.connectingBox
 end
 
 local function hideConnectingBox(container, fadeOut)
-  if container.connectingBox then
+  if container.connectingBox and container.connectingBox.showing then
+    container.connectingBox.showing = false
     container.connectingBox:close(fadeOut)
+    --container.connectingBox = nil
   end
 end
 

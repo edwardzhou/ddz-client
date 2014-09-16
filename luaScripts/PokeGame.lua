@@ -20,6 +20,7 @@ function PokeGame:ctor()
   self.grabbingLord.lordValue = 0
   self.lordValue = 0
   self.lordUserId = 0
+  self.gameOver = false
 end
 
 function PokeGame:initWithGameData(gameData)

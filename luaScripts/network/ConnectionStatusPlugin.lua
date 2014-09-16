@@ -1,6 +1,8 @@
 local ConnectionStatusPlugin = {}
 local showToastBox = require('UICommon.ToastBox').showToastBox
 local hideToastBox = require('UICommon.ToastBox').hideToastBox
+local showConnectingBox = require('UICommon.ConnectingBox').showConnectingBox
+local hideConnectingBox = require('UICommon.ConnectingBox').hideConnectingBox
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
 
 function ConnectionStatusPlugin.bind(theClass)
@@ -10,15 +12,27 @@ function ConnectionStatusPlugin.bind(theClass)
 
   function theClass:hookConnectionEvents()
     local this = self
-    this.hidenRetries = this.hidenRetries or 3
+    this.hidenRetries = this.hidenRetries or 4
     print('[hookConnectionEvents] start to hook')
     if not this._onConnectingEvent then
       this._onConnectingEvent = function(gameConn, event)
         dump(event, '[hookConnectionEvents] this._onConnectingEvent')
         print('[hookConnectionEvents] this.hidenRetries => ', this.hidenRetries, 
           ', gameConn.isStartConnecting => ', gameConn.isStartConnecting)
-        if event.retries <= this.hidenRetries then
+        if not gameConn.isStartConnecting and event.retries <= this.hidenRetries then
           return
+        end
+
+        local onRetry = function()
+          hideConnectingBox(this, false)
+          this:runAction(
+            cc.Sequence:create(
+              cc.DelayTime:create(0.1),
+              cc.CallFunc:create(function() 
+                this.gameConnection:reconnect()
+              end)
+            )
+          )
         end
 
         --print('[hookConnectionEvents] this._onConnectingEvent')
@@ -28,6 +42,7 @@ function ConnectionStatusPlugin.bind(theClass)
           closeOnTouch = false,
           showingTime = 0,
           closeOnBack = event.retries > 3,
+          onRetry = onRetry,
           msg = '正在努力连接中...'
         }
 
@@ -37,25 +52,32 @@ function ConnectionStatusPlugin.bind(theClass)
           params.msg = '网络不给力, 加倍努力连接中... #' .. event.retries
         end
 
-        showToastBox(this, params)
+        --if event.retries <= 2 then
+          this.connectingBox = showConnectingBox(this, params)
+          this.connectingBox:setCurrentRetries(event.retries)
+        --end
+        
       end
     end
 
     if not this._onConnectedEvent then
       this._onConnectedEvent = function()
         print('[hookConnectionEvents] this._onConnectedEvent')
-        hideToastBox(this)
+        -- hideToastBox(this)
+        hideConnectingBox(this)
       end
     end
 
     if not this._onConnectionFailureEvent then
       this._onConnectionFailureEvent = function()
         print('[hookConnectionEvents] this._onConnectionFailureEvent')
-        hideToastBox(this, false)
+        --hideToastBox(this, false)
         local params = {
           msg = '喔~ 网络不给力, 臣妾做不到啊! \n请检查网络设置。'
         }
-        showMessageBox(this, params)
+        this.connectingBox:setFailure()
+        --showMessageBox(this, params)
+
       end
     end
 
@@ -63,9 +85,13 @@ function ConnectionStatusPlugin.bind(theClass)
 
     if this.gameConnection and not this.connectionEventHooked then
       this.connectionEventHooked = true
-      this.gameConnection:on('connecting', this._onConnectingEvent)
-      this.gameConnection:on('connected', this._onConnectedEvent)
-      this.gameConnection:on('connection_failure', this._onConnectionFailureEvent)
+      if not this.firstTime then
+        this.gameConnection:on('connecting', this._onConnectingEvent)
+        this.gameConnection:on('connected', this._onConnectedEvent)
+        this.gameConnection:on('connection_failure', this._onConnectionFailureEvent)
+        --this.firstTime = true
+      end
+
     else
       print('[hookConnectionEvents] WARNING: no this.gameConnection instance')
     end
@@ -85,11 +111,13 @@ function ConnectionStatusPlugin.bind(theClass)
 
 
   function theClass:on_enter()
+    print('[ConnectionStatusPlugin:on_enter] ...')
     local this = self
     if _priorOnEnter then
       _priorOnEnter(this)
     end
     this:hookConnectionEvents()
+    hideConnectingBox(this, false)
   end
 
   function theClass:on_exit()

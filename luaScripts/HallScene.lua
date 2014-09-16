@@ -20,6 +20,7 @@ end
 
 function HallScene:ctor(...)
   local this = self
+  this.hidenRetries = 4
   self:registerScriptHandler(function(event)
     print('[HallScene] event => ', event)
     local on_event = 'on_' .. event
@@ -33,6 +34,7 @@ function HallScene:ctor(...)
 end
 
 function HallScene:on_enter()
+  print('[HallScene:on_enter] ...')
   self:updateUserInfo()
   self.gameConnection.needReconnect = false
 end

@@ -221,7 +221,7 @@ function Pomelo:initWebSocket(url, cb)
 				end
 			end
 
-			local delayTime = 2 * (_this.retries -1)
+			local delayTime = 2 * (_this.retries)
 			print(string.format('[pomelo] connection closed, delay %d seconds to retry', delayTime))
 			setTimeout(doConnect, delayTime)
 		else
@@ -232,6 +232,10 @@ function Pomelo:initWebSocket(url, cb)
 
 	doConnect = function()	
 		print(string.format('[pomelo] #%d, connect to %s', _this.retries, url))
+	  print('[pomelo:doConnect] --------------')
+  	cclog(debug.traceback())
+  	print('[pomelo:doConnect] --------------')
+
 		_this.socket = _this.WebSocketClass.new(url)
 		_this.binaryType = 'arraybuffer'
 		_this.socket.onopen = onopen
