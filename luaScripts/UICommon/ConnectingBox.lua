@@ -231,9 +231,9 @@ function ConnectingBox:setCurrentRetries(retries)
   pos = cc.p(260, 40)
   this.retries = retries
 
-  print('[ConnectingBox:setCurrentRetries] --------------', retries)
-  cclog(debug.traceback())
-  print('[ConnectingBox:setCurrentRetries] --------------', retries)
+  -- print('[ConnectingBox:setCurrentRetries] --------------', retries)
+  -- cclog(debug.traceback())
+  -- print('[ConnectingBox:setCurrentRetries] --------------', retries)
 
   if retries <= 2 then
     this.PanelOption:setVisible(false)

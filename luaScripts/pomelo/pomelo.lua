@@ -177,6 +177,16 @@ function Pomelo:initWebSocket(url, cb)
 	self.retries = 0
 	self.connected = false
 	local doConnect
+
+	local clearSocket = function(sock)
+		if sock then
+			sock.onopen = nil
+			sock.onerror = nil
+			sock.onmessage = nil
+			sock.onclose = nil
+		end
+	end
+
 	
 	local onclose = function(event)
 		self.connected = false
@@ -188,12 +198,14 @@ function Pomelo:initWebSocket(url, cb)
 		if Pomelo.debug.pomelo then
     	dump(event, '[Pomelo] local onclose, event => ')
     end
-		if self.socket then
-			self.socket.onopen = nil
-			self.socket.onerror = nil
-			self.socket.onopen = nil
-			self.socket.onmessage = nil
-		end
+    clearSocket(self.socket)
+    self.socket = nil
+		-- if self.socket then
+		-- 	self.socket.onopen = nil
+		-- 	self.socket.onerror = nil
+		-- 	self.socket.onopen = nil
+		-- 	self.socket.onmessage = nil
+		-- end
 		if self.heartbeatId then
 			clearTimeout(self.heartbeatId)
 			self.heartbeatId = nil
@@ -230,18 +242,20 @@ function Pomelo:initWebSocket(url, cb)
 
 	end
 
+
 	doConnect = function()	
 		print(string.format('[pomelo] #%d, connect to %s', _this.retries, url))
-	  print('[pomelo:doConnect] --------------')
-  	cclog(debug.traceback())
-  	print('[pomelo:doConnect] --------------')
+	  -- print('[pomelo:doConnect] --------------')
+  	-- cclog(debug.traceback())
+  	-- print('[pomelo:doConnect] --------------')
 
-		_this.socket = _this.WebSocketClass.new(url)
+  	local initSocket = _this.WebSocketClass.new(url)
 		_this.binaryType = 'arraybuffer'
-		_this.socket.onopen = onopen
-		_this.socket.onmessage = onmessage
-		_this.socket.onerror = onerror
-		_this.socket.onclose = onclose
+		initSocket.onopen = onopen
+		initSocket.onmessage = onmessage
+		initSocket.onerror = onerror
+		initSocket.onclose = onclose
+		_this.socket = initSocket
 		_this.retries = _this.retries + 1
 
 		_this:emit('connecting', {retries = _this.retries})
@@ -255,13 +269,15 @@ function Pomelo:initWebSocket(url, cb)
 
 			_this.connectTimeout = nil
 			_this:disconnect(true)
-			if _this.socket then
-				_this.socket.onopen = nil
-				_this.socket.onerror = nil
-				_this.socket.onopen = nil
-				_this.socket.onmessage = nil
-				_this.socket = nil
-			end
+			clearSocket(_this.socket)
+			_this.socket = nil
+			-- if _this.socket then
+			-- 	_this.socket.onopen = nil
+			-- 	_this.socket.onerror = nil
+			-- 	_this.socket.close = nil
+			-- 	_this.socket.onmessage = nil
+			-- 	_this.socket = nil
+			-- end
 
 			if _this.retries <= _this.maxRetries then
 				doConnect()
@@ -381,7 +397,6 @@ function Pomelo:heartbeat(data)
 	end
 	-- dump(data, '[Pomelo:heartbeat]')
 	local obj = Package.encode(Package.TYPE_HEARTBEAT)
-  self:send(obj)
 	if self.heartbeatTimeoutId then
 		clearTimeout(self.heartbeatTimeoutId)
 		self.heartbeatTimeoutId = nil
@@ -390,9 +405,12 @@ function Pomelo:heartbeat(data)
 	if self.heartbeatId then
 		-- already in a heartbeat interval
 		--do return end
-		clearTimeout(self.heartbeatId)
-		self.hearbeatId = nil
+		return
+		-- clearTimeout(self.heartbeatId)
+		-- self.hearbeatId = nil
 	end
+
+  --self:send(obj)
 	
 	self.heartbeatId = setTimeout(function()
 		print('self.hearbeatId with setTimeout. send...')

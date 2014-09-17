@@ -35,13 +35,13 @@ function RemoteGameService:setupPomeloEvents()
 end
 
 function RemoteGameService:removePomeloEvents()
-  ddz.pomeloClient:off('onPlayerJoin', self._onServerPlayerJoinMsg)
-  ddz.pomeloClient:off('onPlayerReady', self._onServerPlayerReadyMsg)
-  ddz.pomeloClient:off('onGameStart', self._onServerGameStartMsg)
-  ddz.pomeloClient:off('onGrabLord', self._onServerGrabLordMsg)
-  ddz.pomeloClient:off('onPlayCard', self._onServerPlayCardMsg)
-  ddz.pomeloClient:off('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
-  ddz.pomeloClient:off('onGameOver', self._onServerGameOverMsg)
+  ddz.pomeloClient:off('onPlayerJoin')
+  ddz.pomeloClient:off('onPlayerReady')
+  ddz.pomeloClient:off('onGameStart')
+  ddz.pomeloClient:off('onGrabLord')
+  ddz.pomeloClient:off('onPlayCard')
+  ddz.pomeloClient:off('onLordValueUpgrade')
+  ddz.pomeloClient:off('onGameOver')
 end
 
 
@@ -131,9 +131,13 @@ function RemoteGameService:readyGame(callback)
 end
 
 function RemoteGameService:leaveGame(callback)
-  self.gameConnection:request('ddz.entryHandler.leave', {}, function(data) 
-      dump(data, '[RemoteGameService:leaveGame] ddz.entryHandler.leave')
-    end)
+  --if self.pokeGame and not self.pokeGame.gameOver then
+    self.gameConnection:request('ddz.entryHandler.leave', {}, function(data) 
+        dump(data, '[RemoteGameService:leaveGame] ddz.entryHandler.leave')
+        utils.invokeCallback(callback)
+      end)
+    --self.pokeGame.gameOver = true
+  --end
 end
 
 function RemoteGameService:startNewGame()

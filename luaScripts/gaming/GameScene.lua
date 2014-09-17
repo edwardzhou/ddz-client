@@ -5,7 +5,7 @@ local mobdebug = require('src.mobdebug')
 local GamePlayer = require('GamePlayer')
 --local GameService = require('LocalGameService')
 local GameService = require('RemoteGameService')
-
+local showMessageBox = require('UICommon.MessageBox').showMessageBox
 local gameConnection = require('network.GameConnection')
 
 local GameScene = class('GameScene', function()
@@ -61,6 +61,7 @@ function GameScene:on_enterTransitionFinish()
 end
 
 function GameScene:on_cleanup()
+  print('[GameScene:on_cleanup]')
   umeng.MobClickCpp:finishLevel('base_200')
   umeng.MobClickCpp:endLogPageView('page_gaming')
   umeng.MobClickCpp:endScene('gaming')
@@ -92,9 +93,12 @@ function GameScene:init()
 
   self.CountDownLabel:setFontName('')
   self.SysTime:setFontName('')
-  self.PrevUserPokeCount:setFontName('')
+  self.SelfUserPokeCount:setFontName('')
+  self.SelfUserName:setFontName('')
   self.NextUserPokeCount:setFontName('')
+  self.NextUserName:setFontName('')
   self.PrevUserPokeCount:setFontName('')
+  self.PrevUserName:setFontName('')
 
   local pokeCardsLayer = cc.Layer:create()
   -- local pokeCardsBatchNode = cc.SpriteBatchNode:createWithTexture(
@@ -158,6 +162,29 @@ function GameScene:onReconnected()
   self.gameService:restoreGame()
 end
 
+function GameScene:onBackClicked()
+  local this = self
+  if not self.pokeGame or self.pokeGame.gameOver then
+    cc.Director:getInstance():popScene()
+    return
+  end
+
+  local function doQuitGame()
+    --self.gameService:leaveGame(function()
+        cc.Director:getInstance():popScene()
+      --end)
+  end
+
+  local msgParams = {
+    msg = '牌局未结束, 现在退出系统将作判负处理, 扣减相应的金币。\n是否真的要退出牌局?',
+    title = '重要提示',
+    buttonType = 'ok|cancel',
+    onOk = doQuitGame
+  }
+
+  showMessageBox(self, msgParams)
+end
+
 function GameScene:initKeypadHandler()
   local this = self
   local function onKeyReleased(keyCode, event)
@@ -166,7 +193,8 @@ function GameScene:initKeypadHandler()
       --        self.onMainMenu()
       --      end
       --this.gameService:leaveGame()
-      cc.Director:getInstance():popScene()
+      --cc.Director:getInstance():popScene()
+      this:onBackClicked()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
     end
   end

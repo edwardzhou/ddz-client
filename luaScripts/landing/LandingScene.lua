@@ -32,7 +32,7 @@ end
 function LandingScene:init()
   local this = self
 
-  this.hidenRetries = 0
+  this.hidenRetries = 1
 
   umeng.MobClickCpp:beginScene('landing scene')
   umeng.MobClickCpp:beginEvent('test')
