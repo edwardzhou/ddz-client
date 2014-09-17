@@ -197,12 +197,12 @@ function GameConnection:request(route, msg, cb)
   local status = self:checkConnection()
 
   if not status.result then
-    if status.errorCode == 2 then
+    --if status.errorCode == 2 then
       this:reconnect()
       this:once('selfConnectionOk', function()
           this:request(route, msg, cb)
         end)
-    end
+    --end
 
     return false
   end
@@ -217,12 +217,12 @@ function GameConnection:notify(route, msg)
   local status = self:checkConnection()
 
   if not status.result then
-    if status.errorCode == 2 then
+    --if status.errorCode == 2 then
       this:reconnect()
       this:once('selfConnectionOk', function()
           this:notify(route, msg)
         end)
-    end
+    --end
 
     return false
   end

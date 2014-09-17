@@ -85,10 +85,11 @@ function Pomelo:ctor(WebSocketClass)
 
 	end
 
-	local _dict = ddz.readFromFile('dicts.json')
-	if _dict ~= nil and #_dict > 0 then
-		self.data.dict = cjson.decode(_dict)
-		self.dictVersion = self.data.dict.version
+	local _dictInfoStr = ddz.readFromFile('dicts.json')
+	if _dictInfoStr ~= nil and #_dictInfoStr > 0 then
+		local _dictInfo = cjson.decode(_dictInfoStr)
+		self.data.dict = _dictInfo.dict
+		self.dictVersion = _dictInfo.dictVersion
 
 		self.data.abbrs = {}
 		for _k, _v in pairs(self.data.dict) do
@@ -563,7 +564,7 @@ function Pomelo:initData(data)
 	
 	-- Init compress dict
 	if dict then
-		self.dictVersion = dict.version
+		self.dictVersion = data.sys.dictVersion
 		self.handshakeBuffer.sys.dictVersion = self.dictVersion
 
 		self.data.dict = dict
@@ -571,7 +572,9 @@ function Pomelo:initData(data)
 		for _k, _v in pairs(dict) do
 			self.data.abbrs[_v] = _k
 		end
-		ddz.writeToFile('dicts.json', cjson.encode(dict))
+
+		local dictInfo = {dictVersion = self.dictVersion, dict = dict}
+		ddz.writeToFile('dicts.json', cjson.encode(dictInfo))
 	end
 	
 	-- Init protobuf protos
