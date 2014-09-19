@@ -47,7 +47,7 @@ function LoginScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Login.csb')
-  self.uiRoot = guiReader
+  self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
@@ -65,6 +65,11 @@ function LoginScene:init()
     self.InputPassword:setText('')
   end
 
+  -- local uiEditBox = ccui.EditBox:create(cc.size(300, 40), 'images/green_edit.png')
+
+  -- uiEditBox:setPosition(100, 100)
+  -- self.uiRoot:addChild(uiEditBox)
+
 end
 
 function LoginScene:on_enterTransitionFinish()
@@ -75,7 +80,7 @@ function LoginScene:on_enterTransitionFinish()
       if data.err == nil then
         this:showSignInProgress(false)
         ddz.GlobalSettings.rooms = data.rooms
-        local scene = require('HallScene')()
+        local scene = require('hall.HallScene')()
         cc.Director:getInstance():replaceScene(scene)
       end
     end)
@@ -196,7 +201,9 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
         this:showSignInProgress(false)
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
       else
-        this.gameConnection:connectToServer(server)
+        if server then
+          this.gameConnection:connectToServer(server)        
+        end
       end
     end)
 end

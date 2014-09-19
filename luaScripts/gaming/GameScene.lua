@@ -58,7 +58,10 @@ end
 
 function GameScene:on_enterTransitionFinish()
   self.gameConnection.needReconnect = true
+end
 
+function GameScene:on_exit()
+  g_pokecards_node:removeFromParent()
 end
 
 function GameScene:on_cleanup()
@@ -108,6 +111,7 @@ function GameScene:init()
   
   self.SelfPokeCards:addChild(pokeCardsLayer)
   PokeCard.resetAll()
+  --g_pokecards_node:removeFromParent()
   pokeCardsLayer:addChild(g_pokecards_node)
   self.pokeCardsLayer = pokeCardsLayer
   self.cardContentSize = g_shared_cards[1].card_sprite:getContentSize()

@@ -149,6 +149,7 @@ function SGamingActionsPlugin.bind(theClass)
 
   function theClass:onGameOverMsg(balance)
     -- self:hideCard(self.selfPlayerInfo.lastCard)
+    local this = self
     self:showPrevPlayerRestPokecards()
     self:showNextPlayerRestPokecards()
     self.ButtonDelegate:setVisible(false)
@@ -183,6 +184,7 @@ function SGamingActionsPlugin.bind(theClass)
     self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
     self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score, function() 
         self.ButtonReady:setVisible(true)
+        this.ButtonReady:setBright(true)        
       end)
 
     self:stopCountdown()
