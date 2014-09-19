@@ -1,4 +1,5 @@
 require "Cocos2d"
+require "Cocos2dConstants"
 require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
@@ -39,6 +40,7 @@ local function main()
     
     fileUtils:setSearchPaths(searchPaths)
     fileUtils:addSearchPath('src')
+    --fileUtils:addSearchPath('cocos2d')
 
     local resPaths = fileUtils:getSearchResolutionsOrder()
     dump(resPaths, 'Search Resolutions Order')

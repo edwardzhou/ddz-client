@@ -47,7 +47,7 @@ function MessageBox:init()
   -- this:setPosition(400, 240)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/MessageBox.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/MessageBox.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 --  self.uiRoot:setOpacity(0)

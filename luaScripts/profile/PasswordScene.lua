@@ -43,7 +43,7 @@ function PasswordScene:init()
   self.rootLayer = rootLayer
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/UP_Pasword.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UP_Pasword.csb')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 

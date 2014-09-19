@@ -12,7 +12,7 @@ function GameResultDialog:ctor(onCloseCallback, onNewGameCallback)
 end
 
 function GameResultDialog:init()
-  local widget = ccs.GUIReader:getInstance():widgetFromBinaryFile('UI/GameResult.csb')
+  local widget = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/GameResult.csb')
   UIVarBinding.bind(widget, self, self)
   self:addChild(widget)
   self.widget = widget

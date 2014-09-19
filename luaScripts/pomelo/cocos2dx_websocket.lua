@@ -1,3 +1,4 @@
+require "network.NetworkConstants"
 local scheduler = require('framework.scheduler')
 local Protocol = require('pomelo.protocol.protocol')
 
@@ -18,21 +19,21 @@ function WS:ctor(url, wsprotocol)
       if type(_this.onopen) == 'function' then
           _this.onopen(event)
       end
-    end, kWebSocketScriptHandlerOpen)
+    end, cc.WEBSOCKET_OPEN)
   
   self.websocket:registerScriptHandler(function(event)
   		--dump(event, 'websocket.close')
       if type(_this.onclose) == 'function' then
         _this.onclose(event)
       end
-    end, kWebSocketScriptHandlerClose)
+    end, cc.WEBSOCKET_CLOSE)
   
   self.websocket:registerScriptHandler(function(event)
   		--dump(event, 'websocket.error')
       if type(_this.onerror) == 'function' then
         _this.onerror(event)
       end
-    end, kWebSocketScriptHandlerError)
+    end, cc.WEBSOCKET_ERROR)
   
   self.websocket:registerScriptHandler(function(message)
 		--print('websocket.message => ', table.concat(message, ','))
@@ -48,7 +49,7 @@ function WS:ctor(url, wsprotocol)
     if type(_this.onmessage) == 'function' then
       _this.onmessage({data=message})
     end
-  end, kWebSocketScriptHandlerMessage)
+  end, cc.WEBSOCKET_MESSAGE)
 
 	--self.websocket:connect(url, wsprotocol)		
 end

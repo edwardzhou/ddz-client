@@ -46,7 +46,7 @@ function LoginScene:init()
   self:addChild(rootLayer)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/Login.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Login.csb')
   self.uiRoot = guiReader
   rootLayer:addChild(uiRoot)
 

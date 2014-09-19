@@ -1,11 +1,13 @@
 #include "AppDelegate.h"
 #include "CCLuaEngine.h"
 #include "SimpleAudioEngine.h"
+#include "cocos2d.h"
+#include "lua_module_register.h"
 #include "lua_extensions.h"
 #include "editor-support/cocostudio/CCSGUIReader.h"
 #include "unzip.h"
-#include "MobClickCpp.h"
-#include "lua_cocos2dx_umeng_auto.hpp"
+//#include "MobClickCpp.h"
+// #include "lua_cocos2dx_umeng_auto.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
 
@@ -142,45 +144,33 @@ AppDelegate::AppDelegate()
 
 AppDelegate::~AppDelegate()
 {
-    MobClickCpp::end();
+   //MobClickCpp::end();
     SimpleAudioEngine::end();
+}
+
+//if you want a different context,just modify the value of glContextAttrs
+//it will takes effect on all platforms
+void AppDelegate::initGLContextAttrs()
+{
+    //set OpenGL context attributions,now can only set six attributions:
+    //red,green,blue,alpha,depth,stencil
+    GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
+
+    GLView::setGLContextAttrs(glContextAttrs);
 }
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
-    // initialize director
-    // auto director = Director::getInstance();
-    // auto glview = director->getOpenGLView();
-    // if(!glview) {
-    //     glview = GLView::create("My Game");
-    //     director->setOpenGLView(glview);
-    // }
-
-    // glview->setDesignResolutionSize(800, 480, ResolutionPolicy::EXACT_FIT);
-
-    // // turn on display FPS
-    // director->setDisplayStats(true);
-
-    // // set FPS. the default value is 1.0/60 if you don't call this
-    // director->setAnimationInterval(1.0 / 30);
-
-    // FileUtils::getInstance()->addSearchPath("src");
-    // FileUtils::getInstance()->addSearchPath("luaScripts");
-    // FileUtils::getInstance()->addSearchPath("res");
-    // auto searchPaths = FileUtils::getInstance()->getSearchPaths();
-    // auto begin = searchPaths.begin();
-    // auto writablePath = FileUtils::getInstance()->getWritablePath();
-    // searchPaths.insert(begin, writablePath);
-    // FileUtils::getInstance()->setSearchPaths(searchPaths);
 
     // register lua engine
     auto engine = LuaEngine::getInstance();
     auto luaState = engine->getLuaStack()->getLuaState();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
-    register_all_cocos2dx_umeng(luaState);
+    // register_all_cocos2dx_umeng(luaState);
     // CCLOG("register_all_cocos2dx_pluginx ....");
     // register_all_cocos2dx_plugin(luaState);
     // CCLOG("after register_all_cocos2dx_pluginx ....");
+    lua_module_register(luaState);
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
 
@@ -241,36 +231,17 @@ bool AppDelegate::applicationDidFinishLaunching()
     // MobClickCpp::setLogEnabled(true);
     // MobClickCpp::setAppVersion("1.2");
     // MobClickCpp::startWithAppkey("5351dee256240b09f604ee4c", "my_channel");
-    MobClickCpp::beginEvent("test");
+    // MobClickCpp::beginEvent("test");
 
-    MobClickCpp::endEvent("test");
-    MobClickCpp::updateOnlineConfig();
-    CCLOG("online config> testParam: %s" , MobClickCpp::getConfigParams("testParam").c_str());
+    // MobClickCpp::endEvent("test");
+    // MobClickCpp::updateOnlineConfig();
+    // CCLOG("online config> testParam: %s" , MobClickCpp::getConfigParams("testParam").c_str());
 
     getApkSign();
 
-    Quaternion q;
-    q.x = 100;
-    q.y = 100;
-    q.z = 1;
-
-    Mat4 m1, m2;
-    m1.m[12] = 100;
-    m1.m[13] = 100;
-    m1.m[14] = 1;
-
-    m2.m[12] = 100;
-    m2.m[13] = 50;
-    m1.m[14] = 0;
-
-    Mat4 m3;
-    Vec3 v(50, 50, 0);
-    m2.rotateY( CC_DEGREES_TO_RADIANS(45) , &m3);
-
-    CCLOG("q => [x: %0.4f, y: %0.4f, z: %0.4f] ", m3.m[12], m3.m[13], m3.m[14]);
-
-
-    engine->executeScriptFile("boot.lua");
+    if (engine->executeScriptFile("boot.lua")) {
+        return  false;
+    }
     
     return true;
 }
@@ -280,7 +251,7 @@ void AppDelegate::applicationDidEnterBackground()
 {
     Director::getInstance()->stopAnimation();
 
-    MobClickCpp::applicationDidEnterBackground();
+    // MobClickCpp::applicationDidEnterBackground();
 
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
@@ -290,7 +261,7 @@ void AppDelegate::applicationWillEnterForeground()
 {
     Director::getInstance()->startAnimation();
 
-    MobClickCpp::applicationWillEnterForeground();
+    // MobClickCpp::applicationWillEnterForeground();
 
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
     Director::getInstance()->getScheduler()->schedule([](float dt) {

@@ -46,7 +46,7 @@ function ShopScene:init()
   self:addChild(rootLayer)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/Shop.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Shop.csb')
   self.uiRoot = guiReader
   rootLayer:addChild(uiRoot)
 

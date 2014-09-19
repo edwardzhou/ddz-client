@@ -34,9 +34,9 @@ function LandingScene:init()
 
   this.hidenRetries = 1
 
-  umeng.MobClickCpp:beginScene('landing scene')
-  umeng.MobClickCpp:beginEvent('test')
-  umeng.MobClickCpp:pay(10, 2, 1000)
+  -- umeng.MobClickCpp:beginScene('landing scene')
+  -- umeng.MobClickCpp:beginEvent('test')
+  -- umeng.MobClickCpp:pay(10, 2, 1000)
 
 
   self:registerScriptHandler(function(event)
@@ -58,7 +58,7 @@ function LandingScene:init()
   self:addChild(rootLayer)
   self.rootLayer = rootLayer
   
-  local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('UI/Landing.csb')
+  local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/Landing.csb')
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
@@ -77,7 +77,7 @@ function LandingScene:init()
       100),
     cc.CallFunc:create(function()
         this.LoadingBar:setVisible(false)
-        umeng.MobClickCpp:endEvent('test')
+--        umeng.MobClickCpp:endEvent('test')
       end)
   ))
   
@@ -151,7 +151,7 @@ function LandingScene:on_exit()
 end
 
 function LandingScene:ButtonStart_onClicked(sender, eventType)
-  local scene = require('HallScene')()
+  local scene = require('hall.HallScene')()
   cc.Director:getInstance():pushScene(scene)
 end
 
@@ -241,7 +241,7 @@ function LandingScene:connectToServer()
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
         this.ButtonStart:setVisible(true)
-        local scene = require('HallScene')()
+        local scene = require('hall.HallScene')()
         cc.Director:getInstance():replaceScene(scene)
       end
     end)
@@ -375,8 +375,8 @@ function LandingScene:initKeypadHandler()
       --      if type(self.onMainMenu) == 'function' then
       --        self.onMainMenu()
       --      end
-      umeng.MobClickCpp:endScene('landing scene')
-      umeng.MobClickCpp:endToLua()
+      -- umeng.MobClickCpp:endScene('landing scene')
+      -- umeng.MobClickCpp:endToLua()
       cc.Director:getInstance():endToLua()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       self:connectToServer()

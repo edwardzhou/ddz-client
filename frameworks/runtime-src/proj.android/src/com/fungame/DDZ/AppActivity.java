@@ -45,7 +45,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.umeng.analytics.MobclickAgent;
+//import com.umeng.analytics.MobclickAgent;
 
 public class AppActivity extends Cocos2dxActivity {
 	private NetworkListener networkListener = new NetworkListener();
@@ -105,7 +105,9 @@ public class AppActivity extends Cocos2dxActivity {
 			e.printStackTrace();
 		}
 		
-		
+    //com.umeng.analytics.game.UMGameAgent.init(getContext());
+    System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
+	
 		//MobileInfoGetter.mContext = AppActivity.getContext();
 	}
 	
@@ -115,28 +117,17 @@ public class AppActivity extends Cocos2dxActivity {
 		System.out.println("unregister network listener");
 		unregisterReceiver(networkListener);
 	};
-
-	@Override
-    public Cocos2dxGLSurfaceView onCreateView() {
-        Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
-        // TestCpp should create stencil buffer
-        glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
-        com.umeng.analytics.game.UMGameAgent.init(getContext());
-        System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
-        
-        return glSurfaceView;
-    }
     
     @Override
     public void onResume() {
       super.onResume();
-      MobclickAgent.onResume(this);
+      //MobclickAgent.onResume(this);
     }
 
     @Override
     public void onPause() {
       super.onPause();
-      MobclickAgent.onPause(this);
+      //MobclickAgent.onPause(this);
     }
     
     public static void enterBackground() {
@@ -208,7 +199,7 @@ public class AppActivity extends Cocos2dxActivity {
                  
 
     static {
-      System.loadLibrary("bspatch");
+      //System.loadLibrary("bspatch");
     }
 
  

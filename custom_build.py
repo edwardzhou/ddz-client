@@ -30,7 +30,8 @@ def compile_lua(src, dst):
         raise RuntimeError("Couldn't compile lua")
     if os.path.isdir(path):
       new_dst = os.path.join(dst, item)
-      os.mkdir(new_dst)
+      if not os.path.exists(new_dst):
+        os.mkdir(new_dst)
       compile_lua(path, new_dst)
     
 def compile_resources(lua_src_dir, assets_dst_dir):

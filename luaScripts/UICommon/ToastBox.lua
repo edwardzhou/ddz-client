@@ -31,7 +31,7 @@ function ToastBox:init()
   local rootLayer = self
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/Toast.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Toast.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 

@@ -33,7 +33,7 @@ function ConnectingBox:init()
 
   this.showing = false
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/NetworkConnecting.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/NetworkConnecting.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 

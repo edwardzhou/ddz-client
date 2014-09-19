@@ -1,3 +1,4 @@
+require('extern')
 require 'consts'
 require 'GlobalSettings'
 require 'DebugSetting'

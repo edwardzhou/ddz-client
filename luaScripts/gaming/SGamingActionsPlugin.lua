@@ -191,7 +191,7 @@ function SGamingActionsPlugin.bind(theClass)
     -- --self.self
     -- local this = self
     -- if self.gameResultPanel == nil then
-    --   --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('UI/GameResult/GameResult.json')
+    --   --self.gameResultPanel = ccs.GUIReader:getInstance():widgetFromJsonFile('gameUI/GameResult/GameResult.json')
     --   local onClose = function ( ... )
     --     -- body
     --   end

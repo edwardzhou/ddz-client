@@ -1,4 +1,10 @@
 {
+    "ndk_module_path" :[
+        "../../cocos2d-x",
+        "../../cocos2d-x/cocos/",
+        "../../cocos2d-x/external",
+        "../../cocos2d-x/cocos/scripting"
+    ],
     "copy_resources": [
         {
             "from": "../../../src", 
@@ -15,12 +21,41 @@
         {
             "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script", 
             "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/cocos2d",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/cocosdenshion",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/cocosbuilder",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/cocostudio",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/extension",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/network",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/cocos/scripting/lua-bindings/script/ui",
+            "to": ""
+        },
+        {
+            "from": "../../cocos2d-x/external/lua/luasocket",
+            "to": "",
+            "include": [
+                "*.lua"
+            ]
         }
-    ], 
-    "ndk_module_path": [
-        "../../cocos2d-x", 
-        "../../cocos2d-x/cocos/", 
-        "../../cocos2d-x/external", 
-        "../../cocos2d-x/cocos/scripting"
     ]
 }

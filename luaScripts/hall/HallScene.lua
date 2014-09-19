@@ -54,7 +54,7 @@ function HallScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   
-  local ui = guiReader:widgetFromBinaryFile('UI/Hall.csb')
+  local ui = guiReader:widgetFromBinaryFile('gameUI/Hall.csb')
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)

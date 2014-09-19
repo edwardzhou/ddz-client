@@ -43,7 +43,7 @@ function UserProfileScene:init()
   self.rootLayer = rootLayer
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('UI/UserProfile.csb')
+  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UserProfile.csb')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 

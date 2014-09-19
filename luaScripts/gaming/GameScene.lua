@@ -50,21 +50,22 @@ function GameScene:ctor(...)
     --   self:cleanup()
     -- end
   end)
-
+ 
+  self:init()
+ 
   self._onReconnected = __bind(self.onReconnected, self)
 end
 
 function GameScene:on_enterTransitionFinish()
-  self:init()
   self.gameConnection.needReconnect = true
 
 end
 
 function GameScene:on_cleanup()
   print('[GameScene:on_cleanup]')
-  umeng.MobClickCpp:finishLevel('base_200')
-  umeng.MobClickCpp:endLogPageView('page_gaming')
-  umeng.MobClickCpp:endScene('gaming')
+  -- umeng.MobClickCpp:finishLevel('base_200')
+  -- umeng.MobClickCpp:endLogPageView('page_gaming')
+  -- umeng.MobClickCpp:endScene('gaming')
   self:stopAllActions()
   --PokeCard.releaseAllCards()
   self.gameService:leaveGame()
@@ -73,12 +74,13 @@ function GameScene:on_cleanup()
 end
 
 function GameScene:init()
-  umeng.MobClickCpp:beginScene('gaming')
-  umeng.MobClickCpp:beginLogPageView('page_gaming')
-  umeng.MobClickCpp:startLevel('base_200')
+  -- umeng.MobClickCpp:beginScene('gaming')
+  -- umeng.MobClickCpp:beginLogPageView('page_gaming')
+  -- umeng.MobClickCpp:startLevel('base_200')
 
-  umeng.MobClickCpp:pay(10, 2, 1000)
-  umeng.MobClickCpp:pay(20, 1, "count_card", 1, 20)
+  -- umeng.MobClickCpp:pay(10, 2, 1000)
+  -- umeng.MobClickCpp:pay(20, 1, "count_card", 1, 20)
+  print('[GameScene:init]')
 
   local this = self
   self:initKeypadHandler()
@@ -86,7 +88,7 @@ function GameScene:init()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
 
-  local ui = ccs.GUIReader:getInstance():widgetFromBinaryFile('UI/Gaming.csb')
+  local ui = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/Gaming.csb')
   rootLayer:addChild(ui)
   self.uiWidget = ui
   self:bindControlsVariables()
