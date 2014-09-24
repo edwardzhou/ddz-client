@@ -51,21 +51,24 @@ function GameScene:ctor(...)
     -- end
   end)
  
+  self._onReconnected = __bind(self.onReconnected, self)
+
   self:init()
  
-  self._onReconnected = __bind(self.onReconnected, self)
 end
 
 function GameScene:on_enterTransitionFinish()
   self.gameConnection.needReconnect = true
+  gameConnection:on('connectionReady', self._onReconnected)
 end
 
 function GameScene:on_exit()
-  g_pokecards_node:removeFromParent()
+  gameConnection:off('connectionReady', self._onReconnected)
 end
 
 function GameScene:on_cleanup()
   print('[GameScene:on_cleanup]')
+  g_pokecards_node:removeFromParent()
   -- umeng.MobClickCpp:finishLevel('base_200')
   -- umeng.MobClickCpp:endLogPageView('page_gaming')
   -- umeng.MobClickCpp:endScene('gaming')
@@ -73,7 +76,6 @@ function GameScene:on_cleanup()
   --PokeCard.releaseAllCards()
   self.gameService:leaveGame()
   self.gameService:cleanup()
-  gameConnection:off('connectionReady', self._onReconnected)
 end
 
 function GameScene:init()
@@ -132,7 +134,6 @@ function GameScene:init()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
 
-  gameConnection:on('connectionReady', self._onReconnected)
 end
 
 function GameScene:resetScene()

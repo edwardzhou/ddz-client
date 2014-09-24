@@ -111,10 +111,14 @@ function RemoteGameService:restoreGame(callback)
     return
   end
 
+
   local params = {
-    gameId = self.pokeGame.gameId,
-    msgNo = self.pokeGame.currentMsgNo
   }
+
+  if this.pokeGame then
+    params.gameId = self.pokeGame.gameId
+    params.msgNo = self.pokeGame.currentMsgNo
+  end
 
   dump(params, "[RemoteGameService:restoreGame] params")
   self.gameConnection:request('ddz.gameHandler.restoreGame', params, function(data)
@@ -232,6 +236,8 @@ function RemoteGameService:onServerGameStartMsg(data)
   self.pokeGame.currentSeqNo = seqNo
   self.pokeGame.currentMsgNo = data.msgNo
   self.pokeGame.nextPlayerId = nextPlayerId
+
+  self:onServerPlayerJoinMsg(data.pokeGame)
 
   if self.msgReceiver.onStartNewGameMsg then
     self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId)
