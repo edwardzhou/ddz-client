@@ -77,6 +77,7 @@ function UIButtonsPlugin.bind( theClass )
     --PokeCard.releaseAllCards()
     --PokeCard.reloadAllCardSprites(self.pokeCardsBatchNode)
     self:resetScene()
+    self.pokeGame = nil
     PokeCard.resetAll()
     this.cardContentSize = PokeCard.getByPokeChars('A')[1].card_sprite:getContentSize()
     this:runAction(

@@ -255,6 +255,8 @@ function PokeCard:reset()
       self.card_sprite:setVisible(false)
       self.card_sprite:setPosition(cc.p(-150, -150))
       self.card_sprite:setScale(self.scaleFactor)
+      --self.card_sprite:setLocalZOrder(54-self.pokeIndex)
+      self.card_sprite:getParent():reorderChild(self.card_sprite, 54 - self.pokeIndex)
     end
 end
 
@@ -460,10 +462,11 @@ PokeCard.resetAll = function(container)
   
 
   for _, pokeCard in pairs(g_shared_cards) do
-    pokeCard.picked = false
-    pokeCard.card_sprite:setVisible(false)
-    pokeCard.card_sprite:setScale(1)
-    pokeCard.card_sprite:setPosition(-150, -150)
+    pokeCard:reset()
+    -- pokeCard.picked = false
+    -- pokeCard.card_sprite:setVisible(false)
+    -- pokeCard.card_sprite:setScale(1)
+    -- pokeCard.card_sprite:setPosition(-150, -150)
   end
 --	PokeCard.releaseAllCards()
 --	PokeCard.sharedPokeCard(container)

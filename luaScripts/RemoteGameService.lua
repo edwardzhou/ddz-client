@@ -128,6 +128,7 @@ function RemoteGameService:restoreGame(callback)
 end
 
 function RemoteGameService:readyGame(callback)
+  self.pokeGame = nil
   self.gameConnection:request('ddz.gameHandler.ready', {}, function(data) 
       dump(data, '[RemoteGameService:readyGame] ddz.gameHandler.ready')
       utils.invokeCallback(callback, data)

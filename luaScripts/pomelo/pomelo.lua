@@ -186,6 +186,14 @@ function Pomelo:initWebSocket(url, cb)
 			sock.onmessage = nil
 			sock.onclose = nil
 		end
+		if self.heartbeatId then
+			clearTimeout(self.heartbeatId)
+			self.heartbeatId = nil
+		end
+		if self.heartbeatTimeoutId then
+			clearTimeout(self.heartbeatTimeoutId)
+			self.heartbeatTimeoutId = nil
+		end	
 	end
 
 	

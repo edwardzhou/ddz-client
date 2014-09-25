@@ -170,6 +170,7 @@ function UIPokecardsPlugin.bind( theClass )
       cardSprite:setPosition( cc.p((self.visibleSize.width - self.cardContentSize.width)/2, p.y) )
       cardSprite:setScale(GlobalSetting.content_scale_factor)
       cardSprite:setVisible(true)
+      cardSprite:getParent():reorderChild(cardSprite, index)
     end
     self:alignCards()
   end
@@ -209,7 +210,7 @@ function UIPokecardsPlugin.bind( theClass )
     for index, pokeCard in pairs(pokeCards) do 
       if pokeCard.card_sprite:getParent() then
         pokeCard.card_sprite:setLocalZOrder(index)
-        --card.card_sprite:getParent():reorderChild(card.card_sprite, index)
+        --pokeCard.card_sprite:getParent():reorderChild(pokeCard.card_sprite, index)
       end
       pokeCard.picked = false
       pokeCard.card_sprite:runAction( CCMoveTo:create(0.3, p ) )
@@ -287,7 +288,7 @@ function UIPokecardsPlugin.bind( theClass )
         cc.ScaleTo:create(0.1, 0.5)
       ))
       startX = startX + 35 * 0.7
-      pokeSprite:setLocalZOrder(30 - index)
+      pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
     end
     --table.removeItems(self.selfPlayerInfo.pokeCards, pokeCards)
     self:alignCards()
@@ -306,7 +307,8 @@ function UIPokecardsPlugin.bind( theClass )
     for index = #pokeCards, 1, -1 do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(startPoint)
-      pokeSprite:setLocalZOrder(100 - index)
+      --pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:getParent():reorderChild(pokeSprite, -100 - index);
       pokeSprite:setVisible(true)
 
       pokeSprite:runAction(cc.Spawn:create(
@@ -330,7 +332,8 @@ function UIPokecardsPlugin.bind( theClass )
     for index = 1, #pokeCards do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(startPoint)
-      pokeSprite:setLocalZOrder(100 - index)
+      --pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:getParent():reorderChild(pokeSprite, -100 - index);
       pokeSprite:setVisible(true)
 
       pokeSprite:runAction(cc.Spawn:create(
@@ -355,7 +358,8 @@ function UIPokecardsPlugin.bind( theClass )
     for index = #pokeCards, 1, -1 do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(endPoint)
-      pokeSprite:setLocalZOrder(100 - index)
+      --pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
       pokeSprite:setVisible(true)
       pokeSprite:setScale(0.7)
 
@@ -382,7 +386,8 @@ function UIPokecardsPlugin.bind( theClass )
     for index = 1, #pokeCards do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(endPoint)
-      pokeSprite:setLocalZOrder(100 - index)
+      --pokeSprite:setLocalZOrder(100 - index)
+      pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
       pokeSprite:setScale(0.7)
       pokeSprite:setVisible(true)
 

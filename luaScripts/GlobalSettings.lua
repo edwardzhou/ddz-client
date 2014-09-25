@@ -21,6 +21,7 @@ settings.handsetInfo = {
 settings.servers = {
   --host = '118.26.229.45',
   host = '192.168.1.165',
+  --host = '192.168.0.163',
   port = '4001'
 }
 
