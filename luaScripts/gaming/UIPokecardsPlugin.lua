@@ -154,32 +154,81 @@ function UIPokecardsPlugin.bind( theClass )
     local eventDispatcher = self:getEventDispatcher()
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, thisObj.pokeCardsLayer)
   end
+
+  function theClass:showDrawingCardsAnimation(nextUserId)
+    local this = self
+    local pokeCards = table.copy(self.selfPlayerInfo.pokeCards)
+    local pokeLen = #pokeCards
+    local index = 1
+    shuffleArray(pokeCards)
+
+    self.pokeCards = {}
+    if not self.selfDrawingCard then
+      self.selfDrawingCard = cc.Sprite:create('images/game168.png')
+      self.selfDrawingCard:setVisible(false)
+      self.pokeCardsLayer:addChild(self.selfDrawingCard, -100)    
+    end
+
+    self:runAction(
+      cc.Sequence:create(
+        cc.Repeat:create( 
+          cc.Sequence:create(
+            cc.CallFunc:create(function() 
+              this.selfDrawingCard:setPosition(400, 300)
+              this.selfDrawingCard:setVisible(true)
+            end),
+            cc.TargetedAction:create(
+              this.selfDrawingCard,
+              cc.MoveTo:create(2/17, cc.p(400, 60))
+            ),
+            cc.CallFunc:create(function() 
+              this.selfDrawingCard:setVisible(false)
+              table.insert(this.pokeCards, pokeCards[index])
+              table.sort(this.pokeCards, sortDescBy('index'))
+              this:showCards(this.pokeCards, true)
+              index = index + 1
+            end)
+            --,cc.DelayTime:create(2 / 17)
+          ), 
+          pokeLen
+        ),
+        cc.CallFunc:create(function()
+          this.pokeCards = this.selfPlayerInfo.pokeCards
+          table.sort(this.pokeCards, sortDescBy('index'))
+          this:showGrabLordButtonsPanel(nextUserId == this.selfUserId, this.pokeGame.grabbingLord.lordValue)
+          this:showPlaycardClock()
+        end)
+      )
+    )
+  end
   
   --------------------------------------------------------------
   -- 显示牌:
   -------------------------------------------------------------
-  function theClass:showCards()
+  function theClass:showCards(pokeCards, noAnimate)
     local p = cc.p(20, (self.visibleSize.height - self.cardContentSize.height)/2)
     p.y = 0
-    local pokeCards = self.selfPlayerInfo.pokeCards
+    --local pokeCards = self.selfPlayerInfo.pokeCards
     for index, pokeCard in pairs(pokeCards) do
       local cardSprite = pokeCard.card_sprite
       local cardValue = pokeCard.index
   
       cardSprite:setTag(0)
-      cardSprite:setPosition( cc.p((self.visibleSize.width - self.cardContentSize.width)/2, p.y) )
+      if not noAnimate then
+        cardSprite:setPosition( cc.p((self.visibleSize.width - self.cardContentSize.width)/2, p.y) )
+      end
       cardSprite:setScale(GlobalSetting.content_scale_factor)
       cardSprite:setVisible(true)
       cardSprite:getParent():reorderChild(cardSprite, index)
     end
-    self:alignCards()
+    self:alignCards(pokeCards, noAnimate)
   end
   
   --[[---------------------------------------------------
   -- 根据牌的数量重新排列展示
   --]]----------------------------------------------------
-  function theClass:alignCards() 
-   local pokeCards = self.selfPlayerInfo.pokeCards
+  function theClass:alignCards(pokeCards, noAnimate) 
+    --local pokeCards = self.selfPlayerInfo.pokeCards
      -- 无牌？返回
     if #pokeCards < 1 then
       return
@@ -213,7 +262,11 @@ function UIPokecardsPlugin.bind( theClass )
         --pokeCard.card_sprite:getParent():reorderChild(pokeCard.card_sprite, index)
       end
       pokeCard.picked = false
-      pokeCard.card_sprite:runAction( CCMoveTo:create(0.3, p ) )
+      if not noAnimate then
+        pokeCard.card_sprite:runAction( CCMoveTo:create(0.3, p ) )
+      else
+        pokeCard.card_sprite:setPosition(p)
+      end
       p.x = p.x + step
     end   
   end
@@ -291,7 +344,7 @@ function UIPokecardsPlugin.bind( theClass )
       pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
     end
     --table.removeItems(self.selfPlayerInfo.pokeCards, pokeCards)
-    self:alignCards()
+    self:alignCards(self.selfPlayerInfo.pokeCards)
   end
 
   --[[-----------------------------------------------------------

@@ -240,6 +240,7 @@ function GameScene:initPlayers()
 end
 
 function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+  local this = self
   self:hideSelfPokecards()
   self:stopWaitingEffect()
   self.selfPlayerInfo = pokeGame:getPlayerInfo(self.selfUserId)
@@ -251,25 +252,71 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.nextPlayerInfo.lastCard = nil
   self.pokeGame = pokeGame
   self.selfPlayerInfo:setPokeIdChars(pokeIdChars)
-  self.pokeCards = self.selfPlayerInfo.pokeCards
-  table.sort(self.pokeCards, sortDescBy('index'))
-  self.selfPlayerInfo:analyzePokecards()
+  -- self.pokeCards = self.selfPlayerInfo.pokeCards
+  -- table.sort(self.pokeCards, sortDescBy('index'))
+  -- self.selfPlayerInfo:analyzePokecards()
   self:doUpdatePlayersUI()
   self.ButtonReady:setVisible(false)
-  self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
+  -- self:showGrabLordButtonsPanel(nextUserId == self.selfUserId, self.pokeGame.grabbingLord.lordValue)
   -- self.LabelBetBase:setStringValue(pokeGame.betBase)
   -- self:showButtonsPanel(nextUserId == self.selfUserId)
   PokeCard.resetAll()
-  self:showCards()
+  --self:showCards()
   self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
   self.LabelLordValue:setString('0')
-  self:showPlaycardClock()
+  --self:showPlaycardClock()
 
   self.SelfUserStatus:setVisible(false)
   self.PrevUserStatus:setVisible(false)
   self.NextUserStatus:setVisible(false)
+  self:showDrawingCardsAnimation(nextUserId)
+
+  -- local pokeCards = table.copy(self.selfPlayerInfo.pokeCards)
+  -- local pokeLen = #pokeCards
+  -- local index = 1
+  -- shuffleArray(pokeCards)
+
+  -- self.pokeCards = {}
+  -- if not self.selfDrawingCard then
+  --   self.selfDrawingCard = cc.Sprite:create('images/game168.png')
+  --   self.selfDrawingCard:setVisible(false)
+  --   self.pokeCardsLayer:addChild(self.selfDrawingCard, -100)    
+  -- end
+
+  -- self:runAction(
+  --   cc.Sequence:create(
+  --     cc.Repeat:create( 
+  --       cc.Sequence:create(
+  --         cc.CallFunc:create(function() 
+  --           this.selfDrawingCard:setPosition(400, 300)
+  --           this.selfDrawingCard:setVisible(true)
+  --         end),
+  --         cc.TargetedAction:create(
+  --           this.selfDrawingCard,
+  --           cc.MoveTo:create(2/17, cc.p(400, 60))
+  --         ),
+  --         cc.CallFunc:create(function() 
+  --           this.selfDrawingCard:setVisible(false)
+  --           table.insert(this.pokeCards, pokeCards[index])
+  --           table.sort(this.pokeCards, sortDescBy('index'))
+  --           this:showCards(this.pokeCards, true)
+  --           index = index + 1
+  --         end)
+  --         --,cc.DelayTime:create(2 / 17)
+  --       ), 
+  --       pokeLen
+  --     ),
+  --     cc.CallFunc:create(function()
+  --       this.pokeCards = this.selfPlayerInfo.pokeCards
+  --       table.sort(this.pokeCards, sortDescBy('index'))
+  --       this:showGrabLordButtonsPanel(nextUserId == this.selfUserId, this.pokeGame.grabbingLord.lordValue)
+  --       this:showPlaycardClock()
+  --     end)
+  --   )
+  -- )
+
 end
 
 local function createScene()

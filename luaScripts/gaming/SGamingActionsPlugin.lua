@@ -9,7 +9,7 @@ function SGamingActionsPlugin.bind(theClass)
 
   function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId)
     self:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
-    self:showPlaycardClock(nil, nextTimeout)
+    --self:showPlaycardClock(nil, nextTimeout)
   end
 
   function theClass:onGrabbingLordMsg(userId, grabState, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish)
@@ -66,7 +66,7 @@ function SGamingActionsPlugin.bind(theClass)
 
       self:showGrabLordButtonsPanel(false)
       if self.pokeGame.lordPlayer == self.selfPlayerInfo then
-        self:showCards()
+        self:showCards(self.selfPlayerInfo.pokeCards, false)
         self:showButtonsPanel(true)
       end      
     end

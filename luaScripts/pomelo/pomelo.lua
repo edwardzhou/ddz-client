@@ -156,6 +156,26 @@ function Pomelo:initWebSocket(url, cb)
 	local _this = self
 	local onopen = function( event)
 		_this.selfDisconnected = false
+	
+		if _this.connectTimeout then
+			clearTimeout(_this.connectTimeout)
+			_this.connectTimeout = nil
+		end
+
+		if _this.connectGuardTimeout then
+			clearTimeout(_this.connectGuardTimeout)
+			_this.connectGuardTimeout = nil
+		end
+
+		if self.heartbeatId then
+			clearTimeout(self.heartbeatId)
+			self.heartbeatId = nil
+		end
+		if self.heartbeatTimeoutId then
+			clearTimeout(self.heartbeatTimeoutId)
+			self.heartbeatTimeoutId = nil
+		end	
+
 		dump(_this.handshakeBuffer, '[Pomelo:InitWebSocket:onopen] _this.handshakeBuffer')
 		local obj = Package.encode(Package.TYPE_HANDSHAKE, Protocol.strencode(cjson.encode(_this.handshakeBuffer)))
 		_this:send(obj) 
@@ -244,7 +264,7 @@ function Pomelo:initWebSocket(url, cb)
 
 			local delayTime = 2 * (_this.retries)
 			print(string.format('[pomelo] connection closed, delay %d seconds to retry', delayTime))
-			setTimeout(doConnect, delayTime)
+			_this.connectGuardTimeout = setTimeout(doConnect, delayTime)
 		else
 			_this:emit('connection_failure')
 		end
