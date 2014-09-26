@@ -2,7 +2,8 @@ local LoginScene = class('LoginScene')
 local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')
 
-local showToastBox = require('UICommon.ToastBox').showToastBox;
+local showToastBox = require('UICommon.ToastBox').showToastBox
+local hideToastBox = require('UICommon.ToastBox').hideToastBox
 
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -163,6 +164,8 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
       else
         if server then
           this.gameConnection:connectToServer(server)
+        else
+          this:showSignInProgress(false)          
         end
       end
     end)
@@ -183,9 +186,10 @@ function LoginScene:showSignInProgress(show, msg)
     }
     showToastBox(this.rootLayer, param)
   else
-    if this.rootLayer.taostBox then
-      this.rootLayer.taostBox:close()
-    end
+    hideToastBox(this.rootLayer)
+    -- if this.rootLayer.taostBox then
+    --   this.rootLayer.taostBox:close()
+    -- end
   end
 end
 
@@ -202,7 +206,9 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
         require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
       else
         if server then
-          this.gameConnection:connectToServer(server)        
+          this.gameConnection:connectToServer(server) 
+        else
+          this:showSignInProgress(false)
         end
       end
     end)

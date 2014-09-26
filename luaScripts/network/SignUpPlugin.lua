@@ -3,7 +3,8 @@ local SignUpPlugin = {}
 local AccountInfo = require('AccountInfo')
 
 function SignUpPlugin.bind(theClass)
-  local function handleSignUpResponse(signUpParams, respData, callback)
+  local function handleSignUpResponse(gameConn, signUpParams, respData, callback)
+    local this = gameConn
     dump(respData, '[handleSignUpResponse][auth.userHandler.signUp] response')
     if respData.err then
       -- sign in failed
@@ -24,6 +25,12 @@ function SignUpPlugin.bind(theClass)
     -- ddz.saveSessionInfo(userInfo)
     callback(true, userInfo, serverInfo)
 
+    if not serverInfo then
+      this:emit('connected')
+      this:emit('connectionReady', this, this.pomeloClient, respData)
+      this:emit('selfConnectionOk')
+    end
+
   end
 
   function theClass:signUp(callback)
@@ -35,7 +42,7 @@ function SignUpPlugin.bind(theClass)
     signUpParams.handsetInfo = ddz.GlobalSettings.handsetInfo
 
     this:request('auth.userHandler.signUp', signUpParams, function(data) 
-      handleSignUpResponse(signUpParams, data, callback)
+      handleSignUpResponse(this, signUpParams, data, callback)
     end)
   end
 end
