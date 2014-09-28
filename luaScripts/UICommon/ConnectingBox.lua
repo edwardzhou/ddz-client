@@ -74,7 +74,7 @@ function ConnectingBox:doShow(params)
   this.closeOnBack = true
 
   if params.closeOnBack ~= nil then
-    --this.closeOnBack = params.closeOnBack
+    this.closeOnBack = params.closeOnBack
   end
 
   if params.showLoading ~= nil then

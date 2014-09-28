@@ -102,7 +102,7 @@ function Emitter:listeners(event)
 end
 
 function Emitter:hasListeners(event)
-	return #(Emitter:listeners(event)) > 0
+	return #(self:listeners(event)) > 0
 end
 
 return Emitter

@@ -6,6 +6,7 @@ local AccountInfo = require('AccountInfo')
 local GameConnection = class('GameConnection', Emitter)
 
 function GameConnection:ctor(userId, sessionToken)
+  local this = self
   self.super.ctor(self)
   self.userId = userId or ddz.GlobalSettings.session.userId
   self.sessionToken = sessionToken or ddz.GlobalSettings.session.sessionToken
@@ -14,6 +15,10 @@ function GameConnection:ctor(userId, sessionToken)
   self.isAuthed = false
   self.isStartConnecting = false
   self.needReconnect = false
+
+  self:on('connectionReady', function() 
+      this:hookChargeResultEvent()
+    end)
 end
 
 function GameConnection:authConnection()
@@ -256,6 +261,7 @@ end
 
 require('network.SignInPlugin').bind(GameConnection)
 require('network.SignUpPlugin').bind(GameConnection)
+require('network.ChargeREsultEventPlugin').bind(GameConnection)
 
 local gameConn = GameConnection.new()
 

@@ -107,6 +107,10 @@ function LandingScene:init()
       print('load json => ' , s2 - s1)
       print('decode json => ', s3 - s2)
       print('total => ', s3 - s1)
+
+      local scene = cc.Director:getInstance():getRunningScene()
+      print('running scene: hidenRetries => ' , scene.hidenRetries)
+
     end),
     cc.DelayTime:create(0.1),
     cc.CallFunc:create(function()

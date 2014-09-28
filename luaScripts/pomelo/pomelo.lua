@@ -521,6 +521,11 @@ function Pomelo:processMessage(msg)
 	if msg.id == nil or msg.id < 1 then
 		-- server push message
 		self:emit(msg.route, msg.body)
+		if not self:hasListeners(msg.route) then
+			print('[Pomelo:processMessage] WARNING: no listener(s) for the event "' .. msg.route .. '", with Data =>')
+			dump(msg.bogy)
+		end
+
 		do return end
 	end
 	
