@@ -1,6 +1,8 @@
 local ChargeChargeEventPlugin = {}
 
 local AccountInfo = require('AccountInfo')
+local showMessageBox = require('UICommon.MessageBox').showMessageBox
+local showToastBox = require('UICommon.ToastBox').showToastBox
 
 function ChargeChargeEventPlugin.bind (theClass)
   function theClass:onChargeResult(data)
@@ -11,14 +13,23 @@ function ChargeChargeEventPlugin.bind (theClass)
       --AccountInfo.getCurrentUser(data.userInfo)
     end
 
-    if runningScene.noPops or runningScene.noChargeResult then
-      return
-    end
-
     if runningScene.updateUserInfo then
       runningScene:updateUserInfo()
     end
 
+    if runningScene.noPops or runningScene.noChargeResult then
+      return
+    end
+
+    local params = {
+      msg = '充值成功，您的金币数量已增加。谢谢！',
+      grayBackground = false,
+      showLoading = false,
+      autoClose = 2,
+      showingTime = 2
+    }
+
+    showToastBox(runningScene, params)
   end
 
   function theClass:hookChargeResultEvent()

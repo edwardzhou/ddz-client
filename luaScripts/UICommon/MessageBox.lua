@@ -22,6 +22,7 @@ function MessageBox:ctor(params)
 
   self.buttonType = params.buttonType or 'ok'
 
+  self.autoClose = params.autoClose
   self.onCancelCallback = params.onCancel
   self.onOkCallback = params.onOk
   self.grayBackground = true
@@ -69,6 +70,13 @@ function MessageBox:init()
               cc.CallFunc:create(function() 
                   this.ImageBox:setVisible(false)
                   this.MsgPanel:setVisible(true)
+
+                  if this.autoClose then
+                    this:runAction(cc.Sequence:create(
+                        cc.DelayTime:create(this.autoClose),
+                        cc.CallFunc:create(__bind(this.close, this))
+                      ))
+                  end
                 end)
             )
         )
