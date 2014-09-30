@@ -261,7 +261,7 @@ end
 
 require('network.SignInPlugin').bind(GameConnection)
 require('network.SignUpPlugin').bind(GameConnection)
-require('network.ChargeREsultEventPlugin').bind(GameConnection)
+require('network.ChargeResultEventPlugin').bind(GameConnection)
 
 local gameConn = GameConnection.new()
 
