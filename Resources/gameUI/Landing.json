@@ -60,7 +60,7 @@
     "images/npitembg.9.png",
     "images/nproombg.9.png",
     "images/npstarbg.9.png",
-    "images/logo.png",
+    "images/landing.jpg",
     "C:\\Program Files (x86)\\CocoStudio\\EditorDefaultRes\\GUI/loadingbar.png",
     "images/sound.9.png",
     "images/start.png",
@@ -116,7 +116,7 @@
           "capInsetsY": 0,
           "fileName": null,
           "fileNameData": {
-            "path": "images/logo.png",
+            "path": "images/landing.jpg",
             "plistFile": "",
             "resourceType": 0
           },

@@ -18,7 +18,7 @@ local TypeMapping = {
   TextField = 'ccui.TextField'
 }
 
-function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
+function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug)
   --[[
     variable pattern v_VarName , it will set varHolder[VarName] = widget
   --]]
@@ -29,7 +29,10 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
     local tmpParent = varHodler
     local widget = nil
     if vtype ~= nil and vname ~= nil and wtype ~= nil then
-      --print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
+      if not not showDebug then
+        print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
+      end
+      
       if vtype == 'v' then
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget
@@ -45,10 +48,12 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer)
         local eventTouchHandler = eventContainer[eventTouchHandlerName]
         local onclickName = vname .. '_onClicked'
         local onclickHandler = eventContainer[onclickName]
-        -- print('[bind event]', vname, eventHandlerName, 
-        --   ' eventHandler: ', eventHandler , 
-        --   ' eventTouchHandlerName: ', eventTouchHandler , 
-        --   ' onclickHandler: ', onclickHandler)
+        if not not showDebug then
+          print('[bind event]', vname, eventHandlerName, 
+            ' eventHandler: ', eventHandler , 
+            ' eventTouchHandlerName: ', eventTouchHandler , 
+            ' onclickHandler: ', onclickHandler)
+        end
         if type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function' then
           widget:addTouchEventListener(function(sender, event)
               if eventTouchHandler then

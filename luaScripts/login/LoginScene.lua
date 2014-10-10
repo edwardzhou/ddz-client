@@ -51,7 +51,7 @@ function LoginScene:init()
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
-  require('utils.UIVariableBinding').bind(uiRoot, self, self)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
   self:initKeypadHandler()
 
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
@@ -59,11 +59,11 @@ function LoginScene:init()
 
   local lastUser = AccountInfo.getCurrentUser()
   if lastUser and lastUser.userId ~= nil then
-    self.InputUserId:setText(lastUser.userId)
-    self.InputPassword:setText('**TOKEN**')
+    self.InputUserId:setString(lastUser.userId)
+    self.InputPassword:setString('**TOKEN**')
   else
-    self.InputUserId:setText('')
-    self.InputPassword:setText('')
+    self.InputUserId:setString('')
+    self.InputPassword:setString('')
   end
 
   -- local uiEditBox = ccui.EditBox:create(cc.size(300, 40), 'images/green_edit.png')
@@ -124,8 +124,8 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
   local this = self
   local params = {buttonType = 'ok'}
 
-  local userId = string.trim(self.InputUserId:getStringValue())
-  local password = string.trim(self.InputPassword:getStringValue())
+  local userId = string.trim(self.InputUserId:getString())
+  local password = string.trim(self.InputPassword:getString())
   if #userId == 0 and #password == 0 then
     params.msg = '请输入账户ID和密码'
   elseif #userId == 0 then
@@ -245,8 +245,8 @@ function LoginScene:Account_onClicked(sender, eventType)
   local btn = sender
   if eventType == ccui.TouchEventType.ended then
     print('[LoginScene:Account_onClicked] userId => ' , btn:getTitleText())
-    self.InputUserId:setText(btn:getTitleText())
-    self.InputPassword:setText('**TOKEN**')
+    self.InputUserId:setString(btn:getTitleText())
+    self.InputPassword:setString('**TOKEN**')
   end
 end
 

@@ -54,13 +54,13 @@ function UserProfileScene:init()
   local userInfo = AccountInfo.getCurrentUser()
 
   self.UserId:setString(userInfo.userId)
-  self.UserNickname:setText(userInfo.nickName)
+  self.UserNickname:setString(userInfo.nickName)
   if userInfo.gender == '男' then
-    self.CheckboxMale:setSelectedState(true)
-    self.CheckboxFemale:setSelectedState(false)
+    self.CheckboxMale:setSelected(true)
+    self.CheckboxFemale:setSelected(false)
   else
-    self.CheckboxMale:setSelectedState(false)
-    self.CheckboxFemale:setSelectedState(true)
+    self.CheckboxMale:setSelected(false)
+    self.CheckboxFemale:setSelected(true)
   end
 
 end
@@ -97,8 +97,8 @@ end
 function UserProfileScene:ButtonBindMobile_onClicked()
   print('[UserProfileScene:ButtonBindMobile_onClicked]')
   local reqParams = {}
-  reqParams.nickName = self.UserNickname:getStringValue()
-  if self.CheckboxMale:getSelectedState() then
+  reqParams.nickName = self.UserNickname:getString()
+  if self.CheckboxMale:isSelected() then
     reqParams.gender = '男'
   else
     reqParams.gender = '女'
@@ -115,19 +115,19 @@ end
 
 
 function UserProfileScene:CheckboxMale_onEvent(sender, eventType)
-  if self.CheckboxFemale:getSelectedState() then
-    self.CheckboxFemale:setSelectedState(false)    
+  if self.CheckboxFemale:isSelected() then
+    self.CheckboxFemale:setSelected(false)    
   else
-    self.CheckboxMale:setSelectedState(true)
+    self.CheckboxMale:setSelected(true)
   end
 end
 
 function UserProfileScene:CheckboxFemale_onEvent(sender, eventType)
   print('[UserProfileScene:CheckboxFemale_onEvent] eventType => ', eventType)
-  if self.CheckboxMale:getSelectedState() then
-    self.CheckboxMale:setSelectedState(false)    
+  if self.CheckboxMale:isSelected() then
+    self.CheckboxMale:setSelected(false)    
   else
-    self.CheckboxFemale:setSelectedState(true)
+    self.CheckboxFemale:setSelected(true)
   end
 end
 

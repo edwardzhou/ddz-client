@@ -67,12 +67,12 @@ end
 
 function PasswordScene:ButtonChangePassword_onClicked()
   local this = self
-  local password = string.trim(self.InputPassword:getStringValue())
-  local password2 = string.trim(self.InputPassword2:getStringValue())
+  local password = string.trim(self.InputPassword:getString())
+  local password2 = string.trim(self.InputPassword2:getString())
 
   if #password < 6 then
     local msgParam = {
-      msg = '请输入六到8位长度的密码。'
+      msg = '请输入6到8位长度的密码。'
     }
     showMessageBox(self, msgParam)
     return

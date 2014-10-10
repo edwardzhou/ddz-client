@@ -1,6 +1,7 @@
 require 'GuiConstants'
 local AccountInfo = require('AccountInfo')
 local Resources = require('Resources')
+local showMessageBox = require('UICommon.MessageBox').showMessageBox
 
 local HallScene = class('HallScene')
 
@@ -143,6 +144,21 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
     local item = this.ListViewRooms:getItem(curIndex)
     local gameRoom = item.gameRoom
     dump(gameRoom, 'selected room: ')
+
+    local coins = 0
+    local currentUser = AccountInfo.getCurrentUser()
+    if currentUser and currentUser.ddzProfile then
+      coins = currentUser.ddzProfile.coins or 0
+    end
+
+    if not self:checkMinCoinsQty(gameRoom, coins) then
+      return
+    end
+
+    if not self:checkMaxCoinsQty(gameRoom, coins) then
+      return
+    end
+
     this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
       ddz.selectedRoom = gameRoom
@@ -152,6 +168,56 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
     end)
   end
 end
+
+function HallScene:checkMinCoinsQty(gameRoom, coins) 
+  local this = self
+
+  -- 小于等于0，代表不限制
+  if gameRoom.minCoinsQty <= 0 then
+    return true
+  end
+
+  -- 大于最小数，返回
+  if coins >= gameRoom.minCoinsQty then
+    return true
+  end
+
+  -- 提示用户金币不足，需购买
+  local params = {
+    msg = string.format('您的金币不足, 还差 %d , 请先充值. 谢谢!', gameRoom.minCoinsQty - coins)
+    , grayBackground = true
+    , closeOnClickOutside = false
+    , buttonType = 'ok'
+  }
+
+  showMessageBox(self, params)
+end
+
+function HallScene:checkMaxCoinsQty(gameRoom, coins) 
+  local this = self
+
+  -- 小于等于0，代表不限制
+  if gameRoom.maxCoinsQty <= 0 then
+    return true
+  end
+
+  -- 大于最大数，返回
+  if coins <= gameRoom.maxCoinsQty then
+    return true
+  end
+
+  -- 提示用户金币超过准入上限，请进入更高级别的房间
+  local params = {
+    msg = string.format('您的金币已超过准入上限%d, 请移步到更高级别的房间. 谢谢!', gameRoom.maxCoinsQty)
+    , grayBackground = true
+    , closeOnClickOutside = false
+    , buttonType = 'ok'
+  }
+
+  showMessageBox(self, params)
+end
+
+
 
 function HallScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
