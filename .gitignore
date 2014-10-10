@@ -2,6 +2,8 @@
 bin/
 gen/
 .project
+tags
+.tag*
 lint.xml
 *~
 .~*
