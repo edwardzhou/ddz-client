@@ -263,7 +263,7 @@ function UIPokecardsPlugin.bind( theClass )
       end
       pokeCard.picked = false
       if not noAnimate then
-        pokeCard.card_sprite:runAction( CCMoveTo:create(0.3, p ) )
+        pokeCard.card_sprite:runAction( cc.MoveTo:create(0.3, p ) )
       else
         pokeCard.card_sprite:setPosition(p)
       end
