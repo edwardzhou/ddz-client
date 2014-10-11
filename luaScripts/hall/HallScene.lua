@@ -1,4 +1,3 @@
-require 'GuiConstants'
 local AccountInfo = require('AccountInfo')
 local Resources = require('Resources')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox

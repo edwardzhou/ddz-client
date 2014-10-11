@@ -1,13 +1,8 @@
-require "Cocos2d"
-require "Cocos2dConstants"
 require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
-require 'GuiConstants'
 
-cc.KeyCode.KEY_BACKSPACE    = 0x0006
-cc.KeyCode.KEY_MENU         = 0x000F
-
+print = release_print
 -- cclog
 cclog = function(...)
     print(string.format(...))
@@ -39,7 +34,7 @@ local function main()
     --fileUtils:addSearchPath()
     
     fileUtils:setSearchPaths(searchPaths)
-    fileUtils:addSearchPath('src')
+    --fileUtils:addSearchPath('src')
     --fileUtils:addSearchPath('cocos2d')
 
     local resPaths = fileUtils:getSearchResolutionsOrder()

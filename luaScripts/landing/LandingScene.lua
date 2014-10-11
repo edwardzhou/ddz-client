@@ -1,5 +1,3 @@
---require 'CCBReaderLoad'
-require 'GuiConstants'
 require 'PokeCard'
 require 'socket'
 require 'GlobalSettings'

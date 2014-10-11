@@ -276,7 +276,7 @@ end
 ddz.getHandsetInfo = function ()
   local cjson = require('cjson.safe')
   local handsetInfo = {}
-  local luaj = require('luaj')
+  local luaj = require('cocos.cocos2d.luaj')
   local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/MobileInfoGetter", "getAllInfoString", {}, "()Ljava/lang/String;")
   print('[MobileInfoGetter] ok: ', ok, ' ret: ', ret)
   if ok then
@@ -288,7 +288,7 @@ end
 
 ddz.getSDCardPath = function ()
   local sdcardPath
-  local luaj = require('luaj')
+  local luaj = require('cocos.cocos2d.luaj')
   local ok, sdcardPath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "getExternalStorageDirectory", {}, "()Ljava/lang/String;")
   print('sdcardPath => ', ok, sdcardPath)
   return sdcardPath
@@ -296,7 +296,7 @@ end
 
 ddz.mkdir = function (dirPath, hasFilename)
   hasFilename = hasFilename == true
-  local luaj = require('luaj')
+  local luaj = require('cocos.cocos2d.luaj')
   local ok, fungamePath = luaj.callStaticMethod("com/fungame/DDZ/Utils", "mkdir", {dirPath, hasFilename}, "(Ljava/lang/String;Z)Ljava/lang/String;")
   print('ddzPath => ', ok, fungamePath)
   return fungamePath

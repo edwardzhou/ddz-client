@@ -1,4 +1,3 @@
-require('GuiConstants')
 local Res = require('Resources')
 
 local UIPlayerUpdatePlugin = {}

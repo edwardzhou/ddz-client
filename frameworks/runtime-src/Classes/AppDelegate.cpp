@@ -241,7 +241,9 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     getApkSign();
 
-    if (engine->executeScriptFile("boot.lua")) {
+    FileUtils::getInstance()->addSearchPath("src");
+
+    if (engine->executeScriptFile("boot")) {
         return  false;
     }
     

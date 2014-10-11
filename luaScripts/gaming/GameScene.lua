@@ -1,4 +1,3 @@
-require 'GuiConstants'
 require 'PokeCard'
 local AccountInfo = require('AccountInfo')
 local mobdebug = require('src.mobdebug')

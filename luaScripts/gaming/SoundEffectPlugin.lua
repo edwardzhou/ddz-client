@@ -1,4 +1,4 @@
-require('AudioEngine')
+require('cocos.cocosdenshion.AudioEngine')
 require('PokeCard')
 local Res = require('Resources')
 local SoundEffectPlugin = {}

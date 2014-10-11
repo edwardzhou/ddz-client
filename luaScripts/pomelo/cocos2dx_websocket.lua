@@ -1,4 +1,4 @@
-require "network.NetworkConstants"
+require "cocos.network.NetworkConstants"
 local scheduler = require('framework.scheduler')
 local Protocol = require('pomelo.protocol.protocol')
 

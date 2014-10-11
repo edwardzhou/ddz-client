@@ -1,7 +1,14 @@
+require "cocos.cocos2d.Cocos2d"
+require "cocos.cocos2d.Cocos2dConstants"
 require('extern')
 require 'consts'
 require 'GlobalSettings'
 require 'DebugSetting'
+
+require 'cocos.ui.GuiConstants'
+
+cc.KeyCode.KEY_BACKSPACE    = 0x0006
+cc.KeyCode.KEY_MENU         = 0x000F
 
 local function startup()
   local director = cc.Director:getInstance()

@@ -50,5 +50,5 @@ def handle_event(event, tp, args):
     lua_src_dir = os.path.normpath(os.path.join(args["project-path"], "luaScripts"))
     #print('lua_src_dir: ' , lua_src_dir)
     assets_dir = args['assets-dir']
-    compile_resources(lua_src_dir, assets_dir)
+    #compile_resources(lua_src_dir, assets_dir)
     generate_app_version(platform_proj_dir, assets_dir)
