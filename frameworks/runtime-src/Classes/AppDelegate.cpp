@@ -241,7 +241,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     getApkSign();
 
-    FileUtils::getInstance()->addSearchPath("src");
+    //FileUtils::getInstance()->addSearchPath("src");
 
     if (engine->executeScriptFile("boot")) {
         return  false;

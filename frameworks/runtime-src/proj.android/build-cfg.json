@@ -8,7 +8,7 @@
     "copy_resources": [
         {
             "from": "../../../src", 
-            "to": "src"
+            "to": ""
         }, 
         {
             "from": "../../../res", 
@@ -25,7 +25,7 @@
         }, 
         {
             "from": "../../cocos2d-x/external/lua/luasocket",
-            "to": "src",
+            "to": "",
             "include": [
                 "*.lua"
             ]

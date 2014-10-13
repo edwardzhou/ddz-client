@@ -1,6 +1,6 @@
 require 'PokeCard'
 local AccountInfo = require('AccountInfo')
-local mobdebug = require('src.mobdebug')
+--local mobdebug = require('src.mobdebug')
 local GamePlayer = require('GamePlayer')
 --local GameService = require('LocalGameService')
 local GameService = require('RemoteGameService')
