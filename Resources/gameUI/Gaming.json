@@ -19,7 +19,7 @@
     "images/ui6.png",
     "images/ui7.png",
     "images/ui8.png",
-    "images/bg.png",
+    "images/bg.jpg",
     "images/lpk_bg.png",
     "images/back.9.png",
     "images/back_high.9.png",
@@ -3982,7 +3982,7 @@
       "adaptScreen": false,
       "backGroundImage": null,
       "backGroundImageData": {
-        "path": "images/bg.png",
+        "path": "images/bg.jpg",
         "plistFile": "",
         "resourceType": 0
       },

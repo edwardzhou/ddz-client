@@ -19,7 +19,7 @@
     "images/ui6.png",
     "images/ui7.png",
     "images/ui8.png",
-    "images/bg.png",
+    "images/bg.jpg",
     "images/lpk_bg.png",
     "images/back.9.png",
     "images/back_high.9.png",
@@ -48,7 +48,7 @@
     "images/feiji.png",
     "images/back2.9.png",
     "images/back2_high.9.png",
-    "images/bg.png",
+    "images/bg.jpg",
     "images/menu_bg.9.png",
     "images/menu_icon_02.png",
     "images/head6.png",
@@ -184,7 +184,7 @@
           "capInsetsY": 0,
           "fileName": null,
           "fileNameData": {
-            "path": "images/bg.png",
+            "path": "images/bg.jpg",
             "plistFile": "",
             "resourceType": 0
           },

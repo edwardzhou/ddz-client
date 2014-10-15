@@ -20,9 +20,16 @@ public class Utils {
 	public static List<String> getStorageList() {
 
         List<String> list = new ArrayList<String>();
-
+        
         BufferedReader buf_reader = null;
         try {
+        	File fMntSdcard = new File("/mnt/sdcard");
+        	if (fMntSdcard.exists() && fMntSdcard.canWrite()) {
+        		Log.d(TAG, "found /mnt/sdcard is writable");
+        		list.add("/mnt/sdcard");
+        		return list;
+        	}
+        	
             buf_reader = new BufferedReader(new FileReader("/proc/mounts"));
             String line;
             Log.d(TAG , "/proc/mounts");
@@ -35,7 +42,8 @@ public class Utils {
                 			|| line.contains("asec") 
                 			|| line.contains("obb") 
                 			|| line.contains("mapper")
-                			|| line.contains("tmpfs")
+                      || line.contains("tmpfs")
+                			|| line.contains("loop")
                 			|| line.contains("lfs")) {
                 		continue;
                 	}
