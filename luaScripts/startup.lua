@@ -1,5 +1,7 @@
-require "cocos.cocos2d.Cocos2d"
-require "cocos.cocos2d.Cocos2dConstants"
+--require "cocos.cocos2d.Cocos2d"
+--require "cocos.cocos2d.Cocos2dConstants"
+CC_USE_DEPRECATED_API = false
+require "cocos.init"
 require('extern')
 require 'consts'
 require 'GlobalSettings'
