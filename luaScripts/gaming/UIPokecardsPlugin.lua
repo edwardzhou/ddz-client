@@ -234,7 +234,7 @@ function UIPokecardsPlugin.bind( theClass )
       return
     end
     
-    local p = cc.p(0, 10) 
+    local p = cc.p(0, 0) 
     local cardWidth = self.cardContentSize.width --* GlobalSetting.content_scale_factor
     --print("cardWidth", cardWidth)
     -- 计算牌之间的覆盖位置，最少遮盖30% 即显示面积最多为70%
