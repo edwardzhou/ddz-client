@@ -33,5 +33,4 @@ int register_all_cocos2dx_umeng(lua_State* tolua_S);
 
 
 
-
 #endif // __cocos2dx_umeng_h__

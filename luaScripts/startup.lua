@@ -47,11 +47,12 @@ local function startup()
 
   umeng.MobClickCpp:startWithAppkey("5351dee256240b09f604ee4c", "my_channel_lua")
 
-  local eventDict = {hello = "world"}
+  local eventDict = {hello = "world", demo = "ok " .. os.date()}
 
   umeng.MobClickCpp:event('test event')
   umeng.MobClickCpp:event('test event with label', 'test label')
-  umeng.MobClickCpp:event('test event with label', eventDict)
+  umeng.MobClickCpp:event('test event with dict', eventDict)
+  umeng.MobClickCpp:event('test event with dict3', {hello = "world", demo = "ok " .. os.date()}, 1)
 
   local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
   local function onNetworkChanged(event)

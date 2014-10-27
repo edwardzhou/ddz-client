@@ -8,6 +8,7 @@
 #include "unzip.h"
 #include "MobClickCpp.h"
 #include "lua_cocos2dx_umeng_auto.hpp"
+#include "lua_cocos2dx_umeng_manual.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
 
@@ -173,6 +174,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     // CCLOG("after register_all_cocos2dx_pluginx ....");
     lua_module_register(luaState);
     register_all_cocos2dx_umeng(luaState);
+    register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
 

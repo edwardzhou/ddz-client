@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := hellolua/main.cpp \
                    ../../Classes/crypto/base64/libbase64.c \
                    ../../Classes/crypto/xxtea/xxtea.c \
                    ../../Classes/lua-binding/auto/lua_cocos2dx_umeng_auto.cpp \
+                   ../../Classes/lua-binding/manual/lua_cocos2dx_umeng_manual.cpp \
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
@@ -26,6 +27,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
                     $(LOCAL_PATH)/../../Classes/crypto/xxtea \
                     $(LOCAL_PATH)/../../Classes/crypto \
                     $(LOCAL_PATH)/../../Classes/lua-binding/auto \
+                    $(LOCAL_PATH)/../../Classes/lua-binding/manual \
                     $(LOCAL_PATH)/../../3rdLibs/umeng/android/libMobClickCpp/include \
 
           
@@ -35,8 +37,6 @@ LOCAL_WHOLE_STATIC_LIBRARIES += mobclickcpp_static
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-module,scripting/lua-bindings/proj.android)
-
-$(call add-import-path, "$(LOCAL_PATH)/../../3rdLibs/umeng/android")
-$(call import-module, libMobClickCpp)
+$(call import-module, scripting/lua-bindings/proj.android)
 $(call import-module, curl/prebuilt/android)
+$(call import-module, libMobClickCpp)

@@ -64,15 +64,6 @@
 -- @param #double price
 
 --------------------------------
--- @overload self, char, map_table, int         
--- @overload self, char, char         
--- @function [parent=#MobClickCpp] event
--- @param self
--- @param #char eventId
--- @param #map_table eventAttr
--- @param #int counter
-
---------------------------------
 --  页面时长统计,记录某个view被打开多长时间,可以自己计时也可以调用beginLogPageView,endLogPageView自动计时<br>
 -- param pageName 需要记录时长的view名称.<br>
 -- return void.

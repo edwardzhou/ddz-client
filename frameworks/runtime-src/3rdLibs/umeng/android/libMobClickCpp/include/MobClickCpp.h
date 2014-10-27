@@ -100,8 +100,7 @@ namespace umeng {
         /** 自定义事件,数量统计.
          使用前，请先到友盟App管理后台的设置->编辑自定义事件 中添加相应的事件ID，然后在工程中传入相应的事件ID
          */
-        static void event(const char * eventId, const cocos2d::Map<std::string, std::string>& eventAttr, int counter = 0);
-
+        static void event(const char * eventId, eventDict * attributes, int counter = 0);
         
         ///---------------------------------------------------------------------------------------
         /// @name  页面计时
