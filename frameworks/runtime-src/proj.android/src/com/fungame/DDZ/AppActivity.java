@@ -104,7 +104,7 @@ public class AppActivity extends Cocos2dxActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	com.umeng.mobclickcpp.MobClickCppHelper.init(this);	
     //com.umeng.analytics.game.UMGameAgent.init(getContext());
     System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
 	

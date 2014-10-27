@@ -52,3 +52,6 @@ def handle_event(event, tp, args):
     assets_dir = args['assets-dir']
     compile_resources(lua_src_dir, assets_dir)
     generate_app_version(platform_proj_dir, assets_dir)
+    umengJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "umeng", "android"))
+    umengJarFile = "mobclickcpphelper.jar"
+    shutil.copy( os.path.join(umengJarPath, umengJarFile) , os.path.join(platform_proj_dir, "libs", umengJarFile))

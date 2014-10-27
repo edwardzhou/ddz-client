@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+<target name="-pre-compile">
+    <echo message="JARPATH=${toString:project.all.jars.path}"></echo>
+
+     <path id="xpath">
+         <path path="${toString:project.all.jars.path}"></path>
+        <pathelement location="3rdJars/umeng_sdk.jar"></pathelement>
+    </path>
+    <path id="project.all.jars.path">
+        <path refid="xpath"/>
+        <!-- <pathelement pathref="xpath"></pathelement> -->
+    </path>
+
+    <echo message="JARPATH=${toString:project.all.jars.path}"></echo>
+</target>
+</project>

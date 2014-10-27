@@ -45,6 +45,13 @@ local function startup()
   
   dump(ddz.GlobalSettings, 'GlobalSettings')
 
+  umeng.MobClickCpp:startWithAppkey("5351dee256240b09f604ee4c", "my_channel_lua")
+
+  local eventDict = {hello = "world"}
+
+  umeng.MobClickCpp:event('test event')
+  umeng.MobClickCpp:event('test event with label', 'test label')
+  umeng.MobClickCpp:event('test event with label', eventDict)
 
   local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
   local function onNetworkChanged(event)
