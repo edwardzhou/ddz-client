@@ -10,8 +10,8 @@ int lua_cocos2dx_umeng_MobClickCpp_event(lua_State* tolua_S)
     int argc = 0;
     bool ok  = true;
 #if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
 #endif
+    tolua_Error tolua_err;
 
 #if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"umeng.MobClickCpp",0,&tolua_err)) goto tolua_lerror;
