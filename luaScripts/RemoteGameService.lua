@@ -17,6 +17,7 @@ function RemoteGameService:ctor(msgReceiver, selfUserId)
   self._onServerPlayCardMsg = __bind(self.onServerPlayCardMsg, self)
   self._onServerLordValueUpgradeMsg = __bind(self.onServerLordValueUpgradeMsg, self)
   self._onServerGameOverMsg= __bind(self.onServerGameOverMsg, self)
+  self._onServerPreStartGameMsg = __bind(self.onServerPreStartGameMsg, self)
   self:setupPomeloEvents()
 end
 
@@ -32,6 +33,7 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onPlayCard', self._onServerPlayCardMsg)
   ddz.pomeloClient:on('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
   ddz.pomeloClient:on('onGameOver', self._onServerGameOverMsg)
+  ddz.pomeloClient:on('onPreStartGame', self._onServerPreStartGameMsg)
 end
 
 function RemoteGameService:removePomeloEvents()
@@ -42,6 +44,7 @@ function RemoteGameService:removePomeloEvents()
   ddz.pomeloClient:off('onPlayCard')
   ddz.pomeloClient:off('onLordValueUpgrade')
   ddz.pomeloClient:off('onGameOver')
+  ddz.pomeloClient:off('onPreStartGame')
 end
 
 
@@ -226,6 +229,22 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
     -- 未产生地主
     self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, false)
   end
+end
+
+function RemoteGameService:onServerPreStartGameMsg(data)
+  dump(data, "[RemoteGameService:onServerPreStartGameMsg] data => ")
+  local this = self
+  local roomId = data.roomId
+  local tableId = data.tableId
+
+  local params = {
+    roomId = roomId,
+    tableId = tableId
+  }
+
+  self.gameConnection:request('ddz.entryHandler.ackPreStartGame', params, function(resp) 
+    end)
+
 end
 
 function RemoteGameService:onServerGameStartMsg(data)
