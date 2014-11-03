@@ -26,6 +26,13 @@ settings.servers = {
   port = '4001'
 }
 
+settings.audioInfo = {
+  musicVolume = 1.0,
+  musicEnabled = true,
+  effectVolume = 1.0,
+  effectEnabled = true
+}
+
 settings.mode = 'dev'
 
 settings.tags = 'testing'

@@ -203,7 +203,8 @@ function UIButtonsPlugin.bind( theClass )
     -- self.gameOverDialog.keypadListener:setEnabled(true)
     -- ddz.pomeloClient:disconnect()
 
-    self:playCardEffect({gender='女'}, {cardType = 10})
+    --self:playCardEffect({gender='女'}, {cardType = 10})
+    local audioConfig = require('sysConfig.AudioConfigScene').showAudioConfig(self, {})
   end
 
   function theClass:ButtonBack_onClicked(sender, event)

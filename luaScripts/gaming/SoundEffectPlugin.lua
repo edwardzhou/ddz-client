@@ -1,10 +1,18 @@
 require('cocos.cocosdenshion.AudioEngine')
 require('PokeCard')
 local Res = require('Resources')
+local _audioInfo = ddz.GlobalSettings.audioInfo
 local SoundEffectPlugin = {}
 
 
 function SoundEffectPlugin.bind( theClass )
+
+  local function playSoundEffect(soundFile)
+    if _audioInfo.effectEnabled and _audioInfo.effectVolume > 0.0 then
+      print('[playSoundEffect] _audioInfo.effectVolume => ', _audioInfo.effectVolume)
+      ccexp.AudioEngine:play2d(soundFile, false, _audioInfo.effectVolume)
+    end
+  end
 
   local function getCardSoundFile(card, female)
     local filename = 'Man_'
@@ -48,7 +56,7 @@ function SoundEffectPlugin.bind( theClass )
  
   local function playCardSound(card, female)
     local filename = 'sounds/' .. getCardSoundFile(card, female)
-    AudioEngine.playEffect(filename)
+    playSoundEffect(filename)
   end
 
   function theClass:playRocketEffect()
@@ -58,7 +66,7 @@ function SoundEffectPlugin.bind( theClass )
       cc.Sequence:create(
         cc.DelayTime:create(0.5),
         cc.CallFunc:create(function ()
-          AudioEngine.playEffect('sounds/Missile.mp3')
+          playSoundEffect('sounds/Missile.mp3')
         end),
         cc.Show:create(),
         cc.MoveBy:create(1.2, cc.p(0, 550)),
@@ -100,7 +108,7 @@ function SoundEffectPlugin.bind( theClass )
     self.bombSprite:runAction(
       cc.Sequence:create(
         cc.DelayTime:create(0.3),
-        cc.CallFunc:create(function () AudioEngine.playEffect('sounds/Bomb.mp3') end),
+        cc.CallFunc:create(function () playSoundEffect('sounds/Bomb.mp3') end),
         cc.Show:create(),
         cc.Blink:create(0.2, 3),
         cc.Animate:create(bombAnamination),
@@ -117,7 +125,7 @@ function SoundEffectPlugin.bind( theClass )
     self.PlaneImage:runAction(
       cc.Sequence:create(
         cc.DelayTime:create(0.2),
-        cc.CallFunc:create(function() AudioEngine.playEffect('sounds/Aircraft.mp3') end),
+        cc.CallFunc:create(function() playSoundEffect('sounds/Aircraft.mp3') end),
         cc.Show:create(),
         cc.Blink:create(0.2, 2),
         cc.MoveBy:create(1.2, cc.p(-800, 0)),
@@ -176,17 +184,17 @@ function SoundEffectPlugin.bind( theClass )
     filename = filename .. '.mp3'
 
     filename = 'sounds/' .. filename
-    AudioEngine.playEffect(filename)
+    playSoundEffect(filename)
   end
 
   function theClass:playWinEffect()
     local filename = 'sounds/game_win.mp3'
-    AudioEngine.playEffect(filename)
+    playSoundEffect(filename)
   end
 
   function theClass:playLoseEffect()
     local filename = 'sounds/game_lose.mp3'
-    AudioEngine.playEffect(filename)
+    playSoundEffect(filename)
   end
 
 

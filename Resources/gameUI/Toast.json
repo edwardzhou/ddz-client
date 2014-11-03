@@ -85,16 +85,10 @@
     "images/bag2.png",
     "GUI/button.png",
     "images/back.png",
-    "images/game8.png",
-    "images/game76.png",
-    "images/game52.png",
-    "images/game48.png",
-    "images/game31.png",
-    "images/game96.png",
-    "images/game53.png",
-    "images/game35.png",
-    "images/menu_icon_high.png",
-    "images/head1.png"
+    "GUI/slider_bar.png",
+    "GUI/slider_bar_button.png",
+    "GUI/selected01.png",
+    "GUI/selected02.png"
   ],
   "version": "1.6.0.0",
   "widgetTree": {

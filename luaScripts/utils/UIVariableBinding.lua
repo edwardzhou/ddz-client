@@ -15,7 +15,8 @@ local TypeMapping = {
   TextBMFont = 'ccui.TextBMFont',
   TextAtlas = 'ccui.TextAtlas',
   Button = 'ccui.Button',
-  TextField = 'ccui.TextField'
+  TextField = 'ccui.TextField',
+  Slider = 'ccui.Slider'
 }
 
 function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug)
@@ -51,8 +52,8 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug
         if not not showDebug then
           print('[bind event]', vname, eventHandlerName, 
             ' eventHandler: ', eventHandler , 
-            ' eventTouchHandlerName: ', eventTouchHandler , 
-            ' onclickHandler: ', onclickHandler)
+            ' , eventTouchHandlerName: ', eventTouchHandler , 
+            ' , onclickHandler: ', onclickHandler)
         end
         if type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function' then
           widget:addTouchEventListener(function(sender, event)
@@ -65,8 +66,20 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug
             end)
         end
 
+        if not not showDebug then
+          print(string.format('widget: %s , type(eventHandler) =>', vname), type(eventHandler))
+          print(widget, widget.addEventListener )
+        end
+
         if type(eventHandler) == 'function' and widget.addEventListener ~= nil then
+          if not not showDebug then
+            print(string.format('widget: %s bind onEvent', vname))
+          end
+
           widget:addEventListener(function(sender, event)
+              if not not showDebug then
+                print(string.format('[widget:EventListener] [%s] onEvent: event => %d, sender =>',vname, event), sender)
+              end
               eventHandler(eventContainer, sender, event)
             end)
         end
