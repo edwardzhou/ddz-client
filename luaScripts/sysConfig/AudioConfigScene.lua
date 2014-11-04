@@ -51,9 +51,6 @@ function AudioConfigScene:init()
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
 
-  print('[AudioConfigScene:init] self.EffectVolume => ', self.EffectVolume, ', ', type(self.EffectVolume))
-  self.EffectVolume:setTouchEnabled(true)
-
   self:initKeypadHandler()
 
 end
@@ -61,8 +58,15 @@ end
 function AudioConfigScene:on_enter()
   local user = AccountInfo.getCurrentUser()
   dump(user, '[AudioConfigScene:on_enter] user')
+  self.MusicVolume:setPercent(_audioInfo.musicVolume * 100)
+  self.MusicEnabled:setSelected(_audioInfo.musicEnabled)
+  self.EffectVolume:setPercent(_audioInfo.effectVolume * 100)
+  self.EffectEnabled:setSelected(_audioInfo.effectEnabled)
 end
 
+function AudioConfigScene:on_exit()
+ ddz.saveAudioInfo( _audioInfo )
+end
 
 function AudioConfigScene:initKeypadHandler()
   local this = self
@@ -84,7 +88,7 @@ end
 
 function AudioConfigScene:close()
   local this = self
-  this:runAction(cc.RemoveSelf:create())
+   this:runAction(cc.RemoveSelf:create())
   --self.uiRoot:setOpacity(0)
   -- self.MsgPanel:setVisible(false)
   -- self.ImageBox:setVisible(true)
@@ -105,23 +109,39 @@ function AudioConfigScene:BgPanel_onClicked()
 end
 
 function AudioConfigScene:MusicVolume_onEvent(sender, eventType)
-  print('[AudioConfigScene:MusicVolume_onEvent] eventType: ', eventType, ', ccui.SliderEventType.percentChanged: ', ccui.SliderEventType.percentChanged)
+  --print('[AudioConfigScene:MusicVolume_onEvent] eventType: ', eventType, ', ccui.SliderEventType.percentChanged: ', ccui.SliderEventType.percentChanged)
+  local player = require('MusicPlayer')
   if eventType == ccui.SliderEventType.percentChanged then
     local slider = sender
     local percent = slider:getPercent()
     _audioInfo.musicVolume = percent / 100.0
     print('MusicVolume => Percent ' , percent)
+    player.setBgMusicVolume()
   end
 end
 
 function AudioConfigScene:EffectVolume_onEvent(sender, eventType)
-  print('[AudioConfigScene:EffectVolume_onEvent] eventType: ', eventType, ', ccui.SliderEventType.percentChanged: ', ccui.SliderEventType.percentChanged)
+  --print('[AudioConfigScene:EffectVolume_onEvent] eventType: ', eventType, ', ccui.SliderEventType.percentChanged: ', ccui.SliderEventType.percentChanged)
   if eventType == ccui.SliderEventType.percentChanged then
     local slider = sender
     local percent = slider:getPercent()
     _audioInfo.effectVolume = percent / 100.0
     print('EffectVolumn => Percent ' , percent)
   end
+end
+
+function AudioConfigScene:MusicEnabled_onEvent(sender, eventType)
+  local player = require('MusicPlayer')
+  _audioInfo.musicEnabled = eventType == ccui.CheckBoxEventType.selected
+  if _audioInfo.musicEnabled then
+    player.playBgMusic()
+  else
+    player.stopBgMusic()
+  end
+end
+
+function AudioConfigScene:EffectEnabled_onEvent(sender, eventType)
+  _audioInfo.effectEnabled = eventType == ccui.CheckBoxEventType.selected
 end
 
 local function createScene()

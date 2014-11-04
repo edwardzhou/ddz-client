@@ -1,4 +1,5 @@
 ddz = ddz or {}
+local cjson = require('cjson.safe')
 
 function table.deepCopy(src)
   local newTable = {}
@@ -316,7 +317,7 @@ end
 
 ddz.loadSessionInfo = function()
   local fu = cc.FileUtils:getInstance()
-  local cjson = require('cjson.safe')
+  --local cjson = require('cjson.safe')
   local sessionInfo = nil
   local filepath = ddz.getDataStorePath() .. '/userinfo.json'
   print('filepath => ', filepath)
@@ -336,12 +337,31 @@ end
 
 ddz.saveSessionInfo = function(sessionInfo, filename)
   filename = filename or 'userinfo.json'
-  local cjson = require('cjson.safe')
+  --local cjson = require('cjson.safe')
   local filepath = ddz.getDataStorePath() .. '/' .. filename
   print('filepath => ', filepath)
   local file = io.open(filepath, 'w+')
   file:write(cjson.encode(sessionInfo))
   file:close()
+end
+
+ddz.saveAudioInfo = function(audioInfo, filename)
+  filename = filename or 'audioinfo.json'
+  local data = cjson.encode(audioInfo)
+  ddz.writeToFile(filename, data)
+end
+
+ddz.loadAudioInfo = function(filename)
+  filename = filename or 'audioinfo.json'
+  local data = ddz.readFromFile(filename)
+  if data and #data > 0 then
+    data = cjson.decode(data)
+    if data and data ~= cjson.null then
+      return data
+    end
+  end
+
+  return null
 end
 
 -- ddz.saveSessionInfo = function(sessionInfo, filename)

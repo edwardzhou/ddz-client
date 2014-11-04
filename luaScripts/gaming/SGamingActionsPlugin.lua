@@ -73,7 +73,7 @@ function SGamingActionsPlugin.bind(theClass)
 
   end
 
-  function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout, isDelegating)
+  function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout, isDelegating, data)
     if userId == self.selfPlayerInfo.userId then
       self:onSelfPlayerPlayCard(card)
       if isDelegating then
@@ -94,9 +94,11 @@ function SGamingActionsPlugin.bind(theClass)
       self:hideCard(nextPlayer.lastCard)
     end
 
-    --if nextPlayer.userId == self.selfPlayerInfo.userId then
-      self:showButtonsPanel(nextPlayer.userId == self.selfPlayerInfo.userId)
-    --end
+   self:showButtonsPanel(nextPlayer.userId == self.selfPlayerInfo.userId)
+   if nextPlayer.userId == self.selfPlayerInfo.userId then
+      self:updateButtonsState()
+      self.tipPokeChars = data.tipPokeChars
+    end
 
     self:showPlaycardClock(nil, nextTimeout)
   end

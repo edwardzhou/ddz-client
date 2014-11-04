@@ -42,6 +42,14 @@ local function startup()
   ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')
   ddz.GlobalSettings.appPrivatePath = cc.FileUtils:getInstance():getWritablePath()
   ddz.GlobalSettings.session = ddz.loadSessionInfo() or {}
+
+  local audioInfo = ddz.loadAudioInfo()
+  if audioInfo then
+    ddz.GlobalSettings.audioInfo.musicEnabled = audioInfo.musicEnabled
+    ddz.GlobalSettings.audioInfo.musicVolume = audioInfo.musicVolume
+    ddz.GlobalSettings.audioInfo.effectEnabled = audioInfo.effectEnabled
+    ddz.GlobalSettings.audioInfo.effectVolume = audioInfo.effectVolume
+  end
   
   dump(ddz.GlobalSettings, 'GlobalSettings')
 

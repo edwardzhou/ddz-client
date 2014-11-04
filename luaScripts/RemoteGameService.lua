@@ -300,52 +300,8 @@ function RemoteGameService:onServerPlayCardMsg(data)
     pokeGame.lastPlay = {player = player, card = card}
   end
 
-  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing, data.delegating > 0)
+  utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing, data.delegating > 0, data)
 
-  -- local this = self
-  -- local userId = data.userId
-  -- local pokeIdChars = data.pokeIdChars
-  -- local player = self.playersMap[userId]
-  -- local pokeCards = PokeCard.getByPokeChars(pokeIdChars)
-  -- table.removeItems(player.pokeCards, pokeCards)
-  -- player:analyzePokecards()
-  -- local nextPlayer = self.pokeGame:setToNextPlayer()
-
-  -- local card = Card.create(pokeCards)
-  -- if card:isBomb() or card:isRocket() then
-  --   self.pokeGame.bombs = self.pokeGame.bombs + 1
-  --   self.pokeGame.lordValue = self.pokeGame.lordValue * 2
-  --   self.msgReceiver:onLordValueUpgrade(self.pokeGame.lordValue)
-  -- end
-
-  -- self.pokeGame.prevPlay = {player = player, card = card}
-  -- if card:isValid() then
-  --   self.pokeGame.lastPlay = {player = player, card = card}
-  -- end
-
-  -- if self.msgReceiver.onPlayCardMsg then
-  --   self.msgReceiver:onPlayCardMsg(userId, pokeIdChars)
-  -- end
-
-  -- if #player.pokeCards == 0 then
-  --   local balance = self:getGameBalance(self.pokeGame, player)
-  --   scheduler.performWithDelayGlobal(function ()
-  --       this:onServerGameOverMsg({balance = balance})
-  --     end, 0.3)
-
-  --   return
-  -- end
-
-  -- if nextPlayer.robot then
-  --   scheduler.performWithDelayGlobal(
-  --     AI.playCard, 
-  --     {this, this.pokeGame, nextPlayer},
-  --     math.random()*10 % 2)
-  --   -- scheduler.performWithDelayGlobal(function() 
-  --   --   local pokeCards = table.copy(nextPlayer.pokeCards, 1, 1)
-  --   --   this:playCard(nextPlayer.userId, PokeCard.getIdChars(pokeCards))
-  --   -- end, math.random(2) - 0.5)
-  -- end
 end
 
 function RemoteGameService:onServerGameOverMsg(data)

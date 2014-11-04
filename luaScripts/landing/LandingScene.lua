@@ -2,6 +2,8 @@ require 'PokeCard'
 require 'socket'
 require 'GlobalSettings'
 
+local _audioInfo = ddz.GlobalSettings.audioInfo
+
 local AccountInfo = require('AccountInfo')
 local SignInType = require('consts').SignInType
 
@@ -132,7 +134,9 @@ function LandingScene:init()
       this:ButtonConnect_onClicked()
     end)
   ))
-  
+
+  require('MusicPlayer').playBgMusic()
+
 end
 
 function LandingScene:on_enterTransitionFinish()

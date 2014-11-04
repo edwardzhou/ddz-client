@@ -111,54 +111,63 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonTip_onClicked(sender, event)
-    --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
-    local analyzedCards = self.selfPlayerInfo.analyzedCards
-    local cards
-    local pokeCards = {}
-    cards = analyzedCards.straightsCards
-    if #cards == 0 then
-      cards = analyzedCards.pairsStraightsCards
-    end
-    if #cards == 0 then
-      cards = analyzedCards.threesCards
-    end
-    if #cards == 0 then
-      cards = analyzedCards.pairsCards
-    end
-    if #cards == 0 then
-      cards = analyzedCards.singlesCards
+    if self.tipPokeChars == nil or self.tipPokeChars == '' then
+      self:ButtonPass_onClicked(self.ButtonPass, event)
+      return
     end
 
-    if #cards > 0 then
-      local card = cards[1]
-      local pokeCards = table.dup(card.pokeCards)
-      if card.cardType == CardType.THREE then
-        local singleCards = analyzedCards.singlesCards
-        if #singleCards > 0 then
-          table.insert(pokeCards, singleCards[1].pokeCards[1])
-        else
-          local pairsCards = analyzedCards.pairsCards
-          if #pairsCards > 0 then
-            table.append(pokeCards, pairsCards[1].pokeCards)
-          end
-        end
-      elseif card.CardType == CardType.THREE_STRAIGHT then
-        local singleCards = analyzedCards.singlesCards
-        if #singleCards >= card.cardLength then
-          for i=1,card.cardLength do
-            table.insert(pokeCards, singleCards[i].pokeCards[1])
-          end
-        else
-          local pairsCards = analyzedCards.pairsCards
-          if #pairsCards >= card.cardLength then
-            table.append(pokeCards, pairsCards[i].pokeCards)
-          end 
-        end
-      end
+    local pokeCards = PokeCard.getByPokeChars(self.tipPokeChars)
+    self:pickupPokecards(pokeCards)
+    self:updateButtonsState()
 
-      self:pickupPokecards(pokeCards)
-      self:updateButtonsState()
-    end
+    -- --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
+    -- local analyzedCards = self.selfPlayerInfo.analyzedCards
+    -- local cards
+    -- local pokeCards = {}
+    -- cards = analyzedCards.straightsCards
+    -- if #cards == 0 then
+    --   cards = analyzedCards.pairsStraightsCards
+    -- end
+    -- if #cards == 0 then
+    --   cards = analyzedCards.threesCards
+    -- end
+    -- if #cards == 0 then
+    --   cards = analyzedCards.pairsCards
+    -- end
+    -- if #cards == 0 then
+    --   cards = analyzedCards.singlesCards
+    -- end
+
+    -- if #cards > 0 then
+    --   local card = cards[1]
+    --   local pokeCards = table.dup(card.pokeCards)
+    --   if card.cardType == CardType.THREE then
+    --     local singleCards = analyzedCards.singlesCards
+    --     if #singleCards > 0 then
+    --       table.insert(pokeCards, singleCards[1].pokeCards[1])
+    --     else
+    --       local pairsCards = analyzedCards.pairsCards
+    --       if #pairsCards > 0 then
+    --         table.append(pokeCards, pairsCards[1].pokeCards)
+    --       end
+    --     end
+    --   elseif card.CardType == CardType.THREE_STRAIGHT then
+    --     local singleCards = analyzedCards.singlesCards
+    --     if #singleCards >= card.cardLength then
+    --       for i=1,card.cardLength do
+    --         table.insert(pokeCards, singleCards[i].pokeCards[1])
+    --       end
+    --     else
+    --       local pairsCards = analyzedCards.pairsCards
+    --       if #pairsCards >= card.cardLength then
+    --         table.append(pokeCards, pairsCards[i].pokeCards)
+    --       end 
+    --     end
+    --   end
+
+    --   self:pickupPokecards(pokeCards)
+    --   self:updateButtonsState()
+    -- end
 
   end
 
