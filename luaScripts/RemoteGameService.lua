@@ -224,10 +224,10 @@ function RemoteGameService:onServerGrabbingLordMsg(data)
     pokeGame.lordUserId = data.lordUserId
     pokeGame.lordPokeCards = PokeCard.pokeCardsFromChars(data.lordPokeCards)
     pokeGame.lordPlayer = pokeGame:getPlayerInfo(pokeGame.lordUserId)
-    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, true)
+    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, true, data)
   else
     -- 未产生地主
-    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, false)
+    self.msgReceiver:onGrabbingLordMsg(userId, grabState, data.nextUserId, data.timing, pokeGame, false, false, data)
   end
 end
 

@@ -12,7 +12,7 @@ function SGamingActionsPlugin.bind(theClass)
     --self:showPlaycardClock(nil, nextTimeout)
   end
 
-  function theClass:onGrabbingLordMsg(userId, grabState, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish)
+  function theClass:onGrabbingLordMsg(userId, grabState, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish, data)
     print('userId: ', userId, self.selfPlayerInfo.userId, self.prevPlayerInfo.userId, self.nextPlayerInfo.userId)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
@@ -68,6 +68,9 @@ function SGamingActionsPlugin.bind(theClass)
       if self.pokeGame.lordPlayer == self.selfPlayerInfo then
         self:showCards(self.selfPlayerInfo.pokeCards, false)
         self:showButtonsPanel(true)
+        self.tipPokeChars = data.tipPokeChars
+      else
+        self.tipPokeChars = ''
       end      
     end
 
@@ -94,10 +97,12 @@ function SGamingActionsPlugin.bind(theClass)
       self:hideCard(nextPlayer.lastCard)
     end
 
-   self:showButtonsPanel(nextPlayer.userId == self.selfPlayerInfo.userId)
-   if nextPlayer.userId == self.selfPlayerInfo.userId then
+    self:showButtonsPanel(nextPlayer.userId == self.selfPlayerInfo.userId)
+    if nextPlayer.userId == self.selfPlayerInfo.userId then
       self:updateButtonsState()
       self.tipPokeChars = data.tipPokeChars
+    else
+      self.tipPokeChars = ''
     end
 
     self:showPlaycardClock(nil, nextTimeout)
