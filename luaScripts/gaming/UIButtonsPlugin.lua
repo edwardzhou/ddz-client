@@ -175,9 +175,25 @@ function UIButtonsPlugin.bind( theClass )
     local pokeCards = self:getPickedPokecards()
     local pokeIdChars = PokeCard.getIdChars(pokeCards)
 
+    if self.tipPokeChars == '' then
+      self:ButtonPass_onClicked(self.ButtonPass, event)
+      return;
+    end
+
     local card = Card.create(pokeCards)
     -- dump(card, '[theClass:ButtonPlay_onClicked] card')
     if card.cardType == CardType.NONE then
+      self.PlayTipsLabel:setVisible(false)
+      self.PlayTipsLabel:setOpacity(0)
+      self.PlayTipsLabel:setString('所选牌型无效')
+      self.PlayTipsLabel:runAction(
+        cc.Sequence:create(
+            cc.Show:create(),
+            cc.FadeIn:create(0.5),
+            cc.DelayTime:create(2),
+            cc.Hide:create()
+          )
+        )
       return
     end
 
@@ -185,6 +201,8 @@ function UIButtonsPlugin.bind( theClass )
     self.gameService:playCard(self.selfUserId, pokeIdChars, function(data)
         if data.result.retCode ~= 0 then
           self:showButtonsPanel(true)
+        else
+          self.PlayTipsLabel:setVisible(false)
         end
       end)
   end

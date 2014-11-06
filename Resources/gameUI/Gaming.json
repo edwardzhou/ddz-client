@@ -3942,6 +3942,53 @@
           },
           "text": "等待牌局开始..."
         }
+      },
+      {
+        "classname": "LabelBMFont",
+        "name": null,
+        "children": [],
+        "options": {
+          "__type": "LabelBMFontSurrogate:#EditorCommon.JsonModel.Component.GUI",
+          "classname": "LabelBMFont",
+          "name": "v_PlayTipsLabel",
+          "ZOrder": 15,
+          "actiontag": 29752015,
+          "anchorPointX": 0.5,
+          "anchorPointY": 0.5,
+          "classType": "CocoStudio.EngineAdapterWrap.CSLabelBMFont",
+          "colorB": 255,
+          "colorG": 255,
+          "colorR": 255,
+          "customProperty": "",
+          "flipX": false,
+          "flipY": false,
+          "height": 28,
+          "ignoreSize": true,
+          "layoutParameter": null,
+          "opacity": 255,
+          "positionPercentX": 0.513125,
+          "positionPercentY": 0.322875,
+          "positionType": 0,
+          "rotation": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "sizePercentX": 0.29375,
+          "sizePercentY": 0.0770833343,
+          "sizeType": 0,
+          "tag": 4506,
+          "touchAble": false,
+          "useMergedTexture": false,
+          "visible": false,
+          "width": 180,
+          "x": 410,
+          "y": 154,
+          "fileNameData": {
+            "path": "fonts/playTips.fnt",
+            "plistFile": "",
+            "resourceType": 0
+          },
+          "text": "你没有大过对方的牌"
+        }
       }
     ],
     "options": {

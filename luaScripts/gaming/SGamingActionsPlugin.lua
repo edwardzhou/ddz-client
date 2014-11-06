@@ -101,8 +101,20 @@ function SGamingActionsPlugin.bind(theClass)
     if nextPlayer.userId == self.selfPlayerInfo.userId then
       self:updateButtonsState()
       self.tipPokeChars = data.tipPokeChars
+      if self.tipPokeChars == '' and data.player.pokeCount > 0 then
+        self.PlayTipsLabel:setVisible(false)
+        self.PlayTipsLabel:setOpacity(0)
+        self.PlayTipsLabel:setString('你没有大过对方的牌')
+        self.PlayTipsLabel:runAction(
+            cc.Sequence:create(
+                cc.Show:create(),
+                cc.FadeIn:create(0.8)
+              )
+          )
+      end
     else
       self.tipPokeChars = ''
+      self.PlayTipsLabel:setVisible(false)
     end
 
     self:showPlaycardClock(nil, nextTimeout)
