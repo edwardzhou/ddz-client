@@ -8,6 +8,7 @@ function PokecardPickAI:findValidCard(pickedPokecards, tipPokecards)
   end
 
   if count == 3 then
+    
   end
 
 end

@@ -197,10 +197,41 @@ function UIButtonsPlugin.bind( theClass )
       return
     end
 
+    local pomeGame = self.pokeGame
+    local lastPlay = pomeGame.lastPlay
+    if lastPlay ~= nil and lastPlay.player.userId ~= self.selfUserId then
+      if not card:isGreaterThan(lastPlay.card) then
+        self.PlayTipsLabel:setVisible(false)
+        self.PlayTipsLabel:setOpacity(0)
+        self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
+        self.PlayTipsLabel:runAction(
+          cc.Sequence:create(
+              cc.Show:create(),
+              cc.FadeIn:create(0.5),
+              cc.DelayTime:create(2),
+              cc.Hide:create()
+            )
+          )
+        return
+      end
+    end
+
     self:showButtonsPanel(false)
     self.gameService:playCard(self.selfUserId, pokeIdChars, function(data)
         if data.result.retCode ~= 0 then
           self:showButtonsPanel(true)
+
+          -- self.PlayTipsLabel:setVisible(false)
+          -- self.PlayTipsLabel:setOpacity(0)
+          -- self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
+          -- self.PlayTipsLabel:runAction(
+          --   cc.Sequence:create(
+          --       cc.Show:create(),
+          --       cc.FadeIn:create(0.5),
+          --       cc.DelayTime:create(2),
+          --       cc.Hide:create()
+          --     )
+          --   )
         else
           self.PlayTipsLabel:setVisible(false)
         end
