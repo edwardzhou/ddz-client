@@ -183,17 +183,18 @@ function UIButtonsPlugin.bind( theClass )
     local card = Card.create(pokeCards)
     -- dump(card, '[theClass:ButtonPlay_onClicked] card')
     if card.cardType == CardType.NONE then
-      self.PlayTipsLabel:setVisible(false)
-      self.PlayTipsLabel:setOpacity(0)
-      self.PlayTipsLabel:setString('所选牌型无效')
-      self.PlayTipsLabel:runAction(
-        cc.Sequence:create(
-            cc.Show:create(),
-            cc.FadeIn:create(0.5),
-            cc.DelayTime:create(2),
-            cc.Hide:create()
-          )
-        )
+      self:showSelfPlayTips('所选牌型无效', 2)
+      -- self.PlayTipsLabel:setVisible(false)
+      -- self.PlayTipsLabel:setOpacity(0)
+      -- self.PlayTipsLabel:setString('所选牌型无效')
+      -- self.PlayTipsLabel:runAction(
+      --   cc.Sequence:create(
+      --       cc.Show:create(),
+      --       cc.FadeIn:create(0.5),
+      --       cc.DelayTime:create(2),
+      --       cc.Hide:create()
+      --     )
+      --   )
       return
     end
 
@@ -201,17 +202,18 @@ function UIButtonsPlugin.bind( theClass )
     local lastPlay = pomeGame.lastPlay
     if lastPlay ~= nil and lastPlay.player.userId ~= self.selfUserId then
       if not card:isGreaterThan(lastPlay.card) then
-        self.PlayTipsLabel:setVisible(false)
-        self.PlayTipsLabel:setOpacity(0)
-        self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
-        self.PlayTipsLabel:runAction(
-          cc.Sequence:create(
-              cc.Show:create(),
-              cc.FadeIn:create(0.5),
-              cc.DelayTime:create(2),
-              cc.Hide:create()
-            )
-          )
+        self.showSelfPlayTips('您所要出的牌没有大过对方', 2)
+        -- self.PlayTipsLabel:setVisible(false)
+        -- self.PlayTipsLabel:setOpacity(0)
+        -- self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
+        -- self.PlayTipsLabel:runAction(
+        --   cc.Sequence:create(
+        --       cc.Show:create(),
+        --       cc.FadeIn:create(0.5),
+        --       cc.DelayTime:create(2),
+        --       cc.Hide:create()
+        --     )
+        --   )
         return
       end
     end
@@ -233,7 +235,8 @@ function UIButtonsPlugin.bind( theClass )
           --     )
           --   )
         else
-          self.PlayTipsLabel:setVisible(false)
+          self:hideSelfPlayTips()
+          --self.PlayTipsLabel:setVisible(false)
         end
       end)
   end

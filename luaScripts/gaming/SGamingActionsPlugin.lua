@@ -102,19 +102,11 @@ function SGamingActionsPlugin.bind(theClass)
       self:updateButtonsState()
       self.tipPokeChars = data.tipPokeChars
       if self.tipPokeChars == '' and data.player.pokeCount > 0 then
-        self.PlayTipsLabel:setVisible(false)
-        self.PlayTipsLabel:setOpacity(0)
-        self.PlayTipsLabel:setString('你没有大过对方的牌')
-        self.PlayTipsLabel:runAction(
-            cc.Sequence:create(
-                cc.Show:create(),
-                cc.FadeIn:create(0.8)
-              )
-          )
+        self:showSelfPlayTips('您没有大过对方的牌')
       end
     else
       self.tipPokeChars = ''
-      self.PlayTipsLabel:setVisible(false)
+      self:hideSelfPlayTips()
     end
 
     self:showPlaycardClock(nil, nextTimeout)
@@ -134,6 +126,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onPrevPlayerPlayCard(card)
+    self:hidePrevPlayTips()
     self:playCardEffect(self.prevPlayerInfo, card)
     self:hideCard(self.prevPlayerInfo.lastCard)
     self:prevPlayCardEffect(card)
@@ -145,6 +138,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onNextPlayerPlayCard(card)
+    self:hideNextPlayTips()
     self:playCardEffect(self.nextPlayerInfo, card)
     self:hideCard(self.nextPlayerInfo.lastCard)
     self:nextPlayCardEffect(card)

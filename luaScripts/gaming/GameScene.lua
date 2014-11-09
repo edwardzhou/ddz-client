@@ -330,6 +330,7 @@ require('gaming.UIButtonsPlugin').bind(GameScene)
 require('gaming.SGamingActionsPlugin').bind(GameScene)
 require('gaming.UIClockCountDownPlugin').bind(GameScene)
 require('gaming.SoundEffectPlugin').bind(GameScene)
+require('gaming.PlayingTipsPlugin').bind(GameScene)
 
 require('network.ConnectionStatusPlugin').bind(GameScene)
 
