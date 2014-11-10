@@ -1,13 +1,15 @@
 local UIClockCountDownPlugin = {}
+local utils = require('utils.utils')
 
 function UIClockCountDownPlugin.bind(theClass)
   local function doTickCount(_self, timeoutCallback)
     return function()
       _self._countDownTimes = _self._countDownTimes - 1
       _self.CountDownLabel:setString(tostring(_self._countDownTimes))
-      if _self._countDownTimes < 0 then
+      if _self._countDownTimes < 1 then
+        _self:stopCountdown()
         _self._clockAction = nil
-        _self.CountDownClock:setVisible(false)
+        -- _self.CountDownClock:setVisible(false)
         if type(timeoutCallback) == 'function' then
           timeoutCallback()
         else
@@ -24,15 +26,16 @@ function UIClockCountDownPlugin.bind(theClass)
     local this = self
     times = times or 30
     self:stopCountdown()
+    self.CountDownClock:runAction(cc.MoveTo:create(0.3, pos))
     self.CountDownLabel:setString(tostring(times))
     self.CountDownLabel:setColor(cc.c3b(0,0,0))
-    self.CountDownClock:setPosition(pos)
+    --self.CountDownClock:setPosition(pos)
     self.CountDownClock:setVisible(true)
     self._countDownTimes = times
     self._clockAction = self.CountDownClock:runAction(cc.Repeat:create(cc.Sequence:create(
       cc.DelayTime:create(1),
       cc.CallFunc:create(doTickCount(this, timeoutCallback))
-    ), times+1))
+    ), times))
   end
 
   function theClass:stopCountdown()
@@ -40,7 +43,7 @@ function UIClockCountDownPlugin.bind(theClass)
       self.CountDownClock:stopAction(self._clockAction)
       self._clockAction = nil
     end
-    self.CountDownClock:setVisible(false)
+    --self.CountDownClock:setVisible(false)
   end
 
   function theClass:startSelfPlayerCountdown(timeoutCallback, times)
@@ -50,12 +53,22 @@ function UIClockCountDownPlugin.bind(theClass)
 
   function theClass:startNextPlayerCountdown(timeoutCallback, times)
     local pos = cc.p(670, 325)
-    self:startCountdown(pos, timeoutCallback, times)
+    local this = self
+    self:startCountdown(pos, function() 
+        print('[startNextPlayerCountdown] clock times up.')
+        this:showNextPlayTips('对方网络不给力, 请稍候...')
+        utils.invokeCallback(timeoutCallback)
+      end, times)
   end
 
   function theClass:startPrevPlayerCountdown(timeoutCallback, times)
     local pos = cc.p(130, 350)
-    self:startCountdown(pos, timeoutCallback, times)
+    local this = self
+    self:startCountdown(pos, function() 
+        print('[startPrevPlayerCountdown] clock times up.')
+        this:showPrevPlayTips('对方网络不给力, 请稍候...')
+        utils.invokeCallback(timeoutCallback)
+      end, times)
   end
 
   function theClass:showPlaycardClock(fn, timeout)

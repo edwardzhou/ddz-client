@@ -202,7 +202,7 @@ function UIButtonsPlugin.bind( theClass )
     local lastPlay = pomeGame.lastPlay
     if lastPlay ~= nil and lastPlay.player.userId ~= self.selfUserId then
       if not card:isGreaterThan(lastPlay.card) then
-        self.showSelfPlayTips('您所要出的牌没有大过对方', 2)
+        self:showSelfPlayTips('您所要出的牌没有大过对方', 2)
         -- self.PlayTipsLabel:setVisible(false)
         -- self.PlayTipsLabel:setOpacity(0)
         -- self.PlayTipsLabel:setString('您所要出的牌没有大过对方')

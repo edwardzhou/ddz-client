@@ -7,6 +7,7 @@ apk="runtime/android/DDZ-debug.apk"
 
 #echo "pkg => " $1
 
+rm -f res.zip
 zip -r res.zip Resources
 
 #echo $serials
