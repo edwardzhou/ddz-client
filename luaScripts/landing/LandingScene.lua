@@ -250,6 +250,8 @@ function LandingScene:connectToServer()
         local scene = require('hall.HallScene')()
         cc.Director:getInstance():replaceScene(scene)
       end
+
+      require('CommonMsgHandler'):hookMessages()
     end)
   end
 

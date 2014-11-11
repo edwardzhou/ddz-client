@@ -67,7 +67,8 @@ end
 
 function GameScene:on_cleanup()
   print('[GameScene:on_cleanup]')
-  g_pokecards_node:removeFromParent()
+  --g_pokecards_node:removeFromParent()
+  --g_pokecards_node:setParent(nil)
   -- umeng.MobClickCpp:finishLevel('base_200')
   -- umeng.MobClickCpp:endLogPageView('page_gaming')
   -- umeng.MobClickCpp:endScene('gaming')
