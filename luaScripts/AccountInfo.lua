@@ -80,6 +80,10 @@ function AccountInfo.setCurrentUser(session)
     ddz.GlobalSettings.serverInfo = table.dup(session.server)
   end
 
+  for i=#_info.accounts, 6, -1 do
+    table.remove(_info.accounts, i)
+  end
+
   AccountInfo.save()
 end
 
