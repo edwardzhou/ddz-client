@@ -7,8 +7,8 @@ local Res = require('Resources')
 
 function SGamingActionsPlugin.bind(theClass)
 
-  function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId)
-    self:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+  function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId, timing)
+    self:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
     --self:showPlaycardClock(nil, nextTimeout)
   end
 
@@ -200,7 +200,7 @@ function SGamingActionsPlugin.bind(theClass)
         this.ButtonReady:setBright(true)        
       end)
 
-    self:stopCountdown()
+    self:stopCountdown(true)
 
 
     -- --self.self

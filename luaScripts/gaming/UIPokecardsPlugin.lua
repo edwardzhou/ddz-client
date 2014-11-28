@@ -155,7 +155,7 @@ function UIPokecardsPlugin.bind( theClass )
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, thisObj.pokeCardsLayer)
   end
 
-  function theClass:showDrawingCardsAnimation(nextUserId)
+  function theClass:showDrawingCardsAnimation(nextUserId, timing)
     local this = self
     local pokeCards = table.copy(self.selfPlayerInfo.pokeCards)
     local pokeLen = #pokeCards
@@ -196,7 +196,8 @@ function UIPokecardsPlugin.bind( theClass )
           this.pokeCards = this.selfPlayerInfo.pokeCards
           table.sort(this.pokeCards, sortDescBy('index'))
           this:showGrabLordButtonsPanel(nextUserId == this.selfUserId, this.pokeGame.grabbingLord.lordValue)
-          this:showPlaycardClock()
+          print('[UIPokecardsPlugin:showDrawingCardsAnimation] timing: ', timing)
+          this:showPlaycardClock(nil, timing, true)
         end)
       )
     )

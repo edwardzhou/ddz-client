@@ -239,7 +239,7 @@ function GameScene:initPlayers()
     end)
 end
 
-function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
+function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
   local this = self
   self:hideSelfPokecards()
   self:stopWaitingEffect()
@@ -271,7 +271,8 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId)
   self.SelfUserStatus:setVisible(false)
   self.PrevUserStatus:setVisible(false)
   self.NextUserStatus:setVisible(false)
-  self:showDrawingCardsAnimation(nextUserId)
+  print('[GameScene:doServerGameStart] timing: ', timing)
+  self:showDrawingCardsAnimation(nextUserId, timing)
 
   -- local pokeCards = table.copy(self.selfPlayerInfo.pokeCards)
   -- local pokeLen = #pokeCards

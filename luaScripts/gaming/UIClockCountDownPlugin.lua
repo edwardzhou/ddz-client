@@ -22,11 +22,16 @@ function UIClockCountDownPlugin.bind(theClass)
     end
   end
 
-  function theClass:startCountdown(pos, timeoutCallback, times)
+  function theClass:startCountdown(pos, timeoutCallback, times, directShow)
     local this = self
     times = times or 30
     self:stopCountdown()
-    self.CountDownClock:runAction(cc.MoveTo:create(0.3, pos))
+    if not directShow then
+      self.CountDownClock:runAction(cc.MoveTo:create(0.3, pos))
+    else
+      self.CountDownClock:setPosition(pos)
+    end
+
     self.CountDownLabel:setString(tostring(times))
     self.CountDownLabel:setColor(cc.c3b(0,0,0))
     --self.CountDownClock:setPosition(pos)
@@ -38,46 +43,50 @@ function UIClockCountDownPlugin.bind(theClass)
     ), times))
   end
 
-  function theClass:stopCountdown()
+  function theClass:stopCountdown(hideIt)
     if self._clockAction ~= nil then
       self.CountDownClock:stopAction(self._clockAction)
       self._clockAction = nil
     end
-    --self.CountDownClock:setVisible(false)
+
+    if hideIt then
+      self.CountDownClock:setVisible(false)
+    end
   end
 
-  function theClass:startSelfPlayerCountdown(timeoutCallback, times)
+
+  function theClass:startSelfPlayerCountdown(timeoutCallback, times, directShow)
     local pos = cc.p(420, 260)
-    self:startCountdown(pos, timeoutCallback, times)
+    self:startCountdown(pos, timeoutCallback, times, directShow)
   end
 
-  function theClass:startNextPlayerCountdown(timeoutCallback, times)
+  function theClass:startNextPlayerCountdown(timeoutCallback, times, directShow)
     local pos = cc.p(670, 325)
     local this = self
     self:startCountdown(pos, function() 
         print('[startNextPlayerCountdown] clock times up.')
         this:showNextPlayTips('对方网络不给力, 请稍候...')
         utils.invokeCallback(timeoutCallback)
-      end, times)
+      end, times, directShow)
   end
 
-  function theClass:startPrevPlayerCountdown(timeoutCallback, times)
+  function theClass:startPrevPlayerCountdown(timeoutCallback, times, directShow)
     local pos = cc.p(130, 350)
     local this = self
     self:startCountdown(pos, function() 
         print('[startPrevPlayerCountdown] clock times up.')
         this:showPrevPlayTips('对方网络不给力, 请稍候...')
         utils.invokeCallback(timeoutCallback)
-      end, times)
+      end, times, directShow)
   end
 
-  function theClass:showPlaycardClock(fn, timeout)
+  function theClass:showPlaycardClock(fn, timeout, directShow)
     if self.pokeGame.nextPlayerId == self.selfPlayerInfo.userId then
-      self:startSelfPlayerCountdown(fn, timeout)
+      self:startSelfPlayerCountdown(fn, timeout, directShow)
     elseif self.pokeGame.nextPlayerId == self.prevPlayerInfo.userId then
-      self:startPrevPlayerCountdown(fn, timeout)
+      self:startPrevPlayerCountdown(fn, timeout, directShow)
     elseif self.pokeGame.nextPlayerId == self.nextPlayerInfo.userId then
-      self:startNextPlayerCountdown(fn, timeout)
+      self:startNextPlayerCountdown(fn, timeout, directShow)
     end
   end
 end

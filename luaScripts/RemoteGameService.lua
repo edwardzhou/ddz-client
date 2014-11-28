@@ -260,7 +260,7 @@ function RemoteGameService:onServerGameStartMsg(data)
   self:onServerPlayerJoinMsg(data.pokeGame)
 
   if self.msgReceiver.onStartNewGameMsg then
-    self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId)
+    self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId, data.timing or 20)
   end
 end
 
