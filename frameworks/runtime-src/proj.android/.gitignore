@@ -9,3 +9,4 @@ assets/
 lint.xml
 *~
 *.DS*
+local.properties
