@@ -150,20 +150,32 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
       coins = currentUser.ddzProfile.coins or 0
     end
 
-    if not self:checkMinCoinsQty(gameRoom, coins) then
-      return
-    end
+    -- if not self:checkMinCoinsQty(gameRoom, coins) then
+    --   return
+    -- end
 
-    if not self:checkMaxCoinsQty(gameRoom, coins) then
-      return
-    end
+    -- if not self:checkMaxCoinsQty(gameRoom, coins) then
+    --   return
+    -- end
 
     this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
-      ddz.selectedRoom = gameRoom
-      local createGameScene = require('gaming.GameScene')
-      local gameScene = createGameScene()
-      cc.Director:getInstance():pushScene(gameScene)
+      if data.retCode == ddz.ErrorCode.SUCCESS then
+        ddz.selectedRoom = gameRoom
+        local createGameScene = require('gaming.GameScene')
+        local gameScene = createGameScene()
+        cc.Director:getInstance():pushScene(gameScene)
+      else
+        -- 提示用户金币超过准入上限，请进入更高级别的房间
+        local params = {
+          msg = data.message
+          , grayBackground = true
+          , closeOnClickOutside = false
+          , buttonType = 'ok'
+        }
+
+        showMessageBox(self, params)
+      end
     end)
   end
 end
