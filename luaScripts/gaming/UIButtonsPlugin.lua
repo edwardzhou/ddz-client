@@ -4,8 +4,9 @@ local UIButtonsPlugin = {}
 
 function UIButtonsPlugin.bind( theClass )
   function theClass:showGrabLordButtonsPanel(show, currentLordValue)
+    --__G__TRACKBACK__('theClass:showGrabLordButtonsPanel')
     currentLordValue = currentLordValue or 0
-    --print('[theClass:showGrabLordButtonsPanel] currentLordValue: ', currentLordValue)
+    print('[theClass:showGrabLordButtonsPanel] show: ', show, ' , currentLordValue: ', currentLordValue)
     self.GrabLordButtonsPanel:setVisible(show)
     if show then
       if currentLordValue == 0 then
@@ -120,54 +121,6 @@ function UIButtonsPlugin.bind( theClass )
     self:pickupPokecards(pokeCards)
     self:updateButtonsState()
 
-    -- --self:enableButtonPlay( not self.ButtonPlay:isEnabled() )
-    -- local analyzedCards = self.selfPlayerInfo.analyzedCards
-    -- local cards
-    -- local pokeCards = {}
-    -- cards = analyzedCards.straightsCards
-    -- if #cards == 0 then
-    --   cards = analyzedCards.pairsStraightsCards
-    -- end
-    -- if #cards == 0 then
-    --   cards = analyzedCards.threesCards
-    -- end
-    -- if #cards == 0 then
-    --   cards = analyzedCards.pairsCards
-    -- end
-    -- if #cards == 0 then
-    --   cards = analyzedCards.singlesCards
-    -- end
-
-    -- if #cards > 0 then
-    --   local card = cards[1]
-    --   local pokeCards = table.dup(card.pokeCards)
-    --   if card.cardType == CardType.THREE then
-    --     local singleCards = analyzedCards.singlesCards
-    --     if #singleCards > 0 then
-    --       table.insert(pokeCards, singleCards[1].pokeCards[1])
-    --     else
-    --       local pairsCards = analyzedCards.pairsCards
-    --       if #pairsCards > 0 then
-    --         table.append(pokeCards, pairsCards[1].pokeCards)
-    --       end
-    --     end
-    --   elseif card.CardType == CardType.THREE_STRAIGHT then
-    --     local singleCards = analyzedCards.singlesCards
-    --     if #singleCards >= card.cardLength then
-    --       for i=1,card.cardLength do
-    --         table.insert(pokeCards, singleCards[i].pokeCards[1])
-    --       end
-    --     else
-    --       local pairsCards = analyzedCards.pairsCards
-    --       if #pairsCards >= card.cardLength then
-    --         table.append(pokeCards, pairsCards[i].pokeCards)
-    --       end 
-    --     end
-    --   end
-
-    --   self:pickupPokecards(pokeCards)
-    --   self:updateButtonsState()
-    -- end
 
   end
 
@@ -175,10 +128,10 @@ function UIButtonsPlugin.bind( theClass )
     local pokeCards = self:getPickedPokecards()
     local pokeIdChars = PokeCard.getIdChars(pokeCards)
 
-    if self.tipPokeChars == '' then
-      self:ButtonPass_onClicked(self.ButtonPass, event)
-      return;
-    end
+    -- if self.tipPokeChars == '' then
+    --   self:ButtonPass_onClicked(self.ButtonPass, event)
+    --   return;
+    -- end
 
     local card = Card.create(pokeCards)
     -- dump(card, '[theClass:ButtonPlay_onClicked] card')
@@ -203,17 +156,6 @@ function UIButtonsPlugin.bind( theClass )
     if lastPlay ~= nil and lastPlay.player.userId ~= self.selfUserId then
       if not card:isGreaterThan(lastPlay.card) then
         self:showSelfPlayTips('您所要出的牌没有大过对方', 2)
-        -- self.PlayTipsLabel:setVisible(false)
-        -- self.PlayTipsLabel:setOpacity(0)
-        -- self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
-        -- self.PlayTipsLabel:runAction(
-        --   cc.Sequence:create(
-        --       cc.Show:create(),
-        --       cc.FadeIn:create(0.5),
-        --       cc.DelayTime:create(2),
-        --       cc.Hide:create()
-        --     )
-        --   )
         return
       end
     end
@@ -222,21 +164,8 @@ function UIButtonsPlugin.bind( theClass )
     self.gameService:playCard(self.selfUserId, pokeIdChars, function(data)
         if data.result.retCode ~= 0 then
           self:showButtonsPanel(true)
-
-          -- self.PlayTipsLabel:setVisible(false)
-          -- self.PlayTipsLabel:setOpacity(0)
-          -- self.PlayTipsLabel:setString('您所要出的牌没有大过对方')
-          -- self.PlayTipsLabel:runAction(
-          --   cc.Sequence:create(
-          --       cc.Show:create(),
-          --       cc.FadeIn:create(0.5),
-          --       cc.DelayTime:create(2),
-          --       cc.Hide:create()
-          --     )
-          --   )
         else
           self:hideSelfPlayTips()
-          --self.PlayTipsLabel:setVisible(false)
         end
       end)
   end
@@ -269,8 +198,8 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonBack_onClicked(sender, event)
-    local gameConn = require('network.GameConnection')
-    gameConn:reconnect()
+    -- local gameConn = require('network.GameConnection')
+    -- gameConn:reconnect()
   end
 
   function theClass:ButtonDelegate_onClicked( sender, event )

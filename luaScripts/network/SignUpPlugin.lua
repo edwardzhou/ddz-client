@@ -39,6 +39,7 @@ function SignUpPlugin.bind(theClass)
     local signUpParams = {}
     signUpParams.appVersion = ddz.GlobalSettings.appInfo.appVersion
     signUpParams.resVersion = ddz.GlobalSettings.appInfo.resVersion
+    signUpParams.appid = ddz.GlobalSettings.appInfo.appid
     signUpParams.handsetInfo = ddz.GlobalSettings.handsetInfo
 
     this:request('auth.userHandler.signUp', signUpParams, function(data) 

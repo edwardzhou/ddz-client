@@ -4,17 +4,19 @@ local Emitter = require('pomelo.emitter')
 local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')
 local GameConnection = class('GameConnection', Emitter)
+local utils = require('utils.utils')
 
 function GameConnection:ctor(userId, sessionToken)
   local this = self
   self.super.ctor(self)
   self.userId = userId or ddz.GlobalSettings.session.userId
   self.sessionToken = sessionToken or ddz.GlobalSettings.session.sessionToken
-  self.autoSignUp = true
+  self.autoSignUp = false
   self.isConnectionReady = false
   self.isAuthed = false
   self.isStartConnecting = false
   self.needReconnect = false
+  self.autoSignIn = true
 
   self:on('connectionReady', function() 
       this:hookChargeResultEvent()
@@ -76,12 +78,16 @@ function GameConnection:authConnection()
   local authParams = {
     appVersion = ddz.GlobalSettings.appInfo.appVersion,
     resVersion = ddz.GlobalSettings.appInfo.resVersion,
+    appid = ddz.GlobalSettings.appInfo.appid,
 --    handsetInfo = ddz.GlobalSettings.handsetInfo,
     mac = ddz.GlobalSettings.handsetInfo.mac,
-    userId = currentUser.userId,
-    authToken = currentUser.authToken,
-    sessionToken = currentUser.sessionToken
   }
+
+  if this.autoSignIn then
+    authParams.userId = currentUser.userId
+    authParams.authToken = currentUser.authToken
+    authParams.sessionToken = currentUser.sessionToken
+  end    
 
   this.pomeloClient:request('auth.connHandler.authConn', authParams, function(data)
       this.isAuthed = true
@@ -96,9 +102,11 @@ function GameConnection:authConnection()
       --   if goSignIn then
       --     this:doSignIn(signParams)
       --   end
-      elseif data.needSignUp and this.autoSignUp then
+      elseif data.needSignUp then        
         print('[auth.connHandler.authConn] server request to sign up')
-        this:emit('signUpRequired', data)
+        if this.autoSignUp then
+          this:emit('signUpRequired', data)
+        end
       --  this:signUp(onSignResult)
         -- local goSignUp, signParams = self.signupCallback(this, pomeloClient, data)
         -- if goSignUp then
@@ -141,9 +149,13 @@ function GameConnection:reconnect()
 
   print('[GameConnection:reconnect] ......................')
 
-  this.pomeloClient:init(serverParams, function()
-    this:authConnection()
-  end)
+  if this.pomeloClient then
+    this.pomeloClient:init(serverParams, function()
+      this:authConnection()
+    end)
+  else
+    this:connectToServer(serverParams)
+  end
 end
 
 function GameConnection:connectToServer(params)
@@ -257,6 +269,17 @@ function GameConnection:onTryReconnect(retries)
   return self.needReconnect
 end
 
+function GameConnection:signOut(cb)
+  local this = self
+  this.autoSignUp = false
+  this.autoSignIn = false
+  if this.pomeloClient then
+    this:request('ddz.entryHandler.leave', {}, function()
+        this.pomeloClient:disconnect()
+        utils.invokeCallback(cb)
+      end)
+  end
+end
 
 
 require('network.SignInPlugin').bind(GameConnection)

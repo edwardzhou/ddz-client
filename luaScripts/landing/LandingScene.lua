@@ -299,27 +299,27 @@ function LandingScene:connectToServer()
   --   ddz.pomeloClient:disconnect()
   -- end
 
-  local function doSignIn()
-    local currentUser = AccountInfo.getCurrentUser()
-    local signInParam = {}
-    signInParam.userId = currentUser.userId
-    signInParam.signType = SignInType.BY_AUTH_TOKEN
-    signInParam.authToken = currentUser.authToken
-    password = nil
-    this.gameConnection:signIn(signInParam, function(success, userInfo, serverInfo, signInParams)
-        dump(userInfo, 'sign result ' .. tostring(success))
-        if success then
-          this.gameConnection:connectToServer(serverInfo)
-          return
-        end
-        local boxParams = {
-          title = '无法自动登录',
-          msg = userInfo.message,
-          onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
-        }
-        require('UICommon.MessageBox').showMessageBox(this, boxParams)
-      end)
-  end
+  -- local function doSignIn()
+  --   local currentUser = AccountInfo.getCurrentUser()
+  --   local signInParam = {}
+  --   signInParam.userId = currentUser.userId
+  --   signInParam.signType = SignInType.BY_AUTH_TOKEN
+  --   signInParam.authToken = currentUser.authToken
+  --   password = nil
+  --   this.gameConnection:signIn(signInParam, function(success, userInfo, serverInfo, signInParams)
+  --       dump(userInfo, 'sign result ' .. tostring(success))
+  --       if success then
+  --         this.gameConnection:connectToServer(serverInfo)
+  --         return
+  --       end
+  --       local boxParams = {
+  --         title = '无法自动登录',
+  --         msg = userInfo.message,
+  --         onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
+  --       }
+  --       require('UICommon.MessageBox').showMessageBox(this, boxParams)
+  --     end)
+  -- end
 
   local function doSignUp()
     this.gameConnection:signUp(function(success, userInfo, serverInfo, signUpParams)
@@ -342,6 +342,7 @@ function LandingScene:connectToServer()
   if self.gameConnection == nil then
     self.gameConnection = require('network.GameConnection')
     self.gameConnection.needReconnect = true
+    self.gameConnection.autoSignUp = true
     if self._onConnectionReady == nil then
       self._onConnectionReady = function()
         queryRooms()
@@ -349,9 +350,9 @@ function LandingScene:connectToServer()
     end
     if self._onSignInUpRequired == nil then
       self._onSignInUpRequired = function(data)
-        if data.needSignIn then
-          doSignIn()
-        else
+        if data.needSignUp then
+        --   doSignIn()
+        -- else
           doSignUp()
         end
         -- local scene = require('login.LoginScene')()

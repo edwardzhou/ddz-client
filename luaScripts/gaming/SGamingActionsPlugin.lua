@@ -33,6 +33,7 @@ function SGamingActionsPlugin.bind(theClass)
       -- error
     end
     if nextUserId == self.selfPlayerInfo.userId and not isGiveup then
+      print('[theClass:onGrabbingLordMsg] show grab lord buttons.')
       self:showGrabLordButtonsPanel(true, self.pokeGame.grabbingLord.lordValue)
       --self:onGameOverMsg({})
     else

@@ -11,7 +11,8 @@ settings.session = {
 
 settings.appInfo = {
   appVersion = '1.0.0',
-  resVersion = '1.0.0.0'
+  resVersion = '1.0.0.0',
+  appid = 1000
 }
 
 settings.handsetInfo = {

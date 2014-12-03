@@ -127,7 +127,8 @@ end
 function HallScene:updateUserInfo()
   local user = AccountInfo.getCurrentUser();
   
-  self.LabelNickName:setString(user.nickName)
+  local idNickName = string.format("%s (%d)", user.nickName, user.userId)
+  self.LabelNickName:setString(idNickName)
   local coins = user.ddzProfile.coins or 0
   self.LabelCoins:setString(coins)
 

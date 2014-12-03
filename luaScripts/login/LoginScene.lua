@@ -22,6 +22,8 @@ end
 function LoginScene:ctor(...)
   local this = self
   self.gameConnection = require('network.GameConnection')
+  self.gameConnection.autoSignIn = false
+  self.gameConnection.autoSignUp = false
 
   self:registerScriptHandler(function(event)
     print('[LoginScene] event => ', event)
@@ -87,6 +89,10 @@ function LoginScene:on_enterTransitionFinish()
     end)
   end
   this.gameConnection:on('connectionReady', self._onConnectionReady)
+  this.hidenRetries = 0
+  this.gameConnection:signOut(function() 
+    this.gameConnection:reconnect()
+  end)
 end
 
 function LoginScene:on_exit()
