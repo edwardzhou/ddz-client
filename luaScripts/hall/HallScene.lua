@@ -122,6 +122,21 @@ function HallScene:init()
 
   require('utils.UIVariableBinding').bind(ui, self, self)
 
+  local sprite = cc.Sprite:create('images/menu_icon_02.png')
+  sprite:setPosition(400,240)
+  rootLayer:addChild(sprite, 1000)
+
+  self:grayButtonStore(sprite)
+
+end
+
+function HallScene:grayButtonStore(s)
+  local node = tolua.cast(self.ButtonStore:getVirtualRenderer(), "ccui.Scale9Sprite"):getVirtualRenderer()
+  local program = cc.GLProgram:create("ccShader_PositionTextureColor_noMVP.vert", "gray.fsh")
+  program:link()
+  program:updateUniforms()
+  s:setGLProgram(program)
+  node:setGLProgram(program)  
 end
 
 function HallScene:updateUserInfo()
