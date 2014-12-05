@@ -131,11 +131,25 @@ function HallScene:init()
 end
 
 function HallScene:grayButtonStore(s)
-  local node = tolua.cast(self.ButtonStore:getVirtualRenderer(), "ccui.Scale9Sprite"):getVirtualRenderer()
+  dump(cc.GLProgram, "cc.GLProgram")
+  print("cc.GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR => ", cc.GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR)
   local program = cc.GLProgram:create("ccShader_PositionTextureColor_noMVP.vert", "gray.fsh")
+  --print("program.SHADER_NAME_POSITION_TEXTURE_COLOR => ", program.SHADER_NAME_POSITION_TEXTURE_COLOR)
   program:link()
   program:updateUniforms()
   s:setGLProgram(program)
+
+  s:runAction(cc.Sequence:create(
+      cc.DelayTime:create(3),
+      cc.CallFunc:create(function() 
+          s:setGLProgram(cc.GLProgramCache:getInstance():getGLProgram('ShaderPositionTextureColor_noMVP'))
+        end)
+    ))
+
+  local node = tolua.cast(self.ButtonStore:getVirtualRenderer(), "ccui.Scale9Sprite"):getSprite()
+  program = cc.GLProgram:create("ccShader_PositionTextureColor_noMVP.vert", "gray.fsh")
+  program:link()
+  program:updateUniforms()
   node:setGLProgram(program)  
 end
 

@@ -249,6 +249,8 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     //FileUtils::getInstance()->addSearchPath("src");
 
+    CCLOG("SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP: '%s'", GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
+
     if (engine->executeScriptFile("boot")) {
         return  false;
     }
