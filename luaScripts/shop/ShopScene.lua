@@ -46,12 +46,51 @@ function ShopScene:init()
   self:addChild(rootLayer)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Shop.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Shop.csb')
+  local uiRoot = cc.CSLoader:createNode('ShopScene.csb')
   self.uiRoot = guiReader
   rootLayer:addChild(uiRoot)
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
+  self.ShopItemModel:setVisible(false)
+
+
+end
+
+
+function ShopScene:on_enterTransitionFinish()
+  local this = self
+
+  self:loadShopItems()
+end
+
+function ShopScene:on_exit()
+end
+
+function ShopScene:loadShopItems()
+  local this = self
+  local listView
+
+  if not self.ShopItemList then
+    listView = ccui.ListView:create()
+    listView:setAnchorPoint(cc.p(0,0))
+    listView:setPosition(cc.p(0,0))
+    listView:setContentSize(cc.size(800, 412))
+    listView:setGravity(ccui.ListViewGravity.left)
+    listView:setDirection(ccui.ScrollViewDir.vertical)
+    listView:setBounceEnabled(true)
+    listView:setColor(cc.c3b(0x96, 0x96, 0xFF))
+    listView:setOpacity(100)
+    listView:addEventListener(__bind(self.ShopItemList_onEvent, self))
+    self.ShopItemList = listView
+    self.PanelRoot:addChild(listView)
+    local item_model = self.ShopItemModel:clone()
+    item_model:setVisible(true)
+    self.ShopItemList:setItemModel(item_model)
+  else
+    self.ShopItemList:removeAllItems()
+  end
   
   local textureCache = cc.Director:getInstance():getTextureCache()
   textureCache:addImage('images/bag1.png')
@@ -59,9 +98,6 @@ function ShopScene:init()
   textureCache:addImage('images/bag3.png')
   textureCache:addImage('images/bag4.png')
 
-  local item_model = self.ShopItemModel:clone()
-  self.ShopItemList:setItemModel(item_model)
-  self.ShopItemModel:setVisible(false)
 
   this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
     dump(data, '[ddz.hallHandler.getShopItems] data =>')
@@ -91,25 +127,17 @@ function ShopScene:init()
       button:addTouchEventListener(this._onButtonBuyClicked)      
     end
   end)
-
 end
-
-function ShopScene:on_enterTransitionFinish()
-  local this = self
-end
-
-function ShopScene:on_exit()
-end
-
 
 function ShopScene:initKeypadHandler()
+  local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
 --      if type(self.onMainMenu) == 'function' then
 --        self.onMainMenu()
 --      end
       event:stopPropagation()
-      cc.Director:getInstance():popScene() 
+      this:close()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
@@ -139,6 +167,10 @@ end
 
 function ShopScene:ButtonBack_onClicked(sender, eventType)
   cc.Director:getInstance():popScene()
+end
+
+function ShopScene:close()
+  cc.Director:getInstance():popScene(cc.Tr)
 end
 
 function ShopScene:buyPackage(pkg)

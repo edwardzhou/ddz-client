@@ -43,7 +43,8 @@ function PasswordScene:init()
   self.rootLayer = rootLayer
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UP_Pasword.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UP_Pasword.csb')
+  local uiRoot = cc.CSLoader:createNode('UP_PasswordScene.csb')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
@@ -121,7 +122,7 @@ function PasswordScene:close()
   cc.Director:getInstance():popScene()
 end
 
-function PasswordScene:ButtonBack_onClicked()
+function PasswordScene:ButtonTopBack_onClicked()
   self:close()
 end
 

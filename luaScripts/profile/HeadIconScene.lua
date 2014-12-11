@@ -37,7 +37,8 @@ function HeadIconScene:init()
   self.rootLayer = rootLayer
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UP_HeadIcon.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UP_HeadIcon.csb')
+  local uiRoot = cc.CSLoader:createNode('UP_HeadIconScene.csb')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 

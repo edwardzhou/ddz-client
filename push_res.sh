@@ -7,6 +7,9 @@ apk="runtime/android/DDZ-debug.apk"
 
 #echo "pkg => " $1
 
+rm -rf Resources/NewUI/*
+cp -r ../DDZ_Res/NewGameUI/res/* Resources/NewUI/
+
 rm -f res.zip
 zip -r res.zip Resources
 

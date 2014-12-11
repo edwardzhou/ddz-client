@@ -136,7 +136,7 @@ end
 function CardUtility.getPairsInfos(pokeInfos, exclude3_4)
   local infos = {}
   for _, pokeInfo in pairs(pokeInfos) do
-    if not exclude4 and pokeInfo.pokeCount >= 2 then
+    if not exclude3_4 and pokeInfo.pokeCount >= 2 then
       table.insert(infos, pokeInfo)
     elseif pokeInfo.pokeCount == 2 then
       table.insert(infos, pokeInfo)

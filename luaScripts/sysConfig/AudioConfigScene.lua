@@ -44,7 +44,9 @@ function AudioConfigScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   print('[AudioConfigScene:init] start to load gameUI/SysConfig.csb')
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/SysConfig.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/SysConfig.csb')
+  local uiRoot = cc.CSLoader:createNode('SysConfigLayer.csb')
+  
   print('[AudioConfigScene:init] add to rootLayer')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot

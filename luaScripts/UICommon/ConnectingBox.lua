@@ -33,7 +33,9 @@ function ConnectingBox:init()
 
   this.showing = false
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/NetworkConnecting.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/NetworkConnecting.csb')
+  local uiRoot = cc.CSLoader:createNode('NetworkConnectingLayer.csb')
+
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
@@ -279,7 +281,7 @@ function ConnectingBox:setFailure()
 end
 
 function ConnectingBox:ButtonNetworkSetup_onClicked(sender, event)
-  local luaj = require('luaj')
+  local luaj = require('cocos.cocos2d.luaj')
   local ok = luaj.callStaticMethod("com/fungame/DDZ/Utils", "wifiSetting", {}, "()V")
 end
 

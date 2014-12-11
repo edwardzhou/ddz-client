@@ -58,12 +58,13 @@ function LandingScene:init()
   self:addChild(rootLayer)
   self.rootLayer = rootLayer
   
-  local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/Landing.csb')
+  --local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/Landing.csb')
+  local uiRoot = cc.CSLoader:createNode('LandingScene.csb')
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
-  require('utils.UIVariableBinding').bind(uiRoot, self, self)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
 
   local percent = 0
   uiRoot:runAction( cc.Sequence:create(
@@ -246,7 +247,7 @@ function LandingScene:connectToServer()
       dump(data, 'queryRooms => ')
       if data.err == nil then
         ddz.GlobalSettings.rooms = data.rooms
-        this.ButtonStart:setVisible(true)
+        --this.ButtonStart:setVisible(true)
         local scene = require('hall.HallScene')()
         cc.Director:getInstance():replaceScene(scene)
       end
@@ -343,6 +344,7 @@ function LandingScene:connectToServer()
     self.gameConnection = require('network.GameConnection')
     self.gameConnection.needReconnect = true
     self.gameConnection.autoSignUp = true
+    self.gameConnection.autoSignIn = true
     if self._onConnectionReady == nil then
       self._onConnectionReady = function()
         queryRooms()

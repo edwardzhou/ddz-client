@@ -48,7 +48,8 @@ function MessageBox:init()
   -- this:setPosition(400, 240)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/MessageBox.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/MessageBox.csb')
+  local uiRoot = cc.CSLoader:createNode('MessageBoxLayer.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 --  self.uiRoot:setOpacity(0)
@@ -83,6 +84,11 @@ function MessageBox:init()
     elseif event == 'exit' then
     end
   end)
+
+  -- self.LabelMessage:ignoreContentAdaptWithSize(false)
+  -- self.LabelMessage:setAnchorPoint(cc.p(0.5, 1.0))
+  -- self.LabelMessage:setTextAreaSize(cc.size(360, 125))
+  -- self.LabelMessage:setPosition(cc.p(200, 182))
 
   self.LabelTitle:setString(self.title)
   self.LabelMessage:setString(self.msg)

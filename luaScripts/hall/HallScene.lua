@@ -54,11 +54,24 @@ function HallScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   
-  local ui = guiReader:widgetFromBinaryFile('gameUI/Hall.csb')
+  -- local ui = guiReader:widgetFromBinaryFile('gameUI/Hall.csb')
+  local ui = cc.CSLoader:createNode('HallScene.csb')
 --  ui:setAnchorPoint(0, 0)
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
+
+  local listView = ccui.ListView:create()
+  listView:setContentSize(800, 236)
+  listView:setPosition(0, 145)
+  listView:setDirection(ccui.ScrollViewDir.horizontal)
+  listView:setGravity(ccui.ListViewGravity.top)
+  listView:addEventListener(__bind(self.ListViewRooms_onEvent, self))
+  self.ListViewRooms = listView
+  ui:addChild(listView)
+  
+  --self.ButtonStore:set
+
   
   local textureCache = cc.Director:getInstance():getTextureCache()
   
@@ -74,7 +87,7 @@ function HallScene:init()
   textureCache:addImage('images/room14.png')
   textureCache:addImage('images/room15.png')
   
-  local modelPanel = ccui.Helper:seekWidgetByName(ui, 'model_Panel')
+  --local modelPanel = ccui.Helper:seekWidgetByName(ui, 'model_Panel')
   local model = self.PanelRoomModel:clone()
   self.PanelRoomModel:setVisible(false)
   local listview = self.ListViewRooms
@@ -104,8 +117,21 @@ function HallScene:init()
     local labelRoomName = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomName'), 'ccui.Text')
     local labelRoomDesc = tolua.cast(ccui.Helper:seekWidgetByName(item, 'Label_RoomDesc'), 'ccui.Text')
 
+    --labelRoomDesc:ignoreContentAdaptWithSize(false)
     labelRoomName:setString(gameRoom.roomName)
     labelRoomDesc:setString(gameRoom.roomDesc)
+
+    -- -- local textArea = ccui.Text:create()
+    local textArea = labelRoomDesc
+    -- textArea:ignoreContentAdaptWithSize(false)
+    --textArea:setContentSize(cc.size(200, 100))
+    -- textArea:setTextHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT)
+    -- textArea:setString(gameRoom.roomDesc)
+    -- --textArea:setFontName("AmericanTypewriter")
+    -- textArea:setFontSize(20)
+    -- textArea:setAnchorPoint(0.5, 0.5)
+    -- textArea:setPosition(cc.p(135, 108))  
+    -- item:addChild(textArea) 
 
     local roomArea = item:getChildByName('Image_RoomArea')
     roomArea:setTag(n)
@@ -288,7 +314,7 @@ end
 
 function HallScene:ButtonStore_onClicked(sender, eventType)
   local scene = require('shop.ShopScene')()
-  cc.Director:getInstance():pushScene(scene)
+  cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
 end
 
 local function createScene()

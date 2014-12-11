@@ -156,7 +156,7 @@ function SGamingActionsPlugin.bind(theClass)
     self.LabelLordValue:runAction(cc.Sequence:create(
         scaleTo,
         cc.CallFunc:create(function(sender)
-          sender:setScale(0.5, 0.5) 
+          sender:setScale(1, 1) 
         end)
       ))
   end

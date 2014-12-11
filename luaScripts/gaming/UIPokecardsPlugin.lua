@@ -119,6 +119,8 @@ function UIPokecardsPlugin.bind( theClass )
       indexBegin, indexEnd = indexEnd, indexBegin
     end
 
+    local hoveredPokecards = table.copy(thisObj.pokeCards, indexBegin, indexEnd)
+
     for i = indexBegin, indexEnd do
       local pokeCard = thisObj.pokeCards[i]
       -- 取消牌划过效果

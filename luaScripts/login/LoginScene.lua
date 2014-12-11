@@ -49,12 +49,22 @@ function LoginScene:init()
   self:addChild(rootLayer)
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Login.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Login.csb')
+  local uiRoot = cc.CSLoader:createNode('LoginScene.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
   self:initKeypadHandler()
+
+  local listView = ccui.ListView:create()
+  listView:setContentSize(190, 196)
+  listView:setPosition(5, 10)
+  listView:setGravity(ccui.ListViewGravity.centerHorizontal)
+  listView:addEventListener(__bind(self.ListViewAccounts_onEvent, self))
+  self.ListViewAccounts = listView
+  self.ListViewHolder:addChild(listView)
+  self.PanelAccounts:setVisible(false)
 
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
   self:bindPanelInput(self.PanelPassword, self.InputPassword)

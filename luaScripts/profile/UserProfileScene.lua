@@ -43,13 +43,24 @@ function UserProfileScene:init()
   self.rootLayer = rootLayer
 
   local guiReader = ccs.GUIReader:getInstance()
-  local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UserProfile.csb')
+  -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/UserProfile.csb')
+  local uiRoot = cc.CSLoader:createNode('UserProfileScene.csb')
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
   self:initKeypadHandler()
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
+
+  local button = ccui.Button:create('images/head0.png')
+  button:setName('v_ButtonChangeHead')
+  button:setAnchorPoint(cc.p(0.5, 0.5))
+  button:setPositionType(ccui.PositionType.percent)
+  button:setPositionPercent(cc.p(0.5, 0.5))
+  -- button:addEventListener(__bind(self.ButtonChangeHead_onClicked, self))
+  self.ImageHead:addChild(button)
+
+  require('utils.UIVariableBinding').bind(button, self, self, true)
 
   local userInfo = AccountInfo.getCurrentUser()
 
