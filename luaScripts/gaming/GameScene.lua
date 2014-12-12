@@ -159,9 +159,9 @@ function GameScene:resetScene()
   }
   self:updateSelfPlayerUI(selfUserInfo)
 
-  self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
-  self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
-  self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard1:loadTexture('lord_back.png', ccui.TextureResType.plistType)
+  self.LordCard2:loadTexture('lord_back.png', ccui.TextureResType.plistType)
+  self.LordCard3:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LabelLordValue:setString('0')
 
 end
@@ -263,9 +263,9 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
   -- self:showButtonsPanel(nextUserId == self.selfUserId)
   PokeCard.resetAll()
   --self:showCards()
-  self.LordCard1:loadTexture('images/game6.png', ccui.TextureResType.localType)
-  self.LordCard2:loadTexture('images/game6.png', ccui.TextureResType.localType)
-  self.LordCard3:loadTexture('images/game6.png', ccui.TextureResType.localType)
+  self.LordCard1:loadTexture('lord_back.png', ccui.TextureResType.plistType)
+  self.LordCard2:loadTexture('lord_back.png', ccui.TextureResType.plistType)
+  self.LordCard3:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LabelLordValue:setString('0')
   --self:showPlaycardClock()
 

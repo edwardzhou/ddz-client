@@ -49,9 +49,9 @@ function SGamingActionsPlugin.bind(theClass)
     end
 
     if isGrabLordFinish then
-      self.LordCard1:loadTexture(self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
-      self.LordCard2:loadTexture(self.pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
-      self.LordCard3:loadTexture(self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
+      self.LordCard1:loadTexture('lord_' .. self.pokeGame.lordPokeCards[3].image_filename, ccui.TextureResType.plistType)
+      self.LordCard2:loadTexture('lord_' .. self.pokeGame.lordPokeCards[2].image_filename, ccui.TextureResType.plistType)
+      self.LordCard3:loadTexture('lord_' .. self.pokeGame.lordPokeCards[1].image_filename, ccui.TextureResType.plistType)
 
       if pokeGame.lordPlayer.userId == self.selfPlayerInfo.userId then
         table.append(self.selfPlayerInfo.pokeCards, pokeGame.lordPokeCards)

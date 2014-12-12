@@ -152,7 +152,7 @@ function HallScene:init()
   sprite:setPosition(400,240)
   rootLayer:addChild(sprite, 1000)
 
-  self:grayButtonStore(sprite)
+  --self:grayButtonStore(sprite)
 
 end
 

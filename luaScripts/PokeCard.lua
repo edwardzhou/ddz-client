@@ -561,6 +561,23 @@ PokeCard.createPokecardsFrames = function(tex)
   end
 end
 
+PokeCard.createLordPokecardsFrames = function(tex)
+  local width, height = 512, 256
+  local row, col, x, y
+  local frameCache = cc.SpriteFrameCache:getInstance()
+  for index = #g_shared_cards, 1, -1 do
+    row = math.floor((index-1) / 10)
+    col = (index-1) % 10
+
+    x = col * 31
+    y = height - (row+1) * 43
+    local rect = cc.rect(x, y, 31, 43)
+    --dump(rect, 'rect for index ' .. index)
+    local spriteFrame = cc.SpriteFrame:createWithTexture(tex, rect)
+    frameCache:addSpriteFrame(spriteFrame, 'lord_' .. g_shared_cards[index].image_filename)
+  end
+end
+
 PokeCard.createPokecardsWithFrames = function(tex)
   local scaleFactor = ddz.GlobalSettings.scaleFactor or 1.0
   g_pokecards_node = cc.SpriteBatchNode:createWithTexture(tex)
