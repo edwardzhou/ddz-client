@@ -166,11 +166,11 @@ function ShopScene:ButtonBuy_onClicked(sender, eventType)
 end
 
 function ShopScene:ButtonBack_onClicked(sender, eventType)
-  cc.Director:getInstance():popScene()
+  self:close()
 end
 
 function ShopScene:close()
-  cc.Director:getInstance():popScene(cc.Tr)
+  cc.Director:getInstance():popScene()
 end
 
 function ShopScene:buyPackage(pkg)

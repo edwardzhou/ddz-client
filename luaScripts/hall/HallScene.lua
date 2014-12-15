@@ -148,15 +148,16 @@ function HallScene:init()
 
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  local sprite = cc.Sprite:create('images/menu_icon_02.png')
-  sprite:setPosition(400,240)
-  rootLayer:addChild(sprite, 1000)
+  -- local sprite = cc.Sprite:create('images/menu_icon_02.png')
+  -- sprite:setPosition(400,240)
+  -- rootLayer:addChild(sprite, 1000)
 
   --self:grayButtonStore(sprite)
 
 end
 
 function HallScene:grayButtonStore(s)
+  do return end
   dump(cc.GLProgram, "cc.GLProgram")
   print("cc.GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR => ", cc.GLProgram.SHADER_NAME_POSITION_TEXTURE_COLOR)
   local program = cc.GLProgram:create("ccShader_PositionTextureColor_noMVP.vert", "gray.fsh")

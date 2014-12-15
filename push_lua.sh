@@ -7,7 +7,7 @@ apk="runtime/android/DDZ-debug.apk"
 
 #echo "pkg => " $1
 
-zip -r lua.zip luaScripts/*
+#zip -r lua.zip luaScripts/*
 
 #echo $serials
 for sid in $serials

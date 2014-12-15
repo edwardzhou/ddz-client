@@ -109,6 +109,48 @@ function CardUtility.getPokeCardsInfo(pokeCards)
   return cardInfo
 end
 
+function CardUtility.extractSinglePokecards(pokeInfos, startIndex, length)
+  local pokecards = {}
+  if startIndex + length > #pokeInfos + 1 then
+    return pokecards
+  end
+
+  for index = startIndex, startIndex + length - 1 do
+    table.insert(pokecards, pokeInfos[index].pokeCards[1])
+  end
+
+  return pokecards
+end
+
+function CardUtility.isPokeInfoStraight(pokeInfos, startIndex, length)
+  if not startIndex then
+    startIndex = 1
+  end
+  
+  if not length then
+    length = #pokeInfos
+  end
+
+  local pokecards = CardUtility.extractSinglePokecards(pokeInfos, startIndex, startIndex + length - 1)
+  if #pokecards == 0 then
+    return false
+  end
+
+  local card = Card.create(pokecards)
+  return card.cardType == CardType.STRAIGHT
+end
+
+function CardUtility.isStraight(pokecards)
+  local card = Card.create(pokecards)
+  return card.cardType == CardType.STRAIGHT
+end
+
+function CardUtility.isPairsStraight(pokecards)
+  local card = Card.create(pokecards)
+  return card.cardType == CardType.PAIRS_STRAIGHT
+end
+
+
 function CardUtility.getBombsInfos(pokeInfos)
   local infos = {}
   for _, pokeInfo in pairs(pokeInfos) do
