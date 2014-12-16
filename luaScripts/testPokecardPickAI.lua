@@ -32,8 +32,9 @@ function __G__TRACKBACK__(msg)
 end
 
 testCases = { 
-  'GJMRUWXZ[^`cejmprs', --// 4, 5, 6, 7, 888, 99, 00, J, Q, K, AA, 22
-  'GJMRUXZ[^`cejmprs' --// 4, 5, 6, 7, 88, 99, 00, J, Q, K, AA, 22
+  'GJMRUWXYZ[^`cejmprs', --// 4, 5, 6, 7, 888, 99, 00, J, Q, K, AA, 22
+  'GJMRUXZ[^`cejmprs', --// 4, 5, 6, 7, 88, 99, 00, J, Q, K, AA, 
+  'AEGJKUVWX_cdhijpqv'   -- // 3, 44, 5, 8888, 0, JJ, Q, KK, A, 2, W
 }
 
 testCase = testCases[1]
@@ -46,7 +47,7 @@ cclog('pokecards: %s', PokeCard.getPokeValuesChars(pokecards, true))
 --[[
 选取 678899 , 找比 55 大的对子, 应该获得 88
 ]]
-pickedPokecards = table.copy(pokecards, 1, 9)
+pickedPokecards = table.copy(pokecards, 1, 10)
 cclog('pickedPokecards: %s', PokeCard.getPokeValuesChars(pickedPokecards))
 testPokecards = PokeCard.pokeCardsFromIds('a05, b05')
 cclog('testPokecards: %s', PokeCard.getPokeValuesChars(testPokecards))
@@ -98,3 +99,19 @@ cclog('testCard: %s', testCard:toString())
 resultPokes = PokecardPickAI:findValidCard(bombPokecards, testCard, nil)
 dump( Card.create(resultPokes):toString(), 'greater 334455 =>' )
 
+testCard = Card.create(PokeCard.pokeCardsFromIds('a03, b03, c03, b04, c04, d04'))
+cclog('testCard: %s', testCard:toString())
+resultPokes = PokecardPickAI:findValidCard(bombPokecards, testCard, nil)
+dump( Card.create(resultPokes):toString(), 'greater 333444 =>' )
+
+
+testCase = testCases[3]
+PokeCard.sharedPokeCard()
+pokecards = PokeCard.pokeCardsFromChars( testCase )
+cclog('pokecards: %s', PokeCard.getPokeValuesChars(pokecards, true))
+pickedPokecards = table.copy(pokecards,2, 9)
+
+testCard = Card.create(PokeCard.pokeCardsFromIds('a09, b09, c09, d09, c04, a04, a05, d05'))
+cclog('testCard: %s', testCard:toString())
+resultPokes = PokecardPickAI:findValidCard(pickedPokecards, testCard, nil)
+dump( Card.create(resultPokes):toString(), 'greater 333345 =>' )

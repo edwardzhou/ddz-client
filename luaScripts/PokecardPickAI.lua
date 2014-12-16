@@ -200,24 +200,136 @@ end
   2. 找炸弹，火箭
 --]]
 function findThreesStraights(pickedPokecards, cardInfos, lastCard, tipPokecards)
+  local lastCardLen = lastCard.cardLength 
+  local endIndex =  #cardInfos.threesInfos - lastCardLen + 1
+  for index = 1, endIndex do
+    if cardInfos.threesInfos[index].pokeValue > lastCard.minPokeValue then
+      local pokecards = {}
+      for i=index, index + lastCardLen - 1 do
+        table.insert(pokecards, cardInfos.threesInfos[i].pokeCards[1])
+        table.insert(pokecards, cardInfos.threesInfos[i].pokeCards[2])
+        table.insert(pokecards, cardInfos.threesInfos[i].pokeCards[3])
+      end
+      if CardUtility.isThreesStraight(pokecards) then
+        return pokecards
+      end
+    end
+  end
+
   if #cardInfos.bombsInfos > 0 then
     return table.copy(cardInfos.bombsInfos[1].pokeCards, 1, 4)
   end
 
   if #cardInfos.rocketInfos > 0 then
-    return table.copy(cardInfos.rocketInfos[1], 1, 2)
+    return table.copy(cardInfos.rocketInfos[1].pokeCards, 1, 2)
+  end
+
+  return nil
+end
+
+--[[
+  在选取的牌中查找大于lastCard的四带二。
+  1. 找顺子
+  2. 找炸弹，火箭
+--]]
+function findFourWithTwo(pickedPokecards, cardInfos, lastCard, tipPokecards)
+  local lastCardLen = lastCard.cardLength 
+  local endIndex =  #cardInfos.bombsInfos - lastCardLen + 1
+  for index = 1, endIndex do
+    if cardInfos.bombsInfos[index].pokeValue > lastCard.minPokeValue then
+      local pokecards = {}
+      local remainingPokecards = table.copy(pickedPokecards)
+      table.append(pokecards, cardInfos.bombsInfos[index].pokeCards)
+      table.removeItems(remainingPokecards, pokecards)
+      if #remainingPokecards > 2 then
+        local remainingCardInfos = CardUtility.getPokeCardsInfo(remainingPokecards)
+        if #remainingCardInfos.singlesInfos > 1 then
+          table.insert(pokecards, remainingCardInfos.singlesInfos[1].pokeCards[1])
+          table.insert(pokecards, remainingCardInfos.singlesInfos[2].pokeCards[1])
+          return pokecards
+        elseif #remainingCardInfos.pairsInfos > 0 then
+          if #remainingCardInfos.singlesInfos > 0 
+            and remainingCardInfos.singlesInfos[1].pokeValue < remainingCardInfos.pairsInfos[1].pokeValue then
+            table.insert(pokecards, remainingCardInfos.singlesInfos[1].pokeCards[1])
+            table.insert(pokecards, remainingCardInfos.pairsInfos[1].pokeCards[1])
+          else
+            table.append(pokecards, remainingCardInfos.pairsInfos[1].pokeCards)
+          end
+          return pokecards
+        elseif #remainingCardInfos.threesInfos > 0 then
+          if #remainingCardInfos.singlesInfos > 0 then
+            table.insert(pokecards, remainingCardInfos.singlesInfos[1].pokeCards[1])
+            table.insert(pokecards, remainingCardInfos.threesInfos[1].pokeCards[1])
+          else
+            table.insert(pokecards, remainingCardInfos.threesInfos[1].pokeCards[1])
+            table.insert(pokecards, remainingCardInfos.threesInfos[1].pokeCards[2])
+          end
+          return pokecards
+        end
+      end
+    end
+  end
+
+  if #cardInfos.bombsInfos > 0 then
+    return table.copy(cardInfos.bombsInfos[1].pokeCards, 1, 4)
+  end
+
+  if #cardInfos.rocketInfos > 0 then
+    return table.copy(cardInfos.rocketInfos[1].pokeCards, 1, 2)
   end
 
   return nil
 end
 
 
+--[[
+  在选取的牌中查找大于lastCard的四带二对。
+  1. 找顺子
+  2. 找炸弹，火箭
+--]]
+function findFourWithTwoPairs(pickedPokecards, cardInfos, lastCard, tipPokecards)
+  local lastCardLen = lastCard.cardLength 
+  local endIndex =  #cardInfos.bombsInfos - lastCardLen + 1
+  for index = 1, endIndex do
+    if cardInfos.bombsInfos[index].pokeValue > lastCard.minPokeValue then
+      local pokecards = {}
+      local remainingPokecards = table.copy(pickedPokecards)
+      table.append(pokecards, cardInfos.bombsInfos[index].pokeCards)
+      table.removeItems(remainingPokecards, pokecards)
+      if #remainingPokecards >= 4 then
+        local remainingCardInfos = CardUtility.getPokeCardsInfo(remainingPokecards)
+        if #remainingCardInfos.pairsInfos > 1 then
+          table.append(pokecards, remainingCardInfos.pairsInfos[1].pokeCards)
+          table.append(pokecards, remainingCardInfos.pairsInfos[2].pokeCards)
+          return pokecards
+        elseif #remainingCardInfos.threesInfos > 1 then
+          table.insert(pokecards, remainingCardInfos.threesInfos[1].pokeCards[1])
+          table.insert(pokecards, remainingCardInfos.threesInfos[1].pokeCards[2])
+          table.insert(pokecards, remainingCardInfos.threesInfos[2].pokeCards[1])
+          table.insert(pokecards, remainingCardInfos.threesInfos[2].pokeCards[2])
+          return pokecards
+        end
+      end
+    end
+  end
+
+  if #cardInfos.bombsInfos > 0 then
+    return table.copy(cardInfos.bombsInfos[1].pokeCards, 1, 4)
+  end
+
+  if #cardInfos.rocketInfos > 0 then
+    return table.copy(cardInfos.rocketInfos[1].pokeCards, 1, 2)
+  end
+
+  return nil
+end
+
 
 function PokecardPickAI:findValidCard(pickedPokecards, lastCard, tipPokecards)
   -- 两张以下的，直接返回
   local count = #pickedPokecards
-  if count <= 2 then
-    return pickedPokecards
+  if count == 0 or lastCard == nil then
+    return nil
   end
 
   local pickedCard = Card.create(pickedPokecards)
@@ -268,7 +380,18 @@ function PokecardPickAI:findValidCard(pickedPokecards, lastCard, tipPokecards)
     if lastCard.cardType == CardType.PAIRS_STRAIGHT then
       return findPairsStraights(pickedPokecards, cardInfos, lastCard, tipPokecards)
     end
+    
+    if lastCard.cardType == CardType.THREE_STRAIGHT then
+      return findThreesStraights(pickedPokecards, cardInfos, lastCard, tipPokecards)
+    end
 
+    if lastCard.cardType == CardType.FOUR_WITH_TWO then
+      return findFourWithTwo(pickedPokecards, cardInfos, lastCard, tipPokecards)
+    end
+
+    if lastCard.cardType == CardType.FOUR_WITH_TWO_PAIRS then
+      return findFourWithTwoPairs(pickedPokecards, cardInfos, lastCard, tipPokecards)
+    end
   end
 
 

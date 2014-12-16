@@ -307,6 +307,7 @@ function Card.create(pokeCards)
       opts.cardType = cardDef.cardType
       opts.cardLength = cardDef.cardLength
       opts.maxPokeValue = cardDef.maxPokeValue
+      opts.minPokeValue = cardDef.minPokeValue
     end
   end  
   return Card.new(opts)

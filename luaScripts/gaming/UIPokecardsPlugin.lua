@@ -1,8 +1,48 @@
 local UIPokecardsPlugin = {}
 
+PokecardPickAI = require('PokecardPickAI')
+
+
 function UIPokecardsPlugin.bind( theClass )
   local lastIndexBegin, lastIndexEnd = nil, nil
   local thisObj = nil
+
+  local function pickPokecard(pokeCard)
+    if not pokeCard.picked then
+      pokeCard.picked = true
+      pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
+    end
+  end
+
+  local function unpickPokecard(pokeCard)
+    if pokeCard.picked then
+      pokeCard.picked = false
+      pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
+    end
+  end
+
+  local function togglePokecard(pokeCard)
+    if pokeCard.picked then
+      unpickPokecard(pokeCard)
+    else
+      pickPokecard(pokeCard)
+    end
+  end
+
+  local function highlightPokecard(pokeCard)
+    if pokeCard.card_sprite:getTag() ~= ddz.PokecardPickTags.Picked then
+      pokeCard.card_sprite:setColor(ddz.PokecardPickColors.Selected)
+      pokeCard.card_sprite:setTag(ddz.PokecardPickTags.Picked)
+    end
+  end
+
+  local function unhighlightPokecard(pokeCard)
+    if pokeCard.card_sprite:getTag() ~= ddz.PokecardPickTags.Unpicked then
+      pokeCard.card_sprite:setColor(ddz.PokecardPickColors.Normal)
+      pokeCard.card_sprite:setTag(ddz.PokecardPickTags.Unpicked)
+    end
+  end
+
 
   --[[-----------------------------------------------------------
   获取loc坐标所在的牌, 由于牌是从大到小排序的显示的，小的牌显示在前面。
@@ -120,6 +160,36 @@ function UIPokecardsPlugin.bind( theClass )
     end
 
     local hoveredPokecards = table.copy(thisObj.pokeCards, indexBegin, indexEnd)
+    local allInPicked = true
+    for i=1, #hoveredPokecards do
+      if not hoveredPokecards[i].picked then
+        allInPicked = false
+        break
+      end
+    end
+
+    if not allInPicked and 
+      thisObj.pokeGame.nextPlayerId == thisObj.selfPlayerInfo.userId and 
+      thisObj.pokeGame.lastPlay and 
+      thisObj.pokeGame.lastPlay.player.userId ~= thisObj.selfPlayerInfo.userId then
+      local pokecards = PokecardPickAI:findValidCard(hoveredPokecards, thisObj.pokeGame.lastPlay.card)
+      if pokecards ~= nil then
+        for i=1, #thisObj.pokeCards do
+          local poke = thisObj.pokeCards[i]
+          if table.indexOf(pokecards, poke) < 0 then
+            unpickPokecard(poke)
+            unhighlightPokecard(poke)
+          end
+        end
+        for i=1, #pokecards do
+          local poke = pokecards[i]
+          pickPokecard(poke)
+          unhighlightPokecard(poke)
+        end
+        thisObj:updateButtonsState()
+        return
+      end
+    end
 
     for i = indexBegin, indexEnd do
       local pokeCard = thisObj.pokeCards[i]

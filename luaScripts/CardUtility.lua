@@ -150,6 +150,10 @@ function CardUtility.isPairsStraight(pokecards)
   return card.cardType == CardType.PAIRS_STRAIGHT
 end
 
+function CardUtility.isThreesStraight(pokecards)
+  local card = Card.create(pokecards)
+  return card.cardType == CardType.THREE_STRAIGHT
+end
 
 function CardUtility.getBombsInfos(pokeInfos)
   local infos = {}
