@@ -1,8 +1,13 @@
 local Res = require('Resources')
-
+local AccountInfo = require('AccountInfo')
 local UIPlayerUpdatePlugin = {}
 
 function UIPlayerUpdatePlugin.bind(theClass)
+
+  function theClass:updateUserInfo()
+    local coins = AccountInfo.getCurrentUser().ddzProfile.coins or 0
+    self.SelfCoins:setString(coins)
+  end
 
   function theClass:updateSelfPlayerUI(userInfo)
     local userUI = {

@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "CCLuaEngine.h"
 #include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
 #include "cocos2d.h"
 #include "lua_module_register.h"
 #include "lua_extensions.h"
@@ -44,6 +45,7 @@ jclass _getClassID_x(const char *className) {
 }
 
 using namespace CocosDenshion;
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
@@ -146,7 +148,8 @@ AppDelegate::AppDelegate()
 AppDelegate::~AppDelegate()
 {
    //MobClickCpp::end();
-    SimpleAudioEngine::end();
+    //SimpleAudioEngine::end();
+    AudioEngine::end();
 }
 
 //if you want a different context,just modify the value of glContextAttrs
@@ -265,7 +268,7 @@ void AppDelegate::applicationDidEnterBackground()
 
     umeng::MobClickCpp::applicationDidEnterBackground();
 
-    SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    AudioEngine::pauseAll();
 }
 
 // this function will be called when the app is active again
@@ -275,7 +278,8 @@ void AppDelegate::applicationWillEnterForeground()
 
     umeng::MobClickCpp::applicationWillEnterForeground();
 
-    SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    //SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    AudioEngine::resumeAll();
     Director::getInstance()->getScheduler()->schedule([](float dt) {
             cocos2d::EventCustom foregroundEvent(EVENT_COME_TO_FOREGROUND);
             cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&foregroundEvent);

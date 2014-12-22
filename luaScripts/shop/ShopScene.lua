@@ -72,24 +72,25 @@ function ShopScene:loadShopItems()
   local this = self
   local listView
 
-  if not self.ShopItemList then
-    listView = ccui.ListView:create()
-    listView:setAnchorPoint(cc.p(0,0))
-    listView:setPosition(cc.p(0,0))
-    listView:setContentSize(cc.size(800, 412))
-    listView:setGravity(ccui.ListViewGravity.left)
-    listView:setDirection(ccui.ScrollViewDir.vertical)
-    listView:setBounceEnabled(true)
-    listView:setColor(cc.c3b(0x96, 0x96, 0xFF))
-    listView:setOpacity(100)
-    listView:addEventListener(__bind(self.ShopItemList_onEvent, self))
-    self.ShopItemList = listView
-    self.PanelRoot:addChild(listView)
+  if not self.listHasItemModel then
+    -- listView = ccui.ListView:create()
+    -- listView:setAnchorPoint(cc.p(0,0))
+    -- listView:setPosition(cc.p(0,0))
+    -- listView:setContentSize(cc.size(800, 412))
+    -- listView:setGravity(ccui.ListViewGravity.left)
+    -- listView:setDirection(ccui.ScrollViewDir.vertical)
+    -- listView:setBounceEnabled(true)
+    -- listView:setColor(cc.c3b(0x96, 0x96, 0xFF))
+    -- listView:setOpacity(100)
+    -- listView:addEventListener(__bind(self.ShopItemList_onEvent, self))
+    -- self.ShopItemList = listView
+    -- self.PanelRoot:addChild(listView)
     local item_model = self.ShopItemModel:clone()
     item_model:setVisible(true)
     self.ShopItemList:setItemModel(item_model)
+    self.listHasItemModel = true
   else
-    self.ShopItemList:removeAllItems()
+    --self.ShopItemList:removeAllItems()
   end
   
   local textureCache = cc.Director:getInstance():getTextureCache()
@@ -101,6 +102,7 @@ function ShopScene:loadShopItems()
 
   this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
     dump(data, '[ddz.hallHandler.getShopItems] data =>')
+    self.ShopItemList:removeAllItems()
     for i=1, #data do
       local pkg = data[i]
       this.ShopItemList:pushBackDefaultItem()

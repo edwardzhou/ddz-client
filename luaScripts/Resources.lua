@@ -14,8 +14,8 @@ Resources.Images = {
     ['head8'] = imgPath .. 'head7.png'
   },
   PlayerRoles = {
-    Farmer = imgPath .. 'game0.png',
-    Lord = imgPath .. 'game1.png'
+    Farmer = imgPath .. 'role_farmer.png',
+    Lord = imgPath .. 'role_lord.png'
   },
   PlayerStatus = {
     None = nil,

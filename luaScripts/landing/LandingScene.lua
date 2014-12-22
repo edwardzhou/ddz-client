@@ -242,12 +242,19 @@ function LandingScene:generateLordPokecards()
   local function createLordPokeSprite(poke)
     local cardSprite = nil
 
+    cardSprite = cc.Sprite:createWithSpriteFrameName('lord_pb.png')
+    
     if poke.value == PokeCardValue.BIG_JOKER then
-      cardSprite = cc.Sprite:createWithSpriteFrameName('plf_BIG_JOKER.png')
+      local sprite = cc.Sprite:createWithSpriteFrameName('plf_BIG_JOKER.png')
+      sprite:setAnchorPoint(cc.p(0, 0))
+      sprite:setPosition(cc.p(0,0))
+      cardSprite:addChild(sprite)
     elseif poke.value == PokeCardValue.SMALL_JOKER then
-      cardSprite = cc.Sprite:createWithSpriteFrameName('plf_SMALL_JOKER.png')
+      local sprite = cc.Sprite:createWithSpriteFrameName('plf_SMALL_JOKER.png')
+      sprite:setAnchorPoint(cc.p(0, 0))
+      sprite:setPosition(cc.p(0,0))
+      cardSprite:addChild(sprite)
     else
-      cardSprite = cc.Sprite:createWithSpriteFrameName('lord_pb.png')
 
       local valueSprite, typeSprite
       local valueFrameName, typeFrameName

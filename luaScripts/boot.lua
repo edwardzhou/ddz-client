@@ -32,6 +32,7 @@ local function main()
     table.insert(searchPaths, 1, sdpath .. '/Resources')
     table.insert(searchPaths, 1, sdpath .. '/Resources/NewUI')
     table.insert(searchPaths, 1, sdpath .. '/luaScripts')
+    table.insert(searchPaths, 'NewUI')
     --fileUtils:addSearchPath()
     
     fileUtils:setSearchPaths(searchPaths)

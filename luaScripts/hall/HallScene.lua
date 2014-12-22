@@ -61,14 +61,14 @@ function HallScene:init()
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  local listView = ccui.ListView:create()
-  listView:setContentSize(800, 236)
-  listView:setPosition(0, 145)
-  listView:setDirection(ccui.ScrollViewDir.horizontal)
-  listView:setGravity(ccui.ListViewGravity.top)
-  listView:addEventListener(__bind(self.ListViewRooms_onEvent, self))
-  self.ListViewRooms = listView
-  ui:addChild(listView)
+  -- local listView = ccui.ListView:create()
+  -- listView:setContentSize(800, 236)
+  -- listView:setPosition(0, 145)
+  -- listView:setDirection(ccui.ScrollViewDir.horizontal)
+  -- listView:setGravity(ccui.ListViewGravity.top)
+  -- listView:addEventListener(__bind(self.ListViewRooms_onEvent, self))
+  -- self.ListViewRooms = listView
+  -- ui:addChild(listView)
   
   --self.ButtonStore:set
 
@@ -315,6 +315,11 @@ end
 
 function HallScene:ButtonStore_onClicked(sender, eventType)
   local scene = require('shop.ShopScene')()
+  cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
+end
+
+function HallScene:ButtonTask_onClicked(sender, eventType)
+  local scene = require('task.TaskScene')()
   cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
 end
 

@@ -76,16 +76,10 @@ function UIPokecardsPlugin.bind( theClass )
       local pokeCard = thisObj.pokeCards[index]
       if index > indexEnd or index < indexBegin then
         -- 不在本次手指划过范围内的牌，恢复正常状态
-        if pokeCard.card_sprite:getTag() ~= ddz.PokecardPickTags.Unpicked then
-          pokeCard.card_sprite:setColor(ddz.PokecardPickColors.Normal)
-          pokeCard.card_sprite:setTag(ddz.PokecardPickTags.Unpicked)
-        end
+        unhighlightPokecard(pokeCard)
       else
         -- 在本次划过范围内的牌，如果还没设置选取标志的，设置牌划过效果和标志
-        if pokeCard.card_sprite:getTag() ~= ddz.PokecardPickTags.Picked then
-          pokeCard.card_sprite:setColor(ddz.PokecardPickColors.Selected)
-          pokeCard.card_sprite:setTag(ddz.PokecardPickTags.Picked)
-        end
+        highlightPokecard(pokeCard)
       end
     end
   end
@@ -161,10 +155,12 @@ function UIPokecardsPlugin.bind( theClass )
 
     local hoveredPokecards = table.copy(thisObj.pokeCards, indexBegin, indexEnd)
     local allInPicked = true
-    for i=1, #hoveredPokecards do
-      if not hoveredPokecards[i].picked then
-        allInPicked = false
-        break
+    if thisObj.pokeGame.nextPlayerId == thisObj.selfPlayerInfo.userId then
+      for i=1, #hoveredPokecards do
+        if not hoveredPokecards[i].picked then
+          allInPicked = false
+          break
+        end
       end
     end
 
@@ -197,14 +193,15 @@ function UIPokecardsPlugin.bind( theClass )
       pokeCard.card_sprite:setTag(ddz.PokecardPickTags.Unpicked)
       pokeCard.card_sprite:setColor(ddz.PokecardPickColors.Normal)
       -- 如果当前牌未被选取，做抽牌处理
-      if pokeCard.picked ~= true then
-        pokeCard.picked = true
-        pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
-      else
-        -- 牌已被选取，做退牌处理
-        pokeCard.picked = false
-        pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
-      end
+      togglePokecard(pokeCard)
+      -- if pokeCard.picked ~= true then
+      --   pokeCard.picked = true
+      --   pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, 30)))
+      -- else
+      --   -- 牌已被选取，做退牌处理
+      --   pokeCard.picked = false
+      --   pokeCard.card_sprite:runAction(cc.MoveBy:create(0.07, cc.p(0, -30)))
+      -- end
     end
     thisObj:updateButtonsState()
   end

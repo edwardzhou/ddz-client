@@ -99,6 +99,8 @@ function GameScene:init()
   self.uiWidget = ui
   self:bindControlsVariables()
 
+  self:updateUserInfo()
+
   -- self.CountDownLabel:setFontName('')
   -- self.SysTime:setFontName('')
   -- self.SelfUserPokeCount:setFontName('')
