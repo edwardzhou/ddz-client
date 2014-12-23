@@ -51,6 +51,8 @@ function TaskScene:init()
   self.uiRoot = guiReader
   rootLayer:addChild(uiRoot)
 
+  this._onButtonApplyClicked = __bind(this.ButtonApply_onClicked, this)
+
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
   self.TaskItemModel:setVisible(false)
@@ -62,13 +64,13 @@ end
 function TaskScene:on_enterTransitionFinish()
   local this = self
 
-  self:loadShopItems()
+  self:loadTaskItems()
 end
 
 function TaskScene:on_exit()
 end
 
-function TaskScene:loadShopItems()
+function TaskScene:loadTaskItems()
   local this = self
   local listView
 
@@ -76,9 +78,9 @@ function TaskScene:loadShopItems()
     local item_model = self.TaskItemModel:clone()
     item_model:setVisible(true)
     self.TaskItemList:setItemModel(item_model)
-    self.TaskItemList:pushBackDefaultItem()
-    self.TaskItemList:pushBackDefaultItem()
-    self.TaskItemList:pushBackDefaultItem()
+    -- self.TaskItemList:pushBackDefaultItem()
+    -- self.TaskItemList:pushBackDefaultItem()
+    -- self.TaskItemList:pushBackDefaultItem()
     self.listHasItemModel = true
   else
     --self.TaskItemList:removeAllItems()
@@ -88,52 +90,40 @@ function TaskScene:loadShopItems()
     dump(data, '[ddz.taskHandler.getTasks] data => ')
     this.TaskItemList:removeAllItems()
     local task, taskItem
-    local label
+    local label, button
     for i=1, #data.tasks do
       task = data.tasks[i]
       this.TaskItemList:pushBackDefaultItem()
       taskItem = this.TaskItemList:getItem(i-1)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskName'), 'ccui.Text')
-      label:setString(task.taskName)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskProgress'), 'ccui.Text')
-      label:setString(task.progressDesc)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskBonus'), 'ccui.Text')
-      label:setString(task.taskBonusDesc)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskDesc'), 'ccui.Text')
-      label:setString(task.taskDesc)
-
+      this:setTaskItemInfo(taskItem, task)
     end
   end)
 
-  -- this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
-  --   dump(data, '[ddz.hallHandler.getShopItems] data =>')
-  --   self.TaskItemList:removeAllItems()
-  --   for i=1, #data do
-  --     local pkg = data[i]
-  --     this.TaskItemList:pushBackDefaultItem()
-  --     local item = this.TaskItemList:getItem(i-1)
-  --     local label, imgIcon, price, button
-  --     price = pkg.price or 0.0
-  --     label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgName'), 'ccui.Text')
-  --     label:setString(pkg.packageName)
-  --     label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgDesc'), 'ccui.Text')
-  --     label:setString(pkg.packageDesc)
-  --     label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPrice'), 'ccui.Text')
-  --     label:setString(string.format('价格 %d 元', price/100))
+end
 
-  --     imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImagePkgIcon'), 'ccui.ImageView')
-  --     if pkg.packageIcon then
-  --       local imgFilename = 'images/' .. pkg.packageIcon
-  --       print('packageIcon => ', imgFilename)
-  --       imgIcon:loadTexture(imgFilename, ccui.TextureResType.localType)
-  --     end
-
-  --     button = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ButtonBuy'), 'ccui.Button')
-  --     button.package = pkg
-
-  --     button:addTouchEventListener(this._onButtonBuyClicked)      
-  --   end
-  -- end)
+function TaskScene:setTaskItemInfo(taskItem, task)
+  local this = self
+  local label, button
+  taskItem.taskId = task.taskId
+  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskName'), 'ccui.Text')
+  label:setString(task.taskName)
+  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskProgress'), 'ccui.Text')
+  label:setString(task.progressDesc)
+  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskBonus'), 'ccui.Text')
+  label:setString(task.taskBonusDesc)
+  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskDesc'), 'ccui.Text')
+  label:setString(task.taskDesc)
+  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskStatus'), 'ccui.Text')
+  button = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ButtonApply'), 'ccui.Button')
+  if task.taskActivated == 0 then
+    button:setVisible(true)
+    button.task = task
+    button:addTouchEventListener(this._onButtonApplyClicked)
+    label:setString('未开始')
+  else
+    button:setVisible(false)
+    label:setString('进行中')
+  end
 end
 
 function TaskScene:initKeypadHandler()
@@ -155,25 +145,48 @@ function TaskScene:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
-function TaskScene:ButtonBuy_onClicked(sender, eventType)
+function TaskScene:ButtonApply_onClicked(sender, eventType)
   local this = self
-  local pkg = sender.package
+  local task = sender.task
   --print('[TaskScene:ButtonBuy_onClicked] eventType => ', eventType)
   if eventType == ccui.TouchEventType.ended then
-    print('[TaskScene:ButtonBuy_onClicked] you want to buy : ' , pkg.packageName)
-    local msgParams = {
-      title = '购买道具',
-      msg = string.format('购买 %s\n%s\n价格 %d 元', pkg.packageName, pkg.packageDesc, pkg.price / 100),
-      closeOnClickOutside = false,
-      buttonType = 'ok|cancel',
-      onOk = function() return this:buyPackage(pkg) end
-    }
-    showMessageBox(this, msgParams)
+    this:applyTask(task)
   end
 end
 
 function TaskScene:ButtonBack_onClicked(sender, eventType)
   self:close()
+end
+
+function TaskScene:applyTask(task)
+  dump(task, '[TaskScene:applyTask] task => ')
+  local this = self
+
+  this.gameConnection:request('ddz.taskHandler.applyTask', {taskId = task.taskId}, function (data)
+    dump(data, '[ddz.taskHandler.applyTask] data =>')
+    local _task = data.task
+    local taskItem = nil
+    local taskItems = this.TaskItemList:getItems()
+    dump(taskItems, 'taskItems')
+    for i=1, #taskItems do
+      taskItem = taskItems[i]
+      if taskItem.taskId == _task.taskId then
+        this:setTaskItemInfo(taskItem, _task)
+        local bgColor = taskItem:getColor()
+        local _item = taskItem
+        this:runAction(cc.Sequence:create(
+            cc.CallFunc:create(function() 
+                _item:setColor(cc.c3b(255,255,0))
+              end),
+            cc.DelayTime:create(0.5),
+            cc.CallFunc:create(function() 
+              _item:setColor(bgColor)
+              end)
+          ))
+        return
+      end
+    end
+  end)
 end
 
 function TaskScene:close()
