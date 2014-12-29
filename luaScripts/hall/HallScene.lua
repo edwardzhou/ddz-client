@@ -146,7 +146,7 @@ function HallScene:init()
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
 
-  require('utils.UIVariableBinding').bind(ui, self, self)
+  --require('utils.UIVariableBinding').bind(ui, self, self)
 
   -- local sprite = cc.Sprite:create('images/menu_icon_02.png')
   -- sprite:setPosition(400,240)
@@ -322,6 +322,12 @@ function HallScene:ButtonTask_onClicked(sender, eventType)
   local scene = require('task.TaskScene')()
   cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
 end
+
+function HallScene:ButtonAssets_onClicked(sender, eventType)
+  local scene = require('bag.AssetsScene')()
+  cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
+end
+
 
 local function createScene()
   local scene = cc.Scene:create()

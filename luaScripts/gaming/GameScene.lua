@@ -99,6 +99,12 @@ function GameScene:init()
   self.uiWidget = ui
   self:bindControlsVariables()
 
+  local jipaiqi = require('gaming.JipaiqiPlugin')()
+  -- jipaiqi:setAnchorPoint(cc.p(0.5, 0))
+  -- jipaiqi:setPosition(cc.p(400, 0))
+  self.JipaiqiPanel:addChild(jipaiqi)
+  self.jipaiqi = jipaiqi
+
   self:updateUserInfo()
 
   -- self.CountDownLabel:setFontName('')
@@ -140,6 +146,7 @@ function GameScene:init()
 end
 
 function GameScene:resetScene()
+  self.jipaiqi:reset()
   self:showButtonsPanel(false)
   self:showGrabLordButtonsPanel(false)
   self.ButtonReady:setVisible(false)

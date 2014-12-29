@@ -94,6 +94,10 @@ function SGamingActionsPlugin.bind(theClass)
       -- error
     end
 
+    if card:isValid() then
+      self.jipaiqi:updateStatus(data.playedPokeBits)
+    end
+
     if nextPlayer then
       self:hideCard(nextPlayer.lastCard)
     end
