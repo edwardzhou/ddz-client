@@ -110,14 +110,14 @@ function AssetsScene:loadAssetItems()
       local item = this.AssetItemList:getItem(i-1)
       local label, imgIcon, price, button
       price = goods.price or 0.0
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgName'), 'ccui.Text')
+      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelGoodsName'), 'ccui.Text')
       label:setString(goods.goodsName)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgDesc'), 'ccui.Text')
+      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelGoodsDesc'), 'ccui.Text')
       label:setString(goods.goodsDesc)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPrice'), 'ccui.Text')
-      label:setString(string.format('价格 %d 元', price/100))
+      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelRemainingCount'), 'ccui.Text')
+      label:setString(string.format('剩余数量: %d', goods.count))
 
-      imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImagePkgIcon'), 'ccui.ImageView')
+      imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImageGoodsIcon'), 'ccui.ImageView')
       if goods.goodsIcon then
         local imgFilename = 'images/' .. goods.goodsIcon
         print('goodsIcon => ', imgFilename)
