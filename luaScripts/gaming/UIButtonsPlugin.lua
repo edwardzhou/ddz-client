@@ -77,6 +77,7 @@ function UIButtonsPlugin.bind( theClass )
     local this = self
     --PokeCard.releaseAllCards()
     --PokeCard.reloadAllCardSprites(self.pokeCardsBatchNode)
+    self.JipaiqiPanel:setVisible(false)
     self:resetScene()
     self.pokeGame = nil
     PokeCard.resetAll()

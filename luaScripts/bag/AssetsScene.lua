@@ -73,18 +73,6 @@ function AssetsScene:loadAssetItems()
   local listView
 
   if not self.listHasItemModel then
-    -- listView = ccui.ListView:create()
-    -- listView:setAnchorPoint(cc.p(0,0))
-    -- listView:setPosition(cc.p(0,0))
-    -- listView:setContentSize(cc.size(800, 412))
-    -- listView:setGravity(ccui.ListViewGravity.left)
-    -- listView:setDirection(ccui.ScrollViewDir.vertical)
-    -- listView:setBounceEnabled(true)
-    -- listView:setColor(cc.c3b(0x96, 0x96, 0xFF))
-    -- listView:setOpacity(100)
-    -- listView:addEventListener(__bind(self.ShopItemList_onEvent, self))
-    -- self.ShopItemList = listView
-    -- self.PanelRoot:addChild(listView)
     local item_model = self.AssetItemModel:clone()
     item_model:setVisible(true)
     self.AssetItemList:setItemModel(item_model)
@@ -108,7 +96,7 @@ function AssetsScene:loadAssetItems()
       local goods = data.assets[i]
       this.AssetItemList:pushBackDefaultItem()
       local item = this.AssetItemList:getItem(i-1)
-      local label, imgIcon, price, button
+      local label, imgIcon, price, button, inUsePanel
       price = goods.price or 0.0
       label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelGoodsName'), 'ccui.Text')
       label:setString(goods.goodsName)
@@ -126,8 +114,50 @@ function AssetsScene:loadAssetItems()
 
       button = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ButtonUse'), 'ccui.Button')
       button.goods = goods
+      button:addTouchEventListener(this._onButtonUseClicked)
+      inUsePanel = tolua.cast(ccui.Helper:seekWidgetByName(item, 'InUsePanel'), 'ccui.Layout')
+      button:setVisible(goods.using == 0)
+      inUsePanel:setVisible(goods.using == 1)
+      if goods.using == 1 then
+        local timeRemainingLabel = tolua.cast(ccui.Helper:seekWidgetByName(item, 'TimeRemaining'), 'ccui.Text')
+        local tm = os.time() + goods.remainingSeconds
+        local daySeconds = 24 * 3600
+        local hourSeconds = 3600
+        local tick = function()
+          local elipsed = tm - os.time()
+          local str = ''
 
-      button:addTouchEventListener(this._onButtonUseClicked)      
+          if elipsed <= 0 then
+            elipsed = 0
+            this:loadAssetItems()
+          end
+
+          if elipsed > daySeconds then
+            str = str + math.floor(elipsed / daySeconds) + '天'
+            elipsed = elipsed % daySeconds
+          end
+          if elipsed > hourSeconds then
+            str = str .. string.format('%02d:', math.floor(elipsed / hourSeconds)) 
+            elipsed = elipsed % hourSeconds
+          else
+            str = str .. '00:'
+          end
+          if elipsed > 60 then
+            str = str .. string.format('%02d:', math.floor(elipsed/60)) 
+            elipsed = elipsed % 60
+          else
+            str = str .. '00:'
+          end
+          str = str .. string.format('%02d', elipsed)
+          timeRemainingLabel:setString(str)
+        end
+
+        timeRemainingLabel:runAction(
+          cc.Repeat:create(
+            cc.Sequence:create(cc.CallFunc:create(tick), cc.DelayTime:create(1)), 
+            goods.remainingSeconds
+          ))
+      end
     end
   end)
 end
@@ -154,6 +184,7 @@ end
 function AssetsScene:ButtonUse_onClicked(sender, eventType)
   local this = self
   local goods = sender.goods
+  sender:setBright(false)
   --print('[AssetsScene:ButtonBuy_onClicked] eventType => ', eventType)
   if eventType == ccui.TouchEventType.ended then
     print('[AssetsScene:ButtonBuy_onClicked] you want to buy : ' , goods.packageName)
@@ -162,7 +193,8 @@ function AssetsScene:ButtonUse_onClicked(sender, eventType)
       msg = string.format('使用道具 %s\n%s', goods.goodsName, goods.goodsDesc),
       closeOnClickOutside = false,
       buttonType = 'ok|cancel',
-      onOk = function() return this:useGoods(goods) end
+      onOk = function() return this:useGoods(goods) end,
+      onCancelCallback = function() sender:setBright(true) end
     }
     showMessageBox(this, msgParams)
   end
@@ -177,14 +209,24 @@ function AssetsScene:close()
 end
 
 function AssetsScene:useGoods(goods)
-  -- local this = self
-  -- local params = {
-  --   pkgId = pkg.packageId
-  -- }
-  -- this.gameConnection:request('ddz.hallHandler.buyItem', params, function(data)
-  --     dump(data, '[AssetsScene:buyPackage] ddz.hallHandler.buyItem =>')
-  --     return true
-  --   end)
+  local this = self
+  local params = {
+    assetId = goods._id;
+  }
+  this.gameConnection:request('ddz.hallHandler.useAssetItem', params, function(data)
+      dump(data, '[ddz.hallHandler.useAssetItem] ddz.hallHandler.buyItem =>')
+      if data.retCode ~= 0 then
+        local msgParams = {
+          title = '使用道具出错',
+          msg = string.format('错误: %d, %s', data.retCode, data.message),
+          closeOnClickOutside = false,
+          buttonType = 'ok|cancel'
+        }
+        showMessageBox(this, msgParams)
+      end
+      this:loadAssetItems()
+      return true
+    end)
 end
 
 local function createScene()

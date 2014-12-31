@@ -6,6 +6,7 @@ local GamePlayer = require('GamePlayer')
 local GameService = require('RemoteGameService')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
 local gameConnection = require('network.GameConnection')
+local bit = require('bit');
 
 local GameScene = class('GameScene', function()
   return cc.Scene:create()
@@ -104,6 +105,7 @@ function GameScene:init()
   -- jipaiqi:setPosition(cc.p(400, 0))
   self.JipaiqiPanel:addChild(jipaiqi)
   self.jipaiqi = jipaiqi
+  self.JipaiqiPanel:setVisible(false)
 
   self:updateUserInfo()
 
@@ -249,7 +251,7 @@ function GameScene:initPlayers()
     end)
 end
 
-function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
+function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing, data)
   local this = self
   self:hideSelfPokecards()
   self:stopWaitingEffect()
@@ -283,6 +285,8 @@ function GameScene:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
   self.NextUserStatus:setVisible(false)
   print('[GameScene:doServerGameStart] timing: ', timing)
   self:showDrawingCardsAnimation(nextUserId, timing)
+  --self.pokeGame.assetBits = data.
+  --self.JipaiqiPanel:setVisible( bit.band(data.assetBits, 0x01) > 0 )
 
   -- local pokeCards = table.copy(self.selfPlayerInfo.pokeCards)
   -- local pokeLen = #pokeCards

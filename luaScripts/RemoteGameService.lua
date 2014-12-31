@@ -256,11 +256,12 @@ function RemoteGameService:onServerGameStartMsg(data)
   self.pokeGame.currentSeqNo = seqNo
   self.pokeGame.currentMsgNo = data.msgNo
   self.pokeGame.nextPlayerId = nextPlayerId
+  self.pokeGame.assetBits = data.assetBits or 0
 
   self:onServerPlayerJoinMsg(data.pokeGame)
 
   if self.msgReceiver.onStartNewGameMsg then
-    self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId, data.timing or 20)
+    self.msgReceiver:onStartNewGameMsg(self.pokeGame, data.pokeCards, nextPlayerId, data.timing or 20, data)
   end
 end
 

@@ -7,8 +7,8 @@ local Res = require('Resources')
 
 function SGamingActionsPlugin.bind(theClass)
 
-  function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId, timing)
-    self:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing)
+  function theClass:onStartNewGameMsg(pokeGame, pokeIdChars, nextUserId, timing, data)
+    self:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing, data)
     --self:showPlaycardClock(nil, nextTimeout)
   end
 
@@ -58,6 +58,9 @@ function SGamingActionsPlugin.bind(theClass)
         table.sort(self.selfPlayerInfo.pokeCards, sortDescBy('index'))
         self.pokeCards = self.selfPlayerInfo.pokeCards
       end
+
+      -- 根据记牌器道具位来控制记牌器是否显示
+      self.JipaiqiPanel:setVisible( bit.band(pokeGame.assetBits, 0x01) > 0 )
 
       self:doUpdatePlayersUI()
 
