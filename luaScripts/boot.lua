@@ -1,4 +1,4 @@
-bagrequire 'framework.functions'
+require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
 
