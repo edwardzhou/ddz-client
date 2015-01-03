@@ -23,8 +23,11 @@ function GameConnection:ctor(userId, sessionToken)
     end)
 end
 
-function GameConnection:authConnection()
+function GameConnection:authConnection(autoLogin)
   local this = self
+  if autoLogin == nil then
+    autoLogin = true
+  end
 
   local function doSignIn()
     local currentUser = AccountInfo.getCurrentUser()
@@ -83,7 +86,7 @@ function GameConnection:authConnection()
     mac = ddz.GlobalSettings.handsetInfo.mac,
   }
 
-  if this.autoSignIn then
+  if autoLogin then
     authParams.userId = currentUser.userId
     authParams.authToken = currentUser.authToken
     authParams.sessionToken = currentUser.sessionToken
@@ -135,7 +138,7 @@ function GameConnection:authConnection()
   end)
 end
 
-function GameConnection:reconnect()
+function GameConnection:reconnect(autoLogin)
   local this = self
 
   self.isStartConnecting = true
@@ -151,7 +154,7 @@ function GameConnection:reconnect()
 
   if this.pomeloClient then
     this.pomeloClient:init(serverParams, function()
-      this:authConnection()
+      this:authConnection(autoLogin)
     end)
   else
     this:connectToServer(serverParams)
@@ -201,10 +204,15 @@ function GameConnection:connectToServer(params)
     port = params.port
   }
 
+  local autoLogin = params.autoLogin
+  if autoLogin == nil then
+    autoLogin = true
+  end
+
   this.isAuthed = false
   this.isConnectionReady = false
   this.pomeloClient:init(serverParams, function()
-    this:authConnection()
+    this:authConnection(autoLogin)
   end)
 
 end

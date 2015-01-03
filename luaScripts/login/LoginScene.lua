@@ -101,7 +101,7 @@ function LoginScene:on_enterTransitionFinish()
   this.gameConnection:on('connectionReady', self._onConnectionReady)
   this.hidenRetries = 0
   this.gameConnection:signOut(function() 
-    this.gameConnection:reconnect()
+    this.gameConnection:reconnect(false)
   end)
 end
 
