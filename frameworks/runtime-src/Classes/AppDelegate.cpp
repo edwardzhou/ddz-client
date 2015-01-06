@@ -12,6 +12,8 @@
 #include "lua_cocos2dx_umeng_manual.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
+#include "lua_app_signature_manual.hpp"
+#include "md5/MD5pp.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,6 +58,22 @@ typedef struct JniFieldInfo_
     jfieldID   fieldID;
 } JniFieldInfo;
 
+void releaseMethodInfo(JniMethodInfo &info, bool keepClazz = false)
+{
+    // info.env->DeleteLocalRef(info.methodID);
+    // if (!keepClazz) {
+    //     info.env->DeleteLocalRef(info.classID);
+    // }
+}
+
+void releaseFieldInfo(JniFieldInfo &info, bool keepClazz = false) 
+{
+    // info.env->DeleteLocalRef(info.fieldID);
+    // if (!keepClazz) {
+    //     info.env->DeleteLocalRef(info.classID);
+    // }
+}
+
 bool getFieldInfo(JniFieldInfo &fieldinfo,
                               const char *className,
                               const char *fieldName,
@@ -92,6 +110,20 @@ bool getFieldInfo(JniFieldInfo &fieldinfo,
     return true;
 }
 
+std::string bin2hex(unsigned char *bin, int size)
+{
+    char buffer[3];
+    memset(buffer, 0, 3);
+    std::string data;
+    for (int i=0; i<size; i++)
+    {
+        sprintf(buffer, "%02x", bin[i]);
+        data.append(buffer);
+    }
+
+    return data;
+}
+
 std::string getApkSign() {
     std::string packageName;
     std::string apkSign;
@@ -106,38 +138,103 @@ std::string getApkSign() {
     JniMethodInfo _mi_getPackageManager;
     JniMethodInfo _mi_getPackageInfo;
     JniMethodInfo _mi_toCharsString;
+    JniMethodInfo _mi_Sign_toByteArray;
     JniMethodInfo _mi_packgeInfo_toString;
     JniFieldInfo _fi_signatures;
+    JniMethodInfo _mi_CertFactory_getInstance;
+    JniMethodInfo _mi_CertFactory_generateCertificate;
+    JniMethodInfo _mi_X509Certificate_toString;
+    JniMethodInfo _mi_X509Certificate_getSubjectX500Principal;
+    JniMethodInfo _mi_ByteArrayInputStreamContructor;
+
+    JniHelper::getStaticMethodInfo(_mi_CertFactory_getInstance, "java.security.cert.CertificateFactory", "getInstance", "(Ljava/lang/String;)Ljava/security/cert/CertificateFactory;");
+    JniHelper::getMethodInfo(_mi_CertFactory_generateCertificate, "java.security.cert.CertificateFactory", "generateCertificate", "(Ljava/io/InputStream;)Ljava/security/cert/Certificate;");
+    JniHelper::getMethodInfo(_mi_X509Certificate_getSubjectX500Principal, "java.security.cert.X509Certificate", "getSubjectX500Principal", "()Ljavax/security/auth/x500/X500Principal;");
+    JniHelper::getMethodInfo(_mi_X509Certificate_toString, "java.security.cert.X509Certificate", "toString", "()Ljava/lang/String;");
+    JniHelper::getMethodInfo(_mi_ByteArrayInputStreamContructor, "java.io.ByteArrayInputStream", "<init>", "([B)V");
 
     JniHelper::getMethodInfo(_mi_getPackageName, "android.content.Context", "getPackageName", "()Ljava/lang/String;");
     JniHelper::getMethodInfo(_mi_getPackageManager, "android.content.Context", "getPackageManager", "()Landroid/content/pm/PackageManager;");
     JniHelper::getMethodInfo(_mi_getPackageInfo, "android.content.pm.PackageManager", "getPackageInfo", "(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;");
     JniHelper::getMethodInfo(_mi_toCharsString, "android.content.pm.Signature", "toCharsString", "()Ljava/lang/String;");
+    if (!JniHelper::getMethodInfo(_mi_Sign_toByteArray, "android.content.pm.Signature", "toByteArray", "()[B")) {
+        CCLOG("[getApkInfo] ERROR: cannot get method info for android.content.pm.Signature#toByteArray");
+    };
     getFieldInfo(_fi_signatures, "android.content.pm.PackageInfo", "signatures", "[Landroid/content/pm/Signature;");
 
     jobject j_packageManager;
     jobject j_packageInfo;
     jobjectArray j_signatures;
     jobject j_signature;
-    jstring j_packageName; 
+    jstring j_packageName;
+    jclass j_classByteArrayInputStream = _getClassID_x("java.io.ByteArrayInputStream");
+    jobject j_byteArrayStream;
 
     jobject objPkgName = env->CallObjectMethod(j_context, _mi_getPackageName.methodID);
     j_packageName = (jstring) objPkgName;
     packageName = JniHelper::jstring2string(j_packageName);
     CCLOG("[getApkInfo] packageName => %s", packageName.c_str());
+    env->DeleteLocalRef(objPkgName);
 
     j_packageManager = env->CallObjectMethod(j_context, _mi_getPackageManager.methodID);
     j_packageInfo = env->CallObjectMethod(j_packageManager, _mi_getPackageInfo.methodID, j_packageName, 64);
     j_signatures = (jobjectArray) env->GetObjectField(j_packageInfo, _fi_signatures.fieldID);
 
+    jstring j_x509_string = env->NewStringUTF("X509");
+    jobject j_certFactory = env->CallStaticObjectMethod(_mi_CertFactory_getInstance.classID, _mi_CertFactory_getInstance.methodID, j_x509_string);
+    env->DeleteLocalRef(j_x509_string);
+
     jsize length = env->GetArrayLength(j_signatures);
-    for (jsize index=0; index < length; index++) {
+    for (jsize index=0; index < std::min(length, 1); index++) {
         j_signature = env->GetObjectArrayElement(j_signatures, index);
         jstring j_signStr = (jstring) env->CallObjectMethod(j_signature, _mi_toCharsString.methodID);
         apkSign = JniHelper::jstring2string(j_signStr);
         CCLOG("[getApkInfo] Signature[%d]: %s", index, apkSign.c_str());
-    }
+        env->DeleteLocalRef(j_signStr);
+        jbyteArray j_bytes = (jbyteArray) env->CallObjectMethod(j_signature, _mi_Sign_toByteArray.methodID);
+        jsize bytesLength = env->GetArrayLength(j_bytes);
+        CCLOG("[getApkInfo] signature[%d]: byte length: %d", index, bytesLength);
+        j_byteArrayStream = env->NewObject(j_classByteArrayInputStream, _mi_ByteArrayInputStreamContructor.methodID, j_bytes);
 
+        jobject j_x509Cert = env->CallObjectMethod(j_certFactory, _mi_CertFactory_generateCertificate.methodID, j_byteArrayStream);
+        jobject j_subjectPrinncipal = env->CallObjectMethod(j_x509Cert, _mi_X509Certificate_getSubjectX500Principal.methodID);
+        jstring j_subjectString = (jstring) env->CallObjectMethod(j_subjectPrinncipal, _mi_X509Certificate_toString.methodID);
+        std::string strSubject = JniHelper::jstring2string(j_subjectString);  
+        CCLOG("[getApkInfo] subject: %s", strSubject.c_str());
+
+        uchar* digest = NULL;
+        char *md5_string = NULL;
+        AppSign::_sign_subject = strSubject;
+        digest = MD5Digest((char*)strSubject.c_str());
+        strncpy((char *)AppSign::_sign_subject_md5_bin, (const char*)digest, 16);
+        md5_string = PrintMD5(AppSign::_sign_subject_md5_bin);
+        CCLOG("********md5_string for _sign_subject: %s", md5_string);
+        AppSign::_sign_subject_md5 = MD5String((char*)AppSign::_sign_subject.c_str());
+        free(md5_string);
+        md5_string = NULL;
+
+        CCLOG("AppSign::_sign_subject: %s", AppSign::_sign_subject.c_str());
+        CCLOG("AppSign::_sign_subject_md5: %s", AppSign::_sign_subject_md5.c_str());
+        CCLOG("AppSign::_sign_subject_md5(MD5String): %s", MD5String((char*)AppSign::_sign_subject.c_str()));
+
+        AppSign::_sign_data = apkSign;
+        digest = MD5Digest((char*)apkSign.c_str(), apkSign.size());
+        strncpy((char *)AppSign::_sign_data_md5_bin, (const char*)digest, 16);
+        md5_string = PrintMD5(AppSign::_sign_data_md5_bin);
+        AppSign::_sign_data_md5 = MD5String((char*)apkSign.c_str());
+        free(md5_string);
+        md5_string = NULL;
+
+        env->DeleteLocalRef(j_byteArrayStream);
+        env->DeleteLocalRef(j_subjectString);
+        env->DeleteLocalRef(j_subjectPrinncipal);
+        env->DeleteLocalRef(j_x509Cert);
+        env->DeleteLocalRef(j_bytes);
+   }
+
+    env->DeleteLocalRef(j_packageManager);
+    env->DeleteLocalRef(j_packageInfo);
+    env->DeleteLocalRef(j_signatures);
     return apkSign;
 }
 
@@ -180,6 +277,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
+
+    register_all_app_signiture(luaState);
 
  //    int nRet;
 	// unzFile pFile = NULL;

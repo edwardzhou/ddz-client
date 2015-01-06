@@ -37,6 +37,11 @@ local function startup()
       --require('src.mobdebug').start(host)
   end
 
+  _aa, _ab, _ac = ___appsig('abcde')
+  -- print('===== subjectMd5: ', subjectMd5)
+  -- print('===== data: ', data)
+  -- print('===== dataMd5: ', dataMd5)
+
   ddz.GlobalSettings.handsetInfo = ddz.getHandsetInfo()
   ddz.GlobalSettings.sdcardPath = ddz.getSDCardPath()
   ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')

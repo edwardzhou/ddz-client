@@ -74,16 +74,21 @@ public class AppActivity extends Cocos2dxActivity {
 				
 		        final byte[] rawCert = sign.toByteArray();
 		        InputStream certStream = new ByteArrayInputStream(rawCert);
+            System.out.println("Signature to byte array, length: " + rawCert.length);
 
 		        final CertificateFactory certFactory;
 		        final X509Certificate x509Cert;
 		        try {
 		            certFactory = CertificateFactory.getInstance("X509");
 		            x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
-
+		            
 		            sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
 		            sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
 		            sb.append("Certificate serial number: " + x509Cert.getSerialNumber() + "\n");
+		            sb.append("getSubjectX500Principal: " + x509Cert.getSubjectX500Principal() + "\n");
+		            sb.append("getSubjectX500Principal.Name: " + x509Cert.getSubjectX500Principal().getName() + "\n");
+		            sb.append("getIssuerX500Principal: " + x509Cert.getIssuerX500Principal() + "\n");
+		            sb.append("getIssuerX500Principal.Name: " + x509Cert.getIssuerX500Principal().getName() + "\n");
 		            sb.append("\n");
 		        }
 		        catch (CertificateException e) {

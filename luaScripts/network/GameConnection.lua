@@ -147,7 +147,12 @@ function GameConnection:reconnect(autoLogin)
 
   local serverParams = {
     host = serverInfo.host,
-    port = serverInfo.port
+    port = serverInfo.port,
+    user = {
+      aa = _aa,
+      ab = _ab, 
+      ac = _ac
+    }
   }
 
   print('[GameConnection:reconnect] ......................')
@@ -201,7 +206,12 @@ function GameConnection:connectToServer(params)
 
   local serverParams = {
     host = params.host,
-    port = params.port
+    port = params.port,
+    user = {
+      aa = _aa,
+      ab = _ab, 
+      ac = _ac
+    }
   }
 
   local autoLogin = params.autoLogin
