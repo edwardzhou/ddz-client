@@ -127,7 +127,7 @@ public class Utils {
 			return file.getAbsolutePath();
 		}
 		
-		boolean result = file.mkdir();
+		boolean result = file.mkdirs();
 		System.out.println(String.format("mkdir '%s' %s", file.getAbsolutePath(), result));
 		return file.getAbsolutePath();	
 	}

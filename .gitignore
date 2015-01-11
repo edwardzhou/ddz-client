@@ -11,7 +11,7 @@ lint.xml
 *.pyc
 cocos2d.bak
 runtime
-lua.zip
+lua*.zip
 res.zip
 publish
 temp

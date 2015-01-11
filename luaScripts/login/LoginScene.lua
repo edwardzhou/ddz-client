@@ -57,13 +57,20 @@ function LoginScene:init()
   require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
   self:initKeypadHandler()
 
-  local listView = ccui.ListView:create()
-  listView:setContentSize(190, 196)
-  listView:setPosition(5, 10)
-  listView:setGravity(ccui.ListViewGravity.centerHorizontal)
-  listView:addEventListener(__bind(self.ListViewAccounts_onEvent, self))
-  self.ListViewAccounts = listView
-  self.ListViewHolder:addChild(listView)
+  ddz.clearPressedDisabledTexture(self.ButtonSignIn)
+  ddz.clearPressedDisabledTexture(self.ButtonQuickSignUp)
+  ddz.clearPressedDisabledTexture(self.ButtonSwitchAccount)
+
+  -- local listView = ccui.ListView:create()
+  -- listView:setContentSize(190, 196)
+  -- listView:setPosition(5, 10)
+  -- listView:setGravity(ccui.ListViewGravity.centerHorizontal)
+  -- listView:addEventListener(__bind(self.ListViewAccounts_onEvent, self))
+  -- self.ListViewAccounts = listView
+  -- self.ListViewHolder:addChild(listView)
+  local itemModel = self.ButtonModel:clone()
+  itemModel:setVisible(true)
+  self.ListViewAccounts:setItemModel(itemModel)
   self.PanelAccounts:setVisible(false)
 
   self:bindPanelInput(self.PanelUserId, self.InputUserId)
@@ -235,22 +242,24 @@ function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
   local accounts = AccountInfo.getAccounts()
 
   if #self.ListViewAccounts:getItems() == 0 then
-    local panelSpan = ccui.Layout:create()
-    panelSpan:setContentSize(cc.size(180, 5))
+    -- local panelSpan = ccui.Layout:create()
+    -- panelSpan:setContentSize(cc.size(180, 5))
     --self.ListViewAccounts:pushBackCustomItem(panelSpan)
-    for _, account in ipairs(accounts) do 
+    for index, account in ipairs(accounts) do 
       print('[LoginScene:ButtonSwitchAccount_onClicked] userId => ', account.userId)
-      local button = self.ButtonModel:clone()
+      self.ListViewAccounts:pushBackDefaultItem()
+      local button = self.ListViewAccounts:getItem(index-1)
       button:setTitleText(account.userId)
-      button:setVisible(true)
-      button:setTouchEnabled(true)
-      button:setScale9Enabled(true)
-      button:setContentSize(cc.size(180, 40))
-      button:setTitleFontSize(22)
+      ddz.clearPressedDisabledTexture(button)
+      -- button:setVisible(true)
+      -- button:setTouchEnabled(true)
+      -- button:setScale9Enabled(true)
+      -- button:setContentSize(cc.size(180, 40))
+      -- button:setTitleFontSize(22)
 
       button:addTouchEventListener(__bind(self.Account_onClicked, self))
 
-      self.ListViewAccounts:pushBackCustomItem(button)
+      -- self.ListViewAccounts:pushBackCustomItem(button)
     end
   end
 

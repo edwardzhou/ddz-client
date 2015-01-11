@@ -61,6 +61,14 @@ function HallScene:init()
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
 
+  ddz.clearPressedDisabledTexture(self.ButtonStore)
+  ddz.clearPressedDisabledTexture(self.ButtonTask)
+  ddz.clearPressedDisabledTexture(self.ButtonAssets)
+  ddz.clearPressedDisabledTexture(self.ButtonBack)
+  ddz.clearPressedDisabledTexture(self.ButtonHead)
+
+  --self.ButtonTask:setBright(false)
+
   -- local listView = ccui.ListView:create()
   -- listView:setContentSize(800, 236)
   -- listView:setPosition(0, 145)

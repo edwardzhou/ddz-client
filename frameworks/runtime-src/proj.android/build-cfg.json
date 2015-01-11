@@ -21,10 +21,6 @@
         }, 
 
         {
-            "from": "../../../luaScripts", 
-            "to": ""
-        }, 
-        {
             "from": "../../cocos2d-x/external/lua/luasocket",
             "to": "",
             "include": [

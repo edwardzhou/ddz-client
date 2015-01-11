@@ -42,15 +42,32 @@ def compile_resources(lua_src_dir, assets_dst_dir):
 def generate_app_version(proj_path, assets_dir):
   read_xml(proj_path, assets_dir)
 
+def zip_lua(proj_path, assets_dir):
+  print('proj_path: %s' %(proj_path))
+  lua_dst_dir = os.path.normpath(os.path.join(proj_path, 'temp', 'luaScripts'))
+  print('shutil.rmtree(%s)' % (lua_dst_dir))
+  shutil.rmtree(lua_dst_dir)
+  print('mkdir %s' % (lua_dst_dir))
+  #os.mkdir(lua_dst_dir)
+  print('copytree ..')
+  shutil.copytree(os.path.join(proj_path, 'luaScripts'), lua_dst_dir)
+  shutil.copytree(os.path.join(proj_path, 'src', 'cocos'), os.path.join(lua_dst_dir, 'cocos'))
+  os.system('cd %s && zip -r ../../luaScripts.zip *' %(lua_dst_dir))
+  shutil.copy(os.path.join(proj_path, 'luaScripts.zip'), os.path.join(assets_dir, 'luaScripts.zip'))
+
+
 
 def handle_event(event, tp, args):
   #print('__handle_event', event, tp, args)
   if event == 'post-copy-assets':
     platform_proj_dir = args['platform-project-path']
+    proj_path = args["project-path"]
     lua_src_dir = os.path.normpath(os.path.join(args["project-path"], "luaScripts"))
     #print('lua_src_dir: ' , lua_src_dir)
     assets_dir = args['assets-dir']
-    compile_resources(lua_src_dir, assets_dir)
+    #compile_resources(lua_src_dir, assets_dir)
+    zip_lua(proj_path, assets_dir)
+    shutil.copy(os.path.normpath(os.path.join(args["project-path"], "luaScripts.zip")), os.path.join(assets_dir, "luaScripts.zip")) 
     generate_app_version(platform_proj_dir, assets_dir)
     umengJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "umeng", "android"))
     umengJarFile = "mobclickcpphelper.jar"

@@ -280,6 +280,9 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     register_all_app_signiture(luaState);
 
+    auto fileUtils = FileUtils::getInstance();
+    fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
+
  //    int nRet;
 	// unzFile pFile = NULL;
  //    do {
@@ -353,10 +356,21 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     CCLOG("SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP: '%s'", GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
 
-    if (engine->executeScriptFile("boot")) {
+    // if (engine->executeScriptFile("boot.lua")) {
+    //     return  false;
+    // }
+
+    engine->getLuaStack()->loadChunksFromZIP("luaScripts.zip");
+
+    // if (engine->executeGlobalFunction("startup")) {
+    //     return false;
+    // }
+    //if (engine->executeScriptFile("boot")) {
+    if(engine->executeString("require 'boot'")) 
+    {
         return  false;
     }
-    
+   
     return true;
 }
 

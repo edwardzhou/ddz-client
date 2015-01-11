@@ -403,3 +403,8 @@ ddz.readFromFile = function(filename)
   local data = fu:getStringFromFile(filepath)
   return data
 end
+
+ddz.clearPressedDisabledTexture = function(button)
+  button:clearPressedTexture()
+  button:clearDisabledTexture()
+end

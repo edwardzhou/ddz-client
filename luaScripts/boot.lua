@@ -27,6 +27,7 @@ local function main()
     local searchPaths = fileUtils:getSearchPaths()
     local sdpath = ddz.getSDCardPath()
     sdpath = sdpath .. '/fungame/DDZ'
+    ddz.mkdir(sdpath)
     table.insert(searchPaths, 1, fileUtils:getWritablePath())
     table.insert(searchPaths, 1, sdpath)
     table.insert(searchPaths, 1, sdpath .. '/Resources')
@@ -44,6 +45,6 @@ local function main()
 
     require('startup')();
 
- end
+end
 
 xpcall(main, __G__TRACKBACK__)
