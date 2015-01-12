@@ -28,11 +28,13 @@ package com.fungame.DDZ;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.File;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxHelper;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.content.Context;
@@ -51,6 +53,8 @@ public class AppActivity extends Cocos2dxActivity {
 	private NetworkListener networkListener = new NetworkListener();
 	public boolean appInForeground = true;
 	public static AppActivity activity = null;
+  public static String progPath = null;
+  public static String resPath = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,45 +64,53 @@ public class AppActivity extends Cocos2dxActivity {
 		activity = this;
 		
 		try {
+      File progFile = new File(Cocos2dxHelper.getCocos2dxWritablePath(), "prg");
+      progFile.mkdirs();
+      progPath = progFile.getAbsolutePath();
+      File resFile = new File(Cocos2dxHelper.getCocos2dxWritablePath(), "res");
+      resFile.mkdirs();
+      resPath = resFile.getAbsolutePath();
+
+      System.out.println("Prog Path: " + this.progPath);
+      System.out.println("Res Path: " + this.resPath);
+
 			PackageInfo info = this.getContext().getPackageManager().getPackageInfo(this.getContext().getPackageName(), PackageManager.GET_SIGNATURES);
 			System.out.println("PackageName: " + this.getContext().getPackageName());
-			   final String strName = info.applicationInfo.loadLabel(this.getContext().getPackageManager()).toString();
-			    final String strVendor = info.packageName;
-			    StringBuffer sb = new StringBuffer();
-			    sb.append("\n" + strName + " / " + strVendor + "\n");
+      final String strName = info.applicationInfo.loadLabel(this.getContext().getPackageManager()).toString();
+	    final String strVendor = info.packageName;
+	    StringBuffer sb = new StringBuffer();
+	    sb.append("\n" + strName + " / " + strVendor + "\n");
 
-			    for (Signature sign : info.signatures) {
-				System.out.println("Signature CharsString: " + sign.toCharsString());
-				System.out.println("Signature toString: " + sign.toString());
-				this.printHex(sign.toByteArray());
-				
-		        final byte[] rawCert = sign.toByteArray();
-		        InputStream certStream = new ByteArrayInputStream(rawCert);
-            System.out.println("Signature to byte array, length: " + rawCert.length);
-
-		        final CertificateFactory certFactory;
-		        final X509Certificate x509Cert;
-		        try {
-		            certFactory = CertificateFactory.getInstance("X509");
-		            x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
-		            
-		            sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
-		            sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
-		            sb.append("Certificate serial number: " + x509Cert.getSerialNumber() + "\n");
-		            sb.append("getSubjectX500Principal: " + x509Cert.getSubjectX500Principal() + "\n");
-		            sb.append("getSubjectX500Principal.Name: " + x509Cert.getSubjectX500Principal().getName() + "\n");
-		            sb.append("getIssuerX500Principal: " + x509Cert.getIssuerX500Principal() + "\n");
-		            sb.append("getIssuerX500Principal.Name: " + x509Cert.getIssuerX500Principal().getName() + "\n");
-		            sb.append("\n");
-		        }
-		        catch (CertificateException e) {
-		            // e.printStackTrace();
-		        }
-		        
-		        System.out.println("Certficate: \n" + sb.toString());
-			    
-			}
+	    for (Signature sign : info.signatures) {
+		    System.out.println("Signature CharsString: " + sign.toCharsString());
+		    System.out.println("Signature toString: " + sign.toString());
+		    this.printHex(sign.toByteArray());
 		
+        final byte[] rawCert = sign.toByteArray();
+        InputStream certStream = new ByteArrayInputStream(rawCert);
+        System.out.println("Signature to byte array, length: " + rawCert.length);
+
+        final CertificateFactory certFactory;
+        final X509Certificate x509Cert;
+        try {
+          certFactory = CertificateFactory.getInstance("X509");
+          x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
+          
+          sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
+          sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
+          sb.append("Certificate serial number: " + x509Cert.getSerialNumber() + "\n");
+          sb.append("getSubjectX500Principal: " + x509Cert.getSubjectX500Principal() + "\n");
+          sb.append("getSubjectX500Principal.Name: " + x509Cert.getSubjectX500Principal().getName() + "\n");
+          sb.append("getIssuerX500Principal: " + x509Cert.getIssuerX500Principal() + "\n");
+          sb.append("getIssuerX500Principal.Name: " + x509Cert.getIssuerX500Principal().getName() + "\n");
+          sb.append("\n");
+        }
+        catch (CertificateException e) {
+          e.printStackTrace();
+        }
+        
+        System.out.println("Certficate: \n" + sb.toString());
+      }
 			
 			IntentFilter intentFilter = new IntentFilter();
 			intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -109,7 +121,7 @@ public class AppActivity extends Cocos2dxActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	com.umeng.mobclickcpp.MobClickCppHelper.init(this);	
+    com.umeng.mobclickcpp.MobClickCppHelper.init(this);	
     //com.umeng.analytics.game.UMGameAgent.init(getContext());
     System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
 	

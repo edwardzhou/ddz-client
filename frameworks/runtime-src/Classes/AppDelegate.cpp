@@ -283,6 +283,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto fileUtils = FileUtils::getInstance();
     fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
 
+    CCLOG("private Path: %s", fileUtils->getWritablePath().c_str());
+
  //    int nRet;
 	// unzFile pFile = NULL;
  //    do {
