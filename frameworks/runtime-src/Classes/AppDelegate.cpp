@@ -9,6 +9,7 @@
 #include "unzip.h"
 #include "MobClickCpp.h"
 #include "lua_cocos2dx_umeng_auto.hpp"
+#include "lua_cocos2dx_quick_manual.hpp"
 #include "lua_cocos2dx_umeng_manual.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
@@ -269,10 +270,12 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto engine = LuaEngine::getInstance();
     auto luaState = engine->getLuaStack()->getLuaState();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
+    engine->getLuaStack()->setXXTEAKeyAndSign("abc", 3, "def", 3);
     // CCLOG("register_all_cocos2dx_pluginx ....");
     // register_all_cocos2dx_plugin(luaState);
     // CCLOG("after register_all_cocos2dx_pluginx ....");
     lua_module_register(luaState);
+    register_all_quick_manual(luaState);
     register_all_cocos2dx_umeng(luaState);
     register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);
@@ -282,6 +285,9 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     auto fileUtils = FileUtils::getInstance();
     fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/res", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/res/NewUI", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/prog", true);
 
     CCLOG("private Path: %s", fileUtils->getWritablePath().c_str());
 
@@ -362,7 +368,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     //     return  false;
     // }
 
-    engine->getLuaStack()->loadChunksFromZIP("luaScripts.zip");
+    engine->getLuaStack()->loadChunksFromZIP("bootstrap.zip");
 
     // if (engine->executeGlobalFunction("startup")) {
     //     return false;

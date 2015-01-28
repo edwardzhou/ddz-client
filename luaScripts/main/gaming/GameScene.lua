@@ -107,16 +107,12 @@ function GameScene:init()
   self.jipaiqi = jipaiqi
   self.JipaiqiPanel:setVisible(false)
 
-  self:updateUserInfo()
+  self.WaitingLabel:ignoreContentAdaptWithSize(true)
+  self.PrevPlayTipsLabel:ignoreContentAdaptWithSize(true)
+  self.PlayTipsLabel:ignoreContentAdaptWithSize(true)
+  self.NextPlayTipsLabel:ignoreContentAdaptWithSize(true)
 
-  -- self.CountDownLabel:setFontName('')
-  -- self.SysTime:setFontName('')
-  -- self.SelfUserPokeCount:setFontName('')
-  -- self.SelfUserName:setFontName('')
-  -- self.NextUserPokeCount:setFontName('')
-  -- self.NextUserName:setFontName('')
-  -- self.PrevUserPokeCount:setFontName('')
-  -- self.PrevUserName:setFontName('')
+  self:updateUserInfo()
 
   local pokeCardsLayer = cc.Layer:create()
   -- local pokeCardsBatchNode = cc.SpriteBatchNode:createWithTexture(

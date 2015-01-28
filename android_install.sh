@@ -2,7 +2,7 @@
 #`awk '{system("cocos compile -j8 -p android")}'`
 if [ "$1" != "-nobuild" ]
 then
-  cocos compile -j8 -p android
+  cocos compile -j8 -p android $*
   cocos_ret=$?
   echo "cocos build returns " $cocos_ret
   if [ $cocos_ret != 0 ]

@@ -8,24 +8,12 @@
     ],
     "copy_resources": [
         {
-            "from": "../../../src", 
-            "to": ""
-        }, 
-        {
             "from": "../../../res", 
             "to": "res"
         }, 
         {
             "from": "../../../Resources", 
             "to": ""
-        }, 
-
-        {
-            "from": "../../cocos2d-x/external/lua/luasocket",
-            "to": "",
-            "include": [
-                "*.lua"
-            ]
         }
     ]
 }

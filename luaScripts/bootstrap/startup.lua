@@ -1,13 +1,8 @@
---require "cocos.cocos2d.Cocos2d"
---require "cocos.cocos2d.Cocos2dConstants"
 CC_USE_DEPRECATED_API = false
 require "cocos.init"
 require('extern')
-require 'consts'
 require 'GlobalSettings'
 require 'DebugSetting'
-
-require 'cocos.ui.GuiConstants'
 
 cc.KeyCode.KEY_BACKSPACE    = 0x0006
 cc.KeyCode.KEY_MENU         = 0x000F
@@ -58,38 +53,38 @@ local function startup()
   
   dump(ddz.GlobalSettings, 'GlobalSettings')
 
-  umeng.MobClickCpp:startWithAppkey("5351dee256240b09f604ee4c", "my_channel_lua")
+  -- umeng.MobClickCpp:startWithAppkey("5351dee256240b09f604ee4c", "my_channel_lua")
 
-  local eventDict = {hello = "world", demo = "ok " .. os.date()}
+  -- local eventDict = {hello = "world", demo = "ok " .. os.date()}
 
-  umeng.MobClickCpp:event('test event')
-  umeng.MobClickCpp:event('test event with label', 'test label')
-  umeng.MobClickCpp:event('test event with dict', eventDict)
-  umeng.MobClickCpp:event('test event with dict3', {hello = "world", demo = "ok " .. os.date()}, 1)
+  -- umeng.MobClickCpp:event('test event')
+  -- umeng.MobClickCpp:event('test event with label', 'test label')
+  -- umeng.MobClickCpp:event('test event with dict', eventDict)
+  -- umeng.MobClickCpp:event('test event with dict3', {hello = "world", demo = "ok " .. os.date()}, 1)
 
-  local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
-  local function onNetworkChanged(event)
-      print('[onNetworkChanged] ', event:getEventName())
-  end
+  -- local eventDispatcher = cc.Director:getInstance():getEventDispatcher()
+  -- local function onNetworkChanged(event)
+  --     print('[onNetworkChanged] ', event:getEventName())
+  -- end
 
-  local listener1 = cc.EventListenerCustom:create("on_network_change_available",onNetworkChanged)
-  eventDispatcher:addEventListenerWithFixedPriority(listener1, 1)
+  -- local listener1 = cc.EventListenerCustom:create("on_network_change_available",onNetworkChanged)
+  -- eventDispatcher:addEventListenerWithFixedPriority(listener1, 1)
 
-  local listener2 = cc.EventListenerCustom:create("on_network_change_disable",onNetworkChanged)
-  eventDispatcher:addEventListenerWithFixedPriority(listener2, 2)
+  -- local listener2 = cc.EventListenerCustom:create("on_network_change_disable",onNetworkChanged)
+  -- eventDispatcher:addEventListenerWithFixedPriority(listener2, 2)
 
-  local function onEventComeToForeground()
-      print("[onEventComeToForeground] ...")
-  end
-  local function onEventComeToBackground()
-      print("[onEventComeToBackground] ...")
-  end
+  -- local function onEventComeToForeground()
+  --     print("[onEventComeToForeground] ...")
+  -- end
+  -- local function onEventComeToBackground()
+  --     print("[onEventComeToBackground] ...")
+  -- end
 
-  local listener3 = cc.EventListenerCustom:create("event_come_to_background", onEventComeToBackground)
-  eventDispatcher:addEventListenerWithFixedPriority(listener3, 3)
+  -- local listener3 = cc.EventListenerCustom:create("event_come_to_background", onEventComeToBackground)
+  -- eventDispatcher:addEventListenerWithFixedPriority(listener3, 3)
 
-  local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
-  eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
+  -- local listener4 = cc.EventListenerCustom:create("event_come_to_foreground", onEventComeToForeground)
+  -- eventDispatcher:addEventListenerWithFixedPriority(listener4, 4)
 
 
   ddz.GlobalSettings.scaleFactor = director:getContentScaleFactor()

@@ -1,0 +1,7 @@
+{
+  "projectUrl": "http://192.168.1.165:3000/app/official/updates/",
+  "remoteVersionUrl": "http://192.168.1.165:3000/app/official/updates/version.json",
+  "remoteManifestUrl": "http://192.168.1.165:3000/app/official/updates/manifest.json",
+  "version": "1.0.0",
+  "engineVersion": "cocos2d-x-lua 3.4rc1"
+}

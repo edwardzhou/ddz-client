@@ -125,7 +125,7 @@ function ConnectionStatusPlugin.bind(theClass)
     if _priorOnExit then
       _priorOnExit(this)
     end
-    this:unhookConnectionEvents()    
+    this:unhookConnectionEvents() 
   end
 
 end
