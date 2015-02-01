@@ -389,7 +389,7 @@ void AppDelegate::applicationDidEnterBackground()
 
     umeng::MobClickCpp::applicationDidEnterBackground();
 
-    AudioEngine::pauseAll();
+    // AudioEngine::pauseAll();
 }
 
 // this function will be called when the app is active again
@@ -401,9 +401,9 @@ void AppDelegate::applicationWillEnterForeground()
 
     //SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
     AudioEngine::resumeAll();
-    Director::getInstance()->getScheduler()->schedule([](float dt) {
-            cocos2d::EventCustom foregroundEvent(EVENT_COME_TO_FOREGROUND);
-            cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&foregroundEvent);
-    }, this, 0.0, 0, 0.0, false, "EVENT_COME_TO_FOREGROUND");
+    // Director::getInstance()->getScheduler()->schedule([](float dt) {
+    //         cocos2d::EventCustom foregroundEvent(EVENT_COME_TO_FOREGROUND);
+    //         cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&foregroundEvent);
+    // }, this, 0.0, 0, 0.0, false, "EVENT_COME_TO_FOREGROUND");
 }
 

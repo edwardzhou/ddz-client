@@ -1,19 +1,19 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "a3a53e9568012b95d727fa9b0be3171e"
+      "md5": "d44a39f4bc659f19b861f0a39edd3106"
     },
     "prog/main.zip": {
-      "md5": "ab9ce21c07a1dab64760637a16ef4372"
+      "md5": "85224d223b05a61d09b6233b4ec38915"
     },
     "prog/version.luac": {
-      "md5": "0ad0e620998f743c9e816faa2454a040"
+      "md5": "95523f51a302b33f76fb72cb0c922d02"
     },
     "res/.DS_Store": {
       "md5": "5c71f7d8d0d927459c929d0e585a9e9f"
     },
     "res/NewUI/AssetsScene.csb": {
-      "md5": "1f5d5b3b8ccb9926aad4badeed4e1349"
+      "md5": "33eb574468154638d00c2442821927ae"
     },
     "res/NewUI/Default/Button_Disable.png": {
       "md5": "fa79821349dd686f516187283bc2fb8c"
@@ -58,25 +58,25 @@
       "md5": "adf7de39246f474fcd29447672f8b66b"
     },
     "res/NewUI/GamingScene.csb": {
-      "md5": "f3e4a0e3ab33f2bcd9c5328f66882922"
+      "md5": "b5f2b965b9d802ffb10bb516c0082571"
     },
     "res/NewUI/HallScene.csb": {
-      "md5": "e541154b0a7d5159a4a28392f5093292"
+      "md5": "cf37b62cd51a4140f28412a6e6fc1a7e"
     },
     "res/NewUI/JipaiqiLayer.csb": {
-      "md5": "30ea8c0e589970544a979486693d97a4"
+      "md5": "dd39ff4e231b94b0c806bce681e0fb06"
     },
     "res/NewUI/LandingScene.csb": {
-      "md5": "0488e7cbadb102f039d78813c3774381"
+      "md5": "b19728470c602f181b85e1aa6317a176"
     },
     "res/NewUI/LoginScene.csb": {
-      "md5": "013cdc4756b7fe8f03c2522274269f29"
+      "md5": "ae915aac459446b2a6abe9ec40ca4f7e"
     },
     "res/NewUI/MessageBoxLayer.csb": {
-      "md5": "f4c1776664b406f0424b913017a5d67b"
+      "md5": "cf600890d4d13e1f6972a51e335cf731"
     },
     "res/NewUI/NetworkConnectingLayer.csb": {
-      "md5": "228b8b9cf132224cbcd93b2266166993"
+      "md5": "bbfcbd73fbd1160df90afabda450be35"
     },
     "res/NewUI/Res/fonts/playTips.fnt": {
       "md5": "adfcc72f7beeac12e3811b0d21958d37"
@@ -280,25 +280,25 @@
       "md5": "e6bf6277771ea19c3f774ac32450a3d4"
     },
     "res/NewUI/ShopScene.csb": {
-      "md5": "0dd566585290bb52918753feda506628"
+      "md5": "ed3930927fff5941ef96c6b8187c701b"
     },
     "res/NewUI/SysConfigLayer.csb": {
-      "md5": "2f521aeb2d8425424baf1743c628c015"
+      "md5": "24635eb41f832f27e7c3bfcdf66038da"
     },
     "res/NewUI/TaskScene.csb": {
-      "md5": "4f0b1d39ad03015f88a5f63ec9cdf48c"
+      "md5": "8e6c82cbe0b33c7e701efcd1155bc401"
     },
     "res/NewUI/Toast.csb": {
-      "md5": "9bfaf10c686f009e1fff7912af0ce46c"
+      "md5": "41504674acd6cb2399eaee60f098cc06"
     },
     "res/NewUI/UP_HeadIconScene.csb": {
-      "md5": "927a5432aa49a355bbcd3bee642021e0"
+      "md5": "c0b2fb4ca7334cbfbcdb3e57b50c13f0"
     },
     "res/NewUI/UP_PasswordScene.csb": {
-      "md5": "90b110cce05a971ec81a7f7c7b70ee84"
+      "md5": "40d0fddf41d1b0b480811d78e3e82ebf"
     },
     "res/NewUI/UserProfileScene.csb": {
-      "md5": "14890fd3ce23d2aa38f18308df3475fe"
+      "md5": "6048f11c08e0d492e0b826fa89ee6edd"
     },
     "res/allCardTypes.json": {
       "md5": "13d8099c3d3b0394d3d7ac02fe2d11cf"
@@ -1834,7 +1834,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "e553f578732d4b97185616e0dbe81ef8"
+      "md5": "6457fc14d42dc0ed29af104559b9ec8c"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",
