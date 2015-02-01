@@ -1,13 +1,13 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "d44a39f4bc659f19b861f0a39edd3106"
+      "md5": "3451f1412022b0f7839a3177c0251f92"
     },
     "prog/main.zip": {
-      "md5": "85224d223b05a61d09b6233b4ec38915"
+      "md5": "d7645ee1ea12bcd8472d588aa37f54fe"
     },
     "prog/version.luac": {
-      "md5": "95523f51a302b33f76fb72cb0c922d02"
+      "md5": "006d5e0a9d6ebf73e7aa63d481680461"
     },
     "res/.DS_Store": {
       "md5": "5c71f7d8d0d927459c929d0e585a9e9f"
@@ -1834,7 +1834,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "6457fc14d42dc0ed29af104559b9ec8c"
+      "md5": "2cbb28cef4a0d21f3851dc0362203c1a"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",
