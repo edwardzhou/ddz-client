@@ -1,16 +1,19 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "3451f1412022b0f7839a3177c0251f92"
+      "md5": "288dd8175934bc976b206486f0bd657d"
     },
     "prog/main.zip": {
-      "md5": "d7645ee1ea12bcd8472d588aa37f54fe"
+      "md5": "578d8f9718efe7fdb23fea3ad642bc79"
     },
     "prog/version.luac": {
-      "md5": "006d5e0a9d6ebf73e7aa63d481680461"
+      "md5": "f43d9aff41865431bfe885331a4984ad"
     },
     "res/.DS_Store": {
-      "md5": "5c71f7d8d0d927459c929d0e585a9e9f"
+      "md5": "4aee112b83fd9f7c8c9e4995298923a0"
+    },
+    "res/NewUI/.DS_Store": {
+      "md5": "194577a7e20bdcc7afbb718f502c134c"
     },
     "res/NewUI/AssetsScene.csb": {
       "md5": "33eb574468154638d00c2442821927ae"
@@ -57,11 +60,17 @@
     "res/NewUI/Default/Slider_PressBar.png": {
       "md5": "adf7de39246f474fcd29447672f8b66b"
     },
+    "res/NewUI/EveryDayLoginItemLayer.csb": {
+      "md5": "96583430508d5be039f1e5a5df69b7c8"
+    },
+    "res/NewUI/EveryDayLoginLayer.csb": {
+      "md5": "3cd52d4ae4103d2fc2498958a17c8c73"
+    },
     "res/NewUI/GamingScene.csb": {
       "md5": "b5f2b965b9d802ffb10bb516c0082571"
     },
     "res/NewUI/HallScene.csb": {
-      "md5": "cf37b62cd51a4140f28412a6e6fc1a7e"
+      "md5": "4432c1ca48ffaafcf258527c54153a37"
     },
     "res/NewUI/JipaiqiLayer.csb": {
       "md5": "dd39ff4e231b94b0c806bce681e0fb06"
@@ -77,6 +86,78 @@
     },
     "res/NewUI/NetworkConnectingLayer.csb": {
       "md5": "bbfcbd73fbd1160df90afabda450be35"
+    },
+    "res/NewUI/Res/everydaylogin/.DS_Store": {
+      "md5": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "res/NewUI/Res/everydaylogin/btn_getbonus.png": {
+      "md5": "cc53d62e942d902f4f47e27e359d869d"
+    },
+    "res/NewUI/Res/everydaylogin/button.png": {
+      "md5": "88efe8cc66f7612cb56efb348919e7c2"
+    },
+    "res/NewUI/Res/everydaylogin/button_down.png": {
+      "md5": "7bbc7ee1f9c41417074e9db80a11b6db"
+    },
+    "res/NewUI/Res/everydaylogin/coin_01.png": {
+      "md5": "e6e48e84f481e606010487c889901ad2"
+    },
+    "res/NewUI/Res/everydaylogin/coin_02.png": {
+      "md5": "990ffbfbc2d77450d98bd16bef8cb6a5"
+    },
+    "res/NewUI/Res/everydaylogin/coin_03.png": {
+      "md5": "990ffbfbc2d77450d98bd16bef8cb6a5"
+    },
+    "res/NewUI/Res/everydaylogin/coin_05.png": {
+      "md5": "f1d5b6123566f067b94147bf770e18bc"
+    },
+    "res/NewUI/Res/everydaylogin/coin_06.png": {
+      "md5": "3ae9e85fe4ce158ebbebf411cf88144c"
+    },
+    "res/NewUI/Res/everydaylogin/coin_07.png": {
+      "md5": "3ae9e85fe4ce158ebbebf411cf88144c"
+    },
+    "res/NewUI/Res/everydaylogin/cover.png": {
+      "md5": "bb28dfcbb8bd3f4c589cf558d2f10f84"
+    },
+    "res/NewUI/Res/everydaylogin/everydaylogin.png": {
+      "md5": "fc5dda92eb8113d753f3aead6d181cba"
+    },
+    "res/NewUI/Res/everydaylogin/everydaylogin_title.png": {
+      "md5": "4ed2a2823198b63b2ba003648ac42e3e"
+    },
+    "res/NewUI/Res/everydaylogin/everydayloginbg.png": {
+      "md5": "116d09065fc2d0a7af314fe43bd99998"
+    },
+    "res/NewUI/Res/everydaylogin/has_get_flag.png": {
+      "md5": "393d0c90f7527789db2dd91708a100ac"
+    },
+    "res/NewUI/Res/everydaylogin/item_bg.png": {
+      "md5": "c52286c52690bf3ba4dc9710f7092553"
+    },
+    "res/NewUI/Res/everydaylogin/login_man.png": {
+      "md5": "e3aa66a36e6643507c39e0241890a3ef"
+    },
+    "res/NewUI/Res/everydaylogin/one_thousand.png": {
+      "md5": "6b171fce550b1b4a50894903590b9462"
+    },
+    "res/NewUI/Res/everydaylogin/six_hundred.png": {
+      "md5": "71d15345d3ed185df19b80cd23cfdebe"
+    },
+    "res/NewUI/Res/everydaylogin/star_bg.png": {
+      "md5": "c4e9001cef8e99015fc59a4b9c900224"
+    },
+    "res/NewUI/Res/everydaylogin/ten_thousand.png": {
+      "md5": "a995558f8503ccfb18a21d9c5d31ce8e"
+    },
+    "res/NewUI/Res/everydaylogin/three_hundred.png": {
+      "md5": "f4a5c616b2e9933ec9122e4fd94cc071"
+    },
+    "res/NewUI/Res/fonts/everydaylogin.fnt": {
+      "md5": "ac56b8f78923f1b3edbe64524553cbe8"
+    },
+    "res/NewUI/Res/fonts/everydaylogin.png": {
+      "md5": "fc5dda92eb8113d753f3aead6d181cba"
     },
     "res/NewUI/Res/fonts/playTips.fnt": {
       "md5": "adfcc72f7beeac12e3811b0d21958d37"
@@ -320,9 +401,6 @@
     },
     "res/gray.fsh": {
       "md5": "4a6d99b109bdd6472e81befdd5f96112"
-    },
-    "res/images/.DS_Store": {
-      "md5": "1e06170f428a9abe291ca2a09b1c2e48"
     },
     "res/images/about.png": {
       "md5": "10bc61fe6c947dba52243b3b9b1ef8ec"
@@ -1834,7 +1912,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "2cbb28cef4a0d21f3851dc0362203c1a"
+      "md5": "63e239b4ebcb090118dbb98064804534"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",

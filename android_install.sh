@@ -15,6 +15,7 @@ serials=`adb devices | grep -v List | awk '{print $1;}'`
 
 pkg="com.fungame.DDZ"
 apk="runtime/android/DDZ-debug.apk"
+act="com.fungame.DDZ.AppActivity"
 
 #echo "pkg => " $1
 
@@ -25,5 +26,6 @@ do
   adb -s $sid uninstall $pkg
   echo "adb -s $sid install -r $apk"
   adb -s $sid install -r $apk 
+  adb -s $sid shell am start -n  "$pkg/$act"
 done
 

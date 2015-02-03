@@ -21,6 +21,17 @@ function __G__TRACKBACK__(msg)
     cclog("----------------------------------------")
 end
 
+
+local function checkSDCardConf()
+	if not debug_file then print('debug file not exist') return end
+	local ret, serverInfo = pcall(function() return require "ddz_server" end)
+	if not ret then print('ddz_server not exist') return end
+	require 'GlobalSettings'
+	if serverInfo.host then ddz.GlobalSettings.servers.host = serverInfo.host end
+	if serverInfo.port then ddz.GlobalSettings.servers.port = serverInfo.port end
+	dump(ddz.GlobalSettings.servers, 'settings.servers')
+end
+
 local function main()
     -- avoid memory leak
     collectgarbage("setpause", 100)
@@ -32,6 +43,7 @@ local function main()
     local searchPaths = fileUtils:getSearchPaths()
     local sdpath = ddz.getSDCardPath()
     local privatePath = fileUtils:getWritablePath()
+    fileUtils:addSearchPath(sdpath .. '/fungame')
     sdpath = sdpath .. '/fungame/DDZ'
     ddz.mkdir(sdpath)
     -- table.insert(searchPaths, 1, sdpath)
@@ -58,6 +70,9 @@ local function main()
 
     local resPaths = fileUtils:getSearchResolutionsOrder()
     dump(resPaths, 'Search Resolutions Order')
+
+    checkSDCardConf()
+
     require('startup')();
 
 end
