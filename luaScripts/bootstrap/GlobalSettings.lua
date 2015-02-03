@@ -25,7 +25,7 @@ settings.servers = {
   -- host = '192.168.1.165',
   -- host = '192.168.1.166',
   -- host = '192.168.0.163',
-  port = '4001'
+  port = '14001'
 }
 
 settings.audioInfo = {
