@@ -201,6 +201,8 @@ function UIButtonsPlugin.bind( theClass )
   function theClass:ButtonBack_onClicked(sender, event)
     -- local gameConn = require('network.GameConnection')
     -- gameConn:reconnect()
+    local dialog = require('chat.ChatLayer').new()
+  	self:addChild(dialog)
   end
 
   function theClass:ButtonDelegate_onClicked( sender, event )

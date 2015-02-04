@@ -1,22 +1,25 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "288dd8175934bc976b206486f0bd657d"
+      "md5": "3522e01064fede42a5b362037036185f"
     },
     "prog/main.zip": {
-      "md5": "578d8f9718efe7fdb23fea3ad642bc79"
+      "md5": "b6397b0ba759672aeb0be7444d911860"
     },
     "prog/version.luac": {
-      "md5": "f43d9aff41865431bfe885331a4984ad"
+      "md5": "fb7354eb4f0bd69c304046d40795b250"
     },
     "res/.DS_Store": {
-      "md5": "4aee112b83fd9f7c8c9e4995298923a0"
+      "md5": "694f1d113fc139fefcde8a8b2e50642b"
     },
     "res/NewUI/.DS_Store": {
-      "md5": "194577a7e20bdcc7afbb718f502c134c"
+      "md5": "64929f7dcf37ed76dd318e41c71a4282"
     },
     "res/NewUI/AssetsScene.csb": {
       "md5": "33eb574468154638d00c2442821927ae"
+    },
+    "res/NewUI/ChatPanelLayer.csb": {
+      "md5": "398acccf2260eb20e47493c8f727c8c2"
     },
     "res/NewUI/Default/Button_Disable.png": {
       "md5": "fa79821349dd686f516187283bc2fb8c"
@@ -86,6 +89,57 @@
     },
     "res/NewUI/NetworkConnectingLayer.csb": {
       "md5": "bbfcbd73fbd1160df90afabda450be35"
+    },
+    "res/NewUI/Res/.DS_Store": {
+      "md5": "368824f55269519074d8daa9d561ecb5"
+    },
+    "res/NewUI/Res/chat/btn_chat_send.png": {
+      "md5": "fc45cfcc5ea3d623463bccaf4d3a312d"
+    },
+    "res/NewUI/Res/chat/btn_chat_send_down.png": {
+      "md5": "8bbfb644e3b86e3dd99c2c53c5002a86"
+    },
+    "res/NewUI/Res/chat/chat_bg.png": {
+      "md5": "55613cbd3f9dffbef7a5da9534e2f963"
+    },
+    "res/NewUI/Res/chat/chat_txt_bg.png": {
+      "md5": "34532666ebbcba912b9c8a276eeebca3"
+    },
+    "res/NewUI/Res/chat/emoji/01/emo01_01.png": {
+      "md5": "036c8f0e4cf98612ab46728b8996b595"
+    },
+    "res/NewUI/Res/chat/emoji/02/emo02_01.png": {
+      "md5": "7d6e0e75fd7b4b114240aa377eb5b2bc"
+    },
+    "res/NewUI/Res/chat/emoji/03/emo03_01.png": {
+      "md5": "d033e2454c556ac75f26e26727a631e4"
+    },
+    "res/NewUI/Res/chat/emoji/04/emo04_01.png": {
+      "md5": "5be3ab5642b88109112672c00221eabb"
+    },
+    "res/NewUI/Res/chat/emoji/05/emo05_01.png": {
+      "md5": "a58adca735591b0f74bac65599379839"
+    },
+    "res/NewUI/Res/chat/emoji/06/emo06_01.png": {
+      "md5": "e2ff295f809775aa13f9f1d068723340"
+    },
+    "res/NewUI/Res/chat/emoji/07/emo07_01.png": {
+      "md5": "d7c3dc81aa0c39f5efec32eeb8b9e9f2"
+    },
+    "res/NewUI/Res/chat/emoji/08/emo08_01.png": {
+      "md5": "8ae69782ac51ca6887dded5d86082dea"
+    },
+    "res/NewUI/Res/chat/emoji/09/emo09_01.png": {
+      "md5": "8687bfc09640b9529e20609430c8bcd2"
+    },
+    "res/NewUI/Res/chat/emoji/10/emo10_01.png": {
+      "md5": "55e3385700ed20d75cca65a03b583fa2"
+    },
+    "res/NewUI/Res/chat/emoji/11/emo11_01.png": {
+      "md5": "5ede405b93356c323652dd14dc18d2f0"
+    },
+    "res/NewUI/Res/chat/emoji/12/emo12_01.png": {
+      "md5": "bd956ec68f6ab3f5784aae23a32df8f8"
     },
     "res/NewUI/Res/everydaylogin/.DS_Store": {
       "md5": "194577a7e20bdcc7afbb718f502c134c"
@@ -398,6 +452,12 @@
     },
     "res/drop_coins.plist": {
       "md5": "28779d99c222ad9537404f90996853b6"
+    },
+    "res/emo.plist": {
+      "md5": "5578aafd3ef7ac9a662c772cab5b0a9e"
+    },
+    "res/emo.png": {
+      "md5": "553a445468caad3300747947414266b6"
     },
     "res/gray.fsh": {
       "md5": "4a6d99b109bdd6472e81befdd5f96112"
@@ -1506,6 +1566,12 @@
     "res/images/ui9.png": {
       "md5": "27e6b86ae65fe724c3f9aafdcf39cb61"
     },
+    "res/itr_emo.plist": {
+      "md5": "6fed4b9f43224e5c90bc053d843205b5"
+    },
+    "res/itr_emo.png": {
+      "md5": "03db92477be6feb03a24c4c43ce139d7"
+    },
     "res/pokecards.plist": {
       "md5": "3159b334780fb06cd87935b73e31e2b2"
     },
@@ -1912,7 +1978,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "63e239b4ebcb090118dbb98064804534"
+      "md5": "c89c915a31b736e0bd86d823d8b9aeca"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",

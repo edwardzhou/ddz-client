@@ -161,8 +161,8 @@ function HallScene:init()
   -- rootLayer:addChild(sprite, 1000)
 
   --self:grayButtonStore(sprite)
-  dialog = require('everydaylogin.EveryDayLoginDialog').new()
-  self:addChild(dialog)
+  --dialog = require('chat.ChatLayer').new()
+  --self:addChild(dialog)
 end
 
 function HallScene:grayButtonStore(s)
