@@ -57,8 +57,6 @@ function TaskScene:init()
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
   self.TaskItemModel:setVisible(false)
-
-
 end
 
 
@@ -90,12 +88,7 @@ function TaskScene:loadTaskItems()
     local item_model = self.TaskItemModel:clone()
     item_model:setVisible(true)
     self.TaskItemList:setItemModel(item_model)
-    -- self.TaskItemList:pushBackDefaultItem()
-    -- self.TaskItemList:pushBackDefaultItem()
-    -- self.TaskItemList:pushBackDefaultItem()
     self.listHasItemModel = true
-  else
-    --self.TaskItemList:removeAllItems()
   end
   
   this.gameConnection:request('ddz.taskHandler.getTasks', {}, function (data)
@@ -103,6 +96,19 @@ function TaskScene:loadTaskItems()
     this.TaskItemList:removeAllItems()
     local task, taskItem
     local label, button
+    data.tasks = {
+    	{taskId=1,taskName='今日获得一次10连胜',progressDesc='10/10',taskBonusDesc='2000金币',taskFinished=1},
+    	{taskId=2,taskName='今日升一级',progressDesc='0/1',taskBonusDesc='1记牌器',taskFinished=2},
+    	{taskId=3,taskName='今日赢取10局',progressDesc='8/10',taskBonusDesc='300金币',taskFinished=2},
+    	{taskId=4,taskName='今日获得一次春天',progressDesc='0/1',taskBonusDesc='100金币',taskFinished=2},
+    	{taskId=5,taskName='今日赢一次3连胜',progressDesc='2/3',taskBonusDesc='100金币',taskFinished=2},
+    	{taskId=6,taskName='今日赢得3000金币',progressDesc='3000/3000',taskBonusDesc='100金币',taskFinished=1},
+    	{taskId=7,taskName='今日完成20局对局',progressDesc='20/20',taskBonusDesc='1000金币',taskFinished=1},
+    	{taskId=8,taskName='今日完成40局对局',progressDesc='32/40',taskBonusDesc='3000金币',taskFinished=2},
+    	{taskId=9,taskName='今日完成60局对局',progressDesc='32/60',taskBonusDesc='10000金币',taskFinished=2},
+    	{taskId=10,taskName='连续2日都完成20局对局',progressDesc='1/2',taskBonusDesc='4000金币',taskFinished=2},
+    	{taskId=11,taskName='连续2日都完成40局对局',progressDesc='1/2',taskBonusDesc='8000金币',taskFinished=2}
+    }
     for i=1, #data.tasks do
       task = data.tasks[i]
       this.TaskItemList:pushBackDefaultItem()
@@ -110,7 +116,6 @@ function TaskScene:loadTaskItems()
       this:setTaskItemInfo(taskItem, task)
     end
   end)
-
 end
 
 function TaskScene:setTaskItemInfo(taskItem, task)
@@ -123,44 +128,29 @@ function TaskScene:setTaskItemInfo(taskItem, task)
   label:setString(task.progressDesc)
   label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskBonus'), 'ccui.Text')
   label:setString(task.taskBonusDesc)
-  label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskDesc'), 'ccui.Text')
-  label:setString(task.taskDesc)
   label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskStatus'), 'ccui.Text')
-  buttonApply = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ButtonApply'), 'ccui.Button')
+
+  local arr = string.split(task.progressDesc, "/")
+  local progress = tonumber(arr[1])/tonumber(arr[2]) * 100
+  local progressBar = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ProgressBar'), 'ccui.LoadingBar') 
+  progressBar:setPercent(progress) 
+
   buttonTakeBonus = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ButtonTakeBonus'), 'ccui.Button')
-  if task.taskActivated == 0 then
-    buttonApply:setVisible(true)
-    buttonTakeBonus:setVisible(false)
-    buttonApply.task = task
-    buttonApply:addTouchEventListener(this._onButtonApplyClicked)
-    label:setString('未开始')
-  elseif task.taskFinished == 1 then
-    buttonApply:setVisible(false)
-    buttonTakeBonus:setVisible(true)
-    buttonTakeBonus.task = task
-    buttonTakeBonus:addTouchEventListener(this._onButtonTakeBonusClicked)
-    label:setString('已完成')
+  buttonTakeBonus.task = task
+  buttonTakeBonus:addTouchEventListener(this._onButtonTakeBonusClicked)
+  if task.taskFinished == 1 then
+    buttonTakeBonus:setTitleText('领取奖励')
   else
-    buttonApply:setVisible(false)
-    buttonTakeBonus:setVisible(false)
-    label:setString('进行中')
+  	buttonTakeBonus:setTitleText('去做任务')
   end
-
-
-
 end
 
 function TaskScene:initKeypadHandler()
   local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
---      if type(self.onMainMenu) == 'function' then
---        self.onMainMenu()
---      end
       event:stopPropagation()
       this:close()
-    elseif keyCode == cc.KeyCode.KEY_MENU  then
-      --label:setString("MENU clicked!")
     end
   end
 
@@ -169,23 +159,19 @@ function TaskScene:initKeypadHandler()
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 end
 
-function TaskScene:ButtonApply_onClicked(sender, eventType)
-  local this = self
-  local task = sender.task
-  --print('[TaskScene:ButtonBuy_onClicked] eventType => ', eventType)
-  if eventType == ccui.TouchEventType.ended then
-    this:applyTask(task)
-  end
-end
-
 function TaskScene:ButtonTakeBonus_onClicked(sender, eventType)
   local this = self
   local task = sender.task
-  --print('[TaskScene:ButtonBuy_onClicked] eventType => ', eventType)
   if eventType == ccui.TouchEventType.ended then
-    dump(task, '[] take Bonus for task')
-    this:takeTaskBonus(task)
-    this:playDropCoins()
+  	if task.taskFinished == 1 then
+    	dump(task, '[] take Bonus for task')
+    	--this:takeTaskBonus(task)
+    	this:playDropCoins()
+    	self.TaskItemList:removeItem(self.TaskItemList:getIndex(sender:getParent():getParent()))
+    	self.TaskItemList:requestRefreshView()
+  	else
+  		self:close()
+  	end
   end
 end
 
@@ -204,38 +190,6 @@ function TaskScene:getTaskItem(taskId)
     end
   end
   return nil
-end
-
-
-function TaskScene:applyTask(task)
-  dump(task, '[TaskScene:applyTask] task => ')
-  local this = self
-
-  this.gameConnection:request('ddz.taskHandler.applyTask', {taskId = task.taskId}, function (data)
-    dump(data, '[ddz.taskHandler.applyTask] data =>')
-    local _task = data.task
-    local taskItem = nil
-    local taskItems = this.TaskItemList:getItems()
-    dump(taskItems, 'taskItems')
-    for i=1, #taskItems do
-      taskItem = taskItems[i]
-      if taskItem.taskId == _task.taskId then
-        this:setTaskItemInfo(taskItem, _task)
-        local bgColor = taskItem:getColor()
-        local _item = taskItem
-        this:runAction(cc.Sequence:create(
-            cc.CallFunc:create(function() 
-                _item:setColor(cc.c3b(255,255,0))
-              end),
-            cc.DelayTime:create(0.5),
-            cc.CallFunc:create(function() 
-              _item:setColor(bgColor)
-              end)
-          ))
-        return
-      end
-    end
-  end)
 end
 
 function TaskScene:takeTaskBonus(task)

@@ -1,13 +1,13 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "3522e01064fede42a5b362037036185f"
+      "md5": "3e6c39ff82764710199140eb50729225"
     },
     "prog/main.zip": {
-      "md5": "b6397b0ba759672aeb0be7444d911860"
+      "md5": "4a64312e40cbd8aa1e31ab23f72dfc1b"
     },
     "prog/version.luac": {
-      "md5": "fb7354eb4f0bd69c304046d40795b250"
+      "md5": "470827716ea62cf2147ff9dfbb122897"
     },
     "res/.DS_Store": {
       "md5": "694f1d113fc139fefcde8a8b2e50642b"
@@ -414,14 +414,38 @@
     "res/NewUI/Res/old_button.png": {
       "md5": "e6bf6277771ea19c3f774ac32450a3d4"
     },
+    "res/NewUI/Res/task/bg_button.png": {
+      "md5": "cc75016f1c0d2dab78d188a741cb3de5"
+    },
+    "res/NewUI/Res/task/goldIcon.png": {
+      "md5": "d35231eb1128f524bf49daa35779ed05"
+    },
+    "res/NewUI/Res/task/progress.png": {
+      "md5": "4213dc280dcc4bd56f6eb69d938aec14"
+    },
+    "res/NewUI/Res/task/progress_bg.png": {
+      "md5": "9355738cfa56c83e9c67bd93b3554c00"
+    },
+    "res/NewUI/Res/task/progress_tx.png": {
+      "md5": "43624232fb6139f381138e14443ef015"
+    },
+    "res/NewUI/Res/task/sys_vs.png": {
+      "md5": "9bf1011601c6d30b5347dd0c2311b11c"
+    },
+    "res/NewUI/Res/task/task_item_bg.png": {
+      "md5": "b89c65b7764a605076bd68f8d9d14314"
+    },
     "res/NewUI/ShopScene.csb": {
       "md5": "ed3930927fff5941ef96c6b8187c701b"
     },
     "res/NewUI/SysConfigLayer.csb": {
       "md5": "24635eb41f832f27e7c3bfcdf66038da"
     },
+    "res/NewUI/TaskItemLayer.csb": {
+      "md5": "da827bc5aff2b9cc7da2b0b933b4a9d4"
+    },
     "res/NewUI/TaskScene.csb": {
-      "md5": "8e6c82cbe0b33c7e701efcd1155bc401"
+      "md5": "df11f21fcbad1dea9a5fd640b180f639"
     },
     "res/NewUI/Toast.csb": {
       "md5": "41504674acd6cb2399eaee60f098cc06"
@@ -1978,7 +2002,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "c89c915a31b736e0bd86d823d8b9aeca"
+      "md5": "0159d67a92e498e3edd4be611bc0f6ba"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",
