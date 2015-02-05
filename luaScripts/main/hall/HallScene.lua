@@ -37,14 +37,12 @@ function HallScene:on_enter()
   print('[HallScene:on_enter] ...')
   self:updateUserInfo()
   self.gameConnection.needReconnect = false
-  self:hookLoginRewardEvent()--hook in here and unhook when exit
 end
 
 function HallScene:on_enterTransitionFinish()
 end
 
 function HallScene:on_cleanup()
-	self:unhookLoginRewardEvent()
 end
 
 function HallScene:init()
@@ -347,5 +345,4 @@ local function createScene()
 end
 
 require('network.ConnectionStatusPlugin').bind(HallScene)
-require('network.LoginRewardEventPlugin').bind(HallScene)
 return createScene

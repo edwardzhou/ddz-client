@@ -20,6 +20,7 @@ function GameConnection:ctor(userId, sessionToken)
 
   self:on('connectionReady', function() 
       this:hookChargeResultEvent()
+      this:hookLoginRewardEvent()
     end)
 end
 
@@ -303,6 +304,8 @@ end
 require('network.SignInPlugin').bind(GameConnection)
 require('network.SignUpPlugin').bind(GameConnection)
 require('network.ChargeResultEventPlugin').bind(GameConnection)
+require('network.LoginRewardEventPlugin').bind(GameConnection)
+
 
 local gameConn = GameConnection.new()
 
