@@ -162,7 +162,7 @@ function HallScene:init()
 
   --self:grayButtonStore(sprite)
   --dialog = require('chat.ChatLayer').new()
-  --dialog = require('everydaylogin.EveryDayLoginDialog').new()
+  --dialog = require('everydaylogin.EveryDayLoginDialog').new({"getted","getted","get","get","disable","disable","disable"})
   --self:addChild(dialog)
 end
 
@@ -345,5 +345,4 @@ local function createScene()
 end
 
 require('network.ConnectionStatusPlugin').bind(HallScene)
-
 return createScene
