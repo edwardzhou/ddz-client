@@ -4,7 +4,8 @@ local EveryDayLoginDialog = class('EveryDayLoginDialog', function()
   return cc.Layer:create()
 end)
 
-function EveryDayLoginDialog:ctor()
+function EveryDayLoginDialog:ctor(status)
+	self.status = status
   self:init()
 end
 
@@ -18,11 +19,11 @@ function EveryDayLoginDialog:init()
 end
 
 function EveryDayLoginDialog:addItems(uiRoot)
-	local status = {"getted","getted","get","get","disable","disable","disable"}
+	--local status = {"getted","getted","get","get","disable","disable","disable"}
   local startx = -214
   local starty = 87.5
   for i=1,7 do 
-  	local item1 = require("everydaylogin.EveryDayLoginItem").new(i, status[i])
+  	local item1 = require("everydaylogin.EveryDayLoginItem").new(i, self.status[i])
   	if i <= 4 then
   		item1:setPosition(startx + 160 * (i - 1), starty)
   	else
@@ -53,6 +54,10 @@ end
 
 function EveryDayLoginDialog:ButtonGet_onClicked(sender, eventType)
   print('on get clicked')
+  local drop_coins = cc.ParticleSystemQuad:create('drop_coins.plist')
+  drop_coins:setPosition(400, 480)
+  self:getParent():addChild(drop_coins)
+  self:removeFromParent(true)
 end
 
 return EveryDayLoginDialog
