@@ -90,7 +90,15 @@ function LoginScene:init()
 
   -- uiEditBox:setPosition(100, 100)
   -- self.uiRoot:addChild(uiEditBox)
+  self:stopUpdateSession()
+end
 
+function LoginScene:stopUpdateSession()
+	if ddz.updateSessionHandler then
+		print('unschedule updateSessionHandler')
+		require('framework.scheduler').unscheduleGlobal(ddz.updateSessionHandler)
+		ddz.updateSessionHandler = nil
+	end
 end
 
 function LoginScene:on_enterTransitionFinish()
