@@ -1,13 +1,13 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "d3a6ded2ec63600ebcf964ed4c515d50"
+      "md5": "a56fb4d7fe0672f4485b1643cb336bdd"
     },
     "prog/main.zip": {
-      "md5": "3e4650f68e20633f2f5244f038597f4e"
+      "md5": "edffa71c2990da99885cf67c757fdfc7"
     },
     "prog/version.luac": {
-      "md5": "9b9295838b24b066c1dc2ce69a2c392c"
+      "md5": "53974adb8f352ebd28e782cb6d0d87ef"
     },
     "res/.DS_Store": {
       "md5": "694f1d113fc139fefcde8a8b2e50642b"
@@ -19,7 +19,7 @@
       "md5": "33eb574468154638d00c2442821927ae"
     },
     "res/NewUI/ChatPanelLayer.csb": {
-      "md5": "398acccf2260eb20e47493c8f727c8c2"
+      "md5": "623cc164f2b8c8382f22ff54df310f21"
     },
     "res/NewUI/Default/Button_Disable.png": {
       "md5": "fa79821349dd686f516187283bc2fb8c"
@@ -64,13 +64,13 @@
       "md5": "adf7de39246f474fcd29447672f8b66b"
     },
     "res/NewUI/EveryDayLoginItemLayer.csb": {
-      "md5": "96583430508d5be039f1e5a5df69b7c8"
+      "md5": "79446b91125c49a19d869352deba9aa1"
     },
     "res/NewUI/EveryDayLoginLayer.csb": {
       "md5": "3cd52d4ae4103d2fc2498958a17c8c73"
     },
     "res/NewUI/GamingScene.csb": {
-      "md5": "b5f2b965b9d802ffb10bb516c0082571"
+      "md5": "bbcc09c7874b88d7eaf3b8b57dde7b1a"
     },
     "res/NewUI/HallScene.csb": {
       "md5": "4432c1ca48ffaafcf258527c54153a37"
@@ -426,6 +426,9 @@
     "res/NewUI/Res/task/sys_vs.png": {
       "md5": "9bf1011601c6d30b5347dd0c2311b11c"
     },
+    "res/NewUI/Res/task/sys_win.png": {
+      "md5": "c3abb595e20339226353e87fe94aa5d7"
+    },
     "res/NewUI/Res/task/task_item_bg.png": {
       "md5": "b89c65b7764a605076bd68f8d9d14314"
     },
@@ -439,7 +442,7 @@
       "md5": "da827bc5aff2b9cc7da2b0b933b4a9d4"
     },
     "res/NewUI/TaskScene.csb": {
-      "md5": "df11f21fcbad1dea9a5fd640b180f639"
+      "md5": "350b53b95874ca8513671ef37597c2ed"
     },
     "res/NewUI/Toast.csb": {
       "md5": "41504674acd6cb2399eaee60f098cc06"
@@ -1996,7 +1999,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "6642d0de71a2e86353220696be785252"
+      "md5": "0ad1d6701c20b854ec244de1f4c7ec82"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",

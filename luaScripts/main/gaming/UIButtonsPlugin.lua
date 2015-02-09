@@ -212,6 +212,47 @@ function UIButtonsPlugin.bind( theClass )
       end)
   end
 
+  function theClass:sendRandMessage(userHead)
+  	print('sendRandMessage')
+  	local heads = {self.SelfUserHead, self.PrevUserHead, self.NextUserHead}
+  	local anims = {'boom','rottenegg','diamond','flower'}
+  	local msgs = {'我等的假花儿都谢了！','真怕猪一样的队友！','一走一停真有型，一秒一卡好','我炸你个桃花朵朵开！',
+  		'姑娘，你真是条汉子。','风吹鸡蛋壳，牌去人安乐。','搏一搏，单车变摩托。','炸得好！'}
+    local from = userHead
+    local rheads = {}
+    for _,v in pairs(heads) do
+    	if v ~= userHead then
+    		table.insert(rheads, v)
+    	end
+    end
+    local to = rheads[math.random(2)]
+    local anim = anims[math.random(4)]
+    local randNum = math.random()
+    if randNum < 0.5 then
+    	print('send danmu ')
+    	require('chat.DanMuChat').sendDanmu(from,to,anim)
+    else
+    	print('send emoji')
+    	local index = math.random(12)
+    	require('chat.EmojiChat').onUserEmoji(userHead, index, userHead == self.SelfUserHead)
+    end
+	end
+
+  function theClass:PrevUserHead_onClicked(sender, event)
+  	print('PrevUserHead_onClicked')
+  	self:sendRandMessage(self.PrevUserHead)
+  end
+
+  function theClass:NextUserHead_onClicked(sender, event)
+  	print('NextUserHead_onClicked')
+  	self:sendRandMessage(self.NextUserHead)
+  end
+
+  function theClass:SelfUserHead_onClicked(sender, event)
+  	print('SelfUserHead_onClicked')
+  	self:sendRandMessage(self.SelfUserHead)
+  end
+
 end
 
 return UIButtonsPlugin
