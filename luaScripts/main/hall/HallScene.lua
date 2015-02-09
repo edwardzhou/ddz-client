@@ -52,7 +52,7 @@ function HallScene:init()
   self:addChild(rootLayer)
 
   self.gameConnection = require('network.GameConnection')
-
+  self.gameConnection:scheduleUpdateSession()
   local guiReader = ccs.GUIReader:getInstance()
   
   -- local ui = guiReader:widgetFromBinaryFile('gameUI/Hall.csb')
@@ -301,6 +301,10 @@ end
 function HallScene:initKeypadHandler()
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
+    	print('hall scene exit')
+    	self:request('ddz.entryHandler.quit', {userId = AccountInfo.getCurrentUser().userId}, function(data) 
+    		dump(data, 'ddz.entryHandler.quit')
+    	end)
       event:stopPropagation()
       cc.Director:getInstance():popScene() 
     elseif keyCode == cc.KeyCode.KEY_MENU  then
