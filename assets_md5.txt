@@ -1,13 +1,13 @@
 {
   "assets": {
     "prog/bootstrap.zip": {
-      "md5": "0940f3f56a816fd9d567d1e871604175"
+      "md5": "78c1383eea5e61d10dc5ff2f6a1fe85f"
     },
     "prog/main.zip": {
-      "md5": "f76d09da6bf9c3209c488386c4ea61d4"
+      "md5": "c24b3e9cbe2e1700756b44d7064d2c4f"
     },
     "prog/version.luac": {
-      "md5": "d8e5cd84d35090f7faecfd4600490f65"
+      "md5": "1cadcacf04e75a6654dc10e91007567f"
     },
     "res/.DS_Store": {
       "md5": "694f1d113fc139fefcde8a8b2e50642b"
@@ -90,9 +90,6 @@
     "res/NewUI/NetworkConnectingLayer.csb": {
       "md5": "bbfcbd73fbd1160df90afabda450be35"
     },
-    "res/NewUI/Res/.DS_Store": {
-      "md5": "368824f55269519074d8daa9d561ecb5"
-    },
     "res/NewUI/Res/chat/btn_chat_send.png": {
       "md5": "fc45cfcc5ea3d623463bccaf4d3a312d"
     },
@@ -140,9 +137,6 @@
     },
     "res/NewUI/Res/chat/emoji/12/emo12_01.png": {
       "md5": "bd956ec68f6ab3f5784aae23a32df8f8"
-    },
-    "res/NewUI/Res/everydaylogin/.DS_Store": {
-      "md5": "194577a7e20bdcc7afbb718f502c134c"
     },
     "res/NewUI/Res/everydaylogin/btn_getbonus.png": {
       "md5": "cc53d62e942d902f4f47e27e359d869d"
@@ -2002,7 +1996,7 @@
       "md5": "9b31ac31700f7186536b615bd7b0d64b"
     },
     "versionInfo.json": {
-      "md5": "8c39615da582e2d38e659763bc9e15f5"
+      "md5": "b9bd4d76480bd1d49f147b49230d3eec"
     }
   },
   "engineVersion": "cocos2d-x-lua 3.4rc1",

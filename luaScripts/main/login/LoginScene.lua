@@ -21,6 +21,7 @@ end
 
 function LoginScene:ctor(...)
   local this = self
+  self.noLoginReward = true
   self.gameConnection = require('network.GameConnection')
   self.gameConnection.autoSignIn = false
   self.gameConnection.autoSignUp = false
