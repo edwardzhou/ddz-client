@@ -221,7 +221,7 @@ end
 
 function GameScene:bindControlsVariables()
   local VarBinding = require('utils.UIVariableBinding')
-  VarBinding.bind(self.uiWidget, self, self)
+  VarBinding.bind(self.uiWidget, self, self, true)
 end
 
 function GameScene:showSysTime()
