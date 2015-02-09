@@ -231,6 +231,16 @@ function GameConnection:connectToServer(params)
 
 end
 
+function GameConnection:scheduleUpdateSession()
+	if ddz.updateSessionHandler then return end
+	local updateUserSession = function()
+		self:request('ddz.entryHandler.updateSession',{userId=AccountInfo.getCurrentUser().userId}, function(data) 
+			dump(data, 'on update user session')
+		end)
+	end
+	ddz.updateSessionHandler = require('framework.scheduler').scheduleGlobal(updateUserSession, 5*60)
+end
+
 function GameConnection:request(route, msg, cb)
   local this = self
   local status = self:checkConnection()
