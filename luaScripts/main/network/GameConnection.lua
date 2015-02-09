@@ -42,6 +42,9 @@ function GameConnection:authConnection(autoLogin)
         dump(userInfo, 'sign result ' .. tostring(success))
         this.isStartConnecting = false
         if success then
+        	if userInfo.ddzLoginRewards then
+        		this:onLoginReward(userInfo)
+        	end
           if serverInfo then
             this:connectToServer(serverInfo)
             return

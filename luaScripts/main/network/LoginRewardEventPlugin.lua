@@ -5,9 +5,20 @@ function LoginRewardEventPlugin.bind (theClass)
     dump(data, '[theClass:onLoginReward]')
     local runningScene = cc.Director:getInstance():getRunningScene()
     if runningScene.noPops or runningScene.noLoginReward then
+    	LoginRewardEventPlugin.data = data
       return
     end
+    LoginRewardEventPlugin.data = nil
     require('everydaylogin.EveryDayLoginLogic').check(data)
+  end
+
+  function theClass:checkLoginRewardEvent()
+  	LoginRewardEventPlugin.data = LoginRewardEventPlugin.data or ddz.GlobalSettings.session.currentUser
+  	if LoginRewardEventPlugin.data and LoginRewardEventPlugin.data.ddzLoginRewards then
+  		require('everydaylogin.EveryDayLoginLogic').check(LoginRewardEventPlugin.data)
+  		LoginRewardEventPlugin.data = nil
+  		ddz.GlobalSettings.session.currentUser.ddzLoginRewards = nil
+  	end
   end
 
   function theClass:hookLoginRewardEvent()

@@ -1,11 +1,13 @@
 local UIVarBinding = require('utils.UIVariableBinding')
+local AccountInfo = require('AccountInfo')
 
 local EveryDayLoginDialog = class('EveryDayLoginDialog', function() 
   return cc.Layer:create()
 end)
 
-function EveryDayLoginDialog:ctor(status)
+function EveryDayLoginDialog:ctor(status, total)
 	self.status = status
+	self.total = total
   self:init()
 end
 
@@ -53,11 +55,25 @@ function EveryDayLoginDialog:initKeypadHandler()
 end
 
 function EveryDayLoginDialog:ButtonGet_onClicked(sender, eventType)
-  print('on get clicked')
   local drop_coins = cc.ParticleSystemQuad:create('drop_coins.plist')
   drop_coins:setPosition(400, 480)
   self:getParent():addChild(drop_coins)
   self:removeFromParent(true)
+
+  local reqParams = {}
+  local user = AccountInfo.getCurrentUser()
+  reqParams.userId = user.userId
+
+  ddz.pomeloClient:request('auth.userHandler.deliverLoginReward', reqParams, function(data) 
+      dump(data, 'deliverLoginReward result')
+      if data.result then
+      local currentUser = AccountInfo.getCurrentUser()
+      local coins = currentUser.ddzProfile.coins or 0
+    	currentUser.ddzProfile.coins = coins + data.coins
+      local scene = cc.Director:getInstance():getRunningScene()
+      scene:updateUserInfo()
+    	end
+    end)
 end
 
 return EveryDayLoginDialog

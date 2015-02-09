@@ -37,6 +37,7 @@ function HallScene:on_enter()
   print('[HallScene:on_enter] ...')
   self:updateUserInfo()
   self.gameConnection.needReconnect = false
+  self.gameConnection:checkLoginRewardEvent()
 end
 
 function HallScene:on_enterTransitionFinish()
