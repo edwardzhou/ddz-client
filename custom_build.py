@@ -285,3 +285,6 @@ def handle_event(event, tp, args):
     umengJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "umeng", "android"))
     umengJarFile = "mobclickcpphelper.jar"
     shutil.copy( os.path.join(umengJarPath, umengJarFile) , os.path.join(platform_proj_dir, "libs", umengJarFile))
+    talkingDataJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "TalkingData", "proj.android", "libs"))
+    talkingDataJarFile = "Game_Analytics_SDK_Android_3.0.64.jar"
+    shutil.copy( os.path.join(talkingDataJarPath, talkingDataJarFile) , os.path.join(platform_proj_dir, "libs", talkingDataJarFile))
