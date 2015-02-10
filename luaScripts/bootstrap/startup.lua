@@ -91,6 +91,13 @@ local function startup()
 
   ddz.GlobalSettings.scaleFactor = director:getContentScaleFactor()
 
+  TalkingDataGA:onStart('D4DB1295EA1B3298DD256AF4BEBCFC0C', 'official')
+  local eventData = {key1="value1", key2="value2", key3="value3"} 
+  TalkingDataGA:onEvent(“event1”, eventData) 
+  TalkingDataGA:setLocation(39.9497, 116.4137)
+  local deviceId = TalkingDataGA:getDeviceId() 
+  print('======= deviceId: ', deviceId)
+  TalkingDataGA:onKill()
   -- run
   local createLoginScene = require('landing.LandingScene')
   local sceneGame = createLoginScene()

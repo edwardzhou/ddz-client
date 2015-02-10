@@ -46,6 +46,7 @@ import android.content.pm.Signature;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import com.tendcloud.tenddata.TalkingDataGA;
 
 //import com.umeng.analytics.MobclickAgent;
 
@@ -124,6 +125,8 @@ public class AppActivity extends Cocos2dxActivity {
     com.umeng.mobclickcpp.MobClickCppHelper.init(this);	
     //com.umeng.analytics.game.UMGameAgent.init(getContext());
     System.out.println("Device Info*********************: " + getDeviceInfo(this.getApplicationContext()));
+
+    TalkingDataGA.init(this, "D4DB1295EA1B3298DD256AF4BEBCFC0C", "official");
 	
 		//MobileInfoGetter.mContext = AppActivity.getContext();
 	}
@@ -138,12 +141,14 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     public void onResume() {
       super.onResume();
+      TalkingDataGA.onResume(this);
       //MobclickAgent.onResume(this);
     }
 
     @Override
     public void onPause() {
       super.onPause();
+      TalkingDataGA.onPause(this);
       //MobclickAgent.onPause(this);
     }
     
