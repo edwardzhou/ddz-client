@@ -16,3 +16,7 @@ res.zip
 publish
 temp
 update_pkg.zip
+main.zip
+bootstrap.zip
+assets_md5.txt
+luaScripts/version.lua

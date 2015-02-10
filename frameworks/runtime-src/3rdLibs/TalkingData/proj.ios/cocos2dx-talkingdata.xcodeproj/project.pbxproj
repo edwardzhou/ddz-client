@@ -1,0 +1,300 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		25413A7917439069001A4694 /* TDCCAccount.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25DC1FAE174375CF0075DF12 /* TDCCAccount.mm */; };
+		25413A7A17439069001A4694 /* TDCCItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25DC1FAF174375CF0075DF12 /* TDCCItem.mm */; };
+		25413A7B17439069001A4694 /* TDCCMission.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25DC1FB0174375CF0075DF12 /* TDCCMission.mm */; };
+		25413A7C17439069001A4694 /* TDCCVirtualCurrency.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25DC1FB1174375CF0075DF12 /* TDCCVirtualCurrency.mm */; };
+		25413A85174390B7001A4694 /* libTalkingDataGA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25DC1FB2174375CF0075DF12 /* libTalkingDataGA.a */; };
+		25413BA31744C728001A4694 /* TDCCTalkingDataGA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25413BA21744C728001A4694 /* TDCCTalkingDataGA.mm */; };
+		25EA06C81739F1DC005EF56D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25EA06C71739F1DC005EF56D /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		25EA06C21739F1DC005EF56D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		25413BA21744C728001A4694 /* TDCCTalkingDataGA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDCCTalkingDataGA.mm; sourceTree = "<group>"; };
+		25DC1FAE174375CF0075DF12 /* TDCCAccount.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDCCAccount.mm; sourceTree = "<group>"; };
+		25DC1FAF174375CF0075DF12 /* TDCCItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDCCItem.mm; sourceTree = "<group>"; };
+		25DC1FB0174375CF0075DF12 /* TDCCMission.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDCCMission.mm; sourceTree = "<group>"; };
+		25DC1FB1174375CF0075DF12 /* TDCCVirtualCurrency.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDCCVirtualCurrency.mm; sourceTree = "<group>"; };
+		25DC1FB2174375CF0075DF12 /* libTalkingDataGA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTalkingDataGA.a; sourceTree = "<group>"; };
+		25DC1FB3174375CF0075DF12 /* TalkingDataGA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TalkingDataGA.h; sourceTree = "<group>"; };
+		25EA06C41739F1DC005EF56D /* libcocos2dx-talkingdata.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcocos2dx-talkingdata.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		25EA06C71739F1DC005EF56D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		25EA06DF1739F414005EF56D /* TDCCTalkingDataGA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCCTalkingDataGA.h; sourceTree = "<group>"; };
+		25EA06E71739FFBC005EF56D /* TDCCMission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCCMission.h; sourceTree = "<group>"; };
+		25EA06EA173A00FA005EF56D /* TDCCItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCCItem.h; sourceTree = "<group>"; };
+		25EA06ED173A02A6005EF56D /* TDCCVirtualCurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCCVirtualCurrency.h; sourceTree = "<group>"; };
+		25EA06F0173A046F005EF56D /* TDCCAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCCAccount.h; sourceTree = "<group>"; };
+		25EA06F3173A30A7005EF56D /* TalkingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TalkingData.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		25EA06C11739F1DC005EF56D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				25EA06C81739F1DC005EF56D /* Foundation.framework in Frameworks */,
+				25413A85174390B7001A4694 /* libTalkingDataGA.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		25DC1FAC174375CF0075DF12 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				25413BA21744C728001A4694 /* TDCCTalkingDataGA.mm */,
+				25DC1FAE174375CF0075DF12 /* TDCCAccount.mm */,
+				25DC1FAF174375CF0075DF12 /* TDCCItem.mm */,
+				25DC1FB0174375CF0075DF12 /* TDCCMission.mm */,
+				25DC1FB1174375CF0075DF12 /* TDCCVirtualCurrency.mm */,
+				25DC1FB2174375CF0075DF12 /* libTalkingDataGA.a */,
+				25DC1FB3174375CF0075DF12 /* TalkingDataGA.h */,
+			);
+			name = ios;
+			path = ../platform/ios;
+			sourceTree = "<group>";
+		};
+		25EA06B91739F1DC005EF56D = {
+			isa = PBXGroup;
+			children = (
+				25DC1FAC174375CF0075DF12 /* ios */,
+				25EA06DA1739F381005EF56D /* include */,
+				25EA06C61739F1DC005EF56D /* Frameworks */,
+				25EA06C51739F1DC005EF56D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		25EA06C51739F1DC005EF56D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				25EA06C41739F1DC005EF56D /* libcocos2dx-talkingdata.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		25EA06C61739F1DC005EF56D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				25EA06C71739F1DC005EF56D /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		25EA06DA1739F381005EF56D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				25EA06F3173A30A7005EF56D /* TalkingData.h */,
+				25EA06DF1739F414005EF56D /* TDCCTalkingDataGA.h */,
+				25EA06E71739FFBC005EF56D /* TDCCMission.h */,
+				25EA06EA173A00FA005EF56D /* TDCCItem.h */,
+				25EA06ED173A02A6005EF56D /* TDCCVirtualCurrency.h */,
+				25EA06F0173A046F005EF56D /* TDCCAccount.h */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		25EA06C31739F1DC005EF56D /* cocos2dx-talkingdata */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 25EA06D21739F1DC005EF56D /* Build configuration list for PBXNativeTarget "cocos2dx-talkingdata" */;
+			buildPhases = (
+				25EA06C01739F1DC005EF56D /* Sources */,
+				25EA06C11739F1DC005EF56D /* Frameworks */,
+				25EA06C21739F1DC005EF56D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cocos2dx-talkingdata";
+			productName = "cocos2dx-talkingdata";
+			productReference = 25EA06C41739F1DC005EF56D /* libcocos2dx-talkingdata.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		25EA06BB1739F1DC005EF56D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = Talkingdata;
+			};
+			buildConfigurationList = 25EA06BE1739F1DC005EF56D /* Build configuration list for PBXProject "cocos2dx-talkingdata" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 25EA06B91739F1DC005EF56D;
+			productRefGroup = 25EA06C51739F1DC005EF56D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				25EA06C31739F1DC005EF56D /* cocos2dx-talkingdata */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		25EA06C01739F1DC005EF56D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				25413A7917439069001A4694 /* TDCCAccount.mm in Sources */,
+				25413A7A17439069001A4694 /* TDCCItem.mm in Sources */,
+				25413A7B17439069001A4694 /* TDCCMission.mm in Sources */,
+				25413A7C17439069001A4694 /* TDCCVirtualCurrency.mm in Sources */,
+				25413BA31744C728001A4694 /* TDCCTalkingDataGA.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		25EA06D01739F1DC005EF56D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALID_ARCHS = "";
+			};
+			name = Debug;
+		};
+		25EA06D11739F1DC005EF56D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "";
+			};
+			name = Release;
+		};
+		25EA06D31739F1DC005EF56D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				DSTROOT = /tmp/cocos2dx_talkingdata.dst;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../platform/ios\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "cocos2dx-talkingdata";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = debugging;
+				VALID_ARCHS = "armv7 armv7s arm64";
+			};
+			name = Debug;
+		};
+		25EA06D41739F1DC005EF56D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				DSTROOT = /tmp/cocos2dx_talkingdata.dst;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../platform/ios\"",
+				);
+				LLVM_LTO = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "cocos2dx-talkingdata";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = debugging;
+				VALID_ARCHS = "armv7 armv7s arm64";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		25EA06BE1739F1DC005EF56D /* Build configuration list for PBXProject "cocos2dx-talkingdata" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				25EA06D01739F1DC005EF56D /* Debug */,
+				25EA06D11739F1DC005EF56D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		25EA06D21739F1DC005EF56D /* Build configuration list for PBXNativeTarget "cocos2dx-talkingdata" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				25EA06D31739F1DC005EF56D /* Debug */,
+				25EA06D41739F1DC005EF56D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 25EA06BB1739F1DC005EF56D /* Project object */;
+}
