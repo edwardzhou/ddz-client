@@ -48,7 +48,7 @@ function LandingScene:init()
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
-  require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
 
   local percent = 0
   uiRoot:runAction( cc.Sequence:create(
@@ -137,7 +137,7 @@ function LandingScene:initKeypadHandler()
       --      end
       -- umeng.MobClickCpp:endScene('landing scene')
       -- umeng.MobClickCpp:endToLua()
-      cc.Director:getInstance():endToLua()
+      ddz.endApplication()
     -- elseif keyCode == cc.KeyCode.KEY_MENU  then
     --   self:connectToServer()
     end

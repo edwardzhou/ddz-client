@@ -7,10 +7,10 @@
 #include "lua_extensions.h"
 #include "editor-support/cocostudio/CCSGUIReader.h"
 #include "unzip.h"
-#include "MobClickCpp.h"
-#include "lua_cocos2dx_umeng_auto.hpp"
+// #include "MobClickCpp.h"
+// #include "lua_cocos2dx_umeng_auto.hpp"
 #include "lua_cocos2dx_quick_manual.hpp"
-#include "lua_cocos2dx_umeng_manual.hpp"
+// #include "lua_cocos2dx_umeng_manual.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
 #include "lua_app_signature_manual.hpp"
@@ -284,8 +284,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     // CCLOG("after register_all_cocos2dx_pluginx ....");
     lua_module_register(luaState);
     register_all_quick_manual(luaState);
-    register_all_cocos2dx_umeng(luaState);
-    register_all_cocos2dx_umeng_manual(luaState);
+    // register_all_cocos2dx_umeng(luaState);
+    // register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
 
@@ -362,17 +362,17 @@ bool AppDelegate::applicationDidFinishLaunching()
     //cocostudio::GUIReader::getInstance()->widgetFromJsonFile("UI/Gaming/Gaming.json");
 
     auto _scheduler = Director::getInstance()->getScheduler();
-    _scheduler->schedule([](float dt) {
-        umeng::MobClickCpp::mainloop(dt);
-    }, this, 0, false, "umeng");
+    // _scheduler->schedule([](float dt) {
+    //     umeng::MobClickCpp::mainloop(dt);
+    // }, this, 0, false, "umeng");
 
-    umeng::MobClickCpp::setLogEnabled(true);
+    // umeng::MobClickCpp::setLogEnabled(true);
     //umeng::MobClickCpp::setAppVersion("1.2");
     // umeng::MobClickCpp::startWithAppkey("5351dee256240b09f604ee4c", "my_channel");
     // umeng::MobClickCpp::event("test");
 
-    umeng::MobClickCpp::updateOnlineConfig();
-    CCLOG("online config> testParam: %s" , umeng::MobClickCpp::getConfigParam("testParam").c_str());
+    // umeng::MobClickCpp::updateOnlineConfig();
+    // CCLOG("online config> testParam: %s" , umeng::MobClickCpp::getConfigParam("testParam").c_str());
 
     getApkSign();
 
@@ -403,7 +403,7 @@ void AppDelegate::applicationDidEnterBackground()
 {
     Director::getInstance()->stopAnimation();
 
-    umeng::MobClickCpp::applicationDidEnterBackground();
+    // umeng::MobClickCpp::applicationDidEnterBackground();
 
     CCLOG("[AppDelegate::applicationDidEnterBackground]");
 
@@ -420,7 +420,7 @@ void AppDelegate::applicationWillEnterForeground()
     CCLOG("[AppDelegate::applicationWillEnterForeground]");
     Director::getInstance()->startAnimation();
 
-    umeng::MobClickCpp::applicationWillEnterForeground();
+    // umeng::MobClickCpp::applicationWillEnterForeground();
 
     //SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
     // AudioEngine::resumeAll();

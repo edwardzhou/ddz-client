@@ -37,7 +37,7 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug
       if vtype == 'v' then
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget
-        print(string.format('varHolder["%s"] => ', vname), widget)
+        --print(string.format('varHolder["%s"] => ', vname), widget)
       elseif vtype =='gv' then
         widget = tolua.cast(uiWidget, TypeMapping[wtype])
         varHodler[vname] = widget

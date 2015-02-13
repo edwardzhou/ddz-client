@@ -3,7 +3,7 @@
 #include "platform/android/jni/JniHelper.h"
 #include <jni.h>
 #include <android/log.h>
-#include "MobClickJniHelper.h"
+// #include "MobClickJniHelper.h"
 #include "TDGAJniHelper.h"
 
 #define  LOG_TAG    "main"
@@ -19,7 +19,7 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
 
     JavaVM* vm;
     env->GetJavaVM(&vm);
-    umeng::MobClickJniHelper::setJavaVM(vm);
+    // umeng::MobClickJniHelper::setJavaVM(vm);
     TDGAJniHelper::setJavaVM(vm);
 
     AppDelegate *pAppDelegate = new AppDelegate();

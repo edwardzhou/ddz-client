@@ -66,6 +66,14 @@ function LandingConnectionPlugin.bind(theClass)
       else
         local newUserInfo = data.user
         local serverInfo = data.server
+        -- TDGAAccount:setAccount(newUserInfo.userId)
+        -- TDGAAccount:setAccountName(newUserInfo.nickName)
+        -- TDGAAccount:setAccountType(TDGAAccount.kAccountRegistered)
+        -- TDGAAccount:setLevel(2) 
+        -- TDGAAccount:setGender(TDGAAccount.kGenderFemale)
+        -- TDGAAccount:setAge(29)
+        -- TDGAAccount:setGameServer("国服 2")
+
         -- ddz.GlobalSettings.userInfo = newUserInfo
         -- ddz.GlobalSettings.session.userId = newUserInfo.userId
         -- ddz.GlobalSettings.session.authToken = newUserInfo.authToken
