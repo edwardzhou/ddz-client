@@ -96,6 +96,25 @@ ddz.ErrorCode = {
   STUB  = -1
 }
 
+ddz.TDEventType = {
+  VIEW_EVENT = '访问页面',
+  PURCHASE_EVENT = '购买',
+  LOGIN_EVENT = '登录',
+  REGISTER_EVENT = '注册'
+}
+
+ddz.ViewAction = {
+  ACTION_ENTER_VIEW = '进入页面',
+  ACTION_LEAVE_VIEW = '离开页面'  
+}
+
+ddz.ViewName = {
+  LANDING = '引导',
+  HALL = '大厅',
+  LOGIN = '登录',
+  TASK = '任务'
+}
+
 GlobalSetting = {
   content_scale_factor = 1
 }

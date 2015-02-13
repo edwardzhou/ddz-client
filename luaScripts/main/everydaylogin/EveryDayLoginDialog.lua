@@ -64,14 +64,17 @@ function EveryDayLoginDialog:ButtonGet_onClicked(sender, eventType)
   local user = AccountInfo.getCurrentUser()
   reqParams.userId = user.userId
 
-  ddz.pomeloClient:request('auth.userHandler.deliverLoginReward', reqParams, function(data) 
+  ddz.pomeloClient:request('ddz.loginRewardsHandler.takeLoginRewards', reqParams, function(data) 
       dump(data, 'deliverLoginReward result')
       if data.result then
-      local currentUser = AccountInfo.getCurrentUser()
-      local coins = currentUser.ddzProfile.coins or 0
-    	currentUser.ddzProfile.coins = coins + data.coins
-      local scene = cc.Director:getInstance():getRunningScene()
-      scene:updateUserInfo()
+        local currentUser = AccountInfo.getCurrentUser()
+        local coins = currentUser.ddzProfile.coins or 0
+      	currentUser.ddzProfile.coins = coins + data.coins
+        local scene = cc.Director:getInstance():getRunningScene()
+        if scene.updateUserInfo then
+          scene:updateUserInfo()
+        end
+        TDGAVirtualCurrency:onReward(data.coins, "每日登录奖励")
     	end
     end)
 end

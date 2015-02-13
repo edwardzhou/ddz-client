@@ -68,6 +68,30 @@ function HallScene:init()
   ddz.clearPressedDisabledTexture(self.ButtonBack)
   ddz.clearPressedDisabledTexture(self.ButtonHead)
 
+
+  TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
+      action = ddz.ViewAction.ACTION_ENTER_VIEW,
+      view = ddz.ViewName.HALL
+    })
+
+  local user = AccountInfo.getCurrentUser();
+  local idNickName = string.format("%s (%d)", user.nickName, user.userId)
+
+  -- TDGAAccount:setAccount(user.userId)
+  -- TDGAAccount:setAccountName(user.nickName)
+  -- TDGAAccount:setAccountType(TDGAAccount.kAccountRegistered)
+  -- TDGAAccount:setLevel(2) 
+  -- TDGAAccount:setGender(TDGAAccount.kGenderFemale)
+  -- TDGAAccount:setAge(29)
+  -- TDGAAccount:setGameServer("国服 2")
+
+  -- local eventData = {key1="value1", key2="value2", key3="value3"} 
+  -- TalkingDataGA:onEvent("event1", eventData) 
+
+  self.gameConnection:request('ddz.loginRewardsHandler.queryLoginRewards', {}, function(data)
+      self.gameConnection.pomeloClient:emit('onLoginReward', data)
+    end)
+
   --self.ButtonTask:setBright(false)
 
   -- local listView = ccui.ListView:create()
@@ -299,14 +323,15 @@ end
 
 
 function HallScene:initKeypadHandler()
+  local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
     	print('hall scene exit')
-    	self:request('ddz.entryHandler.quit', {userId = AccountInfo.getCurrentUser().userId}, function(data) 
+    	this.gameConnection:request('ddz.entryHandler.quit', {userId = AccountInfo.getCurrentUser().userId}, function(data) 
     		dump(data, 'ddz.entryHandler.quit')
     	end)
       event:stopPropagation()
-      cc.Director:getInstance():popScene() 
+      ddz.endApplication()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end

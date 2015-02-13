@@ -23,6 +23,8 @@ local function startup()
   --set FPS. the default value is 1.0/60 if you't call this
   director:setAnimationInterval(1.0 / 60)
 
+  local fileUtils = cc.FileUtils:getInstance()
+
   --support debug
   local targetPlatform = cc.Application:getInstance():getTargetPlatform()
   if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) or 
@@ -40,7 +42,7 @@ local function startup()
   ddz.GlobalSettings.handsetInfo = ddz.getHandsetInfo()
   ddz.GlobalSettings.sdcardPath = ddz.getSDCardPath()
   ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')
-  ddz.GlobalSettings.appPrivatePath = cc.FileUtils:getInstance():getWritablePath()
+  ddz.GlobalSettings.appPrivatePath = fileUtils:getWritablePath()
   ddz.GlobalSettings.session = ddz.loadSessionInfo() or {}
 
   local audioInfo = ddz.loadAudioInfo()
@@ -91,13 +93,26 @@ local function startup()
 
   ddz.GlobalSettings.scaleFactor = director:getContentScaleFactor()
 
-  TalkingDataGA:onStart('D4DB1295EA1B3298DD256AF4BEBCFC0C', 'official')
-  local eventData = {key1="value1", key2="value2", key3="value3"} 
-  TalkingDataGA:onEvent(“event1”, eventData) 
-  TalkingDataGA:setLocation(39.9497, 116.4137)
+  local talkingDataInfo = fileUtils:getValueMapFromFile('talkingdata.plist')
+
+  --fileUtils:writeToFile({appkey = 'D4DB1295EA1B3298DD256AF4BEBCFC0C', channel = 'official'}, '/sdcard/fungame/DDZ/td.plist')
+  local tdInitParams = {talkingDataInfo.appkey, talkingDataInfo.channel}
+
+  local luaj = require('cocos.cocos2d.luaj')
+  local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/TalkingDataUtils", "init", tdInitParams, "(Ljava/lang/String;Ljava/lang/String;)V")
+  TalkingDataGA:onStart(talkingDataInfo.appkey, talkingDataInfo.channel)
+
+  ddz.onEnd(function() 
+      print('==== call TalkingDataGA:onKill()')
+      TalkingDataGA:onKill()
+    end)
+
+  -- local eventData = {key1="value1", key2="value2", key3="value3"} 
+  -- TalkingDataGA:onEvent("event1", eventData) 
+  -- TalkingDataGA:setLocation(39.9497, 116.4137)
   local deviceId = TalkingDataGA:getDeviceId() 
   print('======= deviceId: ', deviceId)
-  TalkingDataGA:onKill()
+  -- TalkingDataGA:onKill()
   -- run
   local createLoginScene = require('landing.LandingScene')
   local sceneGame = createLoginScene()

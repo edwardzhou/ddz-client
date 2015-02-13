@@ -408,3 +408,20 @@ ddz.clearPressedDisabledTexture = function(button)
   button:clearPressedTexture()
   button:clearDisabledTexture()
 end
+
+local _onEndListeners = {}
+ddz.onEnd = function(listener)
+  for _k, _v in ipairs(_onEndListeners) do
+    if _v == listener then
+      return
+    end
+  end
+  table.insert(_onEndListeners, listener)
+end
+
+ddz.endApplication = function()
+  for _, listener in ipairs(_onEndListeners) do
+    listener()
+  end
+  cc.Director:getInstance():endToLua()
+end
