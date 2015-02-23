@@ -9,8 +9,10 @@ function ChargeChargeEventPlugin.bind (theClass)
     dump(data, '[theClass:onChargeResult]')
     local runningScene = cc.Director:getInstance():getRunningScene()
     if data.success and data.user then
-      table.merge(AccountInfo.getCurrentUser(), data.user)
+      local currentUser = AccountInfo.getCurrentUser()
+      table.merge(currentUser, data.user)
       --AccountInfo.getCurrentUser(data.userInfo)
+      TDGAVirtualCurrency:onChargeSuccess(currentUser.userId .. '-' .. data.purchaseOrderId)
     end
 
     if runningScene.updateUserInfo then
