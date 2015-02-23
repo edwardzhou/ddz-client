@@ -96,6 +96,7 @@ function LandingScene:init()
 
   local function onUpdateEvent(event)
     local eventCode = event:getEventCode()
+    print('[onUpdateEvent] event => ', event)
     if eventCode == cc.EventAssetsManagerEx.EventCode.ERROR_DOWNLOAD_MANIFEST or 
         eventCode == cc.EventAssetsManagerEx.EventCode.ERROR_PARSE_MANIFEST or
         eventCode == cc.EventAssetsManagerEx.EventCode.ALREADY_UP_TO_DATE or

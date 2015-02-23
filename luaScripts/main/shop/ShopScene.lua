@@ -181,7 +181,21 @@ function ShopScene:buyPackage(pkg)
     pkgId = pkg.packageId
   }
   this.gameConnection:request('ddz.hallHandler.buyItem', params, function(data)
-      dump(data, '[ShopScene:buyPackage] ddz.hallHandler.buyItem =>')
+      dump(data, '[ShopScene:buyPackage] ddz.hallHandler.buyItem =>', 20)
+      dump(data.pkg.packageData.items, '[ShopScene:buyPackage] packageData.items =>')
+      local purchaseOrder = data.pkg
+      local pkgData = purchaseOrder.packageData
+      local tdOrderId = purchaseOrder.userId .. '-' .. purchaseOrder.orderId
+      local pkgId = pkgData.packageId .. '-' .. pkgData.packageName
+      local pkgCoins = pkgData.packageCoins
+      local paidPrice = purchaseOrder.paidPrice
+      local paymentMethodId = 'unknown'
+      if purchaseOrder.payment then 
+        paymentMethodId = purchaseOrder.payment.paymentMethod.methodId
+      end
+
+      print('[ShopScene:buyPackage] tdOrderId: ', tdOrderId, ', pkgId: ', pkgId)
+      TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
       return true
     end)
 end
