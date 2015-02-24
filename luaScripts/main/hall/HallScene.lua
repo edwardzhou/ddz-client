@@ -249,6 +249,11 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
     -- if not self:checkMaxCoinsQty(gameRoom, coins) then
     --   return
     -- end
+    local eventData = {
+      roomId = gameRoom.roomId,
+      roomName = gameRoom.roomName
+    } 
+    TalkingDataGA:onEvent("尝试进入房间", eventData) 
 
     this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
