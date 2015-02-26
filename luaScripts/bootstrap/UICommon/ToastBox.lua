@@ -188,22 +188,35 @@ function ToastBox:PanelRoot_onClicked(sender, eventType)
 end
 
 local function showToastBox(container, params)
-  if container.toastBox == nil then
+  local toastId = 'toastBox'
+  local toastZOrder = 1100
+  if params.id ~= nil then
+    toastId = params.id
+  end
+  if params.zorder ~= nil then
+    toastZOrder = params.zorder
+  end
+
+  if container[toastId] == nil then
     local layer = cc.Layer:create()
     local msgBox = ToastBox.extend(layer)
 
-    msgBox:setLocalZOrder(1100)
+    msgBox:setLocalZOrder(toastZOrder)
     container:addChild(msgBox)
-    container.toastBox = msgBox
+    container[toastId] = msgBox
   end
 
-  container.toastBox:doShow(params)
-  return container.toastBox
+  container[toastId]:doShow(params)
+  return container[toastId]
 end
 
-local function hideToastBox(container, fadeOut)
-  if container.toastBox then
-    container.toastBox:close(fadeOut)
+local function hideToastBox(container, fadeOut, toastId)
+  if toastId == nil then
+    toastId = 'toastBox'
+  end
+
+  if container[toastId] then
+    container[toastId]:close(fadeOut)
   end
 end
 
