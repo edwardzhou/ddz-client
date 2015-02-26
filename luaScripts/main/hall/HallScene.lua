@@ -1,6 +1,8 @@
 local AccountInfo = require('AccountInfo')
 local Resources = require('Resources')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
+local showToastBox = require('UICommon.ToastBox').showToastBox
+local hideToastBox = require('UICommon.ToastBox').hideToastBox
 
 local HallScene = class('HallScene')
 
@@ -235,46 +237,74 @@ function HallScene:ListViewRooms_onEvent(sender, eventType)
     local item = this.ListViewRooms:getItem(curIndex)
     local gameRoom = item.gameRoom
     dump(gameRoom, 'selected room: ')
+    this:tryEnterRoom(gameRoom)
+  end
+end
 
-    local coins = 0
-    local currentUser = AccountInfo.getCurrentUser()
-    if currentUser and currentUser.ddzProfile then
-      coins = currentUser.ddzProfile.coins or 0
+function HallScene:tryEnterRoom(gameRoom)
+  local this = self
+  local coins = 0
+  local currentUser = AccountInfo.getCurrentUser()
+  if currentUser and currentUser.ddzProfile then
+    coins = currentUser.ddzProfile.coins or 0
+  end
+
+  local eventData = {
+    roomId = gameRoom.roomId,
+    roomName = gameRoom.roomName
+  } 
+  TalkingDataGA:onEvent("尝试进入房间", eventData) 
+
+  local toastParams = {
+    id = 'enteringRoom',
+    zorder = 1099,
+    showLoading = true, 
+    grayBackground = true,
+    closeOnTouch = false,
+    closeOnBack = false,
+    showingTime = 15,
+    msg = '正在进入房间, 马上开始...'
+  }
+
+  local enterTimeoutActionId = nil
+  local enteringRoomToast = showToastBox(this, toastParams)
+  enterTimeoutActionId = this:runAction(cc.Sequence:create(
+      cc.DelayTime:create(15.1),
+      cc.CallFunc:create(function() 
+          local enterTimeoutActionId = nil
+          if enteringRoomToast:isVisible() then
+            enteringRoomToast:close(true)
+          end
+        end)
+    ))
+
+  this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
+    dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
+    if enterTimeoutActionId then
+      self:stopAction(enterTimeoutActionId)
+      enterTimeoutActionId = nil
+      if enteringRoomToast:isVisible() then
+        enteringRoomToast:close(true)
+      end
     end
 
-    -- if not self:checkMinCoinsQty(gameRoom, coins) then
-    --   return
-    -- end
+    if data.retCode == ddz.ErrorCode.SUCCESS then
+      ddz.selectedRoom = gameRoom
+      local createGameScene = require('gaming.GameScene')
+      local gameScene = createGameScene()
+      cc.Director:getInstance():pushScene(gameScene)
+    else
+      -- 提示用户金币超过准入上限，请进入更高级别的房间
+      local params = {
+        msg = data.message
+        , grayBackground = true
+        , closeOnClickOutside = false
+        , buttonType = 'ok'
+      }
 
-    -- if not self:checkMaxCoinsQty(gameRoom, coins) then
-    --   return
-    -- end
-    local eventData = {
-      roomId = gameRoom.roomId,
-      roomName = gameRoom.roomName
-    } 
-    TalkingDataGA:onEvent("尝试进入房间", eventData) 
-
-    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
-      dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
-      if data.retCode == ddz.ErrorCode.SUCCESS then
-        ddz.selectedRoom = gameRoom
-        local createGameScene = require('gaming.GameScene')
-        local gameScene = createGameScene()
-        cc.Director:getInstance():pushScene(gameScene)
-      else
-        -- 提示用户金币超过准入上限，请进入更高级别的房间
-        local params = {
-          msg = data.message
-          , grayBackground = true
-          , closeOnClickOutside = false
-          , buttonType = 'ok'
-        }
-
-        showMessageBox(self, params)
-      end
-    end)
-  end
+      showMessageBox(self, params)
+    end
+  end)
 end
 
 function HallScene:checkMinCoinsQty(gameRoom, coins) 
