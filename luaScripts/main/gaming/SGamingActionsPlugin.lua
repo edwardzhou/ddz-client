@@ -210,7 +210,7 @@ function SGamingActionsPlugin.bind(theClass)
 
     self:stopCountdown(true)
     self:updateUserInfo()
-
+    self:updateTask()
 
     -- --self.self
     -- local this = self

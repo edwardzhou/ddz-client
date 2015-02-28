@@ -94,25 +94,10 @@ function TaskScene:loadTaskItems()
   this.gameConnection:request('ddz.taskHandler.getTasks', {}, function (data)
     dump(data, '[ddz.taskHandler.getTasks] data => ')
     this.TaskItemList:removeAllItems()
-    local task, taskItem
-    local label, button
-    data.tasks = {
-    	{taskId=1,taskName='今日获得一次10连胜',progressDesc='10/10',taskBonusDesc='2000金币',taskFinished=1},
-    	{taskId=2,taskName='今日升一级',progressDesc='0/1',taskBonusDesc='1记牌器',taskFinished=2},
-    	{taskId=3,taskName='今日赢取10局',progressDesc='8/10',taskBonusDesc='300金币',taskFinished=2},
-    	{taskId=4,taskName='今日获得一次春天',progressDesc='0/1',taskBonusDesc='100金币',taskFinished=2},
-    	{taskId=5,taskName='今日赢一次3连胜',progressDesc='2/3',taskBonusDesc='100金币',taskFinished=2},
-    	{taskId=6,taskName='今日赢得3000金币',progressDesc='3000/3000',taskBonusDesc='100金币',taskFinished=1},
-    	{taskId=7,taskName='今日完成20局对局',progressDesc='20/20',taskBonusDesc='1000金币',taskFinished=1},
-    	{taskId=8,taskName='今日完成40局对局',progressDesc='32/40',taskBonusDesc='3000金币',taskFinished=2},
-    	{taskId=9,taskName='今日完成60局对局',progressDesc='32/60',taskBonusDesc='10000金币',taskFinished=2},
-    	{taskId=10,taskName='连续2日都完成20局对局',progressDesc='1/2',taskBonusDesc='4000金币',taskFinished=2},
-    	{taskId=11,taskName='连续2日都完成40局对局',progressDesc='1/2',taskBonusDesc='8000金币',taskFinished=2}
-    }
     for i=1, #data.tasks do
-      task = data.tasks[i]
+      local task = data.tasks[i]
       this.TaskItemList:pushBackDefaultItem()
-      taskItem = this.TaskItemList:getItem(i-1)
+      local taskItem = this.TaskItemList:getItem(i-1)
       this:setTaskItemInfo(taskItem, task)
     end
   end)
@@ -139,7 +124,12 @@ function TaskScene:setTaskItemInfo(taskItem, task)
   buttonTakeBonus.task = task
   buttonTakeBonus:addTouchEventListener(this._onButtonTakeBonusClicked)
   if task.taskFinished == 1 then
-    buttonTakeBonus:setTitleText('领取奖励')
+  	if task.bonusDelivered then
+  		buttonTakeBonus:setTitleText('已领奖')
+  		buttonTakeBonus:setEnabled(false)
+  	else
+    	buttonTakeBonus:setTitleText('领取奖励')
+  	end
   else
   	buttonTakeBonus:setTitleText('去做任务')
   end
@@ -160,15 +150,10 @@ function TaskScene:initKeypadHandler()
 end
 
 function TaskScene:ButtonTakeBonus_onClicked(sender, eventType)
-  local this = self
   local task = sender.task
   if eventType == ccui.TouchEventType.ended then
   	if task.taskFinished == 1 then
-    	dump(task, '[] take Bonus for task')
-    	--this:takeTaskBonus(task)
-    	this:playDropCoins()
-    	self.TaskItemList:removeItem(self.TaskItemList:getIndex(sender:getParent():getParent()))
-    	self.TaskItemList:requestRefreshView()
+    	self:takeTaskBonus(sender, task)
   	else
   		self:close()
   	end
@@ -192,20 +177,16 @@ function TaskScene:getTaskItem(taskId)
   return nil
 end
 
-function TaskScene:takeTaskBonus(task)
+function TaskScene:takeTaskBonus(sender, task)
   dump(task, '[TaskScene:takeTaskBonus] task => ')
   local this = self
 
-  this.gameConnection:request('ddz.taskHandler.takeTaskBonus', {taskId = task.taskId}, function (data)
+  this.gameConnection:request('ddz.taskHandler.takeTaskBonus', {taskId = task.taskId, userId = AccountInfo.getCurrentUser().userId}, function (data)
     dump(data, '[ddz.taskHandler.takeTaskBonus] data =>')
-    local taskItem = this:getTaskItem(task.taskId)
-    local label, buttonApply, buttonApply
-    label = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'TaskStatus'), 'ccui.Text')
-    buttonApply = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ButtonApply'), 'ccui.Button')
-    buttonTakeBonus = tolua.cast(ccui.Helper:seekWidgetByName(taskItem, 'ButtonTakeBonus'), 'ccui.Button')
-    label:setString('已领取')
-    buttonApply:setVisible(false)
-    buttonTakeBonus:setVisible(false)
+    this:playDropCoins()
+    task.bonusDelivered = true
+    local taskItem = sender:getParent():getParent()
+    this:setTaskItemInfo(taskItem, task)
   end)
 end
 
