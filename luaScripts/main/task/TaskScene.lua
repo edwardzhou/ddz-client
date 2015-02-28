@@ -181,7 +181,7 @@ function TaskScene:takeTaskBonus(sender, task)
   dump(task, '[TaskScene:takeTaskBonus] task => ')
   local this = self
 
-  this.gameConnection:request('ddz.taskHandler.takeTaskBonus', {taskId = task.taskId}, function (data)
+  this.gameConnection:request('ddz.taskHandler.takeTaskBonus', {taskId = task.taskId, userId = AccountInfo.getCurrentUser().userId}, function (data)
     dump(data, '[ddz.taskHandler.takeTaskBonus] data =>')
     this:playDropCoins()
     task.bonusDelivered = true

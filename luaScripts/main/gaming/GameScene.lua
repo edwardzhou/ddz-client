@@ -140,7 +140,7 @@ function GameScene:init()
   self:startWaitingEffect()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
-
+  self:updateTask()
 end
 
 function GameScene:resetScene()
@@ -343,7 +343,7 @@ require('gaming.SGamingActionsPlugin').bind(GameScene)
 require('gaming.UIClockCountDownPlugin').bind(GameScene)
 require('gaming.SoundEffectPlugin').bind(GameScene)
 require('gaming.PlayingTipsPlugin').bind(GameScene)
-
+require('gaming.TaskUpdatePlugin').bind(GameScene)
 require('network.ConnectionStatusPlugin').bind(GameScene)
 
 return createScene
