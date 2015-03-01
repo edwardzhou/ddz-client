@@ -40,8 +40,9 @@ function ChargeChargeEventPlugin.bind (theClass)
       this._onChargeResult = __bind(this.onChargeResult, this)
     end
 
-    if this.pomeloClient then
+    if this.pomeloClient and not this._onChargeResultHooked then
       this.pomeloClient:on('onChargeResult', this._onChargeResult)
+      this._onChargeResultHooked = true
     end
   end
 
@@ -49,6 +50,7 @@ function ChargeChargeEventPlugin.bind (theClass)
     local this = self
     if this._onChargeResult and this.pomeloClient then
       this.pomeloClient:off('onChargeResult', this._onChargeResult)
+      this._onChargeResultHooked = false
     end
   end
 end

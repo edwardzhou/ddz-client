@@ -27,8 +27,9 @@ function LoginRewardEventPlugin.bind (theClass)
       this._onLoginReward = __bind(this.onLoginReward, this)
     end
 
-    if this.pomeloClient then
+    if this.pomeloClient and not this._onLoginRewardHooked then
       this.pomeloClient:on('onLoginReward', this._onLoginReward)
+      this._onLoginRewardHooked = true
     end
   end
 
@@ -36,6 +37,7 @@ function LoginRewardEventPlugin.bind (theClass)
     local this = self
     if this._onLoginReward and this.pomeloClient then
       this.pomeloClient:off('onLoginReward', this._onLoginReward)
+      this._onLoginRewardHooked = false
     end
   end
 end
