@@ -45,6 +45,11 @@ function Pomelo:ctor(WebSocketClass)
   self.connected = false
   self.protoVersion = 0
   self.dictVersion = 0
+
+  self.totalBytesReceived = 0
+  self.totalBytesSent = 0
+  self.bytesReceived = 0
+  self.bytesSent = 0
   
   self.Protobuf = ProtobufFactory.getProtobuf()
   
@@ -182,6 +187,10 @@ function Pomelo:initWebSocket(url, cb)
 	end
 	
 	local onmessage = function( event)
+		local bytes = #event.data
+		_this.totalBytesReceived = _this.totalBytesReceived + bytes
+		_this.bytesReceived = _this.bytesReceived + bytes
+
 		_this:processPackage(Package.decode(event.data), cb)
 		if _this.heartbeatTimeout then
 			_this.nextHeartbeatTimeout = getTime() + _this.heartbeatTimeout
@@ -415,6 +424,9 @@ end
 function Pomelo:send(packet)
 --	print("self, ", self, 'self.socket', self.socket, packet)
 --	dump(self.socket, 'self.socket')
+	local bytes = #packet
+	self.totalBytesSent = self.totalBytesSent + bytes
+	self.bytesSent = self.bytesSent + bytes
 	if self.socket then
 		self.socket:send(packet)
 	end
@@ -633,5 +645,44 @@ function Pomelo:initData(data)
 		end
 	end
 end
+
+function Pomelo:resetBytesStat()
+	self.bytesSent = 0
+	self.bytesReceived = 0
+end
+
+function Pomelo:dumpBytesStat()
+	local mb, kb, bytes
+	bytes = self.totalBytesReceived
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] totalBytesReceived: %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+
+	bytes = self.totalBytesSent
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] totalBytesSent: %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+
+	bytes = self.totalBytesReceived + self.totalBytesSent
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] totalBytes(Rx+Tx): %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+
+	bytes = self.bytesReceived
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] bytesReceived: %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+
+	bytes = self.bytesSent
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] bytesSent: %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+
+	bytes = self.bytesReceived + self.bytesSent
+	kb = bytes / 1024
+	mb = kb / 1024
+	print(string.format('[pomelo] bytes(Rx+Tx): %0.2f Mb, %0.2f Kb, %d bytes', mb, kb, bytes))
+end
+
 
 return Pomelo

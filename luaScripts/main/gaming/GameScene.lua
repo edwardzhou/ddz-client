@@ -38,6 +38,9 @@ function GameScene:ctor(...)
   self.visibleSize = cc.Director:getInstance():getVisibleSize()
   self.origin = cc.Director:getInstance():getVisibleOrigin()
 
+  -- hard code bytes state
+  self.gameConnection:resetBytesStat()
+
   self:registerScriptHandler(function(event)
     print('[GameScene] event => ', event)
     local on_event = 'on_' .. event
