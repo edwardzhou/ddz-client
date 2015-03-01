@@ -212,6 +212,10 @@ function SGamingActionsPlugin.bind(theClass)
     self:updateUserInfo()
     self:updateTask()
 
+    print('[Gaming] GAME OVER. =========')
+    self.gameConnection:dumpBytesStat()
+    self.gameConnection:resetBytesStat()
+
     -- --self.self
     -- local this = self
     -- if self.gameResultPanel == nil then

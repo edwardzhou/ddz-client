@@ -313,6 +313,18 @@ function GameConnection:signOut(cb)
   end
 end
 
+function GameConnection:resetBytesStat()
+  if self.pomeloClient then
+    self.pomeloClient:resetBytesStat()
+  end
+end
+
+function GameConnection:dumpBytesStat()
+  if self.pomeloClient then
+    self.pomeloClient:dumpBytesStat()
+  end
+end
+
 
 require('network.SignInPlugin').bind(GameConnection)
 require('network.SignUpPlugin').bind(GameConnection)
