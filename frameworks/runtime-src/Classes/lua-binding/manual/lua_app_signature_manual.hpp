@@ -10,7 +10,10 @@ extern "C" {
 }
 #endif
 
-namespace AppSign{
+namespace AppInfo{
+extern std::string _app_pkg_name;
+extern std::string _app_pkg_version;
+extern int _app_pkg_version_code;
 extern std::string _sign_subject;
 extern std::string _sign_subject_md5;
 extern unsigned char _sign_subject_md5_bin[16];

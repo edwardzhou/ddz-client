@@ -76,8 +76,11 @@ function AccountInfo.setCurrentUser(session)
   ddz.GlobalSettings.session.userId = _info.currentUser.userId
   ddz.GlobalSettings.session.authToken = _info.currentUser.authToken
   ddz.GlobalSettings.session.sessionToken = _info.currentUser.sessionToken
-  if session.server then
-    ddz.GlobalSettings.serverInfo = table.dup(session.server)
+  ddz.GlobalSettings.session.sk = session.sk
+  if session.serverInfo then
+    ddz.GlobalSettings.servers = table.dup(session.serverInfo)
+  elseif session.server then
+    ddz.GlobalSettings.servers = table.dup(session.server)
   end
 
   for i=#_info.accounts, 6, -1 do

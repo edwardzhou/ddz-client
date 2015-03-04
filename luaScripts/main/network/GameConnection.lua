@@ -155,7 +155,11 @@ function GameConnection:reconnect(autoLogin)
     user = {
       aa = _aa,
       ab = _ab, 
-      ac = _ac
+      ac = _ac,
+      mac = ddz.GlobalSettings.handsetInfo.mac,
+      userId = AccountInfo.getCurrentUser().userId,
+      sessionToken = ddz.GlobalSettings.session.sessionToken,
+      v = _v
     }
   }
 
@@ -214,7 +218,11 @@ function GameConnection:connectToServer(params)
     user = {
       aa = _aa,
       ab = _ab, 
-      ac = _ac
+      ac = _ac,
+      mac = ddz.GlobalSettings.handsetInfo.mac,
+      userId = AccountInfo.getCurrentUser().userId,
+      sessionToken = ddz.GlobalSettings.session.sessionToken,
+      v = _v
     }
   }
 
