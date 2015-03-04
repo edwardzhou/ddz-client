@@ -1,6 +1,9 @@
 require 'framework.functions'
 require 'framework.debug'
 require 'GlobalFunctions'
+require 'resver'
+require 'appurl'
+require 'appAffiliate'
 
 local debug_file = io.open('/sdcard/fungame/ddz_debug.txt')
 if debug_file ~= nil then
@@ -26,10 +29,10 @@ local function checkSDCardConf()
 	if not debug_file then print('debug file not exist') return end
 	local ret, serverInfo = pcall(function() return require "ddz_server" end)
 	if not ret then print('ddz_server not exist') return end
-	require 'GlobalSettings'
-	if serverInfo.host then ddz.GlobalSettings.servers.host = serverInfo.host end
-	if serverInfo.port then ddz.GlobalSettings.servers.port = serverInfo.port end
-	dump(ddz.GlobalSettings.servers, 'settings.servers')
+	-- require 'GlobalSettings'
+	-- if serverInfo.host then ddz.GlobalSettings.servers.host = serverInfo.host end
+	-- if serverInfo.port then ddz.GlobalSettings.servers.port = serverInfo.port end
+	-- dump(ddz.GlobalSettings.servers, 'settings.servers')
 end
 
 local function main()

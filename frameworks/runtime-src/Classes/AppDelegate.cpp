@@ -150,6 +150,8 @@ std::string getApkSign() {
     JniMethodInfo _mi_Sign_toByteArray;
     JniMethodInfo _mi_packgeInfo_toString;
     JniFieldInfo _fi_signatures;
+    JniFieldInfo _fi_versionName;
+    JniFieldInfo _fi_versionCode;
     JniMethodInfo _mi_CertFactory_getInstance;
     JniMethodInfo _mi_CertFactory_generateCertificate;
     JniMethodInfo _mi_X509Certificate_toString;
@@ -170,6 +172,8 @@ std::string getApkSign() {
         CCLOG("[getApkInfo] ERROR: cannot get method info for android.content.pm.Signature#toByteArray");
     };
     getFieldInfo(_fi_signatures, "android.content.pm.PackageInfo", "signatures", "[Landroid/content/pm/Signature;");
+    getFieldInfo(_fi_versionName, "android.content.pm.PackageInfo", "versionName", "Ljava/lang/String;");
+    getFieldInfo(_fi_versionCode, "android.content.pm.PackageInfo", "versionCode", "I");
 
     jobject j_packageManager;
     jobject j_packageInfo;
@@ -178,15 +182,28 @@ std::string getApkSign() {
     jstring j_packageName;
     jclass j_classByteArrayInputStream = _getClassID_x("java.io.ByteArrayInputStream");
     jobject j_byteArrayStream;
+    jobject j_pkgVersionName;
 
     jobject objPkgName = env->CallObjectMethod(j_context, _mi_getPackageName.methodID);
     j_packageName = (jstring) objPkgName;
     packageName = JniHelper::jstring2string(j_packageName);
     CCLOG("[getApkInfo] packageName => %s", packageName.c_str());
     env->DeleteLocalRef(objPkgName);
+    AppInfo::_app_pkg_name = packageName;
+
 
     j_packageManager = env->CallObjectMethod(j_context, _mi_getPackageManager.methodID);
     j_packageInfo = env->CallObjectMethod(j_packageManager, _mi_getPackageInfo.methodID, j_packageName, 64);
+    j_pkgVersionName = env->GetObjectField(j_packageInfo, _fi_versionName.fieldID);
+    AppInfo::_app_pkg_version = JniHelper::jstring2string((jstring)j_pkgVersionName);
+    env->DeleteLocalRef(j_pkgVersionName);
+    CCLOG("[getApkInfo] packageVersion => %s", AppInfo::_app_pkg_version.c_str());
+
+    jint j_versionCode = env->GetIntField(j_packageInfo, _fi_versionCode.fieldID);
+    AppInfo::_app_pkg_version_code = (int) j_versionCode;
+    //env->DeleteLocalRef(j_versionCode);
+    CCLOG("[getApkInfo] packageVersionCode => %d", AppInfo::_app_pkg_version_code);
+
     j_signatures = (jobjectArray) env->GetObjectField(j_packageInfo, _fi_signatures.fieldID);
 
     jstring j_x509_string = env->NewStringUTF("X509");
@@ -213,24 +230,24 @@ std::string getApkSign() {
 
         uchar* digest = NULL;
         char *md5_string = NULL;
-        AppSign::_sign_subject = strSubject;
+        AppInfo::_sign_subject = strSubject;
         digest = MD5Digest((char*)strSubject.c_str());
-        strncpy((char *)AppSign::_sign_subject_md5_bin, (const char*)digest, 16);
-        md5_string = PrintMD5(AppSign::_sign_subject_md5_bin);
+        strncpy((char *)AppInfo::_sign_subject_md5_bin, (const char*)digest, 16);
+        md5_string = PrintMD5(AppInfo::_sign_subject_md5_bin);
         CCLOG("********md5_string for _sign_subject: %s", md5_string);
-        AppSign::_sign_subject_md5 = MD5String((char*)AppSign::_sign_subject.c_str());
+        AppInfo::_sign_subject_md5 = MD5String((char*)AppInfo::_sign_subject.c_str());
         free(md5_string);
         md5_string = NULL;
 
-        CCLOG("AppSign::_sign_subject: %s", AppSign::_sign_subject.c_str());
-        CCLOG("AppSign::_sign_subject_md5: %s", AppSign::_sign_subject_md5.c_str());
-        CCLOG("AppSign::_sign_subject_md5(MD5String): %s", MD5String((char*)AppSign::_sign_subject.c_str()));
+        CCLOG("AppInfo::_sign_subject: %s", AppInfo::_sign_subject.c_str());
+        CCLOG("AppInfo::_sign_subject_md5: %s", AppInfo::_sign_subject_md5.c_str());
+        CCLOG("AppInfo::_sign_subject_md5(MD5String): %s", MD5String((char*)AppInfo::_sign_subject.c_str()));
 
-        AppSign::_sign_data = apkSign;
+        AppInfo::_sign_data = apkSign;
         digest = MD5Digest((char*)apkSign.c_str(), apkSign.size());
-        strncpy((char *)AppSign::_sign_data_md5_bin, (const char*)digest, 16);
-        md5_string = PrintMD5(AppSign::_sign_data_md5_bin);
-        AppSign::_sign_data_md5 = MD5String((char*)apkSign.c_str());
+        strncpy((char *)AppInfo::_sign_data_md5_bin, (const char*)digest, 16);
+        md5_string = PrintMD5(AppInfo::_sign_data_md5_bin);
+        AppInfo::_sign_data_md5 = MD5String((char*)apkSign.c_str());
         free(md5_string);
         md5_string = NULL;
 

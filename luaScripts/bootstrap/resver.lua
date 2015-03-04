@@ -1,0 +1,1 @@
+__appResVersion = '1.2.10'

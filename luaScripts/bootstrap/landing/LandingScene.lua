@@ -76,18 +76,6 @@ function LandingScene:init()
 
   cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
 
-  -- self:runAction(cc.Sequence:create(
-  --   cc.DelayTime:create(0.3),
-  --   cc.CallFunc:create(function()
-
-  --   end),
-  --   cc.DelayTime:create(0.1),
-  --   cc.CallFunc:create(function()
-
-  --     this:connectToServer()
-  --   end)
-  -- ))
-
   require('MusicPlayer').playBgMusic()
 
   local function onPokeCardTextureReady()
@@ -115,14 +103,37 @@ function LandingScene:init()
     end
   end
 
-  local updateManager = require('update.UpdateManager').new()
-  updateManager:startCheckUpdate(onUpdateEvent)
+  self:startToLogin(function(succ, respData, extra) 
+      if not succ then
+
+      end
+
+      local updateManager = require('update.UpdateManager').new()
+      updateManager:startCheckUpdate(onUpdateEvent)
+    end)
 end
 
 function LandingScene:on_enterTransitionFinish()
   -- body
   print('[LandingScene:on_enterTransitionFinish]')
   self:initKeypadHandler()
+end
+
+function LandingScene:startToLogin(cb)
+
+  local AccountInfo = require('AccountInfo')
+  local EntryService = require('EntryService')
+
+  local function onLoginResult(succ, respData, extra)
+    if succ then
+      AccountInfo.setCurrentUser(respData)
+    end
+    utils.invokeCallback(cb, succ, respData, extra)
+  end
+
+  a = EntryService.new()
+  a:signInWithToken(__appUrl, ddz.GlobalSettings.handsetInfo, AccountInfo.getCurrentUser(), onLoginResult)
+
 end
 
 function LandingScene:on_exit()

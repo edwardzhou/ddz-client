@@ -4,6 +4,7 @@ require('extern')
 require 'GlobalSettings'
 require 'DebugSetting'
 
+
 cc.KeyCode.KEY_BACKSPACE    = 0x0006
 cc.KeyCode.KEY_MENU         = 0x000F
 
@@ -39,6 +40,21 @@ local function startup()
   -- print('===== data: ', data)
   -- print('===== dataMd5: ', dataMd5)
 
+  _xa, _xb, _xc = ___appxxx('D4DB1295EA1B3298DD256AF4BEBCFC0C')
+  -- print('===== xa: ', _xa)
+  -- print('===== xb: ', _xb)
+  -- print('===== xc: ', _xc)
+
+  __appPkgName, __appVersionName, __appVersionCode = ___appver()
+  -- print('===== appPkgName: ', appPkgName)
+  -- print('===== appVersionName: ', appVersionName)
+  -- print('===== appVersionCode: ', appVersionCode)
+
+  -- print('===== a?b base64: ', ___tobase64('a?b'))
+  -- print('===== YT9i debase64: ', ___frombase64('YT9i'))
+  -- print('===== YT9ibx debase64: ', ___frombase64('YT9ibx?./{}'))
+  -- print('===== "YT9ibx?./{}" md5: ', ___md5('YT9ibx?./{}'))
+
   ddz.GlobalSettings.handsetInfo = ddz.getHandsetInfo()
   ddz.GlobalSettings.sdcardPath = ddz.getSDCardPath()
   ddz.GlobalSettings.ddzSDPath = ddz.mkdir('fungame/DDZ')
@@ -54,6 +70,9 @@ local function startup()
   end
   
   dump(ddz.GlobalSettings, 'GlobalSettings')
+
+  -- require('httpTest')
+  -- doHttpTest()
 
   -- umeng.MobClickCpp:startWithAppkey("5351dee256240b09f604ee4c", "my_channel_lua")
 
@@ -77,7 +96,9 @@ local function startup()
 
   local function onEventComeToForeground()
     print("[onEventComeToForeground] ...")
-    ccexp.AudioEngine:resumeAll()
+    cc.Director:getInstance():getRunningScene():runAction(cc.CallFunc:create(function() 
+        ccexp.AudioEngine:resumeAll()
+      end))
   end
   local function onEventComeToBackground()
     print("[onEventComeToBackground] ...")

@@ -1,0 +1,1 @@
+__appAffiliate = 'official_ddz'
