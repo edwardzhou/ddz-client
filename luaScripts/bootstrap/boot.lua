@@ -27,12 +27,16 @@ end
 
 local function checkSDCardConf()
 	if not debug_file then print('debug file not exist') return end
-	local ret, serverInfo = pcall(function() return require "ddz_server" end)
-	if not ret then print('ddz_server not exist') return end
+	local ret, serverInfo = pcall(function() return require "ddz_server_url" end)
+	if not ret then print('ddz_server_url not exist') return end
+
+    __appUrl = serverInfo
+    cclog('__appUrl: %s', __appUrl);
+
 	-- require 'GlobalSettings'
 	-- if serverInfo.host then ddz.GlobalSettings.servers.host = serverInfo.host end
 	-- if serverInfo.port then ddz.GlobalSettings.servers.port = serverInfo.port end
-	-- dump(ddz.GlobalSettings.servers, 'settings.servers')
+	-- dump(ddz.GlobalSettings.servers, 'settings.servers')mf
 end
 
 local function main()

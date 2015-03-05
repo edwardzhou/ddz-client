@@ -78,8 +78,21 @@ function LandingScene:init()
 
   require('MusicPlayer').playBgMusic()
 
+  local nextStep = null
+
   local function onPokeCardTextureReady()
-    this:connectToServer()
+    --this:connectToServer()
+    nextStep()
+  end
+
+  local function loadMain()
+    main_path = cc.FileUtils:getInstance():fullPathForFilename('main.zip')
+    print('main.zip =====> ', main_path)
+    cc.LuaLoadChunksFromZIP(main_path)
+    require('landing.LandingConnectionPlugin').bind(LandingScene)
+    require('network.ConnectionStatusPlugin').bind(LandingScene)
+    require('CardTypeLoader').loadAllCardType()
+    require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
   end
 
   local function onUpdateEvent(event)
@@ -92,25 +105,41 @@ function LandingScene:init()
 
       local searchPaths = cc.FileUtils:getInstance():getSearchPaths()
       dump(searchPaths, '=====searchPaths=========')
-
-      main_path = cc.FileUtils:getInstance():fullPathForFilename('main.zip')
-      print('main.zip =====> ', main_path)
-      cc.LuaLoadChunksFromZIP(main_path)
-      require('landing.LandingConnectionPlugin').bind(LandingScene)
-      require('network.ConnectionStatusPlugin').bind(LandingScene)
-      require('CardTypeLoader').loadAllCardType()
-      require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+      loadMain()
     end
   end
 
-  self:startToLogin(function(succ, respData, extra) 
-      if not succ then
+  local onLoginFailed = function(respData)
+    local msg = respData.message
+    local boxParams = {
+      title = '无法自动登录',
+      msg = msg,
+      onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
+    }
+    require('UICommon.MessageBox').showMessageBox(cc.Director:getInstance():getRunningScene(), boxParams)
+  end
 
-      end
+  local function connectToServerAfterUpdate()
+    this:connectToServer()
+  end
 
-      local updateManager = require('update.UpdateManager').new()
-      updateManager:startCheckUpdate(onUpdateEvent)
-    end)
+  this:runAction(cc.CallFunc:create( function()
+      this:startToLogin(function(succ, respData, extra) 
+          if not succ then
+            nextStep = function() onLoginFailed(respData) end
+          else
+            nextStep = connectToServerAfterUpdate
+          end
+
+          if respData.forceUpdateRes then
+            local updateManager = require('update.UpdateManager').new()
+            updateManager:startCheckUpdate(onUpdateEvent)
+          else
+            loadMain()
+          end
+
+        end)
+    end))
 end
 
 function LandingScene:on_enterTransitionFinish()
@@ -120,20 +149,30 @@ function LandingScene:on_enterTransitionFinish()
 end
 
 function LandingScene:startToLogin(cb)
+  print('LandingScene:startToLogin')
 
   local AccountInfo = require('AccountInfo')
   local EntryService = require('EntryService')
 
-  local function onLoginResult(succ, respData, extra)
+  local sendLogin, onLoginResult, onFailure
+
+  onLoginResult = function(succ, respData, extra)
+    dump(respData, '[LandingScene:startToLogin] onLoginResult: respData', 5)
     if succ then
       AccountInfo.setCurrentUser(respData)
     end
     utils.invokeCallback(cb, succ, respData, extra)
   end
+  -- onFailure = function( ... )
+  --   -- body
+  -- end
 
-  a = EntryService.new()
-  a:signInWithToken(__appUrl, ddz.GlobalSettings.handsetInfo, AccountInfo.getCurrentUser(), onLoginResult)
+  sendLogin = function()
+    local loginService = EntryService.new()
+    loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, AccountInfo.getCurrentUser(), 5, onLoginResult)
+  end
 
+  sendLogin()
 end
 
 function LandingScene:on_exit()

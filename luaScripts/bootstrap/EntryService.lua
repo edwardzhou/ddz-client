@@ -2,8 +2,16 @@ local AccountInfo = require('AccountInfo')
 local cjson = require('cjson.safe')
 local EntryService = class('EntryService')
 local utils = require('utils.utils')
+local showConnectingBox = require('UICommon.ConnectingBox').showConnectingBox
+local hideConnectingBox = require('UICommon.ConnectingBox').hideConnectingBox
+local scheduler = require('framework.scheduler')
 
-function EntryService:ctor()
+function EntryService:ctor(params)
+  self.cancelled = false
+  self.showProgress = true
+  if params and params.showProgress ~= nil then
+    self.showProgress = params.showProgress
+  end
 end
 
 function EntryService:prepareParams(handsetInfo, userInfo)
@@ -21,12 +29,13 @@ function EntryService:prepareParams(handsetInfo, userInfo)
     params.userId = currentUser.userId
     params.sessionToken = currentUser.sessionToken
     params.authToken = currentUser.authToken
+    params.password = currentUser.password
   end
 
   return params
 end
 
-function EntryService:signInWithToken(url, handsetInfo, userInfo, callback)
+function EntryService:sendRequest(url, handsetInfo, userInfo, callback, onFailure)
   local xhr = cc.XMLHttpRequest:new()
   xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_STRING
   --xhr:open("GET", "http://192.168.1.165:8080/upd/assets_md5.json")
@@ -44,33 +53,104 @@ function EntryService:signInWithToken(url, handsetInfo, userInfo, callback)
   print('data len: ', #data)
 
   local function onReadyStateChange()
-    print(string.format('xhr.readyState: %d, xhr.status: %d', xhr.readyState, xhr.status))
+    print(string.format('[EntryService:sendRequest] xhr.readyState: %d, xhr.status: %d', xhr.readyState, xhr.status))
     if xhr.readyState == 4 and (xhr.status >= 200 and xhr.status < 300) then
-        local statusString = "Http Status Code:"..xhr.statusText
+        local statusString = "Http Status Code:" .. xhr.statusText
         print(statusString)
-        print("[EntryService:signInWithToken] response: ", xhr.response)
+        print("[EntryService:sendRequest] response: ", xhr.response)
 
         local respData = cjson.decode(xhr.response)
-        local a, b, c = ___appxxx(ddz.GlobalSettings.handsetInfo.mac .. respData.sk, respData.sk)
-        _v = b
+        local succ = respData.errCode == 0
+        if succ then
+          local a, b, c = ___appxxx(ddz.GlobalSettings.handsetInfo.mac .. respData.sk, respData.sk)
+          _v = b
+        end
 
-        utils.invokeCallback(callback, true, respData)
+        utils.invokeCallback(callback, succ, respData)
     else
-        print("xhr.readyState is:", xhr.readyState, "xhr.status is: ",xhr.status)
-        utils.invokeCallback(callback, false, xhr.readyState, xhr.status)
+        print("[EntryService:sendRequest] xhr.readyState is:", xhr.readyState, "xhr.status is: ",xhr.status)
+        utils.invokeCallback(onFailure, xhr.readyState, xhr.status)
     end
   end
 
   xhr:registerScriptHandler(onReadyStateChange)
   xhr:send(data)
-
-  print("waiting...")
 end
 
-function EntryService:signInWithPassword(url, handsetInfo, userInfo)
+function EntryService:requestSignInUp(url, handsetInfo, userInfo, retryCount, callback, onFailure)
+  local this = self
+  local currentRetry = 1
+
+  local director = cc.Director:getInstance()
+  local doRequest, onReqFailure, onReqCb
+
+  onReqFailure = function()
+    if this.cancelled then
+      return
+    end
+    currentRetry = currentRetry + 1
+    if currentRetry <= retryCount then
+      print('[EntryService:signInWithToken] retry to send request');
+      setTimeout(doRequest, {}, 2)
+      --doRequest()
+    else
+      local box = director:getRunningScene().connectingBox
+      if box then
+        box:setFailure()
+      end
+    end
+  end
+
+  onReqCb = function (succ, respData)
+    hideConnectingBox(director:getRunningScene(), false)
+    utils.invokeCallback(callback, succ, respData)
+  end
+
+  onRetry = function()
+    currentRetry = 1
+    hideConnectingBox(director:getRunningScene(), false)
+    doRequest()
+  end
+
+  doRequest = function()
+    local params = {
+      showLoading = true,
+      grayBackground = false,
+      closeOnTouch = false,
+      showingTime = 0,
+      closeOnBack = false,
+      onRetry = onRetry,
+      msg = '正在努力连接中...'
+    }
+
+    if currentRetry < 2 then
+      params.msg = '正在努力连接中... #' .. currentRetry
+    else
+      params.msg = '网络不给力, 加倍努力连接中... #' .. currentRetry
+    end
+
+    if not this.cancelled then
+      print('director:getRunningScene() => ', director:getRunningScene());
+      if this.showProgress then
+        local box = showConnectingBox(director:getRunningScene(), params)
+        box:setCurrentRetries(currentRetry)
+      end
+
+      this:sendRequest(url, handsetInfo, userInfo, onReqCb, onReqFailure)
+    end
+  end
+
+  doRequest()
+  
 end
 
-function EntryService:signUp(url, handsetInfo)
+function EntryService:cancel()
+  self.cancelled = true
+  local director = cc.Director:getInstance()
+  local scene = director.getRunningScene()
+  if scene.connectingBox then
+    scene.connectingBox:close()
+  end
 end
 
 return EntryService

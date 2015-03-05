@@ -1,6 +1,7 @@
 local LoginScene = class('LoginScene')
 local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')
+local EntryService = require('EntryService')
 
 local showToastBox = require('UICommon.ToastBox').showToastBox
 local hideToastBox = require('UICommon.ToastBox').hideToastBox
@@ -117,7 +118,7 @@ function LoginScene:on_enterTransitionFinish()
   this.gameConnection:on('connectionReady', self._onConnectionReady)
   this.hidenRetries = 0
   this.gameConnection:signOut(function() 
-    this.gameConnection:reconnect(false)
+    --this.gameConnection:reconnect(false)
   end)
 end
 
@@ -150,6 +151,24 @@ function LoginScene:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function LoginScene:onSignResult(succ, respData)
+  local this = self
+  local params = {buttonType = 'ok'}
+  
+  this:showSignInProgress(false)
+  if not succ then
+    local msg = respData.message
+    params.msg = msg
+    require('UICommon.MessageBox').showMessageBox(this.rootLayer, params)
+  else
+    AccountInfo.setCurrentUser(respData)      
+    this.gameConnection:connectToServer({
+      host = ddz.GlobalSettings.servers.host
+      , port = ddz.GlobalSettings.servers.port
+    })
+  end
 end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
@@ -186,21 +205,25 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
 
   self:showSignInProgress(true)
 
-  this.gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
-      print('signIn result ', success)
-      dump(userInfo, 'userInfo')
-      if not success then
-        params.msg = userInfo.message
-        this:showSignInProgress(false)
-        require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
-      else
-        if server then
-          this.gameConnection:connectToServer(server)
-        else
-          this:showSignInProgress(false)          
-        end
-      end
-    end)
+  local loginService = EntryService.new()
+  loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, signInParam, 5, 
+    __bind(this.onSignResult, this))
+
+  -- this.gameConnection:signIn(signInParam, userId, password, function(success, userInfo, server, signParams)
+  --     print('signIn result ', success)
+  --     dump(userInfo, 'userInfo')
+  --     if not success then
+  --       params.msg = userInfo.message
+  --       this:showSignInProgress(false)
+  --       require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+  --     else
+  --       if server then
+  --         this.gameConnection:connectToServer(server)
+  --       else
+  --         this:showSignInProgress(false)          
+  --       end
+  --     end
+  --   end)
 
 end
 
@@ -229,21 +252,26 @@ function LoginScene:ButtonQuickSignUp_onClicked(sender, event)
   local this = self
   self:showSignInProgress(true, '快速注册中...')
 
-  this.gameConnection:signUp(function(success, userInfo, server, signParams)
-      print('signUp result ', success)
-      dump(userInfo, 'userInfo')
-      if not success then
-        params.msg = userInfo.message
-        this:showSignInProgress(false)
-        require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
-      else
-        if server then
-          this.gameConnection:connectToServer(server) 
-        else
-          this:showSignInProgress(false)
-        end
-      end
-    end)
+  local loginService = EntryService.new()
+  loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, {}, 5, 
+    __bind(this.onSignResult, this))
+
+
+  -- this.gameConnection:signUp(function(success, userInfo, server, signParams)
+  --     print('signUp result ', success)
+  --     dump(userInfo, 'userInfo')
+  --     if not success then
+  --       params.msg = userInfo.message
+  --       this:showSignInProgress(false)
+  --       require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+  --     else
+  --       if server then
+  --         this.gameConnection:connectToServer(server) 
+  --       else
+  --         this:showSignInProgress(false)
+  --       end
+  --     end
+  --   end)
 end
 
 function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
@@ -294,10 +322,13 @@ function LoginScene:ListViewAccounts_onEvent(sender, eventType)
   end
 end
 
+require('network.ConnectionStatusPlugin').bind(LoginScene)
+
 
 local function createScene()
   local scene = cc.Scene:create()
   return LoginScene.extend(scene)
 end
+
 
 return createScene

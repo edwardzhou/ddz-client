@@ -243,8 +243,10 @@ function ConnectingBox:setCurrentRetries(retries)
     -- this.ButtonTryAgain:setVisible(false)
     -- this.ButtonQuit:setVisible(false)
     this.LabelMsg:setPosition(pos)
-  elseif retries > 3 then    
+  --elseif retries > 3 then 
+  else
     this.ButtonNetworkSetup:setVisible(true)
+    this.PanelOption:setVisible(true)
     --this.ButtonNetworkSetup:setPosition(590, 40)
     pos = cc.p(200, 40)
     this.LabelMsg:setPosition(pos)
@@ -286,7 +288,7 @@ function ConnectingBox:ButtonNetworkSetup_onClicked(sender, event)
 end
 
 function ConnectingBox:ButtonQuit_onClicked(sender, event)
-  cc.Director:getInstance():endToLua()
+  ddz.endApplication()
 end
 
 function ConnectingBox:ButtonTryAgain_onClicked(sender, event)
