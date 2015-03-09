@@ -1,1 +1,7 @@
-{"packageUrl":"http://192.168.1.165:3000/official_ddz/updates/","remoteVersionUrl":"http://192.168.1.165:3000/official_ddz/version.json","remoteManifestUrl":"http://192.168.1.165:3000/official_ddz/manifest.json","version":"1","engineVersion":"Cocos2d-X-lua 3.4rc1"}
+{
+  "engineVersion": "cocos2d-x-lua 3.4rc1",
+  "projectUrl": "http://192.168.1.165:3000/app/official/updates/",
+  "remoteManifestUrl": "http://192.168.1.165:3000/app/official/updates/manifest.json",
+  "remoteVersionUrl": "http://192.168.1.165:3000/app/official/updates/version.json",
+  "version": "1.1_2015-03-09 14:36"
+}

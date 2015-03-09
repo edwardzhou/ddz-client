@@ -4,8 +4,11 @@ local PokeCardTexture = class('PokeCardTexture')
 
 function PokeCardTexture:loadPokeCardTextures(node, callback)
   local this = self
+  print('[PokeCardTexture:loadPokeCardTextures] start')
   PokeCard.sharedPokeCard()
-  cc.SpriteFrameCache:getInstance():addSpriteFrames('raw_lord_pokecards.plist')
+  print('[PokeCardTexture:loadPokeCardTextures] PokeCard.sharedPokeCard done')
+  
+  print('[PokeCardTexture:loadPokeCardTextures] cc.SpriteFrameCache:getInstance():addSpriteFrames(\'raw_lord_pokecards.plist\') done')
   local pokefile = 'pc.png'
   local filepath = cc.FileUtils:getInstance():fullPathForFilename(pokefile)
   print('filepath =>' , filepath)

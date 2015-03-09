@@ -64,6 +64,17 @@ function EntryService:sendRequest(url, handsetInfo, userInfo, callback, onFailur
         if succ then
           local a, b, c = ___appxxx(ddz.GlobalSettings.handsetInfo.mac .. respData.sk, respData.sk)
           _v = b
+          if respData.updateManifestUrl then
+            _updateManifestUrl = respData.updateManifestUrl or ""
+            _updateVersionUrl = respData.updateVersionUrl or ""
+            _updatePackageUrl = respData.updatePackageUrl or ""
+            _updateManifestUrl = string.gsub(_updateManifestUrl, ':affiliate:', __appAffiliate)
+            _updateVersionUrl = string.gsub(_updateVersionUrl, ':affiliate:', __appAffiliate)
+            _updatePackageUrl = string.gsub(_updatePackageUrl, ':affiliate:', __appAffiliate)
+            if #_updatePackageUrl > 0 and string.sub(_updatePackageUrl, -1) ~= '/' then
+              _updatePackageUrl = _updatePackageUrl .. '/'
+            end
+          end
         end
 
         utils.invokeCallback(callback, succ, respData)

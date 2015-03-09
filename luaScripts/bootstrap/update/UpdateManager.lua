@@ -10,6 +10,10 @@ function UpdateManager:startCheckUpdate(callback)
   local am = cc.AssetsManagerEx:create('project.manifest', cc.FileUtils:getInstance():getWritablePath())
   am:retain()
   self.am = am
+  if _updateManifestUrl then
+    print('set am remote urls:', _updateManifestUrl, _updateVersionUrl, _updatePackageUrl)
+    am:setRemoteUrls(_updateManifestUrl, _updateVersionUrl, _updatePackageUrl)
+  end
 
   if not am:getLocalManifest():isLoaded() then
       print("Fail to update assets, step skipped.")

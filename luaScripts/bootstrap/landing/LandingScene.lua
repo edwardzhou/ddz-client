@@ -88,11 +88,31 @@ function LandingScene:init()
   local function loadMain()
     main_path = cc.FileUtils:getInstance():fullPathForFilename('main.zip')
     print('main.zip =====> ', main_path)
-    cc.LuaLoadChunksFromZIP(main_path)
-    require('landing.LandingConnectionPlugin').bind(LandingScene)
-    require('network.ConnectionStatusPlugin').bind(LandingScene)
-    require('CardTypeLoader').loadAllCardType()
-    require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+
+    this:runAction(cc.Sequence:create(
+        cc.CallFunc:create(function() 
+            cc.LuaLoadChunksFromZIP(main_path)
+          end ),
+        cc.DelayTime:create(0.2),
+        cc.CallFunc:create(function()
+            require('landing.LandingConnectionPlugin').bind(LandingScene)
+            require('network.ConnectionStatusPlugin').bind(LandingScene)
+          end),
+        cc.DelayTime:create(0.2),
+        cc.CallFunc:create(function()
+            --require('CardTypeLoader').loadAllCardType()
+          end),
+        cc.DelayTime:create(0.2),
+        cc.CallFunc:create(function()
+            require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+          end)
+      ))
+
+    -- cc.LuaLoadChunksFromZIP(main_path)
+    -- require('landing.LandingConnectionPlugin').bind(LandingScene)
+    -- require('network.ConnectionStatusPlugin').bind(LandingScene)
+    -- require('CardTypeLoader').loadAllCardType()
+    -- require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
   end
 
   local function onUpdateEvent(event)
@@ -131,7 +151,10 @@ function LandingScene:init()
             nextStep = connectToServerAfterUpdate
           end
 
-          if respData.forceUpdateRes then
+          print("respData.forceUpdateRes: ", respData.forceUpdateRes)
+          print("respData.updateVersionUrl: ", respData.updateVersionUrl)
+          if respData.forceUpdateRes or respData.updateVersionUrl then
+            print(string.format('got UpdateUrl[%s], need to update', respData.updateVersionUrl))
             local updateManager = require('update.UpdateManager').new()
             updateManager:startCheckUpdate(onUpdateEvent)
           else

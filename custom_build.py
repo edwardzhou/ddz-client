@@ -222,6 +222,12 @@ def make_update_resources(proj_path, update_pkg_path):
     version_template = json.load(cfg)
     cfg.close()
 
+  version_template["version"] = versionInfo["version"] + "_" + versionInfo["timestamp"]
+  asset_md5_file = io.open(os.path.join(proj_path, 'Resources', 'project.manifest'), 'wb')
+  asset_md5_file.write(json.dumps(version_template, sort_keys=True, indent=2, separators=(',', ': ')))
+  asset_md5_file.close()
+
+
   version_template["assets"] = assets_md5
 
   asset_md5_file = io.open(os.path.join(proj_path, 'assets_md5.txt'), 'wb')
@@ -281,6 +287,7 @@ def handle_event(event, tp, args):
     compile_resources(lua_src_dir, lua_dst_dir)
     zip_lua(proj_path, lua_dst_dir, assets_dir)
     make_update_resources(proj_path, os.path.join(proj_path, 'temp', 'upd_pkg'))
+    shutil.copy( os.path.join(proj_path, 'Resources', 'project.manifest') , os.path.join(assets_dir, 'project.manifest'))
     #shutil.copy(os.path.normpath(os.path.join(args["project-path"], "luaScripts.zip")), os.path.join(assets_dir, "luaScripts.zip")) 
     # umengJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "umeng", "android"))
     # umengJarFile = "mobclickcpphelper.jar"
