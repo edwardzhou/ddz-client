@@ -278,33 +278,42 @@ function HallScene:tryEnterRoom(gameRoom)
         end)
     ))
 
-  this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
-    dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
-    if enterTimeoutActionId then
-      self:stopAction(enterTimeoutActionId)
-      enterTimeoutActionId = nil
-      if enteringRoomToast:isVisible() then
-        enteringRoomToast:close(true)
+  local doTryEnterRoom = function()
+    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
+      dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
+      if enterTimeoutActionId then
+        this:stopAction(enterTimeoutActionId)
+        enterTimeoutActionId = nil
+        if enteringRoomToast:isVisible() then
+          enteringRoomToast:close(false)
+        end
       end
-    end
 
-    if data.retCode == ddz.ErrorCode.SUCCESS then
-      ddz.selectedRoom = gameRoom
-      local createGameScene = require('gaming.GameScene')
-      local gameScene = createGameScene()
-      cc.Director:getInstance():pushScene(gameScene)
-    else
-      -- 提示用户金币超过准入上限，请进入更高级别的房间
-      local params = {
-        msg = data.message
-        , grayBackground = true
-        , closeOnClickOutside = false
-        , buttonType = 'ok'
-      }
+      if data.retCode == ddz.ErrorCode.SUCCESS then
+        ddz.selectedRoom = gameRoom
+        local createGameScene = require('gaming.GameScene')
+        local gameScene = createGameScene()
+        cc.Director:getInstance():pushScene(gameScene)
+      else
+        -- 提示用户金币超过准入上限，请进入更高级别的房间
+        local params = {
+          msg = data.message
+          , grayBackground = true
+          , closeOnClickOutside = false
+          , buttonType = 'ok'
+        }
 
-      showMessageBox(self, params)
-    end
-  end)
+        showMessageBox(this, params)
+      end
+    end)
+  end
+
+  this:runAction(cc.Sequence:create(
+      cc.DelayTime:create(0.8),
+      cc.CallFunc:create(doTryEnterRoom)
+    ))
+
+
 end
 
 function HallScene:checkMinCoinsQty(gameRoom, coins) 

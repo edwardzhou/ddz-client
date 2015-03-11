@@ -225,6 +225,9 @@ end
 function GameScene:bindControlsVariables()
   local VarBinding = require('utils.UIVariableBinding')
   VarBinding.bind(self.uiWidget, self, self, true)
+
+  ddz.clearPressedDisabledTexture(self.ButtonChat)
+
 end
 
 function GameScene:showSysTime()

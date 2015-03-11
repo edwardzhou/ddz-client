@@ -1,1 +1,1 @@
-__appResVersion = '1.2.10'
+__appResVersion = '1.1.10'

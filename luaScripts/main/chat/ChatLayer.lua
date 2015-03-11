@@ -10,13 +10,13 @@ end
 
 function ChatLayer:init()
 	for index = 1, 8 do
-  	self[string.format("Button_%d_onClicked",index)] = self.onDefaultMsgClicked
+  	self[string.format("ButtonMsg_%d_onClicked",index)] = self.onDefaultMsgClicked
   end
   for index = 1, 12 do
   	self[string.format("Emoji_%d_onClicked",index)] = self.onEmojiClicked
   end
 
-  local uiRoot = cc.CSLoader:createNode('ChatPanelLayer.csb')
+  local uiRoot = cc.CSLoader:createNode('ChatLayer.csb')
   self:addChild(uiRoot)
   require('utils.UIVariableBinding').bind(uiRoot, self, self,true)
   self:initTouch()
