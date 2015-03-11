@@ -100,7 +100,7 @@ function LandingScene:init()
           end),
         cc.DelayTime:create(0.2),
         cc.CallFunc:create(function()
-            --require('CardTypeLoader').loadAllCardType()
+            require('CardTypeLoader').loadAllCardType()
           end),
         cc.DelayTime:create(0.2),
         cc.CallFunc:create(function()

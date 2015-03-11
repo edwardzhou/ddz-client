@@ -425,7 +425,7 @@ function UIPokecardsPlugin.bind( theClass )
     local startPoint = cc.p(-100, self.visibleSize.height + 100)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(165, 300)
+    local endPoint = cc.p(165, 270)
 
     for index = #pokeCards, 1, -1 do
       local pokeSprite = pokeCards[index].card_sprite
@@ -450,7 +450,7 @@ function UIPokecardsPlugin.bind( theClass )
     local startPoint = cc.p(self.visibleSize.width + 100, self.visibleSize.height + 100)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(585, 300)
+    local endPoint = cc.p(585, 270)
 
     for index = 1, #pokeCards do
       local pokeSprite = pokeCards[index].card_sprite
@@ -473,25 +473,42 @@ function UIPokecardsPlugin.bind( theClass )
       return
     end
     self:hideCard(self.prevPlayerInfo.lastCard)
-    local startPoint = cc.p(-100, 330)
+    local startPoint = cc.p(-100, 280)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
     local endPoint = cc.p(125, 280)
 
-    for index = #pokeCards, 1, -1 do
+    -- for index = #pokeCards, 1, -1 do
+    --   local pokeSprite = pokeCards[index].card_sprite
+    --   pokeSprite:setPosition(endPoint)
+    --   --pokeSprite:setLocalZOrder(100 - index)
+    --   pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
+    --   pokeSprite:setVisible(true)
+    --   pokeSprite:setScale(0.6)
+
+    --   endPoint.x = endPoint.x + 35 * 0.7
+    -- end
+
+    local count = 1
+    local index = #pokeCards
+    while index > 0 do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(endPoint)
       --pokeSprite:setLocalZOrder(100 - index)
       pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
       pokeSprite:setVisible(true)
-      pokeSprite:setScale(0.7)
+      pokeSprite:setScale(0.6)
 
-      -- pokeSprite:runAction(cc.Spawn:create(
-      --   cc.MoveTo:create(0.2, endPoint),
-      --   cc.ScaleTo:create(0.1, 0.7)
-      -- ))
-      endPoint.x = endPoint.x + 35 * 0.7
+      if count == 10 then 
+        endPoint = cc.p(125, 240)
+      else
+        endPoint.x = endPoint.x + 35 * 0.7
+      end
+
+      count = count + 1
+      index = index - 1
     end
+
   end
 
   function theClass:showNextPlayerRestPokecards(pokeCards)
@@ -501,25 +518,54 @@ function UIPokecardsPlugin.bind( theClass )
     end
     
     self:hideCard(self.nextPlayerInfo.lastCard)
-    local startPoint = cc.p(self.visibleSize.width + 100, 335)
+    local startPoint = cc.p(self.visibleSize.width + 100, 280)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(625, 335)
+    local endPoint = cc.p(625, 280)
 
-    for index = 1, #pokeCards do
+    -- for index = 1, #pokeCards do
+    --   local pokeSprite = pokeCards[index].card_sprite
+    --   pokeSprite:setPosition(endPoint)
+    --   --pokeSprite:setLocalZOrder(100 - index)
+    --   pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
+    --   pokeSprite:setScale(0.6)
+    --   pokeSprite:setVisible(true)
+
+    --   -- pokeSprite:runAction(cc.Spawn:create(
+    --   --   cc.MoveTo:create(0.2, endPoint),
+    --   --   cc.ScaleTo:create(0.1, 0.7)
+    --   -- ))
+    --   endPoint.x = endPoint.x - 35 * 0.7
+    -- end
+
+    local count = 1
+    local index = #pokeCards
+    local startX = 630 - #pokeCards * 35 * 0.7
+    if #pokeCards > 10 then
+      startX = 630 - 10 * 35 * 0.7
+    end 
+    endPoint = cc.p(startX, 280)
+
+    while index > 0 do
       local pokeSprite = pokeCards[index].card_sprite
       pokeSprite:setPosition(endPoint)
       --pokeSprite:setLocalZOrder(100 - index)
       pokeSprite:getParent():reorderChild(pokeSprite, -100 - index)
-      pokeSprite:setScale(0.7)
       pokeSprite:setVisible(true)
+      pokeSprite:setScale(0.6)
 
-      -- pokeSprite:runAction(cc.Spawn:create(
-      --   cc.MoveTo:create(0.2, endPoint),
-      --   cc.ScaleTo:create(0.1, 0.7)
-      -- ))
-      endPoint.x = endPoint.x - 35 * 0.7
+      if count == 10 then 
+        endPoint = cc.p(startX, 240)
+      else
+        endPoint.x = endPoint.x + 35 * 0.7
+      end
+
+      count = count + 1
+      index = index - 1
     end
+
+  --end
+  
   end
 
   --[[-----------------------------------------------------------

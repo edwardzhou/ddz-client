@@ -317,12 +317,13 @@ bool AppDelegate::applicationDidFinishLaunching()
     register_all_app_signiture(luaState);
 
     auto fileUtils = FileUtils::getInstance();
-    fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
-    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/res", true);
-    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/res/NewUI", true);
-    fileUtils->addSearchPath(fileUtils->getWritablePath() + "/prog", true);
 
     CCLOG("private Path: %s", fileUtils->getWritablePath().c_str());
+    
+    fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "res", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "res/NewUI", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "prog", true);
 
  //    int nRet;
 	// unzFile pFile = NULL;
