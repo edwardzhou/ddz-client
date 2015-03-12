@@ -56,6 +56,15 @@ function GameScene:ctor(...)
  
   self._onReconnected = __bind(self.onReconnected, self)
 
+  self:runAction(
+    cc.RepeatForever:create(
+      cc.Sequence:create(
+        cc.DelayTime:create(10),
+        cc.CallFunc:create(function() this.gameConnection:doHeartbeat() end)
+      )
+    )
+  )
+
   self:init()
  
 end

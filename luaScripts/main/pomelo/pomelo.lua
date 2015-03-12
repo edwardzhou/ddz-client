@@ -432,6 +432,11 @@ function Pomelo:send(packet)
 	end
 end
 
+function Pomelo:sendHeartbeat()
+	local obj = Package.encode(Package.TYPE_HEARTBEAT)
+	self:send(obj)
+end
+
 function Pomelo:heartbeat(data)
 	if not self.heartbeatInterval or self.heartbeatInterval <= 0 then
 		do return end
