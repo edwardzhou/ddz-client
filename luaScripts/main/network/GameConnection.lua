@@ -309,6 +309,17 @@ function GameConnection:onTryReconnect(retries)
   return self.needReconnect
 end
 
+function GameConnection:doHeartbeat()
+  local status = self:checkConnection()
+
+  if not status.result then
+    return
+  end
+
+  self.pomeloClient:sendHeartbeat()
+end
+
+
 function GameConnection:signOut(cb)
   local this = self
   this.autoSignUp = false
