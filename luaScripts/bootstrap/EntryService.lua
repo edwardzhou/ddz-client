@@ -141,7 +141,11 @@ function EntryService:requestSignInUp(url, handsetInfo, userInfo, retryCount, ca
     end
 
     if not this.cancelled then
-      print('director:getRunningScene() => ', director:getRunningScene());
+      local scene = director:getRunningScene()
+      print('director:getRunningScene() => ', scene);
+      if scene.onLoginProgressNotify then
+        scene:onLoginProgressNotify(params.msg, currentRetry)
+      end
       if this.showProgress then
         local box = showConnectingBox(director:getRunningScene(), params)
         box:setCurrentRetries(currentRetry)

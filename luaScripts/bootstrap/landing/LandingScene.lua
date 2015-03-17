@@ -5,6 +5,7 @@ local cjson = require('cjson.safe')
 
 local _audioInfo = ddz.GlobalSettings.audioInfo
 local LandingScene = class('LandingScene')
+local display = require('cocos.framework.display')
 
 function LandingScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -43,25 +44,68 @@ function LandingScene:init()
   self.rootLayer = rootLayer
   
   --local uiRoot = ccs.GUIReader:getInstance():widgetFromBinaryFile('gameUI/Landing.csb')
-  local uiRoot = cc.CSLoader:createNode('LandingScene.csb')
+  local uiRoot = cc.CSLoader:createNode('LandingScene2.csb')
   print( 'uiRoot => ', uiRoot)
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
 
-  local percent = 0
+  if self.Version then
+    self.Version:setString('v'  .. require('version'))
+  end
+
+  self.MainPanel:setScale(0.01)
+  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.8, 1.0), 0.5))
+
+
+  local percent = 10
+
+  local function progressEffect()
+    local startWidth = 70
+    local width = startWidth
+    local height = 36
+    this.ImageProgressLight:setContentSize(cc.size(70, 36))
+    this.ImageProgressLight:setVisible(true)
+    local animateFunc = function()
+      width = width + 3
+      if width > (340 * percent / 100 - 20) then
+        width = startWidth
+      end
+      this.ImageProgressLight:setContentSize(cc.size(width, height))
+    end
+    this:runAction(cc.RepeatForever:create(
+        cc.Sequence:create(
+            cc.CallFunc:create(animateFunc)
+          )
+      ))
+  end
+
+  this:runAction(cc.RepeatForever:create(
+      cc.Sequence:create(
+        cc.CallFunc:create(function()
+          this:updateLoadingProgress()
+        end),
+        cc.DelayTime:create(0.016)
+        )
+    ))
+
+  this.progress = 10
+  this.lastProgress = 0
+
+  this.ImageProgressLight:setVisible(false)
+  --this.ImageProgress:setVisible(false)
+  this.ImageProgress:setContentSize(cc.size(340 * percent / 100, 36))
   uiRoot:runAction( cc.Sequence:create(
     cc.Repeat:create(
       cc.Sequence:create(
-        cc.DelayTime:create(0.02),
+        cc.DelayTime:create(0.03),
         cc.CallFunc:create(function()
-          percent = percent + 1
-          this.LoadingBar:setPercent(percent) 
+          this.progress = this.progress + 1
         end)), 
-      100),
+      20),
     cc.CallFunc:create(function()
-        this.LoadingBar:setVisible(false)
+        --this.LoadingBar:setVisible(false)
 --        umeng.MobClickCpp:endEvent('test')
       end)
   ))
@@ -75,6 +119,21 @@ function LandingScene:init()
   rootLayer:addChild(snow)
 
   cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
+  cc.SpriteFrameCache:getInstance():addSpriteFrames('loading.plist')
+
+  local loadingAnimation = display.newAnimation('loading_animate_%02d.png', 1, 8, 12.0 / 60.0)
+  this.LoadingAnimation:runAction(
+      cc.RepeatForever:create(
+        cc.Animate:create(loadingAnimation)
+        )
+    )
+
+  local dotAnimation = display.newAnimation('loading_text_animate_%02d.png', 1, 3, 24.0 / 60.0)
+  this.LoadingDot:runAction(
+      cc.RepeatForever:create(
+        cc.Animate:create(dotAnimation)
+        )
+    )
 
   require('MusicPlayer').playBgMusic()
 
@@ -88,24 +147,37 @@ function LandingScene:init()
   local function loadMain()
     main_path = cc.FileUtils:getInstance():fullPathForFilename('main.zip')
     print('main.zip =====> ', main_path)
+    local lastStep = 0
 
     this:runAction(cc.Sequence:create(
         cc.CallFunc:create(function() 
             cc.LuaLoadChunksFromZIP(main_path)
+            this.progress = this.progress + 10
           end ),
         cc.DelayTime:create(0.2),
         cc.CallFunc:create(function()
             require('landing.LandingConnectionPlugin').bind(LandingScene)
             require('network.ConnectionStatusPlugin').bind(LandingScene)
+            this.progress = this.progress + 5
           end),
         cc.DelayTime:create(0.2),
         cc.CallFunc:create(function()
-            require('CardTypeLoader').loadAllCardType()
-          end),
-        cc.DelayTime:create(0.2),
-        cc.CallFunc:create(function()
-            require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+            require('CardTypeLoader').loadAllCardTypeX(this, 
+                function(step)
+                  this.progress = this.progress + (step - lastStep) * 50 / 100
+                  lastStep = step
+                end,
+                function()
+                  print('----- start to PokeCardTexture.loadPokeCardTextures')
+                  require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+                end
+              )
           end)
+        -- ,
+        -- cc.DelayTime:create(0.2),
+        -- cc.CallFunc:create(function()
+        --     require('PokeCardTexture'):loadPokeCardTextures(this, onPokeCardTextureReady)
+        --   end)
       ))
 
     -- cc.LuaLoadChunksFromZIP(main_path)
@@ -165,6 +237,26 @@ function LandingScene:init()
     end))
 end
 
+function LandingScene:updateLoadingProgress()
+  local this = self
+
+  if this.progress == this.lastProgress then
+    return
+  end
+  this.lastProgress = this.progress
+
+  local width = 340 * this.progress / 100
+
+  this.ImageProgress:setContentSize(cc.size(width, 36))
+  if width > 95 then
+    this.ImageProgressLight:setContentSize(cc.size(width - 30, 36))
+    this.ImageProgressLight:setVisible(true)
+  else
+    this.ImageProgressLight:setVisible(false)
+  end
+
+end
+
 function LandingScene:on_enterTransitionFinish()
   -- body
   print('[LandingScene:on_enterTransitionFinish]')
@@ -191,7 +283,7 @@ function LandingScene:startToLogin(cb)
   -- end
 
   sendLogin = function()
-    local loginService = EntryService.new()
+    local loginService = EntryService.new({showProgress=false})
     loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, AccountInfo.getCurrentUser(), 5, onLoginResult)
   end
 

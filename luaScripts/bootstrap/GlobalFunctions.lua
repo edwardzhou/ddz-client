@@ -405,8 +405,10 @@ ddz.readFromFile = function(filename)
 end
 
 ddz.clearPressedDisabledTexture = function(button)
-  button:clearPressedTexture()
-  button:clearDisabledTexture()
+  if button ~= nil and button.clearPressedTexture ~= nil then
+    button:clearPressedTexture()
+    button:clearDisabledTexture()
+  end
 end
 
 local _onEndListeners = {}
