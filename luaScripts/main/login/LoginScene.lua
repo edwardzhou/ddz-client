@@ -52,16 +52,23 @@ function LoginScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Login.csb')
-  local uiRoot = cc.CSLoader:createNode('LoginScene.csb')
+  local uiRoot = cc.CSLoader:createNode('LoginScene2.csb')
   self.uiRoot = uiRoot
   rootLayer:addChild(uiRoot)
 
-  require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
+
+  if self.Version then
+    self.Version:setString('v'  .. require('version'))
+  end
 
   ddz.clearPressedDisabledTexture(self.ButtonSignIn)
   ddz.clearPressedDisabledTexture(self.ButtonQuickSignUp)
   ddz.clearPressedDisabledTexture(self.ButtonSwitchAccount)
+
+  self.MainPanel:setScale(0.01)
+  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.8, 1.0), 0.5))
 
   -- local listView = ccui.ListView:create()
   -- listView:setContentSize(190, 196)

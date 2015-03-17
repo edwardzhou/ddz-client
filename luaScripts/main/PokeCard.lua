@@ -302,7 +302,7 @@ function Card.create(pokeCards)
     opts.pokeCards = table.dup(pokeCards)
     table.sort(opts.pokeCards, sortAscBy('index'))
     local valueChars = PokeCard.getPokeValuesChars(opts.pokeCards, true)
-    local cardDef = allCardTypes[valueChars]
+    local cardDef = AllCardTypes[valueChars]
     if cardDef ~= nil then
       opts.cardType = cardDef.cardType
       opts.cardLength = cardDef.cardLength
@@ -704,6 +704,6 @@ PokeCard.slicePokeCards = function()
   return p1, p2, p3, allPokeCards
 end
 
-allCardTypes = require('cjson.safe').decode(getContent('allCardTypes.json'))
+--allCardTypes = require('cjson.safe').decode(getContent('allCardTypes.json'))
 
 PokeCard.getByPokeChars = PokeCard.pokeCardsFromChars

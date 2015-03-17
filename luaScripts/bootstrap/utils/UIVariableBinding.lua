@@ -19,6 +19,8 @@ local TypeMapping = {
   Slider = 'ccui.Slider'
 }
 
+TypeMapping['cc.Sprite'] = 'cc.Sprite'
+
 function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug)
   --[[
     variable pattern v_VarName , it will set varHolder[VarName] = widget
@@ -26,20 +28,22 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug
   local function bindVariables(uiWidget, varHodler)
     local widgetName = uiWidget:getName()
     local vtype, vname, wtype = string.gmatch(widgetName, '(%w*)_(.*)')()
-    wtype = uiWidget:getDescription()
+    -- wtype = uiWidget:getDescription()
+    wtype = tolua.type(uiWidget)
     local tmpParent = varHodler
     local widget = nil
     if vtype ~= nil and vname ~= nil and wtype ~= nil then
       if not not showDebug then
-        print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
+        --print('bind variable:' , vtype, vname, wtype, TypeMapping[wtype])
+        print('bind variable:' , vtype, vname, wtype)
       end
       
       if vtype == 'v' then
-        widget = tolua.cast(uiWidget, TypeMapping[wtype])
+        widget = tolua.cast(uiWidget, wtype)
         varHodler[vname] = widget
         --print(string.format('varHolder["%s"] => ', vname), widget)
       elseif vtype =='gv' then
-        widget = tolua.cast(uiWidget, TypeMapping[wtype])
+        widget = tolua.cast(uiWidget, wtype)
         varHodler[vname] = widget
       end
       --if widget and eventContainer and wtype == 'Button' then
@@ -56,8 +60,9 @@ function UIVaribleBinding.bind(uiWidget, varContainer, eventContainer, showDebug
             ' , eventTouchHandlerName: ', eventTouchHandler , 
             ' , onclickHandler: ', onclickHandler)
         end
-        if type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function' then
-          widget:addTouchEventListener(function(sender, event)
+        if widget.addTouchEventListener ~= nil 
+          and (type(eventTouchHandler) == 'function' or type(onclickHandler) == 'function') then
+            widget:addTouchEventListener(function(sender, event)
               if eventTouchHandler then
                 eventTouchHandler(eventContainer, sender, event)
               end

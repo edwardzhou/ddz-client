@@ -1,10 +1,13 @@
 local utils = require('utils.utils')
+print('start to require PokeCard')
 require('PokeCard')
+print('PokeCard required')
 local PokeCardTexture = class('PokeCardTexture')
 
 function PokeCardTexture:loadPokeCardTextures(node, callback)
   local this = self
   local spriteFrameCache = cc.SpriteFrameCache:getInstance()
+  local textureCache = cc.Director:getInstance():getTextureCache()
   print('[PokeCardTexture:loadPokeCardTextures] start')
   PokeCard.sharedPokeCard()
   print('[PokeCardTexture:loadPokeCardTextures] PokeCard.sharedPokeCard done')
@@ -21,13 +24,29 @@ function PokeCardTexture:loadPokeCardTextures(node, callback)
     print('pokecards generated')
   else
     print('pokecards loading')
-    local tex = cc.Director:getInstance():getTextureCache():addImage(pokefile)
-    local lord_tex = cc.Director:getInstance():getTextureCache():addImage('lord_pc.png')
-    PokeCard.createPokecardsFrames(tex)
-    PokeCard.createLordPokecardsFrames(lord_tex)
-    PokeCard.createPokecardsWithFrames(tex)
-    print('pokecards loaded')
-    utils.invokeCallback(callback)
+    local tex
+    local lord_tex
+    textureCache:addImageAsync(pokefile, function(texture)
+        tex = texture
+
+        textureCache:addImageAsync('lord_pc.png', function(t2) 
+            lord_tex = t2
+            PokeCard.createPokecardsFrames(tex)
+            PokeCard.createLordPokecardsFrames(lord_tex)
+            PokeCard.createPokecardsWithFrames(tex)
+            print('pokecards loaded')
+            utils.invokeCallback(callback)
+          end)
+
+      end)
+    -- local tex = cc.Director:getInstance():getTextureCache():addImage(pokefile)
+    -- local lord_tex = cc.Director:getInstance():getTextureCache():addImage('lord_pc.png')
+
+    -- PokeCard.createPokecardsFrames(tex)
+    -- PokeCard.createLordPokecardsFrames(lord_tex)
+    -- PokeCard.createPokecardsWithFrames(tex)
+    -- print('pokecards loaded')
+    -- utils.invokeCallback(callback)
   end
 end
 
