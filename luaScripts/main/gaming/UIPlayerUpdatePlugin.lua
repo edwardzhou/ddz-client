@@ -29,6 +29,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
       Head = self.PrevUserHead,
       Status = self.PrevUserStatus,
       PokeCount = self.PrevUserPokeCount,
+      pc_prefix = 'prev_pc_',
       Role = self.PrevUserRole
     }
     
@@ -50,7 +51,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
 
   function theClass:updatePlayerUI(userUI, userInfo, updateStatus)
 
-    userUI.Panel:setVisible(userInfo ~= nil)
+    --userUI.Panel:setVisible(userInfo ~= nil)
     if userInfo == nil then
       return
     end
@@ -62,6 +63,49 @@ function UIPlayerUpdatePlugin.bind(theClass)
     userInfo =  userInfo or {}
     userUI.Name:setString(userInfo.nickName or '')
     userUI.Name:setVisible(userInfo.nickName and userInfo.nickName ~= '')
+    userUI.PokeCount:setString(userInfo.pokeCount)
+
+    if userUI.pc_prefix == nil then
+      return
+    end
+
+    local pokeCount = userInfo.pokeCount or 0
+    local pokeDiv = math.floor(pokeCount / 2)
+    local pokeRem = pokeCount % 2
+    local pc_name
+    local pokeIndex
+    for i=1, 10 do
+      pokeIndex = 10 - i
+      if pokeIndex > 0 then
+        pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
+        local visible = pokeIndex > (10 - pokeDiv - pokeRem)
+        self[pc_name]:setVisible(visible)
+        local v = 0
+        if visible then
+          v=1
+        end
+        -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
+      end
+
+      pokeIndex = 10 + i
+      if pokeIndex <= 20 then
+        pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
+        local visible = pokeIndex <= (10 + pokeDiv)
+        self[pc_name]:setVisible(visible)
+        local v = 0
+        if visible then
+          v=1
+        end
+        -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
+      end
+    end
+
+    self[userUI.pc_prefix .. '10']:setVisible(pokeCount > 0)
+
+
+    do return end
+
+
     if userInfo.headIcon then
       --userUI.Head:loadTexture(Res.Images.HeadIcons[userInfo.headIcon], ccui.TextureResType.localType)
       --userUI.Head:loadTexture(Res.getHeadIconPath(userInfo.headIcon), ccui.TextureResType.localType)

@@ -2,6 +2,7 @@ local scheduler = require('framework.scheduler')
 local SGamingActionsPlugin = {}
 local AccountInfo = require('AccountInfo')
 local utils = require('utils.utils')
+local RoleImages = require('roleImages')
 
 local Res = require('Resources')
 
@@ -13,6 +14,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onGrabbingLordMsg(userId, grabState, nextUserId, nextTimeout, pokeGame, isGiveup, isGrabLordFinish, data)
+    local this = self
     print('userId: ', userId, self.selfPlayerInfo.userId, self.prevPlayerInfo.userId, self.nextPlayerInfo.userId)
     if userId == self.selfPlayerInfo.userId then
       --dump(self.selfPlayerInfo, 'selfPlayerInfo')
@@ -42,8 +44,6 @@ function SGamingActionsPlugin.bind(theClass)
 
     --self.LabelLordValue:setText("x " .. self.pokeGame.grabbingLord.lordValue)
 
-    self:showPlaycardClock(nil, nextTimeout)
-
     if isGiveup then
       self:hideSelfPokecards()
     end
@@ -64,6 +64,61 @@ function SGamingActionsPlugin.bind(theClass)
 
       self:doUpdatePlayersUI()
 
+
+      -- self.PanelPrevHead:setVisible(false)
+      -- self.PanelNextHead:setVisible(false)
+      -- self.SelfUserHead:setVisible(false)
+
+      local roleImage = ''
+
+      roleImage = RoleImages[self.prevPlayerInfo.role][self.prevPlayerInfo.gender or '男']['left']
+      self.PrevUserRole:loadTexture(roleImage, ccui.TextureResType.localType)
+
+      roleImage = RoleImages[self.nextPlayerInfo.role][self.nextPlayerInfo.gender or '男']['right']
+      self.NextUserRole:loadTexture(roleImage, ccui.TextureResType.localType)
+
+      roleImage = RoleImages[self.selfPlayerInfo.role][self.selfPlayerInfo.gender or '男']['left']
+      self.SelfUserRole:loadTexture(roleImage, ccui.TextureResType.localType)
+
+      self.PrevUserRole:setVisible(true)
+      self.NextUserRole:setVisible(true)
+      self.SelfUserRole:setVisible(true)
+
+      self.PrevUserRole:setScale(0.01)
+      self.NextUserRole:setScale(0.01)
+      self.SelfUserRole:setScale(0.01)
+
+      local timing = 0.4
+      self.PanelPrevHead:runAction(cc.Sequence:create(
+            cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 0.01), timing),
+            cc.TargetedAction:create(self.PrevUserRole, cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 1), timing)),
+            cc.CallFunc:create(function(sender) 
+                sender:setVisible(false)
+                sender:setScale(1.0)
+              end)
+          )
+        )
+
+      self.SelfUserHead:runAction(cc.Sequence:create(
+            cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 0.01), timing),
+            cc.TargetedAction:create(self.NextUserRole, cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 1), timing)),
+            cc.CallFunc:create(function(sender) 
+                sender:setVisible(false)
+                sender:setScale(1.0)
+              end)
+          )
+        )
+
+      self.PanelNextHead:runAction(cc.Sequence:create(
+            cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 0.01), timing),
+            cc.TargetedAction:create(self.SelfUserRole, cc.EaseElasticInOut:create(cc.ScaleTo:create(timing, 1), timing)),
+            cc.CallFunc:create(function(sender) 
+                sender:setVisible(false)
+                sender:setScale(1.0)
+              end)
+          )
+        )
+
       -- self.NextUserStatus:setVisible(false)
       -- self.SelfUserStatus:setVisible(false)
       -- self.PrevUserStatus:setVisible(false)
@@ -73,11 +128,22 @@ function SGamingActionsPlugin.bind(theClass)
         self:showCards(self.selfPlayerInfo.pokeCards, false)
         self:showButtonsPanel(true)
         self.tipPokeChars = data.tipPokeChars
+        --if userId == self.selfPlayerInfo.userId then
+          self:stopCountdown(true)
+          self:runAction(cc.Sequence:create(
+              cc.DelayTime:create(1),
+              cc.CallFunc:create(function() 
+                  this:showPlaycardClock(nil, nextTimeout)
+                end)
+            ))
+          return
+        --end
       else
         self.tipPokeChars = ''
-      end      
+      end
     end
 
+    self:showPlaycardClock(nil, nextTimeout)
   end
 
   function theClass:onPlayCardMsg(userId, card, nextPlayer, nextTimeout, isDelegating, data)
@@ -201,12 +267,25 @@ function SGamingActionsPlugin.bind(theClass)
       self:playLoseEffect()
     end
 
-    self:showPlayerWinCoins(self.SelfUserCoins, balance.playersMap[self.selfPlayerInfo.userId].score)
-    self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
-    self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score, function() 
-        self.ButtonReady:setVisible(true)
-        this.ButtonReady:setBright(true)        
-      end)
+    -- self:showPlayerWinCoins(self.SelfUserCoins, balance.playersMap[self.selfPlayerInfo.userId].score)
+    -- self:showPlayerWinCoins(self.PrevUserCoins, balance.playersMap[self.prevPlayerInfo.userId].score)
+    -- self:showPlayerWinCoins(self.NextUserCoins, balance.playersMap[self.nextPlayerInfo.userId].score, function() 
+    --     this.ButtonReady:setVisible(true)
+    --     this.ButtonReady:setBright(true)        
+    --   end)
+
+    -- this.ButtonReady:setVisible(true)
+    -- this.ButtonReady:setBright(true)        
+
+    if this.gameResultPanel == nil then
+      this.gameResultPanel = require('gaming.GameResultDialog2').new()
+      this:addChild(self.gameResultPanel)
+    end
+
+    scheduler.performWithDelayGlobal(function() 
+        this.ButtonReady:setVisible(true)
+        this.gameResultPanel:show(balance, this.selfPlayerInfo)
+      end, 1)
 
     self:stopCountdown(true)
     self:updateUserInfo()
@@ -276,7 +355,8 @@ function SGamingActionsPlugin.bind(theClass)
     -- local statusUISize = statusUI:getContentSize()
     -- local pos = cc.p(statusUI:getPosition())
     statusUI:setVisible(false)
-    statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
+    statusUI:setString('不出')
+    -- statusUI:loadTexture(Res.Images.PlayerStatus.PassPlay, ccui.TextureResType.localType)
     self:animateStatus(statusUI)
 
   end

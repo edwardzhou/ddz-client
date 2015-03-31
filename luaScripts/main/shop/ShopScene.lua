@@ -4,7 +4,7 @@ local gameConnection = require('network.GameConnection')
 local AccountInfo = require('AccountInfo')
 
 local showToastBox = require('UICommon.ToastBox').showToastBox
-local showMessageBox = require('UICommon.MessageBox').showMessageBox
+local showMessageBox = require('UICommon.MsgBox').showMessageBox
 
 function ShopScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -47,7 +47,7 @@ function ShopScene:init()
 
   local guiReader = ccs.GUIReader:getInstance()
   -- local uiRoot = guiReader:widgetFromBinaryFile('gameUI/Shop.csb')
-  local uiRoot = cc.CSLoader:createNode('ShopScene.csb')
+  local uiRoot = cc.CSLoader:createNode('ShopScene2.csb')
   self.uiRoot = guiReader
   rootLayer:addChild(uiRoot)
 
@@ -55,6 +55,7 @@ function ShopScene:init()
   self:initKeypadHandler()
   self.ShopItemModel:setVisible(false)
 
+  self.ShopItemList:addScrollViewEventListener(__bind(self.ListView_onScrollViewEvent, self))
 
 end
 
@@ -93,42 +94,68 @@ function ShopScene:loadShopItems()
     --self.ShopItemList:removeAllItems()
   end
   
-  local textureCache = cc.Director:getInstance():getTextureCache()
-  textureCache:addImage('images/bag1.png')
-  textureCache:addImage('images/bag2.png')
-  textureCache:addImage('images/bag3.png')
-  textureCache:addImage('images/bag4.png')
+  -- local textureCache = cc.Director:getInstance():getTextureCache()
+  -- textureCache:addImage('images/bag1.png')
+  -- textureCache:addImage('images/bag2.png')
+  -- textureCache:addImage('images/bag3.png')
+  -- textureCache:addImage('images/bag4.png')
 
+  local function addListItem(pkg, index)
+    this.ShopItemList:pushBackDefaultItem()
+    local item = this.ShopItemList:getItem(index-1)
+    local label, imgIcon, price, button
+    price = pkg.price or 0.0
+    label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgName'), 'ccui.Text')
+    label:setString(pkg.packageName)
+    label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgDesc'), 'ccui.Text')
+    --label:ignoreContentAdaptWithSize(true)
+    label:setContentSize(cc.size(370, 60))
+    label:setPosition(96, 10)
+    label:setString(pkg.packageDesc)
+    -- label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPrice'), 'ccui.Text')
+    -- label:setString(string.format('￥%0.2f 元', price/100))
 
-  this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
-    dump(data, '[ddz.hallHandler.getShopItems] data =>')
-    self.ShopItemList:removeAllItems()
-    for i=1, #data do
-      local pkg = data[i]
-      this.ShopItemList:pushBackDefaultItem()
-      local item = this.ShopItemList:getItem(i-1)
-      local label, imgIcon, price, button
-      price = pkg.price or 0.0
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgName'), 'ccui.Text')
-      label:setString(pkg.packageName)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgDesc'), 'ccui.Text')
-      label:setString(pkg.packageDesc)
-      label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPrice'), 'ccui.Text')
-      label:setString(string.format('价格 %d 元', price/100))
-
-      imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImagePkgIcon'), 'ccui.ImageView')
-      if pkg.packageIcon then
-        local imgFilename = 'images/' .. pkg.packageIcon
-        print('packageIcon => ', imgFilename)
-        imgIcon:loadTexture(imgFilename, ccui.TextureResType.localType)
-      end
-
-      button = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ButtonBuy'), 'ccui.Button')
-      button.package = pkg
-
-      button:addTouchEventListener(this._onButtonBuyClicked)      
+    imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImagePkgIcon'), 'ccui.ImageView')
+    if pkg.packageIcon then
+      local imgFilename = 'images/' .. pkg.packageIcon
+      print('packageIcon => ', imgFilename)
+      --imgIcon:loadTexture(imgFilename, ccui.TextureResType.localType)
     end
-  end)
+
+    button = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ButtonBuy'), 'ccui.Button')
+    button.package = pkg
+    button:setTitleText(string.format('￥%0.2f', price/100))
+    button:addTouchEventListener(this._onButtonBuyClicked)
+    -- item:setOpacity(0)
+    -- item:runAction(cc.FadeIn:create(0.8))
+  end
+
+  local function addItems(items)
+    local actions = {}
+    for i=1, #items do
+      local pkg = items[i]
+      table.insert(actions, cc.DelayTime:create(0.05))
+      table.insert(actions, cc.CallFunc:create(__bind(__bind(addListItem, pkg), i)))
+    end
+    table.insert(actions, cc.DelayTime:create(0.01))
+    table.insert(actions, cc.CallFunc:create(function() 
+        this.ShopItemList:jumpToTop()
+        this.ImageThumb:setPosition(3, 300)
+      end))
+    this:runAction(cc.Sequence:create(unpack(actions)))
+  end
+  
+  self.ShopItemList:removeAllItems()
+
+  if _globalShopItems == nil then
+    this.gameConnection:request('ddz.hallHandler.getShopItems', {}, function(data) 
+      dump(data, '[ddz.hallHandler.getShopItems] data =>')
+      _globalShopItems = data
+      addItems(_globalShopItems)
+    end)
+  else
+    addItems(_globalShopItems)
+  end
 end
 
 function ShopScene:initKeypadHandler()
@@ -160,7 +187,9 @@ function ShopScene:ButtonBuy_onClicked(sender, eventType)
       title = '购买道具',
       msg = string.format('购买 %s\n%s\n价格 %d 元', pkg.packageName, pkg.packageDesc, pkg.price / 100),
       closeOnClickOutside = false,
-      buttonType = 'ok|cancel',
+      closeAsCancel = true,
+      buttonType = 'ok|close',
+      --width = 450,
       onOk = function() return this:buyPackage(pkg) end
     }
     showMessageBox(this, msgParams)
@@ -199,6 +228,47 @@ function ShopScene:buyPackage(pkg)
       return true
     end)
 end
+
+function ShopScene:ListView_onScrollViewEvent(sender, evenType)
+  local this = self
+  if evenType == ccui.ScrollviewEventType.scrollToBottom then
+      print("SCROLL_TO_BOTTOM")
+  elseif evenType ==  ccui.ScrollviewEventType.scrollToTop then
+      print("SCROLL_TO_TOP")
+  end
+
+    -- float minY = _contentSize.height - _innerContainer->getContentSize().height;
+    -- float h = - minY;
+    -- jumpToDestination(Vec2(_innerContainer->getPosition().x, minY + percent * h / 100.0f));
+
+  local innerContainer = sender:getInnerContainer()
+  local contentSize = sender:getContentSize()
+  local innerContainerSize = sender:getInnerContainerSize()
+  local minY = contentSize.height - innerContainerSize.height
+  local h = - minY
+  local percent = cc.p(innerContainer:getPosition()).y / h
+
+  local thumbMinY = 10
+  local thumbMaxY = 300
+  local thumbHeight = thumbMaxY - thumbMinY
+  local y = thumbHeight * (-percent) + thumbMinY
+
+  if y > thumbMaxY then
+    y = thumbMaxY
+  elseif y < thumbMinY then
+    y = thumbMinY
+  end
+
+  -- cclog('[ShopScene:ListView_onScrollViewEvent] h: %0.2f, minY: %0.2f, percent: %0.2f, y: %0.2f',
+  --   h, minY, percent, y)
+
+  if this.ImageThumb then
+    this.ImageThumb:setPosition(3, y)
+  end
+  -- this.ImageThumb:setPosition(3, y)
+
+end
+
 
 local function createScene()
   local scene = cc.Scene:create()

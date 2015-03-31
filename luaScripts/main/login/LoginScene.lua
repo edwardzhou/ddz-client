@@ -6,6 +6,8 @@ local EntryService = require('EntryService')
 local showToastBox = require('UICommon.ToastBox').showToastBox
 local hideToastBox = require('UICommon.ToastBox').hideToastBox
 
+local showMsgBox = require('UICommon.MsgBox').showMsgBox
+
 function LoginScene.extend(target, ...)
   local t = tolua.getpeer(target)
   if not t then
@@ -59,6 +61,16 @@ function LoginScene:init()
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initKeypadHandler()
 
+  
+  local snow = cc.ParticleSystemQuad:create('snow.plist')
+  snow:setPosition(200, 480)
+  rootLayer:addChild(snow)
+
+  snow = cc.ParticleSystemQuad:create('snow.plist')
+  snow:setPosition(600, 480)
+  rootLayer:addChild(snow)
+
+
   if self.Version then
     self.Version:setString('v'  .. require('version'))
   end
@@ -67,8 +79,7 @@ function LoginScene:init()
   ddz.clearPressedDisabledTexture(self.ButtonQuickSignUp)
   ddz.clearPressedDisabledTexture(self.ButtonSwitchAccount)
 
-  self.MainPanel:setScale(0.01)
-  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.8, 1.0), 0.5))
+  self.MainPanel:setScale(0.001)
 
   -- local listView = ccui.ListView:create()
   -- listView:setContentSize(190, 196)
@@ -77,7 +88,11 @@ function LoginScene:init()
   -- listView:addEventListener(__bind(self.ListViewAccounts_onEvent, self))
   -- self.ListViewAccounts = listView
   -- self.ListViewHolder:addChild(listView)
-  local itemModel = self.ButtonModel:clone()
+  -- local itemModel = self.ButtonModel:clone()
+  -- itemModel:setVisible(true)
+  -- self.ListViewAccounts:setItemModel(itemModel)
+  -- self.PanelAccounts:setVisible(false)
+  local itemModel = self.PanelListViewModel:clone()
   itemModel:setVisible(true)
   self.ListViewAccounts:setItemModel(itemModel)
   self.PanelAccounts:setVisible(false)
@@ -110,6 +125,8 @@ function LoginScene:stopUpdateSession()
 end
 
 function LoginScene:on_enterTransitionFinish()
+  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 1.0), 0.5))
+
   local this = self
   self._onConnectionReady = function()
     this.gameConnection:request('ddz.entryHandler.queryRooms', {}, function(data) 
@@ -162,13 +179,15 @@ end
 
 function LoginScene:onSignResult(succ, respData)
   local this = self
-  local params = {buttonType = 'ok'}
+  local params = {
+    buttonType = 'ok|close'
+  }
   
   this:showSignInProgress(false)
   if not succ then
     local msg = respData.message
     params.msg = msg
-    require('UICommon.MessageBox').showMessageBox(this.rootLayer, params)
+    showMsgBox(this.rootLayer, params)
   else
     AccountInfo.setCurrentUser(respData)      
     this.gameConnection:connectToServer({
@@ -180,7 +199,7 @@ end
 
 function LoginScene:ButtonSignIn_onClicked(sender, event)
   local this = self
-  local params = {buttonType = 'ok'}
+  local params = {buttonType = 'ok|close'}
 
   local userId = string.trim(self.InputUserId:getString())
   local password = string.trim(self.InputPassword:getString())
@@ -193,7 +212,7 @@ function LoginScene:ButtonSignIn_onClicked(sender, event)
   end
 
   if params.msg then
-    require('UICommon.MessageBox').showMessageBox(self.rootLayer, params)
+    showMsgBox(self.rootLayer, params)
     return
   end
 
@@ -292,16 +311,25 @@ function LoginScene:ButtonSwitchAccount_onClicked(sender, eventType)
     for index, account in ipairs(accounts) do 
       print('[LoginScene:ButtonSwitchAccount_onClicked] userId => ', account.userId)
       self.ListViewAccounts:pushBackDefaultItem()
-      local button = self.ListViewAccounts:getItem(index-1)
-      button:setTitleText(account.userId)
-      ddz.clearPressedDisabledTexture(button)
+      local itemPanel = self.ListViewAccounts:getItem(index-1)
+      local userIdText = itemPanel:getChildByName('UserId')
+      userIdText:setString(account.userId)
+      itemPanel.userId = account.userId
+      itemPanel:addTouchEventListener(__bind(self.AccountHistory_onClicked, self))
+
+
+      -- local button = self.ListViewAccounts:getItem(index-1)
+      -- button:setTitleText(account.userId)
+      -- ddz.clearPressedDisabledTexture(button)
+
+
       -- button:setVisible(true)
       -- button:setTouchEnabled(true)
       -- button:setScale9Enabled(true)
       -- button:setContentSize(cc.size(180, 40))
       -- button:setTitleFontSize(22)
 
-      button:addTouchEventListener(__bind(self.Account_onClicked, self))
+      --button:addTouchEventListener(__bind(self.Account_onClicked, self))
 
       -- self.ListViewAccounts:pushBackCustomItem(button)
     end
@@ -315,6 +343,15 @@ function LoginScene:Account_onClicked(sender, eventType)
   if eventType == ccui.TouchEventType.ended then
     print('[LoginScene:Account_onClicked] userId => ' , btn:getTitleText())
     self.InputUserId:setString(btn:getTitleText())
+    self.InputPassword:setString('**TOKEN**')
+  end
+end
+
+function LoginScene:AccountHistory_onClicked(sender, eventType)
+  local itemPanel = sender
+  if eventType == ccui.TouchEventType.ended then
+    print('[LoginScene:Account_onClicked] userId => ' , itemPanel.userId)
+    self.InputUserId:setString(itemPanel.userId)
     self.InputPassword:setString('**TOKEN**')
   end
 end

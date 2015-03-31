@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fungame.DDZ"
     android:versionCode="2"
-    android:versionName="1.1" >
+    android:versionName="1.1" android:installLocation="preferExternal">
 
     <uses-sdk android:minSdkVersion="9" />
 
@@ -27,7 +27,7 @@
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name" >
+        android:label="@string/app_name" android:logo="@drawable/icon">
                      
         <!-- Tell Cocos2dxActivity the name of our .so -->
         <meta-data android:name="android.app.lib_name"

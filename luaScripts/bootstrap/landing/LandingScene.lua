@@ -55,8 +55,8 @@ function LandingScene:init()
     self.Version:setString('v'  .. require('version'))
   end
 
-  self.MainPanel:setScale(0.01)
-  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.8, 1.0), 0.5))
+  self.MainPanel:setScale(0.001)
+  self.MainPanel:runAction(cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 1.0), 0.5))
 
 
   local percent = 10
@@ -206,9 +206,10 @@ function LandingScene:init()
     local boxParams = {
       title = '无法自动登录',
       msg = msg,
+      buttonType = 'ok|close',
       onOk = function() cc.Director:getInstance():replaceScene(require('login.LoginScene')()) end,            
     }
-    require('UICommon.MessageBox').showMessageBox(cc.Director:getInstance():getRunningScene(), boxParams)
+    require('UICommon.MsgBox').showMessageBox(cc.Director:getInstance():getRunningScene(), boxParams)
   end
 
   local function connectToServerAfterUpdate()

@@ -151,15 +151,20 @@ function SoundEffectPlugin.bind( theClass )
   function theClass:playGrabLordEffect(playerInfo, statusUI, grabState)
 
     if grabState == ddz.PlayerStatus.Ready then
-      statusUI:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+      -- statusUI:loadTexture(Res.Images.PlayerStatus.Ready, ccui.TextureResType.localType)
+      statusUI:setString('准备')
     elseif grabState == ddz.PlayerStatus.NoGrabLord then
-      statusUI:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+      statusUI:setString('不叫')
+      -- statusUI:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
     elseif grabState == ddz.PlayerStatus.GrabLord then
-      statusUI:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+      statusUI:setString('叫地主')
+      -- statusUI:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
     elseif grabState == ddz.PlayerStatus.PassGrabLord then
-      statusUI:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+      statusUI:setString('不抢')
+      -- statusUI:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
     elseif grabState == ddz.PlayerStatus.ReGrabLord then
-      statusUI:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+      statusUI:setString('抢地主')
+      -- statusUI:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
     end
 
     statusUI:setVisible(false)

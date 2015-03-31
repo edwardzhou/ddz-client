@@ -1,6 +1,6 @@
 local AccountInfo = require('AccountInfo')
 local Resources = require('Resources')
-local showMessageBox = require('UICommon.MessageBox').showMessageBox
+local showMessageBox = require('UICommon.MsgBox').showMessageBox
 local showToastBox = require('UICommon.ToastBox').showToastBox
 local hideToastBox = require('UICommon.ToastBox').hideToastBox
 

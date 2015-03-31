@@ -30,7 +30,7 @@ function LandingConnectionPlugin.bind(theClass)
         if data.err == nil then
           ddz.GlobalSettings.rooms = data.rooms
           --this.ButtonStart:setVisible(true)
-          local scene = require('hall.HallScene')()
+          local scene = require('hall.HallScene2')()
           cc.Director:getInstance():replaceScene(scene)
         end
 

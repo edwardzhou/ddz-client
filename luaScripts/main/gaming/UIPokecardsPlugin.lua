@@ -89,13 +89,19 @@ function UIPokecardsPlugin.bind( theClass )
   手指点击开始
   --]]-----------------------------------------------------------
   local function onTouchBegan(touch, event)
+    local location = touch
+    if touch.getLocation ~= nil then
+      location = touch:getLocation()
+    end
+
+    print('[onTouchBegan]')
     -- 如果当前还没有牌，直接返回false
     if thisObj.pokeCards == nil then
       return false
     end
 
     -- 转换触点坐标
-    local locationInNode = thisObj:convertToNodeSpace(touch:getLocation())
+    local locationInNode = thisObj.pokeCardsLayer:convertToNodeSpace(location)
     -- 取该点的牌index
     lastIndexBegin = getCardIndex(locationInNode)
     if lastIndexBegin > 0 then
@@ -110,8 +116,17 @@ function UIPokecardsPlugin.bind( theClass )
   手指移动, 每次移动都判断位置变化并更新划过的牌的效果
   --]]-----------------------------------------------------------
   local function onTouchMoved(touch, event)
+    local location = touch
+    if touch.getLocation ~= nil then
+      location = touch:getLocation()
+    end
+    print('[onTouchMoved]')
+    -- 如果当前还没有牌，直接返回false
+    if thisObj.pokeCards == nil then
+      return false
+    end
     -- 转换触点坐标
-    local locationInNode = thisObj:convertToNodeSpace(touch:getLocation())
+    local locationInNode = thisObj.pokeCardsLayer:convertToNodeSpace(location)
     -- 取该点的牌index
     local curIndex = getCardIndex(locationInNode)
     if curIndex < 0 or curIndex == lastIndexEnd then
@@ -134,6 +149,15 @@ function UIPokecardsPlugin.bind( theClass )
   手指移动结束， 对所划过的牌进行抽牌、退牌处理
   --]]-----------------------------------------------------------
   local function onTouchEnded(touch, event)
+    local location = touch
+    if touch.getLocation ~= nil then
+      location = touch:getLocation()
+    end
+    -- 如果当前还没有牌，直接返回false
+    if thisObj.pokeCards == nil then
+      return false
+    end
+
     local indexBegin, indexEnd = lastIndexBegin , lastIndexEnd
     -- 重置划牌index
     lastIndexBegin , lastIndexEnd = -1, -1
@@ -212,16 +236,22 @@ function UIPokecardsPlugin.bind( theClass )
   function theClass:initPokeCardsLayerTouchHandler()
     thisObj = self
 
-    local listener = cc.EventListenerTouchOneByOne:create()
-    self._listener = listener
-    listener:setSwallowTouches(true)
+    thisObj.pokeCardsTouchEvents = {}
+    thisObj.pokeCardsTouchEvents[ccui.TouchEventType.ended] = onTouchEnded
+    thisObj.pokeCardsTouchEvents[ccui.TouchEventType.began] = onTouchBegan
+    thisObj.pokeCardsTouchEvents[ccui.TouchEventType.moved] = onTouchMoved
 
-    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
-    listener:registerScriptHandler(onTouchMoved,cc.Handler.EVENT_TOUCH_MOVED )
-    listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
 
-    local eventDispatcher = self:getEventDispatcher()
-    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, thisObj.pokeCardsLayer)
+    -- local listener = cc.EventListenerTouchOneByOne:create()
+    -- self._listener = listener
+    -- listener:setSwallowTouches(true)
+
+    -- listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
+    -- listener:registerScriptHandler(onTouchMoved,cc.Handler.EVENT_TOUCH_MOVED )
+    -- listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
+
+    -- local eventDispatcher = self:getEventDispatcher()
+    -- eventDispatcher:addEventListenerWithSceneGraphPriority(listener, thisObj.pokeCardsLayer)
   end
 
   function theClass:showDrawingCardsAnimation(nextUserId, timing)
@@ -425,7 +455,7 @@ function UIPokecardsPlugin.bind( theClass )
     local startPoint = cc.p(-100, self.visibleSize.height + 100)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(165, 270)
+    local endPoint = cc.p(165, 240)
 
     for index = #pokeCards, 1, -1 do
       local pokeSprite = pokeCards[index].card_sprite
@@ -450,7 +480,7 @@ function UIPokecardsPlugin.bind( theClass )
     local startPoint = cc.p(self.visibleSize.width + 100, self.visibleSize.height + 100)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(585, 270)
+    local endPoint = cc.p(585, 240)
 
     for index = 1, #pokeCards do
       local pokeSprite = pokeCards[index].card_sprite
@@ -473,10 +503,10 @@ function UIPokecardsPlugin.bind( theClass )
       return
     end
     self:hideCard(self.prevPlayerInfo.lastCard)
-    local startPoint = cc.p(-100, 280)
+    local startPoint = cc.p(-100, 240)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(125, 280)
+    local endPoint = cc.p(125, 240)
 
     -- for index = #pokeCards, 1, -1 do
     --   local pokeSprite = pokeCards[index].card_sprite
@@ -500,7 +530,7 @@ function UIPokecardsPlugin.bind( theClass )
       pokeSprite:setScale(0.6)
 
       if count == 10 then 
-        endPoint = cc.p(125, 240)
+        endPoint = cc.p(125, 200)
       else
         endPoint.x = endPoint.x + 35 * 0.7
       end
@@ -518,10 +548,10 @@ function UIPokecardsPlugin.bind( theClass )
     end
     
     self:hideCard(self.nextPlayerInfo.lastCard)
-    local startPoint = cc.p(self.visibleSize.width + 100, 280)
+    local startPoint = cc.p(self.visibleSize.width + 100, 240)
     local pokeSize = self.cardContentSize.width/2
     local step = 35 * 0.7
-    local endPoint = cc.p(625, 280)
+    local endPoint = cc.p(625, 240)
 
     -- for index = 1, #pokeCards do
     --   local pokeSprite = pokeCards[index].card_sprite
@@ -544,7 +574,7 @@ function UIPokecardsPlugin.bind( theClass )
     if #pokeCards > 10 then
       startX = 630 - 10 * 35 * 0.7
     end 
-    endPoint = cc.p(startX, 280)
+    endPoint = cc.p(startX, 240)
 
     while index > 0 do
       local pokeSprite = pokeCards[index].card_sprite
@@ -555,7 +585,7 @@ function UIPokecardsPlugin.bind( theClass )
       pokeSprite:setScale(0.6)
 
       if count == 10 then 
-        endPoint = cc.p(startX, 240)
+        endPoint = cc.p(startX, 200)
       else
         endPoint.x = endPoint.x + 35 * 0.7
       end
