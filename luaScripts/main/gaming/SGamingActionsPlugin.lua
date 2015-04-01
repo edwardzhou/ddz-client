@@ -284,7 +284,7 @@ function SGamingActionsPlugin.bind(theClass)
 
     scheduler.performWithDelayGlobal(function() 
         this.ButtonReady:setVisible(true)
-        this.gameResultPanel:show(balance, this.selfPlayerInfo)
+        this.gameResultPanel:show(balance, this.selfPlayerInfo, this.prevPlayerInfo, this.nextPlayerInfo)
       end, 1)
 
     self:stopCountdown(true)

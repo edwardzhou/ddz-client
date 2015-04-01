@@ -13,7 +13,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     local userUI = {
       Panel = self.SelfUser,
       Name = self.SelfUserName,
-      Head = self.SelfUserHead,
+      Head = self.SelfUserHeadIcon,
       Status = self.SelfUserStatus,
       PokeCount = self.SelfUserPokeCount,
       Role = self.SelfUserRole
@@ -26,7 +26,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     local userUI = {
       Panel = self.PrevUser,
       Name = self.PrevUserName,
-      Head = self.PrevUserHead,
+      Head = self.PrevUserHeadIcon,
       Status = self.PrevUserStatus,
       PokeCount = self.PrevUserPokeCount,
       pc_prefix = 'prev_pc_',
@@ -40,7 +40,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
     local userUI = {
       Panel = self.NextUser,
       Name = self.NextUserName,
-      Head = self.NextUserHead,
+      Head = self.NextUserHeadIcon,
       Status = self.NextUserStatus,
       PokeCount = self.NextUserPokeCount,
       Role = self.NextUserRole
@@ -65,53 +65,57 @@ function UIPlayerUpdatePlugin.bind(theClass)
     userUI.Name:setVisible(userInfo.nickName and userInfo.nickName ~= '')
     userUI.PokeCount:setString(userInfo.pokeCount)
 
-    if userUI.pc_prefix == nil then
-      return
-    end
-
-    local pokeCount = userInfo.pokeCount or 0
-    local pokeDiv = math.floor(pokeCount / 2)
-    local pokeRem = pokeCount % 2
-    local pc_name
-    local pokeIndex
-    for i=1, 10 do
-      pokeIndex = 10 - i
-      if pokeIndex > 0 then
-        pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
-        local visible = pokeIndex > (10 - pokeDiv - pokeRem)
-        self[pc_name]:setVisible(visible)
-        local v = 0
-        if visible then
-          v=1
+    if userUI.pc_prefix ~= nil then
+      local pokeCount = userInfo.pokeCount or 0
+      local pokeDiv = math.floor(pokeCount / 2)
+      local pokeRem = pokeCount % 2
+      local pc_name
+      local pokeIndex
+      for i=1, 10 do
+        pokeIndex = 10 - i
+        if pokeIndex > 0 then
+          pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
+          local visible = pokeIndex > (10 - pokeDiv - pokeRem)
+          self[pc_name]:setVisible(visible)
+          local v = 0
+          if visible then
+            v=1
+          end
+          -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
         end
-        -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
+
+        pokeIndex = 10 + i
+        if pokeIndex <= 20 then
+          pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
+          local visible = pokeIndex <= (10 + pokeDiv)
+          self[pc_name]:setVisible(visible)
+          local v = 0
+          if visible then
+            v=1
+          end
+          -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
+        end
       end
 
-      pokeIndex = 10 + i
-      if pokeIndex <= 20 then
-        pc_name = string.format('%s%02d', userUI.pc_prefix, pokeIndex)
-        local visible = pokeIndex <= (10 + pokeDiv)
-        self[pc_name]:setVisible(visible)
-        local v = 0
-        if visible then
-          v=1
-        end
-        -- cclog('pokeCount: %d, pokeDiv: %d, pokeRem: %d, pc_name: %s, visible: %d', pokeCount, pokeDiv, pokeRem, pc_name, v)
-      end
+      self[userUI.pc_prefix .. '10']:setVisible(pokeCount > 0)
     end
 
-    self[userUI.pc_prefix .. '10']:setVisible(pokeCount > 0)
+    -- do return end
 
-
-    do return end
-
-
-    if userInfo.headIcon then
-      --userUI.Head:loadTexture(Res.Images.HeadIcons[userInfo.headIcon], ccui.TextureResType.localType)
-      --userUI.Head:loadTexture(Res.getHeadIconPath(userInfo.headIcon), ccui.TextureResType.localType)
-      userUI.Head:loadTextureNormal(Res.getHeadIconPath(userInfo.headIcon))
+    local iconIndex = tonumber(userInfo.headIcon)
+    if iconIndex == nil or iconIndex == 0 then
+      userInfo.headIcon = math.floor(math.random() * 10000000) % 8 + 1
+      iconIndex = userInfo.headIcon
     end
-    userUI.Head:setVisible(userInfo.headIcon ~= nil)
+
+    userUI.Head:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex), ccui.TextureResType.localType)
+
+    -- if userInfo.headIcon then
+    --   --userUI.Head:loadTexture(Res.Images.HeadIcons[userInfo.headIcon], ccui.TextureResType.localType)
+    --   --userUI.Head:loadTexture(Res.getHeadIconPath(userInfo.headIcon), ccui.TextureResType.localType)
+    --   userUI.Head:loadTextureNormal(Res.getHeadIconPath(userInfo.headIcon))
+    -- end
+    -- userUI.Head:setVisible(userInfo.headIcon ~= nil)
 
     -- if userInfo.state ~= ddz.PlayerStatus.Playing then
     --   if userInfo.state == ddz.PlayerStatus.Ready then
@@ -130,14 +134,14 @@ function UIPlayerUpdatePlugin.bind(theClass)
 
     -- userUI.Status:setVisible(false)
 
-    if userInfo.role == ddz.PlayerRoles.Farmer then
-      userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)
-    elseif userInfo.role == ddz.PlayerRoles.Lord then
-      userUI.Role:loadTexture(Res.Images.PlayerRoles.Lord, ccui.TextureResType.localType)
-    end
-    userUI.Role:setVisible(userInfo.role and userInfo.role ~= ddz.PlayerRoles.None)
+    -- if userInfo.role == ddz.PlayerRoles.Farmer then
+    --   userUI.Role:loadTexture(Res.Images.PlayerRoles.Farmer, ccui.TextureResType.localType)
+    -- elseif userInfo.role == ddz.PlayerRoles.Lord then
+    --   userUI.Role:loadTexture(Res.Images.PlayerRoles.Lord, ccui.TextureResType.localType)
+    -- end
+    -- userUI.Role:setVisible(userInfo.role and userInfo.role ~= ddz.PlayerRoles.None)
 
-    userUI.PokeCount:setString(userInfo.pokeCount)
+    -- userUI.PokeCount:setString(userInfo.pokeCount)
 
   end
 

@@ -60,7 +60,7 @@ function GameResultDialog2:initKeypadHandler()
 end
 
 
-function GameResultDialog2:show(balance, selfPlayer)
+function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   -- 修改标题
   if balance.lordWon > 0 then
     -- 地主是赢家
@@ -191,6 +191,11 @@ function GameResultDialog2:show(balance, selfPlayer)
   if self.keypadListener ~= nil then
     self.keypadListener:setEnabled(true)
   end
+
+  self.ImageSelfIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', selfPlayer.headIcon), ccui.TextureResType.localType)
+  self.ImagePrevIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', prevPlayer.headIcon), ccui.TextureResType.localType)
+  self.ImageNextIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', nextPlayer.headIcon), ccui.TextureResType.localType)
+
 
 
 
