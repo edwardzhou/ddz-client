@@ -27,10 +27,12 @@ function GamePlayer:init(playerInfo)
 end
 
 function GamePlayer:isFarmer()
+  -- print('[GamePlayer:isFarmer] self.role:' , self.role, ', ddz.PlayerRoles.Lord:' , ddz.PlayerRoles.Farmer)
   return self.role == ddz.PlayerRoles.Farmer
 end
 
 function GamePlayer:isLord()
+  -- print('[GamePlayer:isLord] self.role:' , self.role, ', ddz.PlayerRoles.Lord:' , ddz.PlayerRoles.Lord)
   return self.role == ddz.PlayerRoles.Lord
 end
 

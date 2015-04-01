@@ -56,12 +56,12 @@ function UIClockCountDownPlugin.bind(theClass)
 
 
   function theClass:startSelfPlayerCountdown(timeoutCallback, times, directShow)
-    local pos = cc.p(400, 290)
+    local pos = cc.p(400, 310)
     self:startCountdown(pos, timeoutCallback, times, directShow)
   end
 
   function theClass:startNextPlayerCountdown(timeoutCallback, times, directShow)
-    local pos = cc.p(600, 325)
+    local pos = cc.p(660, 350)
     local this = self
     self:startCountdown(pos, function() 
         print('[startNextPlayerCountdown] clock times up.')
@@ -71,7 +71,7 @@ function UIClockCountDownPlugin.bind(theClass)
   end
 
   function theClass:startPrevPlayerCountdown(timeoutCallback, times, directShow)
-    local pos = cc.p(180, 350)
+    local pos = cc.p(130, 350)
     local this = self
     self:startCountdown(pos, function() 
         print('[startPrevPlayerCountdown] clock times up.')

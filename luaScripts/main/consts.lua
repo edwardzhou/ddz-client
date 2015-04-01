@@ -16,6 +16,11 @@ ddz.PlayerStatus = {
   Playing = 6
 }
 
+ddz.Gender = {
+  Female = '女',
+  Male = '男'
+} 
+
 ddz.PlayerRoles = {
   None = 0,
   Farmer = 1,

@@ -4,17 +4,22 @@ local UIButtonsPlugin = {}
 
 function UIButtonsPlugin.bind( theClass )
   function theClass:showGrabLordButtonsPanel(show, currentLordValue)
+    local this = self
     --__G__TRACKBACK__('theClass:showGrabLordButtonsPanel')
     currentLordValue = currentLordValue or 0
     print('[theClass:showGrabLordButtonsPanel] show: ', show, ' , currentLordValue: ', currentLordValue)
     self.GrabLordButtonsPanel:setVisible(show)
     if show then
       if currentLordValue == 0 then
-        self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
-        self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
+        self.LabelNoGrab:setString('不叫')
+        self.LabelGrab:setString('叫地主')
+        -- self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.NoGrabLord, ccui.TextureResType.localType)
+        -- self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.GrabLord, ccui.TextureResType.localType)
       else
-        self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
-        self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
+        self.LabelNoGrab:setString('不抢')
+        self.LabelGrab:setString('抢地主')
+        -- self.ImageNoGrabLord:loadTexture(Res.Images.PlayerStatus.PassGrabLord, ccui.TextureResType.localType)
+        -- self.ImageGrabLord:loadTexture(Res.Images.PlayerStatus.ReGrabLord, ccui.TextureResType.localType)
       end
     end
   end
@@ -25,45 +30,46 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:enableButtonPass(enabled)
+    self.ButtonPass:setBright(enabled)
     self.ButtonPass:setEnabled(enabled)
-    local imgPath = 'images/game11.png'
-    if not enabled then
-      imgPath = 'images/game15.png'
-    end
-    self.ImagePass:loadTexture(imgPath, ccui.TextureResType.localType)
+    -- local imgPath = 'images/game11.png'
+    -- if not enabled then
+    --   imgPath = 'images/game15.png'
+    -- end
+    -- self.ImagePass:loadTexture(imgPath, ccui.TextureResType.localType)
   end
 
   function theClass:enableButtonReset(enabled)
     self.ButtonReset:setBright(enabled)
-    self.ButtonReset:setTouchEnabled(enabled)
+    self.ButtonReset:setEnabled(enabled)
 
     --self.ButtonReset:setEnabled(enabled)
-    local imgPath = 'images/game12.png'
-    if not enabled then
-      imgPath = 'images/game16.png'
-    end
-    self.ImageReset:loadTexture(imgPath, ccui.TextureResType.localType)
+    -- local imgPath = 'images/game12.png'
+    -- if not enabled then
+    --   imgPath = 'images/game16.png'
+    -- end
+    -- self.ImageReset:loadTexture(imgPath, ccui.TextureResType.localType)
   end
 
   function theClass:enableButtonTip(enabled)
     self.ButtonTip:setBright(enabled)
-    self.ButtonTip:setTouchEnabled(enabled)
+    self.ButtonTip:setEnabled(enabled)
     --self.ButtonTip:setEnabled(enabled)
-    local imgPath = 'images/game13.png'
-    if not enabled then
-      imgPath = 'images/game17.png'
-    end
-    self.ImageTip:loadTexture(imgPath, ccui.TextureResType.localType)
+    -- local imgPath = 'images/game13.png'
+    -- if not enabled then
+    --   imgPath = 'images/game17.png'
+    -- end
+    -- self.ImageTip:loadTexture(imgPath, ccui.TextureResType.localType)
   end
 
   function theClass:enableButtonPlay(enabled)
     self.ButtonPlay:setBright(enabled)
-    self.ButtonPlay:setTouchEnabled(enabled)
-    local imgPath = 'images/game14.png'
-    if not enabled then
-      imgPath = 'images/game18.png'
-    end
-    self.ImagePlay:loadTexture(imgPath, ccui.TextureResType.localType)
+    self.ButtonPlay:setEnabled(enabled)
+    -- local imgPath = 'images/game14.png'
+    -- if not enabled then
+    --   imgPath = 'images/game18.png'
+    -- end
+    -- self.ImagePlay:loadTexture(imgPath, ccui.TextureResType.localType)
   end
 
   function theClass:updateButtonsState()
@@ -199,10 +205,12 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonBack_onClicked(sender, event)
+    local this = self
     -- local gameConn = require('network.GameConnection')
     -- gameConn:reconnect()
    --  local dialog = require('chat.ChatLayer').new()
   	-- self:addChild(dialog)
+    this:onBackClicked()
   end
 
   function theClass:ButtonChat_onClicked(sender, event)
@@ -215,6 +223,14 @@ function UIButtonsPlugin.bind( theClass )
     self.gameService:cancelDelegate(function(data)
         self.ButtonDelegate:setVisible(false)
       end)
+  end
+
+  function theClass:ButtonRecharge_onClicked(sender, event)
+    print('[theClass:ButtonRecharge_onClicked]');
+  end
+
+  function theClass:SelfUserHead(sender, event)
+    print('[theClass:SelfUserHead]');
   end
 
   function theClass:sendRandMessage(userHead)

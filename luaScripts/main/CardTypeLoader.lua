@@ -59,6 +59,7 @@ function CardTypeLoader.loadAllCardTypeX(scene, progressCb, finishCb)
                 s2 = socket.gettime()
 
                 print('total load json => ' , s2 - s1)
+                allCardTypes = AllCardTypes
                 finishCb()
               end
             end)

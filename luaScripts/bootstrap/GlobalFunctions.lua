@@ -404,11 +404,41 @@ ddz.readFromFile = function(filename)
   return data
 end
 
-ddz.clearPressedDisabledTexture = function(button)
-  if button ~= nil and button.clearPressedTexture ~= nil then
-    button:clearPressedTexture()
-    button:clearDisabledTexture()
+ddz.clearPressedDisabledTexture = function(button, pressed, disabled)
+  local function _clearButtonTexture(btn)
+    if btn ~= nil and btn.clearPressedTexture ~= nil then
+      if pressed ~= false then
+        btn:clearPressedTexture()
+      end
+      if disabled ~= false then
+        btn:clearDisabledTexture()
+      end
+    end
   end
+
+  if type(button) == 'table' then
+    for index=1, #button do
+      _clearButtonTexture(button[index])
+    end
+  else
+    _clearButtonTexture(button)
+  end
+end
+
+function ddz.formatNumberThousands(num, numSign)
+  local formatted
+  if numSign then
+    formatted = string.format('%+d', num)
+  else
+    formatted = tostring(tonumber(num))
+  end
+
+  local k
+  while true do
+      formatted, k = string.gsub(formatted, "^([+-]?%d+)(%d%d%d)", '%1,%2')
+      if k == 0 then break end
+  end
+  return formatted
 end
 
 local _onEndListeners = {}

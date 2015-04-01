@@ -4,7 +4,7 @@ local AccountInfo = require('AccountInfo')
 local GamePlayer = require('GamePlayer')
 --local GameService = require('LocalGameService')
 local GameService = require('RemoteGameService')
-local showMessageBox = require('UICommon.MessageBox').showMessageBox
+local showMessageBox = require('UICommon.MsgBox').showMessageBox
 local gameConnection = require('network.GameConnection')
 local bit = require('bit');
 
@@ -126,15 +126,18 @@ function GameScene:init()
 
   self:updateUserInfo()
 
-  local pokeCardsLayer = cc.Layer:create()
+  -- local pokeCardsLayer = cc.Layer:create()
+  -- pokeCardsLayer:setContentSize(800, 150)
+  -- pokeCardsLayer:setAnchorPoint(0, 0)
+  -- pokeCardsLayer:setPosition(0,0)
   -- local pokeCardsBatchNode = cc.SpriteBatchNode:createWithTexture(
   --   cc.Director:getInstance():getTextureCache():getTextureForKey('pokecards.png'))
   
-  self.SelfPokeCards:addChild(pokeCardsLayer)
+  -- self.SelfPokeCards:addChild(pokeCardsLayer)
   PokeCard.resetAll()
   --g_pokecards_node:removeFromParent()
   pokeCardsLayer:addChild(g_pokecards_node)
-  self.pokeCardsLayer = pokeCardsLayer
+  self.pokeCardsLayer = self.SelfPokeCards
   self.cardContentSize = g_shared_cards[1].card_sprite:getContentSize()
   -- self.pokeCardsBatchNode = pokeCardsBatchNode
   
@@ -148,6 +151,8 @@ function GameScene:init()
   self.SelfUserStatus:setVisible(false)
   self.PrevUserStatus:setVisible(false)
   self.NextUserStatus:setVisible(false)
+
+  ddz.clearPressedDisabledTexture({self.ButtonChat, self.ButtonEmoj, self.ButtonConfig, self.ButtonBack})
 
   self:startWaitingEffect()
 
@@ -167,7 +172,7 @@ function GameScene:resetScene()
   self:updateNextPlayerUI(emptyUserInfo)
   self:updatePrevPlayerUI(emptyUserInfo)
   self:stopCountdown()
-  self.LabelLordValue:setString(0)
+  self.LabelLordValue:setString("X 0")
 
   local thisUser = AccountInfo.getCurrentUser()
   local selfUserInfo = {
@@ -182,6 +187,12 @@ function GameScene:resetScene()
   self.LordCard2:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LordCard3:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LabelLordValue:setString('0')
+
+  self.PlayTipsLabel:setVisible(false)
+  self.PrevTipsLabel:setVisible(false)
+  self.NextTipsLabel:setVisible(false)
+  self.ButtonDelegate:setVisible(false)
+
 
 end
 
@@ -203,9 +214,11 @@ function GameScene:onBackClicked()
   end
 
   local msgParams = {
-    msg = '牌局未结束, 现在退出系统将作判负处理, 扣减相应的金币。\n是否真的要退出牌局?',
+    msg = '牌局未结束, 现在退出系统将作判负处理, 扣减相应的金币。是否真的要退出牌局?',
     title = '重要提示',
     buttonType = 'ok|cancel',
+    width = 430,
+    height = 250,
     onOk = doQuitGame
   }
 
