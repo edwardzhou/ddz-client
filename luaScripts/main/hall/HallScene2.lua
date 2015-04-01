@@ -64,18 +64,19 @@ function HallScene2:init()
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  ddz.clearPressedDisabledTexture(self.ButtonStore)
-  ddz.clearPressedDisabledTexture(self.ButtonTask)
-  ddz.clearPressedDisabledTexture(self.ButtonAssets)
-  ddz.clearPressedDisabledTexture(self.ButtonHead)
-
-  ddz.clearPressedDisabledTexture(self.ButtonHelp)
-  ddz.clearPressedDisabledTexture(self.ButtonMsg)
-  ddz.clearPressedDisabledTexture(self.ButtonSetting)
-  ddz.clearPressedDisabledTexture(self.ButtonVip)
-  ddz.clearPressedDisabledTexture(self.ButtonNormalRoom)
-  ddz.clearPressedDisabledTexture(self.ButtonYueZhan)
-
+  ddz.clearPressedDisabledTexture({
+    self.ButtonStore,
+    self.ButtonTask,
+    self.ButtonAssets,
+    self.ButtonHead,
+    self.ButtonHelp,
+    self.ButtonMsg,
+    self.ButtonSetting,
+    self.ButtonVip,
+    self.ButtonPrize,
+    self.ButtonNormalRoom,
+    self.ButtonYueZhan
+  })
 
   TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
       action = ddz.ViewAction.ACTION_ENTER_VIEW,
@@ -141,6 +142,13 @@ function HallScene2:updateUserInfo()
   self.LabelNickName:setString(idNickName)
   local coins = user.ddzProfile.coins or 0
   self.LabelCoins:setString(coins)
+
+  if user.headIcon then
+    self.ImageHeadIcon:loadTexture(
+        string.format('NewRes/idImg/idImg_head_%02d.jpg', user.headIcon),
+        ccui.TextureResType.localType
+      )
+  end
 
   -- if user.headIcon then
   --   self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
@@ -287,12 +295,8 @@ function HallScene2:initKeypadHandler()
   local this = self
   local function onKeyReleased(keyCode, event)
     if keyCode == cc.KeyCode.KEY_BACKSPACE then
-      print('hall scene exit')
-      this.gameConnection:request('ddz.entryHandler.quit', {userId = AccountInfo.getCurrentUser().userId}, function(data) 
-        dump(data, 'ddz.entryHandler.quit')
-      end)
       event:stopPropagation()
-      ddz.endApplication()
+      this:confirmQuit()
     elseif keyCode == cc.KeyCode.KEY_MENU  then
       --label:setString("MENU clicked!")
     end
@@ -301,6 +305,34 @@ function HallScene2:initKeypadHandler()
   local listener = cc.EventListenerKeyboard:create()
   listener:registerScriptHandler(onKeyReleased, cc.Handler.EVENT_KEYBOARD_RELEASED )
   self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+end
+
+function HallScene2:close( ... )
+  local this = self
+
+  print('hall scene exit')
+  this.gameConnection:request('ddz.entryHandler.quit', {userId = AccountInfo.getCurrentUser().userId}, function(data) 
+    dump(data, 'ddz.entryHandler.quit')
+  end)
+  ddz.endApplication()
+end
+
+function HallScene2:confirmQuit( ... )
+
+  local function doQuitGame()
+    self:close()
+  end
+
+  local msgParams = {
+    msg = '退出游戏?',
+    title = '不要走嘛',
+    buttonType = 'ok|cancel',
+    width = 430,
+    height = 250,
+    onOk = doQuitGame
+  }
+
+  showMessageBox(self, msgParams)
 end
 
 function HallScene2:ButtonNormalRoom_onClicked(sender, event)
@@ -312,12 +344,15 @@ end
 
 function HallScene2:ButtonHead_onClicked(sender, event)
   print('[HallScene2:ButtonHead_onClicked]')
-  local userProfile = require('profile.UserProfileScene')()
-  cc.Director:getInstance():pushScene(userProfile)
+  -- local userProfile = require('profile.UserProfileScene')()
+  -- cc.Director:getInstance():pushScene(userProfile)
+  local profileLayer = require('profile.UserProfileLayer').new()
+  self:addChild(profileLayer)
+  profileLayer:show()
 end
 
 function HallScene2:ButtonBack_onClicked(sender, eventType)
-  cc.Director:getInstance():replaceScene(require('login.LoginScene')())
+  self:confirmQuit()
   -- body
 end
 

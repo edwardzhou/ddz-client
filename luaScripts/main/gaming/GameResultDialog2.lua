@@ -171,9 +171,13 @@ function GameResultDialog2:show(balance, selfPlayer)
   local winlose = 'win'
   if selfResult.score > 0 then
     self:showWinTop()
+    self.ImageWinLine:loadTexture('NewRes/bg/bg_table_vnf_line_v.png', ccui.TextureResType.localType)
+    self.ImageWinBg:loadTexture('NewRes/bg/bg_table_vnf_v.png', ccui.TextureResType.localType)
   else
     self:showLoseTop()
     winlose = 'lose'
+    self.ImageWinLine:loadTexture('NewRes/bg/bg_table_vnf_line_f.png', ccui.TextureResType.localType)
+    self.ImageWinBg:loadTexture('NewRes/bg/bg_table_vnf_f.png', ccui.TextureResType.localType)
   end
   if selfPlayer.gender ~= nil then 
     gender = selfPlayer.gender
