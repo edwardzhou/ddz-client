@@ -307,7 +307,7 @@ end
 
 function RemoteGameService:onServerGameOverMsg(data)
   local balance = data
-  dump(data, '[RemoteGameService:onServerGameOverMsg] data')
+  dump(data, '[RemoteGameService:onServerGameOverMsg] data', 5)
   self.pokeGame.gameOver = true
   local players = {}
   players[data.players[1].userId] = data.players[1]

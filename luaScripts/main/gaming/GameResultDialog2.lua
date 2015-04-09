@@ -104,25 +104,44 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   -- local nextPlayer = selfPlayer.nextPlayer
 
 
+  local function getScoreString(score, thePlayer)
+    local theScore = score
+    theScore = ddz.formatNumberThousands(theScore, true)
+    if score == 0 then
+      if balance.lordWon > 0 then
+        theScore = "-0"
+        if thePlayer:isLord() then
+          theScore = "+0"
+        end
+      else
+        theScore = "+0"
+        if thePlayer:isLord() then
+          theScore = "-0"
+        end
+      end
+    end
+    return theScore
+  end
+
   -- 显示得分
-  local selfScore = selfResult.score
-  local prevScore = prevResult.score
-  local nextScore = nextResult.score
+  local selfScore = getScoreString(selfResult.score, selfPlayer)
+  local prevScore = getScoreString(prevResult.score, prevPlayer)
+  local nextScore = getScoreString(nextResult.scorej, nextPlayer)
 
   local winNumFont = 'NewRes/fonts/win_num_28.fnt'
   local loseNumFont = 'NewRes/fonts/lose_num_28.fnt'
 
-  if selfScore > 0 then
+  if string.sub(selfScore, 1, 1) == '+' then
     self.LabelSelfPlayerResult:setFntFile(winNumFont)
   else
     self.LabelSelfPlayerResult:setFntFile(loseNumFont)
   end
-  if prevScore > 0 then
+  if string.sub(prevScore, 1, 1) == '+' then
     self.LabelPrevPlayerResult:setFntFile(winNumFont)
   else
     self.LabelPrevPlayerResult:setFntFile(loseNumFont)
   end
-  if nextScore > 0 then
+  if string.sub(nextScore, 1, 1) == '+' then
     self.LabelNextPlayerResult:setFntFile(winNumFont)
   else
     self.LabelNextPlayerResult:setFntFile(loseNumFont)
@@ -131,9 +150,9 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   -- selfScore = string.format('%+d', selfScore)
   -- prevScore = string.format('%+d', prevScore)
   -- nextScore = string.format('%+d', nextScore)
-  selfScore = ddz.formatNumberThousands(selfScore, true)
-  prevScore = ddz.formatNumberThousands(prevScore, true)
-  nextScore = ddz.formatNumberThousands(nextScore, true)
+  -- selfScore = ddz.formatNumberThousands(selfScore, true)
+  -- prevScore = ddz.formatNumberThousands(prevScore, true)
+  -- nextScore = ddz.formatNumberThousands(nextScore, true)
   self.LabelSelfPlayerResult:setString(selfScore)
   self.LabelPrevPlayerResult:setString(prevScore)
   self.LabelNextPlayerResult:setString(nextScore)
@@ -169,7 +188,7 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
 
   local gender = '男'
   local winlose = 'win'
-  if selfResult.score > 0 then
+  if string.sub(selfScore, 1, 1) == '+' then
     self:showWinTop()
     self.ImageWinLine:loadTexture('NewRes/bg/bg_table_vnf_line_v.png', ccui.TextureResType.localType)
     self.ImageWinBg:loadTexture('NewRes/bg/bg_table_vnf_v.png', ccui.TextureResType.localType)
@@ -195,9 +214,6 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   self.ImageSelfIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', selfPlayer.headIcon), ccui.TextureResType.localType)
   self.ImagePrevIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', prevPlayer.headIcon), ccui.TextureResType.localType)
   self.ImageNextIcon:loadTexture(string.format('NewRes/idImg/idImg_head_%02d.jpg', nextPlayer.headIcon), ccui.TextureResType.localType)
-
-
-
 
 end
 

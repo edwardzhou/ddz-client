@@ -79,6 +79,7 @@ local function main()
     dump(resPaths, 'Search Resolutions Order')
 
     checkSDCardConf()
+    cclog('__appUrl: %s', __appUrl);
 
     require('startup')();
 

@@ -134,7 +134,7 @@ function LoginScene:on_enterTransitionFinish()
       if data.err == nil then
         this:showSignInProgress(false)
         ddz.GlobalSettings.rooms = data.rooms
-        local scene = require('hall.HallScene')()
+        local scene = require('hall.HallScene2')()
         cc.Director:getInstance():replaceScene(scene)
       end
     end)

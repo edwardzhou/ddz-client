@@ -138,17 +138,20 @@ end
 function HallScene2:updateUserInfo()
   local user = AccountInfo.getCurrentUser();
   
-  local idNickName = string.format("%s (%d)", user.nickName, user.userId)
+  local idNickName = string.format("%s (%s)", user.nickName, user.userId)
   self.LabelNickName:setString(idNickName)
   local coins = user.ddzProfile.coins or 0
   self.LabelCoins:setString(coins)
 
-  if user.headIcon then
-    self.ImageHeadIcon:loadTexture(
-        string.format('NewRes/idImg/idImg_head_%02d.jpg', user.headIcon),
-        ccui.TextureResType.localType
-      )
+  local iconIndex = tonumber(user.headIcon) or 1
+  if iconIndex < 1 then
+    iconIndex = 1
   end
+
+  self.ImageHeadIcon:loadTexture(
+      string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+      ccui.TextureResType.localType
+    )
 
   -- if user.headIcon then
   --   self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
@@ -324,8 +327,8 @@ function HallScene2:confirmQuit( ... )
   end
 
   local msgParams = {
-    msg = '退出游戏?',
-    title = '不要走嘛',
+    --msg = '退出游戏?',
+    title = '退出游戏?',
     buttonType = 'ok|cancel',
     width = 430,
     height = 250,
@@ -362,15 +365,18 @@ function HallScene2:ButtonStore_onClicked(sender, eventType)
 end
 
 function HallScene2:ButtonTask_onClicked(sender, eventType)
-  local scene = require('task.TaskScene')()
+  local scene = require('task.TaskScene2')()
   cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
 end
 
 function HallScene2:ButtonAssets_onClicked(sender, eventType)
-  local scene = require('bag.AssetsScene')()
+  local scene = require('bag.AssetsScene2')()
   cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
 end
 
+function HallScene2:ButtonSetting_onClicked(sender, eventType)
+  require('sysConfig.AudioConfigLayer').showAudioConfig(self, {})
+end
 
 local function createScene()
   local scene = cc.Scene:create()
