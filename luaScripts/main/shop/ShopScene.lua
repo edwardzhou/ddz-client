@@ -57,6 +57,7 @@ function ShopScene:init()
 
   self.ShopItemList:addScrollViewEventListener(__bind(self.ListView_onScrollViewEvent, self))
 
+  self:updateUserInfo()
 end
 
 
@@ -185,7 +186,7 @@ function ShopScene:ButtonBuy_onClicked(sender, eventType)
     print('[ShopScene:ButtonBuy_onClicked] you want to buy : ' , pkg.packageName)
     local msgParams = {
       title = '购买道具',
-      msg = string.format('购买 %s\n%s\n价格 %d 元', pkg.packageName, pkg.packageDesc, pkg.price / 100),
+      msg = string.format('购买 %s\n%s\n价格 %.1f 元', pkg.packageName, pkg.packageDesc, pkg.price / 100),
       closeOnClickOutside = false,
       closeAsCancel = true,
       buttonType = 'ok|close',
@@ -228,6 +229,30 @@ function ShopScene:buyPackage(pkg)
       return true
     end)
 end
+
+function ShopScene:updateUserInfo()
+  local user = AccountInfo.getCurrentUser();
+  
+  -- local idNickName = string.format("%s (%s)", user.nickName, user.userId)
+  -- self.LabelNickName:setString(idNickName)
+  local coins = user.ddzProfile.coins or 0
+  self.LabelCoins:setString(coins)
+
+  -- local iconIndex = tonumber(user.headIcon) or 1
+  -- if iconIndex < 1 then
+  --   iconIndex = 1
+  -- end
+
+  -- self.ImageHeadIcon:loadTexture(
+  --     string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+  --     ccui.TextureResType.localType
+  --   )
+
+  -- if user.headIcon then
+  --   self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
+  -- end
+end
+
 
 function ShopScene:ListView_onScrollViewEvent(sender, evenType)
   local this = self

@@ -86,19 +86,27 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   local prevResult
   local nextResult
 
-  if balance.players[1].userId == selfPlayer.userId then
-    selfResult = balance.players[1]
-    prevResult = balance.players[2]
-    nextResult = balance.players[3]
-  elseif balance.players[2].userId == selfPlayer.userId then
-    selfResult = balance.players[2]
-    prevResult = balance.players[1]
-    nextResult = balance.players[3]
-  else
-    selfResult = balance.players[3]
-    prevResult = balance.players[1]
-    nextResult = balance.players[2]    
-  end
+  selfResult = balance.playersMap[selfPlayer.userId]
+  prevResult = balance.playersMap[prevPlayer.userId]
+  nextResult = balance.playersMap[nextPlayer.userId]
+
+  dump(selfResult, 'selfResult')
+  dump(prevResult, 'prevResult')
+  dump(nextResult, 'nextResult')
+
+  -- if balance.players[1].userId == selfPlayer.userId then
+  --   selfResult = balance.players[1]
+  --   prevResult = balance.players[2]
+  --   nextResult = balance.players[3]
+  -- elseif balance.players[2].userId == selfPlayer.userId then
+  --   selfResult = balance.players[2]
+  --   prevResult = balance.players[1]
+  --   nextResult = balance.players[3]
+  -- else
+  --   selfResult = balance.players[3]
+  --   prevResult = balance.players[1]
+  --   nextResult = balance.players[2]    
+  -- end
   -- local selfResult = balance.players[selfPlayer.userId].score
   -- local prevPlayer = selfPlayer.prevPlayer
   -- local nextPlayer = selfPlayer.nextPlayer
@@ -126,7 +134,11 @@ function GameResultDialog2:show(balance, selfPlayer, prevPlayer, nextPlayer)
   -- 显示得分
   local selfScore = getScoreString(selfResult.score, selfPlayer)
   local prevScore = getScoreString(prevResult.score, prevPlayer)
-  local nextScore = getScoreString(nextResult.scorej, nextPlayer)
+  local nextScore = getScoreString(nextResult.score, nextPlayer)
+
+  print('selfPlayer.isLord: ', selfPlayer:isLord(), ', selfScore: ', selfScore)
+  print('prevPlayer.isLord: ', prevPlayer:isLord(), ', prevScore: ', prevScore)
+  print('nextPlayer.isLord: ', nextPlayer:isLord(), ', nextScore: ', nextScore)
 
   local winNumFont = 'NewRes/fonts/win_num_28.fnt'
   local loseNumFont = 'NewRes/fonts/lose_num_28.fnt'

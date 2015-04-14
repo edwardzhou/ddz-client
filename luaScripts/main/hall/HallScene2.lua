@@ -177,6 +177,9 @@ function HallScene2:tryEnterRoom(gameRoom)
     coins = currentUser.ddzProfile.coins or 0
   end
 
+  this.room = nil
+  this.waitingOrderId = nil
+
   local eventData = {
     roomId = gameRoom.roomId,
     roomName = gameRoom.roomName
@@ -206,6 +209,38 @@ function HallScene2:tryEnterRoom(gameRoom)
         end)
     ))
 
+  local onBuyPackage = function(room, pkg)
+    dump(pkg, 'try to buy package')
+    --local this = self
+    local params = {
+      pkgId = pkg.packageId
+    }
+    this.room = room
+    this.gameConnection:request('ddz.hallHandler.buyItem', params, function(data)
+        dump(data, '[HallScene2:onBuyPackage] ddz.hallHandler.buyItem =>', 20)
+        dump(data.pkg.packageData.items, '[HallScene2:onBuyPackage] packageData.items =>')
+        local purchaseOrder = data.pkg
+        local pkgData = purchaseOrder.packageData
+        local tdOrderId = purchaseOrder.userId .. '-' .. purchaseOrder.orderId
+        local pkgId = pkgData.packageId .. '-' .. pkgData.packageName
+        local pkgCoins = pkgData.packageCoins
+        local paidPrice = purchaseOrder.paidPrice
+        local paymentMethodId = 'unknown'
+        if purchaseOrder.payment then 
+          paymentMethodId = purchaseOrder.payment.paymentMethod.methodId
+        end
+
+        this.waitingOrderId = purchaseOrder.orderId
+
+        print('[HallScene2:onBuyPackage] tdOrderId: ', tdOrderId, ', pkgId: ', pkgId)
+        TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
+        return true
+      end)
+  end
+
+  local onCancelBuyPackage = function()
+  end
+
   local doTryEnterRoom = function()
     this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
@@ -218,10 +253,21 @@ function HallScene2:tryEnterRoom(gameRoom)
       end
 
       if data.retCode == ddz.ErrorCode.SUCCESS then
-        ddz.selectedRoom = gameRoom
+        ddz.selectedRoom = data.room;
         local createGameScene = require('gaming.GameScene2')
         local gameScene = createGameScene()
         cc.Director:getInstance():pushScene(gameScene)
+      elseif data.retCode == ddz.ErrorCode.COINS_NOT_ENOUGH then
+        local params = {
+          msg = data.recruitMsg
+          , grayBackground = true
+          , closeOnClickOutside = false
+          , buttonType = 'ok|close'
+          , closeAsCancel = true
+          , onCancel = onCancelBuyPackage
+          , onOk = function() onBuyPackage(data.room, data.pkg) end
+        }
+        showMessageBox(this, params)
       else
         -- 提示用户金币超过准入上限，请进入更高级别的房间
         local params = {
@@ -242,6 +288,14 @@ function HallScene2:tryEnterRoom(gameRoom)
     ))
 
 
+end
+
+function HallScene2:onChargeCallback(msg)
+  local this = self
+
+  if this.waitingOrderId == msg.purchaseOrderId then
+    this:tryEnterRoom(this.room)
+  end
 end
 
 function HallScene2:checkMinCoinsQty(gameRoom, coins) 
@@ -341,7 +395,7 @@ end
 function HallScene2:ButtonNormalRoom_onClicked(sender, event)
   local this = self
   local rooms = ddz.GlobalSettings.rooms
-  local gameRoom = rooms[#rooms]
+  local gameRoom = {roomId=0, roomName='普通房'}
   this:tryEnterRoom(gameRoom)
 end
 
