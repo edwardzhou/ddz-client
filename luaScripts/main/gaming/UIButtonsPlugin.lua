@@ -201,7 +201,7 @@ function UIButtonsPlugin.bind( theClass )
     -- ddz.pomeloClient:disconnect()
 
     --self:playCardEffect({gender='女'}, {cardType = 10})
-    local audioConfig = require('sysConfig.AudioConfigScene').showAudioConfig(self, {})
+    local audioConfig = require('sysConfig.AudioConfigLayer').showAudioConfig(self, {})
   end
 
   function theClass:ButtonBack_onClicked(sender, event)

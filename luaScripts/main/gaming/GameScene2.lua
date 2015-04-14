@@ -151,6 +151,9 @@ function GameScene2:init()
 
   self.LabelBetBase:setString(ddz.selectedRoom.ante)
   self:updateTask()
+
+  self.ButtonRoomList:setTitleText(ddz.selectedRoom.roomName)
+
 end
 
 function GameScene2:resetScene()

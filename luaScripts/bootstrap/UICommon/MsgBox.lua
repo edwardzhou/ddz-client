@@ -150,6 +150,12 @@ end
 function MsgBox:close()
   local this = self
   --self.uiRoot:setOpacity(0)
+  if this.closing then
+    return
+  end
+
+  this.closing = true
+
   this.PanelGray:setVisible(false)
   this.MsgPanel:runAction(
     cc.Sequence:create(

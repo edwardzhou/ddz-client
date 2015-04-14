@@ -1,5 +1,5 @@
 local ChargeChargeEventPlugin = {}
-
+local utils = require('utils.utils')
 local AccountInfo = require('AccountInfo')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
 local showToastBox = require('UICommon.ToastBox').showToastBox
@@ -22,6 +22,8 @@ function ChargeChargeEventPlugin.bind (theClass)
     if runningScene.noPops or runningScene.noChargeResult then
       return
     end
+
+    utils.invokeCallback(runningScene.onChargeCallback, runningScene, data)
 
     local params = {
       msg = '充值成功，您的金币数量已增加。谢谢！',

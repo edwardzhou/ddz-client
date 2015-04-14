@@ -1,1 +1,1 @@
-__appUrl = 'http://login.ec.lordgame.cn:8080/sessions/new'
+__appUrl = 'http://login.ucdev.lordgame.cn:4001/sessions/new'

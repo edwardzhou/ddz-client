@@ -425,6 +425,16 @@ ddz.clearPressedDisabledTexture = function(button, pressed, disabled)
   end
 end
 
+function ddz.formatStringThousands(str)
+  local formatted = str
+  local k
+  while true do
+      formatted, k = string.gsub(formatted, "^([+-]?%d+)(%d%d%d)", '%1,%2')
+      if k == 0 then break end
+  end
+  return formatted
+end
+
 function ddz.formatNumberThousands(num, numSign)
   local formatted
   if numSign then
@@ -433,12 +443,7 @@ function ddz.formatNumberThousands(num, numSign)
     formatted = tostring(tonumber(num))
   end
 
-  local k
-  while true do
-      formatted, k = string.gsub(formatted, "^([+-]?%d+)(%d%d%d)", '%1,%2')
-      if k == 0 then break end
-  end
-  return formatted
+  return ddz.formatStringThousands(formatted)
 end
 
 local _onEndListeners = {}
