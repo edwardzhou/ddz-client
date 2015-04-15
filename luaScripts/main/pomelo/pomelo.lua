@@ -540,7 +540,7 @@ function Pomelo:processMessage(msg)
 		self:emit(msg.route, msg.body)
 		if not self:hasListeners(msg.route) then
 			print('[Pomelo:processMessage] WARNING: no listener(s) for the event "' .. msg.route .. '", with Data =>')
-			dump(msg.bogy)
+			dump(msg.body)
 		end
 
 		do return end
