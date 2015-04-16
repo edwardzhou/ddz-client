@@ -304,6 +304,7 @@ function GameScene2:initPlayers()
             this:ButtonReady_onClicked(this.ButtonReady, 0)
           end, data.timing)
       end
+      ddz.selectedRoom = data.room
     end)
 end
 
@@ -412,6 +413,7 @@ require('gaming.UIClockCountDownPlugin').bind(GameScene2)
 require('gaming.SoundEffectPlugin').bind(GameScene2)
 require('gaming.PlayingTipsPlugin').bind(GameScene2)
 require('gaming.TaskUpdatePlugin').bind(GameScene2)
+require('gaming.GameRoomUpgradePlugin').bind(GameScene2)
 require('network.ConnectionStatusPlugin').bind(GameScene2)
 
 return createScene

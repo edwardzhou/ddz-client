@@ -201,6 +201,10 @@ function MsgBox:ButtonCancel_onClicked(sender, eventType)
 end
 
 function MsgBox:ButtonOk_onClicked(sender, eventType)
+  local this = self
+  if this.closing then
+    return
+  end
   if utils.invokeCallback(self.onOkCallback) == false then
     return
   else
@@ -209,6 +213,10 @@ function MsgBox:ButtonOk_onClicked(sender, eventType)
 end
 
 function MsgBox:ButtonClose_onClicked(sender, eventType)
+  local this = self
+  if this.closing then
+    return
+  end
   if self.ButtonCancel:isVisible() or self.closeAsCancel then
     self:ButtonCancel_onClicked(sender, eventType)
   else
