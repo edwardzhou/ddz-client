@@ -372,6 +372,7 @@ require('gaming.UIClockCountDownPlugin').bind(GameScene)
 require('gaming.SoundEffectPlugin').bind(GameScene)
 require('gaming.PlayingTipsPlugin').bind(GameScene)
 require('gaming.TaskUpdatePlugin').bind(GameScene)
+require('gaming.GameRoomUpgradePlugin').bind(GameScene)
 require('network.ConnectionStatusPlugin').bind(GameScene)
 
 return createScene

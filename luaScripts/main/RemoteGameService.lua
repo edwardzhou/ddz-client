@@ -18,6 +18,7 @@ function RemoteGameService:ctor(msgReceiver, selfUserId)
   self._onServerLordValueUpgradeMsg = __bind(self.onServerLordValueUpgradeMsg, self)
   self._onServerGameOverMsg= __bind(self.onServerGameOverMsg, self)
   self._onServerPreStartGameMsg = __bind(self.onServerPreStartGameMsg, self)
+  self._onServerRoomUpgrade = __bind(self.onServerRoomUpgrade, self)
   self:setupPomeloEvents()
 end
 
@@ -34,6 +35,7 @@ function RemoteGameService:setupPomeloEvents()
   ddz.pomeloClient:on('onLordValueUpgrade', self._onServerLordValueUpgradeMsg)
   ddz.pomeloClient:on('onGameOver', self._onServerGameOverMsg)
   ddz.pomeloClient:on('onPreStartGame', self._onServerPreStartGameMsg)
+  ddz.pomeloClient:on('onRoomUpgrade', self._onServerRoomUpgrade)
 end
 
 function RemoteGameService:removePomeloEvents()
@@ -303,6 +305,12 @@ function RemoteGameService:onServerPlayCardMsg(data)
 
   utils.invokeCallback(MR.onPlayCardMsg, MR, player.userId, card, nextPlayer, data.timing, data.delegating > 0, data)
 
+end
+
+function RemoteGameService:onServerRoomUpgrade(data)
+  dump(data, '[RemoteGameService:onServerRoomUpgrade] data', 5)
+
+  utils.invokeCallback(self.msgReceiver.onRoomUpgrade, self.msgReceiver, data)
 end
 
 function RemoteGameService:onServerGameOverMsg(data)
