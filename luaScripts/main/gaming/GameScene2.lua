@@ -334,7 +334,7 @@ function GameScene2:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing,
   self.LordCard1:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LordCard2:loadTexture('lord_back.png', ccui.TextureResType.plistType)
   self.LordCard3:loadTexture('lord_back.png', ccui.TextureResType.plistType)
-  self.LabelLordValue:setString('0')
+  self.LabelLordValue:setString('X 0')
   --self:showPlaycardClock()
 
   self.PanelPrevHead:setVisible(true)

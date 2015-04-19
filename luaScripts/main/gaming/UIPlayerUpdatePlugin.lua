@@ -43,6 +43,7 @@ function UIPlayerUpdatePlugin.bind(theClass)
       Head = self.NextUserHeadIcon,
       Status = self.NextUserStatus,
       PokeCount = self.NextUserPokeCount,
+      pc_prefix = 'next_pc_',
       Role = self.NextUserRole
     }
     
