@@ -3,8 +3,8 @@ local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')
 local EntryService = require('EntryService')
 
-local showToastBox = require('UICommon.ToastBox').showToastBox
-local hideToastBox = require('UICommon.ToastBox').hideToastBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
+local hideToastBox = require('UICommon.ToastBox2').hideToastBox
 
 local showMsgBox = require('UICommon.MsgBox').showMsgBox
 

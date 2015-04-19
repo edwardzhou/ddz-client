@@ -2,7 +2,7 @@ local ChargeChargeEventPlugin = {}
 local utils = require('utils.utils')
 local AccountInfo = require('AccountInfo')
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
-local showToastBox = require('UICommon.ToastBox').showToastBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
 
 function ChargeChargeEventPlugin.bind (theClass)
   function theClass:onChargeResult(data)

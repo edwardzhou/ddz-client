@@ -121,7 +121,11 @@ function LandingScene:init()
   cc.SpriteFrameCache:getInstance():addSpriteFrames('dialogs.plist')
   cc.SpriteFrameCache:getInstance():addSpriteFrames('loading.plist')
 
-  local loadingAnimation = display.newAnimation('loading_animate_%02d.png', 1, 8, 12.0 / 60.0)
+  local loadingAnimation = display.getAnimationCache('loadingAnimation')
+  if loadingAnimation == nil then
+    loadingAnimation = display.newAnimation('loading_animate_%02d.png', 1, 8, 12.0 / 60.0)
+    display.setAnimationCache('loadingAnimation', loadingAnimation)
+  end
   this.LoadingAnimation:runAction(
       cc.RepeatForever:create(
         cc.Animate:create(loadingAnimation)

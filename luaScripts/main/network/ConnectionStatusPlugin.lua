@@ -1,8 +1,8 @@
 local ConnectionStatusPlugin = {}
 local showToastBox = require('UICommon.ToastBox').showToastBox
 local hideToastBox = require('UICommon.ToastBox').hideToastBox
-local showConnectingBox = require('UICommon.ConnectingBox').showConnectingBox
-local hideConnectingBox = require('UICommon.ConnectingBox').hideConnectingBox
+local showConnectingBox = require('UICommon.ConnectingBox2').showConnectingBox
+local hideConnectingBox = require('UICommon.ConnectingBox2').hideConnectingBox
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
 
 function ConnectionStatusPlugin.bind(theClass)

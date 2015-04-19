@@ -5,7 +5,7 @@ local AssetsScene2 = class('AssetsScene2', function()
 local gameConnection = require('network.GameConnection')
 local AccountInfo = require('AccountInfo')
 
-local showToastBox = require('UICommon.ToastBox').showToastBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
 local showMessageBox = require('UICommon.MsgBox').showMessageBox
 
 function AssetsScene2.extend(target, ...)
