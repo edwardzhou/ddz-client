@@ -5,7 +5,7 @@ local TaskScene2 = class('TaskScene2', function()
 local gameConnection = require('network.GameConnection')
 local AccountInfo = require('AccountInfo')
 
-local showToastBox = require('UICommon.ToastBox').showToastBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
 local showMessageBox = require('UICommon.MessageBox').showMessageBox
 
 function TaskScene2.extend(target, ...)

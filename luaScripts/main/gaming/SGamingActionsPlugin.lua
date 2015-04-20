@@ -224,7 +224,7 @@ function SGamingActionsPlugin.bind(theClass)
   end
 
   function theClass:onLordValueUpgrade(newLordValue)
-    self.LabelLordValue:setString(newLordValue)
+    self.LabelLordValue:setString('X ' .. newLordValue)
     local scaleTo = cc.ScaleTo:create(0.15, 2.5)
     self.LabelLordValue:runAction(cc.Sequence:create(
         scaleTo,

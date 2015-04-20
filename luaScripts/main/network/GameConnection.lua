@@ -76,7 +76,7 @@ function GameConnection:authConnection(autoLogin)
         title = '无法登录',
         msg = msg
       }
-      require('UICommon.ToastBox').showToastBox(cc.Director:getInstance():getRunningScene(), params)
+      require('UICommon.ToastBox2').showToastBox(cc.Director:getInstance():getRunningScene(), params)
       -- this:signUp(onSignResult);
     end
   end

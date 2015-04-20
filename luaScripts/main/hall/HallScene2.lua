@@ -1,9 +1,9 @@
 local AccountInfo = require('AccountInfo')
 local Resources = require('Resources')
 local showMessageBox = require('UICommon.MsgBox').showMessageBox
-local showToastBox = require('UICommon.ToastBox').showToastBox
-local hideToastBox = require('UICommon.ToastBox').hideToastBox
-
+local showToastBox = require('UICommon.ToastBox2').showToastBox
+local hideToastBox = require('UICommon.ToastBox2').hideToastBox
+local utils = require('utils.utils')
 local HallScene2 = class('HallScene2')
 
 function HallScene2.extend(target, ...)
@@ -103,16 +103,29 @@ function HallScene2:init()
   self.PanelFriendsItemModel:setVisible(false)
   local listview = self.ListViewFriends
   listview:setItemModel(model)
+  listview:setVisible(false)
+
+  model = self.PanelPlayedItemModel:clone()
+  self.PanelPlayedItemModel:setVisible(false)
+  listview = self.ListViewPlayed
+  listview:setItemModel(model)
+  listview:setVisible(true)
+
+
 
   local gameRooms = ddz.GlobalSettings.rooms
 
-  for i=1, 5 do
-    listview:pushBackDefaultItem()
-    local item = listview:getItem(i-1)
-    ddz.clearPressedDisabledTexture(item:getChildByName('ButtonUserHead'))
-    ddz.clearPressedDisabledTexture(item:getChildByName('ButtonChat'))
-    ddz.clearPressedDisabledTexture(item:getChildByName('ButtonYZ'))
-  end
+  self.CheckBoxFriends:setSelected(false)
+  self.CheckBoxPlayed:setSelected(true)
+  self:loadPlayedList()
+
+  -- for i=1, 5 do
+  --   listview:pushBackDefaultItem()
+  --   local item = listview:getItem(i-1)
+  --   ddz.clearPressedDisabledTexture(item:getChildByName('ButtonUserHead'))
+  --   ddz.clearPressedDisabledTexture(item:getChildByName('ButtonChat'))
+  --   ddz.clearPressedDisabledTexture(item:getChildByName('ButtonYZ'))
+  -- end
 
   
   local snow = cc.ParticleSystemQuad:create('snow.plist')
@@ -156,6 +169,91 @@ function HallScene2:updateUserInfo()
   -- if user.headIcon then
   --   self.ButtonHead:loadTextureNormal(Resources.getHeadIconPath(user.headIcon), ccui.TextureResType.localType)
   -- end
+end
+
+function HallScene2:loadPlayedList(refresh)
+  local this = self
+  local listview = this.ListViewPlayed
+
+  local function fillPlayedList()
+    listview:removeAllItems()
+    for i=1, #ddz.playedUsers do
+      local userInfo = ddz.playedUsers[i]
+      listview:pushBackDefaultItem()
+      local item = listview:getItem(i-1)
+      item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
+      local iconIndex = userInfo.headIcon
+      if iconIndex == nil or iconIndex < 1 then
+        iconIndex = os.time() % 8 + 1
+      end
+      item:getChildByName('ImageHeadIcon'):loadTexture(
+          string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+          ccui.TextureResType.localType
+        )
+    end
+    this.playedListLoaded = true
+  end
+
+  local function loadData(cb)
+    if ddz.playedUsers == nil or refresh then
+      this.gameConnection:request('ddz.hallHandler.getPlayWithMeUsers', {}, function(data)
+          dump(data, 'ddz.hallHandler.getPlayWithMeUsers => data', 3)
+          ddz.playedUsers = data.users
+          utils.invokeCallback(cb)
+        end)
+    else
+      utils.invokeCallback(cb)
+    end
+  end
+
+  if this.playedListLoaded then
+    return
+  end
+
+  loadData(fillPlayedList)
+
+end
+
+function HallScene2:loadFriendsList(refresh)
+  local this = self
+  local listview = this.ListViewFriends
+
+  local function fillFriendsList()
+    listview:removeAllItems()
+    for i=1, #ddz.myFriends do
+      local userInfo = ddz.myFriends[i]
+      listview:pushBackDefaultItem()
+      local item = listview:getItem(i-1)
+      item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
+      local iconIndex = userInfo.headIcon
+      if iconIndex == nil or iconIndex < 1 then
+        iconIndex = os.time() % 8 + 1
+      end
+      item:getChildByName('ImageHeadIcon'):loadTexture(
+          string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+          ccui.TextureResType.localType
+        )
+    end
+    this.friendsListLoaded = true
+  end
+
+  local function loadData(cb)
+    if ddz.myFriends == nil or refresh then
+      this.gameConnection:request('ddz.hallHandler.getFriends', {}, function(data)
+          dump(data, 'ddz.hallHandler.getFriends => data', 3)
+          ddz.myFriends = data.users
+          utils.invokeCallback(cb)
+        end)
+    else
+      utils.invokeCallback(cb)
+    end
+  end
+
+  if this.friendsListLoaded then
+    return
+  end
+
+  loadData(fillFriendsList)
 end
 
 function HallScene2:ListViewRooms_onEvent(sender, eventType)
@@ -431,6 +529,33 @@ end
 function HallScene2:ButtonSetting_onClicked(sender, eventType)
   require('sysConfig.AudioConfigLayer').showAudioConfig(self, {})
 end
+
+function HallScene2:ButtonQuickStart_onClicked(sender, eventType)
+  self:ButtonNormalRoom_onClicked(sender, eventType)
+end
+
+function HallScene2:CheckBoxPlayed_onEvent(sender, eventType)
+  if self.CheckBoxFriends:isSelected() then
+    self.CheckBoxFriends:setSelected(false)    
+    self.ListViewPlayed:setVisible(true)
+    self.ListViewFriends:setVisible(false)    
+    self:loadPlayedList()
+  else
+    self.CheckBoxPlayed:setSelected(true)
+  end
+end
+
+function HallScene2:CheckBoxFriends_onEvent(sender, eventType)
+  if self.CheckBoxPlayed:isSelected() then
+    self.CheckBoxPlayed:setSelected(false)
+    self.ListViewPlayed:setVisible(false)
+    self.ListViewFriends:setVisible(true)
+    self:loadFriendsList()
+  else
+    self.CheckBoxFriends:setSelected(true)
+  end
+end
+
 
 local function createScene()
   local scene = cc.Scene:create()

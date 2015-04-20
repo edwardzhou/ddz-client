@@ -3,6 +3,10 @@ EveryDayLoginLogic = {}
 EveryDayLoginLogic.check = function(data)
 	data = data.ddzLoginRewards.dayRewards
 	dump(data, 'ddzLoginRewards.dayRewards')
+	if data == nil then
+		return
+	end
+	
 	local  status = {}
 	local total = 0
 	for k,v in pairs(data) do
