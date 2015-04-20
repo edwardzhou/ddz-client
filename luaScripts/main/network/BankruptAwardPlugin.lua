@@ -1,7 +1,7 @@
 local BankruptAwardPlugin = {}
 local AccountInfo = require('AccountInfo')
-local showMessageBox = require('UICommon.MessageBox').showMessageBox
-local showToastBox = require('UICommon.ToastBox').showToastBox
+local showMessageBox = require('UICommon.MsgBox').showMessageBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
 
 function BankruptAwardPlugin.bind (theClass)
   function theClass:onBankruptReward(data)
