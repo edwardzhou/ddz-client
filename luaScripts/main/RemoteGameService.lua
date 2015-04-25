@@ -194,6 +194,13 @@ function RemoteGameService:cancelDelegate(callback)
     end)
 end
 
+function RemoteGameService:setDelegate(callback)
+  self.gameConnection:request('ddz.gameHandler.setDelegate', {}, function(data) 
+      dump(data, '[RemoteGameService:cancelDelegate] ddz.gameHandler.setDelegate response')
+      utils.invokeCallback(callback, data)
+    end)
+end
+
 function RemoteGameService:onServerGrabbingLordMsg(data)
   local this = self
   local userId = data.userId

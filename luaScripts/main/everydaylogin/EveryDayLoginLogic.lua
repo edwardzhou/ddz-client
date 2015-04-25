@@ -13,16 +13,19 @@ EveryDayLoginLogic.check = function(data)
 		local arr = string.split(v.day, "_")
 		local day = tonumber(arr[2])
 		if v.status == 1 then
+			v.statusText = 'get'
 			status[day] = 'get'
 			total = total + v.bonus
 		elseif v.status == 0 then
+			v.statusText = 'disable'
 			status[day] = 'disable'
 		else
+			v.statusText = 'getted'
 			status[day] = 'getted'
 		end
 	end
 	if total > 0 then
-		local dialog = require('everydaylogin.EveryDayLoginDialog').new(status, total)
+		local dialog = require('everydaylogin.DailyLoginLayer').new(data, total)
 		local scene = cc.Director:getInstance():getRunningScene()
 		scene:addChild(dialog)
 	end

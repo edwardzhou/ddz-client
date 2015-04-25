@@ -127,8 +127,15 @@ function UIButtonsPlugin.bind( theClass )
     local pokeCards = PokeCard.getByPokeChars(self.tipPokeChars)
     self:pickupPokecards(pokeCards)
     self:updateButtonsState()
+  end
 
-
+  function theClass:ButtonRobot_onClicked(sender, event)
+    local this = self
+    if not self.ButtonDelegate:isVisible() then
+      self.gameService:setDelegate(function() 
+          this.ButtonDelegate:setVisible(true)
+        end)
+    end
   end
 
   function theClass:ButtonPlay_onClicked(sender, event)
@@ -214,7 +221,16 @@ function UIButtonsPlugin.bind( theClass )
   end
 
   function theClass:ButtonChat_onClicked(sender, event)
-    local dialog = require('chat.ChatLayer').new()
+    local this = self
+    local userIds = {}
+    table.insert(userIds, self.selfUserId)
+    if this.prevPlayerInfo then
+      table.insert(userIds, this.prevPlayerInfo.userId)
+    end
+    if this.nextPlayerInfo then
+      table.insert(userIds, this.nextPlayerInfo.userId)
+    end
+    local dialog = require('chat.TextChatLayer').new(self.gameConnection, userIds)
     self:addChild(dialog)
   end
 
