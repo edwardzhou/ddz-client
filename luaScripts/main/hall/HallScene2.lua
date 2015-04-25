@@ -183,7 +183,7 @@ function HallScene2:loadPlayedList(refresh)
       local item = listview:getItem(i-1)
       item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
       local iconIndex = userInfo.headIcon
-      if iconIndex == nil or iconIndex < 1 then
+      if iconIndex == nil or tonumber(iconIndex) < 1 then
         iconIndex = os.time() % 8 + 1
       end
       item:getChildByName('ImageHeadIcon'):loadTexture(

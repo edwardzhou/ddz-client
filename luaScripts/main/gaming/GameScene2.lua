@@ -202,6 +202,17 @@ function GameScene2:resetScene()
   self.PanelNextHead:setVisible(false)
   self.SelfUserHead:setVisible(true)
 
+  self.SelfChatPanel:setVisible(false)
+  self.PrevChatPanel:setVisible(false)
+  self.NextChatPanel:setVisible(false)
+  self.nextPlayerInfo = nil
+  self.prevPlayerInfo = nil
+
+  self.ButtonChat:setEnabled(false)
+  self.ButtonRobot:setEnabled(false)
+  self.ButtonChat:setBright(false)
+  self.ButtonRobot:setBright(false)
+
   self:stopCountdown(true)
 end
 
@@ -350,6 +361,11 @@ function GameScene2:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing,
   self.NextUserStatus:setVisible(false)
   print('[GameScene2:doServerGameStart] timing: ', timing)
   self:showDrawingCardsAnimation(nextUserId, timing)
+
+  self.ButtonChat:setEnabled(true)
+  self.ButtonRobot:setEnabled(true)
+  self.ButtonChat:setBright(true)
+  self.ButtonRobot:setBright(true)
   --self.pokeGame.assetBits = data.
   --self.JipaiqiPanel:setVisible( bit.band(data.assetBits, 0x01) > 0 )
 
@@ -413,6 +429,7 @@ require('gaming.UIClockCountDownPlugin').bind(GameScene2)
 require('gaming.SoundEffectPlugin').bind(GameScene2)
 require('gaming.PlayingTipsPlugin').bind(GameScene2)
 require('gaming.TaskUpdatePlugin').bind(GameScene2)
+require('gaming.UIChatMsgPlugin').bind(GameScene2)
 require('gaming.GameRoomUpgradePlugin').bind(GameScene2)
 require('network.ConnectionStatusPlugin').bind(GameScene2)
 

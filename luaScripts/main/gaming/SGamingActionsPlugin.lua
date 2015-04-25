@@ -360,6 +360,23 @@ function SGamingActionsPlugin.bind(theClass)
     self:animateStatus(statusUI)
 
   end
+
+  function theClass:onServerGamingChat(data)
+    local this = self
+
+    if data == nil or data.from == nil then
+      return
+    end
+
+    if this.prevPlayerInfo and data.from == this.prevPlayerInfo.userId then
+      this:showPrevPlayerChatMsg(data)
+    elseif this.nextPlayerInfo and data.from == this.nextPlayerInfo.userId then
+      this:showNextPlayerChatMsg(data)
+    elseif this.selfPlayerInfo and data.from == this.selfPlayerInfo.userId then
+      this:showSelfPlayerChatMsg(data)
+    end
+
+  end
 end
 
 return SGamingActionsPlugin
