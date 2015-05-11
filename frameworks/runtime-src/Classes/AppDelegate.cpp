@@ -9,7 +9,7 @@
 #include "unzip.h"
 // #include "MobClickCpp.h"
 // #include "lua_cocos2dx_umeng_auto.hpp"
-#include "lua_cocos2dx_quick_manual.hpp"
+// #include "lua_cocos2dx_quick_manual.hpp"
 // #include "lua_cocos2dx_umeng_manual.hpp"
 #include "platform/android/jni/JniHelper.h"
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
@@ -264,6 +264,20 @@ std::string getApkSign() {
     return apkSign;
 }
 
+static int tolua_Cocos2d_Function_loadChunksFromZIP(lua_State* tolua_S)
+{
+    return LuaEngine::getInstance()->getLuaStack()->luaLoadChunksFromZIP(tolua_S);
+}
+
+static void extendFunctions(lua_State* tolua_S)
+{
+    tolua_module(tolua_S,"cc",0);
+    tolua_beginmodule(tolua_S,"cc");
+    tolua_function(tolua_S,"LuaLoadChunksFromZIP",tolua_Cocos2d_Function_loadChunksFromZIP);
+    tolua_endmodule(tolua_S);
+}
+
+
 AppDelegate::AppDelegate()
 {
 }
@@ -300,7 +314,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     // register_all_cocos2dx_plugin(luaState);
     // CCLOG("after register_all_cocos2dx_pluginx ....");
     lua_module_register(luaState);
-    register_all_quick_manual(luaState);
+    // register_all_quick_manual(luaState);
+    extendFunctions(luaState);
     // register_all_cocos2dx_umeng(luaState);
     // register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);

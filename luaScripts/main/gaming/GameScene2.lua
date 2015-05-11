@@ -309,7 +309,7 @@ function GameScene2:initPlayers()
   self.selfUserId = ddz.GlobalSettings.userInfo.userId
   local this = self
 
-  this.gameService:enterRoom(ddz.selectedRoom.roomId, function(data) 
+  this.gameService:enterRoom(ddz.selectedRoom.roomId, ddz.selectedRoom.tableId, function(data) 
       if data.timing then
         this:startSelfPlayerCountdown(function()
             this:ButtonReady_onClicked(this.ButtonReady, 0)

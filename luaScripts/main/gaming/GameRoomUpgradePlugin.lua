@@ -4,7 +4,7 @@ local showMessageBox = require('UICommon.MsgBox').showMessageBox
 function GameRoomUpgradePlugin.bind(theClass)
 
   local function enterRoom(this, room)
-    this.gameService:enterRoom(room.roomId, function(respData) 
+    this.gameService:enterRoom(room.roomId, room.tableId, function(respData) 
         ddz.selectedRoom = respData.room
         this.ButtonRoomList:setTitleText(respData.room.roomName)
         this.ButtonRoomList:runAction(cc.RotateBy:create(1, 360))
