@@ -59,8 +59,9 @@ function RemoteGameService:onServerPlayerJoinMsg(data)
   end
   
   self.playersInfo = players
+  self.tableId = data.tableId 
 
-  utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players)
+  utils.invokeCallback(self.msgReceiver.onServerPlayerJoin, self.msgReceiver, players, data)
   -- if self.msgReceiver.onServerPlayerJoin then
   --   self.msgReceiver:onServerPlayerJoin(players)
   -- end
@@ -100,10 +101,10 @@ function RemoteGameService:queryRooms(callback)
 end
 
 
-function RemoteGameService:enterRoom(roomId, callback)
+function RemoteGameService:enterRoom(roomId, tableId, callback)
   local this = self
 
-  self.gameConnection:request('ddz.entryHandler.enterRoom', {room_id = roomId}, function(data)
+  self.gameConnection:request('ddz.entryHandler.enterRoom', {room_id = roomId, table_id = tableId}, function(data)
       dump(data, '[RemoteGameService:enterRoom] ddz.entryHandler.enterRoom =>')
       utils.invokeCallback(callback, data)
     end)
@@ -134,7 +135,10 @@ end
 
 function RemoteGameService:readyGame(callback)
   self.pokeGame = nil
-  self.gameConnection:request('ddz.gameHandler.ready', {}, function(data) 
+  local params = {
+    table_id = self.tableId
+  }
+  self.gameConnection:request('ddz.gameHandler.ready', params, function(data) 
       dump(data, '[RemoteGameService:readyGame] ddz.gameHandler.ready')
       utils.invokeCallback(callback, data)
     end)

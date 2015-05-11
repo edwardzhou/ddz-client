@@ -48,10 +48,10 @@ function GameRoomEnterPlugin.bind(theClass)
     end)
   end
 
-  function theClass:tryEnterRoom(roomId, callback)
+  function theClass:tryEnterRoom(roomId, tableId, callback)
     local this = self
 
-    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = roomId}, function(data) 
+    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = roomId, table_id = tableId}, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
       if enterTimeoutActionId then
         this:stopAction(enterTimeoutActionId)
@@ -63,10 +63,10 @@ function GameRoomEnterPlugin.bind(theClass)
     end)
   end
 
-  function theClass:enterRoom(roomId, callback)
+  function theClass:enterRoom(roomId, tableId, callback)
     local this = self
 
-    this.gameService:enterRoom(roomId, function(data) 
+    this.gameService:enterRoom(roomId, tableId, function(data) 
         this.room = data.room
         local scene = cc.Director:getInstance():getRunningScene()
         utils.invokeCallback(scene.onRoomEntered, scene, this.room)

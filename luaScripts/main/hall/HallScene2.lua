@@ -64,19 +64,19 @@ function HallScene2:init()
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  ddz.clearPressedDisabledTexture({
-    self.ButtonStore,
-    self.ButtonTask,
-    self.ButtonAssets,
-    self.ButtonHead,
-    self.ButtonHelp,
-    self.ButtonMsg,
-    self.ButtonSetting,
-    self.ButtonVip,
-    self.ButtonPrize,
-    self.ButtonNormalRoom,
-    self.ButtonYueZhan
-  })
+  -- ddz.clearPressedDisabledTexture({
+  --   self.ButtonStore,
+  --   self.ButtonTask,
+  --   self.ButtonAssets,
+  --   self.ButtonHead,
+  --   self.ButtonHelp,
+  --   self.ButtonMsg,
+  --   self.ButtonSetting,
+  --   self.ButtonVip,
+  --   self.ButtonPrize,
+  --   self.ButtonNormalRoom,
+  --   self.ButtonYueZhan
+  -- })
 
   TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
       action = ddz.ViewAction.ACTION_ENTER_VIEW,
@@ -340,7 +340,14 @@ function HallScene2:tryEnterRoom(gameRoom)
   end
 
   local doTryEnterRoom = function()
-    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', {room_id = gameRoom.roomId}, function(data) 
+    local params = {
+      room_id = gameRoom.roomId,
+      table_id = gameRoom.tableId
+    }
+
+    dump(params, '[doTryEnterRoom] params =>')
+
+    this.gameConnection:request('ddz.entryHandler.tryEnterRoom', params, function(data) 
       dump(data, "[ddz.entryHandler.tryEnterRoom] data =>")
       if enterTimeoutActionId then
         this:stopAction(enterTimeoutActionId)
@@ -352,6 +359,7 @@ function HallScene2:tryEnterRoom(gameRoom)
 
       if data.retCode == ddz.ErrorCode.SUCCESS then
         ddz.selectedRoom = data.room;
+        ddz.selectedRoom.tableId = gameRoom.tableId 
         local createGameScene = require('gaming.GameScene2')
         local gameScene = createGameScene()
         cc.Director:getInstance():pushScene(gameScene)
@@ -496,6 +504,15 @@ function HallScene2:ButtonNormalRoom_onClicked(sender, event)
   local gameRoom = {roomId=0, roomName='普通房'}
   this:tryEnterRoom(gameRoom)
 end
+
+
+function HallScene2:ButtonAppointPlay_onClicked(sender, event)
+  local this = self
+  local rooms = ddz.GlobalSettings.rooms
+  local gameRoom = {roomId=10000, roomName='约战房', tableId = 1}
+  this:tryEnterRoom(gameRoom)
+end
+
 
 function HallScene2:ButtonHead_onClicked(sender, event)
   print('[HallScene2:ButtonHead_onClicked]')
