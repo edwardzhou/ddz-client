@@ -40,6 +40,10 @@ function HallScene2:on_enter()
   self:updateUserInfo()
   self.gameConnection.needReconnect = false
   self.gameConnection:checkLoginRewardEvent()
+
+  if self.reloadPlayedData then
+    self:loadPlayedList()
+  end
 end
 
 function HallScene2:on_enterTransitionFinish()
@@ -49,9 +53,13 @@ function HallScene2:on_cleanup()
 end
 
 function HallScene2:init()
+  local this = self
   self:initKeypadHandler()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
+
+  this.reloadPlayedData = true
+  this.reloadFriendData = true
 
   self.gameConnection = require('network.GameConnection')
   self.gameConnection:scheduleUpdateSession()
@@ -117,7 +125,7 @@ function HallScene2:init()
 
   self.CheckBoxFriends:setSelected(false)
   self.CheckBoxPlayed:setSelected(true)
-  self:loadPlayedList()
+  -- self:loadPlayedList()
 
   -- for i=1, 5 do
   --   listview:pushBackDefaultItem()
@@ -190,15 +198,25 @@ function HallScene2:loadPlayedList(refresh)
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
+      item:getChildByName('LabelUserCoins'):setString(
+          ddz.tranlateTimeLapsed(userInfo.lastPlayed, true).cn
+        )
+
+      local button = item:getChildByName('ButtonAddFriend')
+      button.userInfo = userInfo
+      button:addClickEventListener(function(sender) 
+          this:addFriend(sender.userInfo)
+        end)
     end
     this.playedListLoaded = true
   end
 
   local function loadData(cb)
-    if ddz.playedUsers == nil or refresh then
-      this.gameConnection:request('ddz.hallHandler.getPlayWithMeUsers', {}, function(data)
-          dump(data, 'ddz.hallHandler.getPlayWithMeUsers => data', 3)
+    if ddz.playedUsers == nil or this.reloadPlayedData then
+      this.gameConnection:request('ddz.friendshipHandler.getPlayWithMeUsers', {}, function(data)
+          dump(data, 'ddz.friendshipHandler.getPlayWithMeUsers => data', 3)
           ddz.playedUsers = data.users
+          this.reloadPlayedData = false
           utils.invokeCallback(cb)
         end)
     else
@@ -206,7 +224,7 @@ function HallScene2:loadPlayedList(refresh)
     end
   end
 
-  if this.playedListLoaded then
+  if this.playedListLoaded and not this.reloadPlayedData then
     return
   end
 
@@ -225,7 +243,7 @@ function HallScene2:loadFriendsList(refresh)
       listview:pushBackDefaultItem()
       local item = listview:getItem(i-1)
       item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
-      local iconIndex = userInfo.headIcon
+      local iconIndex = tonumber(userInfo.headIcon)
       if iconIndex == nil or iconIndex < 1 then
         iconIndex = os.time() % 8 + 1
       end
@@ -233,15 +251,19 @@ function HallScene2:loadFriendsList(refresh)
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
+      item:getChildByName('LabelUserCoins'):setString(
+          ddz.tranlateTimeLapsed(userInfo.addDate, true).cn
+        )
     end
     this.friendsListLoaded = true
   end
 
   local function loadData(cb)
-    if ddz.myFriends == nil or refresh then
-      this.gameConnection:request('ddz.hallHandler.getFriends', {}, function(data)
-          dump(data, 'ddz.hallHandler.getFriends => data', 3)
-          ddz.myFriends = data.users
+    if ddz.myFriends == nil or this.reloadFriendData then
+      this.gameConnection:request('ddz.friendshipHandler.getFriends', {}, function(data)
+          dump(data, 'ddz.friendshipHandler.getFriends => data', 5)
+          ddz.myFriends = data.users.friends
+          this.reloadFriendData = false
           utils.invokeCallback(cb)
         end)
     else
@@ -249,7 +271,7 @@ function HallScene2:loadFriendsList(refresh)
     end
   end
 
-  if this.friendsListLoaded then
+  if this.friendsListLoaded and not this.reloadFriendData then
     return
   end
 
@@ -265,6 +287,16 @@ function HallScene2:ListViewRooms_onEvent(sender, eventType)
   --   dump(gameRoom, 'selected room: ')
   --   this:tryEnterRoom(gameRoom)
   -- end
+end
+
+function HallScene2:addFriend(userInfo)
+  local this = self
+  local params = {
+    friend_userId = userInfo.userId
+  }
+  this.gameConnection:request('ddz.friendshipHandler.addFriend', params, function(data) 
+      dump(data, '[ddz.friendshipHandler.addFriend] data => ', 5)
+    end)
 end
 
 function HallScene2:tryEnterRoom(gameRoom)
@@ -360,6 +392,7 @@ function HallScene2:tryEnterRoom(gameRoom)
       if data.retCode == ddz.ErrorCode.SUCCESS then
         ddz.selectedRoom = data.room;
         ddz.selectedRoom.tableId = gameRoom.tableId 
+        this.reloadPlayedData = true
         local createGameScene = require('gaming.GameScene2')
         local gameScene = createGameScene()
         cc.Director:getInstance():pushScene(gameScene)
@@ -570,6 +603,13 @@ function HallScene2:CheckBoxFriends_onEvent(sender, eventType)
     self:loadFriendsList()
   else
     self.CheckBoxFriends:setSelected(true)
+  end
+end
+
+function HallScene2:onReplyFriend(data)
+  self.reloadFriendData = true
+  if self.CheckBoxFriends:isSelected() then
+    self:loadFriendsList()
   end
 end
 
