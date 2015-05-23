@@ -1,6 +1,13 @@
 ddz = ddz or {}
 local cjson = require('cjson.safe')
 
+local SECONDS_IN_MIN = 60
+local SECONDS_IN_HOUR = 60 * 60
+local SECONDS_IN_DAY = 60 * 60 * 24
+local SECONDS_IN_WEEK = 60 * 60 * 24 * 7
+local SECONDS_IN_MONTH = 60 * 60 * 24 * 30
+local SECONDS_IN_YEAR = 60 * 60 * 24 * 365
+
 function table.deepCopy(src)
   local newTable = {}
   for k, v in pairs(src) do
@@ -444,6 +451,51 @@ function ddz.formatNumberThousands(num, numSign)
   end
 
   return ddz.formatStringThousands(formatted)
+end
+
+function ddz.tranlateTimeLapsed(dt, isMs)
+  if isMs then
+    dt = math.floor(dt / 1000)
+  end
+  local now = os.time()
+  local diff = now - dt
+  local result = {}
+  local diffUnit
+
+  if diff < SECONDS_IN_MIN then
+    --diffUnit = math.floor(diff / SECONDS_IN_MIN)
+    result.en = '1 min ago'
+    result.cn = '1 分钟前'
+  elseif diff < SECONDS_IN_HOUR then
+    diffUnit = math.floor(diff / SECONDS_IN_MIN)
+    result.en = string.format('%d min(s) ago', diffUnit)
+    result.cn = string.format('%d 分钟前', diffUnit)
+  elseif diff < SECONDS_IN_DAY then
+    diffUnit = math.floor(diff / SECONDS_IN_HOUR)
+    result.en = string.format('%d hour(s) ago', diffUnit)
+    result.cn = string.format('%d 小时前', diffUnit)
+  elseif diff < SECONDS_IN_WEEK then
+    diffUnit = math.floor(diff / SECONDS_IN_DAY)
+    result.en = string.format('%d day(s) ago', diffUnit)
+    result.cn = string.format('%d 天前', diffUnit)
+  elseif diff < SECONDS_IN_MONTH then
+    diffUnit = math.floor(diff / SECONDS_IN_DAY / 7)
+    result.en = string.format('%d week(s) ago', diffUnit)
+    result.cn = string.format('%d 周前', diffUnit)
+  elseif diff < SECONDS_IN_YEAR then
+    diffUnit = math.floor(diff / SECONDS_IN_DAY / 30)
+    result.en = string.format('%d month(s) ago', diffUnit)
+    result.cn = string.format('%d 月前', diffUnit)
+  elseif diff > SECONDS_IN_YEAR then
+    diffUnit = math.floor(diff / SECONDS_IN_DAY / 365)
+    result.en = string.format('%d year(s) ago', diffUnit)
+    result.cn = string.format('%d 年前', diffUnit)
+  else
+    result.en = os.date('%Y-%m-%d %H:%M', dt)
+    result.cn = os.date('%Y-%m-%d %H:%M', dt)
+  end
+
+  return result
 end
 
 local _onEndListeners = {}

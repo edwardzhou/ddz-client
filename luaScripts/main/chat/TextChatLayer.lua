@@ -31,7 +31,7 @@ function TextChatLayer:init()
 
   local uiRoot = cc.CSLoader:createNode('GamingChatLayer.csb')
   self:addChild(uiRoot)
-  require('utils.UIVariableBinding').bind(uiRoot, self, self,true)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initTouch()
   self:initKeypadHandler()
   

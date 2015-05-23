@@ -40,18 +40,45 @@ function HallScene2:on_enter()
   self:updateUserInfo()
   self.gameConnection.needReconnect = false
   self.gameConnection:checkLoginRewardEvent()
+
+  if self.reloadPlayedData then
+    self:loadPlayedList()
+  end
 end
 
 function HallScene2:on_enterTransitionFinish()
+  local this = self
+
+  if ddz.gotoAppointPlay ~= nil then
+    self:enterAppointPlay()
+  end
+
+  this.gameConnection:getAppointPlays()
+end
+
+function HallScene2:enterAppointPlay()
+  local this = self
+  if ddz.gotoAppointPlay ~= nil then
+    local appointPlay = ddz.gotoAppointPlay
+    ddz.gotoAppointPlay = nil
+    local gameRoom = {roomId=10000, roomName='约战房', tableId=appointPlay.appointId}
+    this:tryEnterRoom(gameRoom)
+  end
 end
 
 function HallScene2:on_cleanup()
 end
 
 function HallScene2:init()
+  local this = self
   self:initKeypadHandler()
   local rootLayer = cc.Layer:create()
   self:addChild(rootLayer)
+
+  this.reloadPlayedData = true
+  this.reloadFriendData = true
+
+  this.appointUsers = {}
 
   self.gameConnection = require('network.GameConnection')
   self.gameConnection:scheduleUpdateSession()
@@ -63,20 +90,6 @@ function HallScene2:init()
 --  ui:setPosition(0, 0)
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
-
-  -- ddz.clearPressedDisabledTexture({
-  --   self.ButtonStore,
-  --   self.ButtonTask,
-  --   self.ButtonAssets,
-  --   self.ButtonHead,
-  --   self.ButtonHelp,
-  --   self.ButtonMsg,
-  --   self.ButtonSetting,
-  --   self.ButtonVip,
-  --   self.ButtonPrize,
-  --   self.ButtonNormalRoom,
-  --   self.ButtonYueZhan
-  -- })
 
   TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
       action = ddz.ViewAction.ACTION_ENTER_VIEW,
@@ -90,9 +103,7 @@ function HallScene2:init()
       self.gameConnection.pomeloClient:emit('onLoginReward', data)
     end)
 
-  
   local textureCache = cc.Director:getInstance():getTextureCache()
-  
   
   --local modelPanel = ccui.Helper:seekWidgetByName(ui, 'model_Panel')
   ddz.clearPressedDisabledTexture(self.PanelFriendsItemModel:getChildByName('ButtonUserHead'))
@@ -111,13 +122,21 @@ function HallScene2:init()
   listview:setItemModel(model)
   listview:setVisible(true)
 
+  model = self.PanelAppointItemModel:clone()
+  self.PanelAppointItemModel:setVisible(false)
+  model:setVisible(true)
+  listview = self.ListViewAppointUser
+  listview:setItemModel(model)
 
+  self.PanelAppointPlay:setVisible(false)
 
   local gameRooms = ddz.GlobalSettings.rooms
 
   self.CheckBoxFriends:setSelected(false)
   self.CheckBoxPlayed:setSelected(true)
-  self:loadPlayedList()
+
+  self.AppointPlaysTip:setVisible(false)
+  -- self:loadPlayedList()
 
   -- for i=1, 5 do
   --   listview:pushBackDefaultItem()
@@ -135,6 +154,8 @@ function HallScene2:init()
   snow = cc.ParticleSystemQuad:create('snow.plist')
   snow:setPosition(600, 480)
   rootLayer:addChild(snow)
+
+  self:startAppointPlaysUpdater()
 
   --require('utils.UIVariableBinding').bind(ui, self, self)
 
@@ -190,15 +211,29 @@ function HallScene2:loadPlayedList(refresh)
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
+      item:getChildByName('LabelUserCoins'):setString(
+          ddz.tranlateTimeLapsed(userInfo.lastPlayed, true).cn
+        )
+
+      local button = item:getChildByName('ButtonAddFriend')
+      button.userInfo = userInfo
+      if userInfo.isFriend then
+        button:setVisible(false)
+      else
+        button:addClickEventListener(function(sender) 
+            this:addFriend(sender.userInfo)
+          end)
+      end
     end
     this.playedListLoaded = true
   end
 
   local function loadData(cb)
-    if ddz.playedUsers == nil or refresh then
-      this.gameConnection:request('ddz.hallHandler.getPlayWithMeUsers', {}, function(data)
-          dump(data, 'ddz.hallHandler.getPlayWithMeUsers => data', 3)
+    if ddz.playedUsers == nil or this.reloadPlayedData then
+      this.gameConnection:request('ddz.friendshipHandler.getPlayWithMeUsers', {}, function(data)
+          dump(data, 'ddz.friendshipHandler.getPlayWithMeUsers => data', 3)
           ddz.playedUsers = data.users
+          this.reloadPlayedData = false
           utils.invokeCallback(cb)
         end)
     else
@@ -206,12 +241,79 @@ function HallScene2:loadPlayedList(refresh)
     end
   end
 
-  if this.playedListLoaded then
+  if this.playedListLoaded and not this.reloadPlayedData then
     return
   end
 
   loadData(fillPlayedList)
+end
 
+function HallScene2:createAppointPlay()
+  local this = self;
+  local params = {
+    player1_userId = this.appointUsers[1].userId,
+    player2_userId = this.appointUsers[2].userId
+  }
+  this.gameConnection:request('ddz.appointPlayHandler.createAppointPlay', params, function(data) 
+      dump(data, '[ddz.appointPlayHandler.createAppointPlay] resp => ')
+      this.PanelAppointPlay:setVisible(false)
+      this.appointUsers = {}
+      this.ListViewAppointUser:removeAllItems()
+
+      if data.result then
+        local gameRoom = {roomId=10000, roomName='约战房', tableId = data.appointPlay.appointId}
+        this:tryEnterRoom(gameRoom)
+      end
+    end)
+end
+
+function HallScene2:ButtonCreateAppointPlay_onClicked()
+  self:createAppointPlay()
+end
+
+function HallScene2:addUserToAppointPlay(userInfo)
+  local this = self
+  self.PanelAppointPlay:setVisible(true)
+  if #self.appointUsers > 1 then
+    return
+  end
+
+  if table.indexOf(self.appointUsers, userInfo) > 0 then
+    return
+  end
+
+  table.insert(this.appointUsers, userInfo)
+  local listview = this.ListViewAppointUser
+
+  this.ButtonCreateAppointPlay:setEnabled(#this.appointUsers > 1)
+  this.ButtonCreateAppointPlay:setBright(#this.appointUsers > 1)
+
+  listview:pushBackDefaultItem()
+  local itemIndex = #self.appointUsers
+  local item = listview:getItem(itemIndex-1)
+  item.userInfo = userInfo
+  item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
+  local iconIndex = tonumber(userInfo.headIcon)
+  if iconIndex == nil or iconIndex < 1 then
+    iconIndex = os.time() % 8 + 1
+  end
+  item:getChildByName('ImageHeadIcon'):loadTexture(
+      string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+      ccui.TextureResType.localType
+    )
+  item:getChildByName('LabelUserCoins'):setString(
+      ddz.tranlateTimeLapsed(userInfo.addDate, true).cn
+    )
+  local button = item:getChildByName('ButtonRemove')
+  button:addClickEventListener(function(sender) 
+      table.removeItem(this.appointUsers, userInfo)
+      listview:removeChild(item, true)
+      if #this.appointUsers == 0 then
+        self.PanelAppointPlay:setVisible(false)
+      end
+      this.ButtonCreateAppointPlay:setEnabled(#this.appointUsers > 1)
+      this.ButtonCreateAppointPlay:setBright(#this.appointUsers > 1)
+    end)
 end
 
 function HallScene2:loadFriendsList(refresh)
@@ -225,7 +327,7 @@ function HallScene2:loadFriendsList(refresh)
       listview:pushBackDefaultItem()
       local item = listview:getItem(i-1)
       item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
-      local iconIndex = userInfo.headIcon
+      local iconIndex = tonumber(userInfo.headIcon)
       if iconIndex == nil or iconIndex < 1 then
         iconIndex = os.time() % 8 + 1
       end
@@ -233,15 +335,24 @@ function HallScene2:loadFriendsList(refresh)
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
+      item:getChildByName('LabelUserCoins'):setString(
+          ddz.tranlateTimeLapsed(userInfo.addDate, true).cn
+        )
+      local button = item:getChildByName('ButtonYZ')
+      button.userInfo = userInfo
+      button:addClickEventListener(function(sender) 
+          this:addUserToAppointPlay(userInfo)
+        end)
     end
     this.friendsListLoaded = true
   end
 
   local function loadData(cb)
-    if ddz.myFriends == nil or refresh then
-      this.gameConnection:request('ddz.hallHandler.getFriends', {}, function(data)
-          dump(data, 'ddz.hallHandler.getFriends => data', 3)
+    if ddz.myFriends == nil or this.reloadFriendData then
+      this.gameConnection:request('ddz.friendshipHandler.getFriends', {}, function(data)
+          dump(data, 'ddz.friendshipHandler.getFriends => data', 5)
           ddz.myFriends = data.users
+          this.reloadFriendData = false
           utils.invokeCallback(cb)
         end)
     else
@@ -249,7 +360,7 @@ function HallScene2:loadFriendsList(refresh)
     end
   end
 
-  if this.friendsListLoaded then
+  if this.friendsListLoaded and not this.reloadFriendData then
     return
   end
 
@@ -265,6 +376,16 @@ function HallScene2:ListViewRooms_onEvent(sender, eventType)
   --   dump(gameRoom, 'selected room: ')
   --   this:tryEnterRoom(gameRoom)
   -- end
+end
+
+function HallScene2:addFriend(userInfo)
+  local this = self
+  local params = {
+    friend_userId = userInfo.userId
+  }
+  this.gameConnection:request('ddz.friendshipHandler.addFriend', params, function(data) 
+      dump(data, '[ddz.friendshipHandler.addFriend] data => ', 5)
+    end)
 end
 
 function HallScene2:tryEnterRoom(gameRoom)
@@ -360,6 +481,7 @@ function HallScene2:tryEnterRoom(gameRoom)
       if data.retCode == ddz.ErrorCode.SUCCESS then
         ddz.selectedRoom = data.room;
         ddz.selectedRoom.tableId = gameRoom.tableId 
+        this.reloadPlayedData = true
         local createGameScene = require('gaming.GameScene2')
         local gameScene = createGameScene()
         cc.Director:getInstance():pushScene(gameScene)
@@ -508,8 +630,24 @@ end
 
 function HallScene2:ButtonAppointPlay_onClicked(sender, event)
   local this = self
-  local rooms = ddz.GlobalSettings.rooms
-  local gameRoom = {roomId=10000, roomName='约战房', tableId = 1}
+  local appointPlay = nil
+
+  if ddz.appointPlays == nil or #ddz.appointPlays == 0 then
+    local msgParams = {
+      msg = '尚未有约战发起或约战已过期, 请在好友列表中选取两名好友并创建约战。'
+      , grayBackground = true
+      , closeOnClickOutside = true
+      , buttonType = 'ok | close'
+    }
+    showMessageBox(self, msgParams)
+    return
+  end
+
+  if #ddz.appointPlays == 1 then
+    appointPlay = ddz.appointPlays[1]
+  end
+
+  local gameRoom = {roomId=10000, roomName='约战房', tableId = appointPlay.appointId}
   this:tryEnterRoom(gameRoom)
 end
 
@@ -573,6 +711,113 @@ function HallScene2:CheckBoxFriends_onEvent(sender, eventType)
   end
 end
 
+function HallScene2:onReplyFriend(data)
+  self.reloadFriendData = true
+  if self.CheckBoxFriends:isSelected() then
+    self:loadFriendsList()
+  end
+end
+
+function HallScene2:ButtonAddFriend_onClicked()
+  local params = {
+    msg = string.format('请先输入好友ID!')
+    , grayBackground = true
+    , closeOnClickOutside = false
+    , buttonType = 'ok'
+  }
+
+  showMessageBox(self, params)
+
+end
+
+function HallScene2:backToHallForAppointPlay()
+  self:enterAppointPlay()
+end
+
+function HallScene2:onAppointPlaysUpdated()
+  --dump(ddz.appointPlays, '[HallScene2:onAppointPlaysUpdated] appointPlays =>')
+  local this = self
+
+  if ddz.appointPlays and #ddz.appointPlays > 0 then
+
+    if self.AppointPlaysTip:isVisible() then
+      return
+    end
+
+    self.AppointPlaysTip:setVisible(true)
+    self.AppointPlaysTip:stopAllActions()
+    self.AppointPlaysTip:runAction(cc.RepeatForever:create(
+        cc.Sequence:create(
+            cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.2), 0.2),
+            cc.DelayTime:create(0.1),
+            cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.15), 0.2),
+            cc.DelayTime:create(0.1)
+          )
+      ))
+  else
+    if not self.AppointPlaysTip:isVisible() then
+      return 
+    end
+    self.AppointPlaysTip:setVisible(false)
+    self.AppointPlaysTip:stopAllActions()
+  end
+
+end
+
+
+function HallScene2:startAppointPlaysUpdater()
+  local this = self
+
+  local function isExpired(expired_at)
+    -- 如果是带微秒的，保留到秒级别
+    if expired_at > 5000000000 then
+      expired_at = math.floor(expired_at / 1000)
+    end
+
+    -- 3秒内即将过期的，都视为过期
+    return (expired_at - os.time() <= 3);
+  end
+
+  local function checkAppointPlays()
+    if ddz.appointPlays == nil or #ddz.appointPlays == 0 then
+      if this.AppointPlaysTip:isVisible() then
+        this.AppointPlaysTip:stopAllActions()
+        this.AppointPlaysTip:setVisible(true)
+      end
+      return
+    end
+
+    -- if this.AppointPlaysTip:isVisible() then
+    --   return
+    -- end
+
+    -- this.AppointPlaysTip:setVisible(true)
+
+    local appointPlay
+    local hasChanges = false
+
+    for index = #ddz.appointPlays, 1, -1 do
+      appointPlay = ddz.appointPlays[index]
+      if isExpired(appointPlay.expired_at) then
+        table.remove(ddz.appointPlays, index)
+        hasChanges = true
+      end
+    end
+
+    if hasChanges then
+      this:onAppointPlaysUpdated()
+    end
+  end
+
+  self:runAction(cc.RepeatForever:create(
+      cc.Sequence:create(
+          cc.DelayTime:create(1),
+          cc.CallFunc:create(function() 
+              checkAppointPlays()
+            end)
+        )
+    )) 
+end
 
 local function createScene()
   local scene = cc.Scene:create()

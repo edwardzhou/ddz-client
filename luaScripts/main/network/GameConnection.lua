@@ -23,6 +23,8 @@ function GameConnection:ctor(userId, sessionToken)
       this:hookLoginRewardEvent()
       this:hookBankruptRewardEvent()
       this:hookServerGamingChatEvents()
+      this:hookAddFriendEvent()
+      this:hookAppointPlayEvent()
     end)
 end
 
@@ -353,6 +355,8 @@ require('network.ChargeResultEventPlugin').bind(GameConnection)
 require('network.LoginRewardEventPlugin').bind(GameConnection)
 require('network.BankruptAwardPlugin').bind(GameConnection)
 require('network.GamingChatPlugin').bind(GameConnection)
+require('network.AddFriendEventPlugin').bind(GameConnection)
+require('network.AppointPlayEventPlugin').bind(GameConnection)
 
 
 local gameConn = GameConnection.new()

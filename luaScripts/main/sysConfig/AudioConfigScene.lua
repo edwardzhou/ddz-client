@@ -51,7 +51,7 @@ function AudioConfigScene:init()
   rootLayer:addChild(uiRoot)
   self.uiRoot = uiRoot
 
-  require('utils.UIVariableBinding').bind(uiRoot, self, self, true)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
 
   self:initKeypadHandler()
 
