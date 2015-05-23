@@ -18,7 +18,7 @@ function ChatLayer:init()
 
   local uiRoot = cc.CSLoader:createNode('ChatLayer.csb')
   self:addChild(uiRoot)
-  require('utils.UIVariableBinding').bind(uiRoot, self, self,true)
+  require('utils.UIVariableBinding').bind(uiRoot, self, self)
   self:initTouch()
   self:initKeypadHandler()
   

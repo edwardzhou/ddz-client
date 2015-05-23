@@ -19,19 +19,19 @@ function CardTypeLoader.loadAllCardType(name)
   --CardTypeLoader.loadFromLua()
 
   local s1, s2, s3
-  print('start to load ' , name)
+  -- print('start to load ' , name)
   s1 = socket.gettime() 
   local jsonStr = cc.FileUtils:getInstance():getStringFromFile(name)
   s2 = socket.gettime()
-  print('start to decode ' , name)
+  -- print('start to decode ' , name)
 
   table.merge(AllCardTypes, cjson.decode(jsonStr) )
   s3 = socket.gettime()
-  print('decode ' , name, ' finished')
+  -- print('decode ' , name, ' finished')
 
-  print('load json => ' , s2 - s1)
-  print('decode json => ', s3 - s2)
-  print('total => ', s3 - s1)
+  -- print('load json => ' , s2 - s1)
+  -- print('decode json => ', s3 - s2)
+  -- print('total => ', s3 - s1)
 end
 
 function CardTypeLoader.loadAllCardTypeX(scene, progressCb, finishCb)
