@@ -691,6 +691,11 @@ function HallScene2:ButtonSetting_onClicked(sender, eventType)
   require('sysConfig.AudioConfigLayer').showAudioConfig(self, {})
 end
 
+function HallScene2:ButtonHelp_onClicked(sender, eventType)
+  require('help.HelpLayer').showHelp(self, {})
+end
+
+
 function HallScene2:ButtonQuickStart_onClicked(sender, eventType)
   self:ButtonNormalRoom_onClicked(sender, eventType)
 end
