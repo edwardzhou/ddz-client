@@ -5,6 +5,7 @@ local showToastBox = require('UICommon.ToastBox2').showToastBox
 local hideToastBox = require('UICommon.ToastBox2').hideToastBox
 local utils = require('utils.utils')
 local HallScene2 = class('HallScene2')
+local showAppointPlayList = require('appointPlay.AppointPlayListLayer').showAppointPlayList
 
 function HallScene2.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -643,12 +644,17 @@ function HallScene2:ButtonAppointPlay_onClicked(sender, event)
     return
   end
 
-  if #ddz.appointPlays == 1 then
+  if #ddz.appointPlays > 1 then
+    showAppointPlayList(this, function(appointPlay) 
+        local gameRoom = {roomId=10000, roomName='约战房', tableId = appointPlay.appointId}
+        this:tryEnterRoom(gameRoom)
+      end)
+  else
     appointPlay = ddz.appointPlays[1]
+    local gameRoom = {roomId=10000, roomName='约战房', tableId = appointPlay.appointId}
+    this:tryEnterRoom(gameRoom)
   end
 
-  local gameRoom = {roomId=10000, roomName='约战房', tableId = appointPlay.appointId}
-  this:tryEnterRoom(gameRoom)
 end
 
 

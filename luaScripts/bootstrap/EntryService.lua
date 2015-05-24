@@ -2,8 +2,8 @@ local AccountInfo = require('AccountInfo')
 local cjson = require('cjson.safe')
 local EntryService = class('EntryService')
 local utils = require('utils.utils')
-local showConnectingBox = require('UICommon.ConnectingBox').showConnectingBox
-local hideConnectingBox = require('UICommon.ConnectingBox').hideConnectingBox
+local showConnectingBox = require('UICommon.ConnectingBox2').showConnectingBox
+local hideConnectingBox = require('UICommon.ConnectingBox2').hideConnectingBox
 local scheduler = require('framework.scheduler')
 
 function EntryService:ctor(params)
