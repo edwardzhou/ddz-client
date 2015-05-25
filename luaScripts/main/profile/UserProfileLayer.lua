@@ -132,7 +132,7 @@ end
 function UserProfileLayer:CheckboxFemale_onEvent(sender, eventType)
   print('[UserProfileLayer:CheckboxFemale_onEvent] eventType => ', eventType)
   if self.CheckboxMale:isSelected() then
-    self.CheckboxMale:setSelected(false)    
+    self.CheckboxMale:setSelected(false)
   else
     self.CheckboxFemale:setSelected(true)
   end

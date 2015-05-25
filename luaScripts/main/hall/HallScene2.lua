@@ -6,6 +6,7 @@ local hideToastBox = require('UICommon.ToastBox2').hideToastBox
 local utils = require('utils.utils')
 local HallScene2 = class('HallScene2')
 local showAppointPlayList = require('appointPlay.AppointPlayListLayer').showAppointPlayList
+local showUserInfo = require('profile.UserInfoLayer').showUserInfo
 
 function HallScene2.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -208,6 +209,7 @@ function HallScene2:loadPlayedList(refresh)
       if iconIndex == nil or tonumber(iconIndex) < 1 then
         iconIndex = os.time() % 8 + 1
       end
+      userInfo.headIcon = iconIndex
       item:getChildByName('ImageHeadIcon'):loadTexture(
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
@@ -225,6 +227,11 @@ function HallScene2:loadPlayedList(refresh)
             this:addFriend(sender.userInfo)
           end)
       end
+      button = item:getChildByName('ButtonUserHead')
+      button.userInfo = userInfo
+      button:addClickEventListener(function(sender) 
+          this:showUserInfo(sender.userInfo)
+        end)
     end
     this.playedListLoaded = true
   end
@@ -296,7 +303,7 @@ function HallScene2:addUserToAppointPlay(userInfo)
   item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
   local iconIndex = tonumber(userInfo.headIcon)
   if iconIndex == nil or iconIndex < 1 then
-    iconIndex = os.time() % 8 + 1
+    iconIndex = math.floor(math.random() * 10000000) % 8 + 1
   end
   item:getChildByName('ImageHeadIcon'):loadTexture(
       string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
@@ -330,8 +337,9 @@ function HallScene2:loadFriendsList(refresh)
       item:getChildByName('LabelUserNickName'):setString(string.format('%s (%d)', userInfo.nickName, userInfo.userId))
       local iconIndex = tonumber(userInfo.headIcon)
       if iconIndex == nil or iconIndex < 1 then
-        iconIndex = os.time() % 8 + 1
+        iconIndex = math.floor(math.random() * 10000000) % 8 + 1
       end
+      userInfo.headIcon = iconIndex
       item:getChildByName('ImageHeadIcon'):loadTexture(
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
@@ -343,6 +351,11 @@ function HallScene2:loadFriendsList(refresh)
       button.userInfo = userInfo
       button:addClickEventListener(function(sender) 
           this:addUserToAppointPlay(userInfo)
+        end)
+      button = item:getChildByName('ButtonUserHead')
+      button.userInfo = userInfo
+      button:addClickEventListener(function(sender) 
+          this:showUserInfo(sender.userInfo)
         end)
     end
     this.friendsListLoaded = true
@@ -828,6 +841,10 @@ function HallScene2:startAppointPlaysUpdater()
             end)
         )
     )) 
+end
+
+function HallScene2:showUserInfo(userInfo)
+  showUserInfo(self, userInfo)
 end
 
 local function createScene()
