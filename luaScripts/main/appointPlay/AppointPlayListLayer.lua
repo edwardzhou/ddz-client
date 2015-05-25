@@ -70,7 +70,7 @@ function AppointPlayListLayer:init()
   local player1, player2
 
   local appointPlays = table.copy(ddz.appointPlays)
-  --table.append(appointPlays, ddz.appointPlays)
+  --  table.append(appointPlays, ddz.appointPlays)
 
   for index=1, #appointPlays do
     appointPlay = appointPlays[index]
