@@ -290,6 +290,12 @@ function UIButtonsPlugin.bind( theClass )
   	self:sendRandMessage(self.SelfUserHead)
   end
 
+  function theClass:ButtonRoomList_onClicked(sender, eventType)
+    print('[theClass:ButtonRoomList_onClicked] clicked')
+    local roomList = require('hall.RoomListLayer').new(ddz.selectedRoom.roomId)
+    self:addChild(roomList)
+  end
+
 end
 
 return UIButtonsPlugin

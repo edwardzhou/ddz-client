@@ -338,6 +338,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     fileUtils->addSearchPath("/sdcard/fungame/DDZ", true);
     fileUtils->addSearchPath(fileUtils->getWritablePath() + "res", true);
     fileUtils->addSearchPath(fileUtils->getWritablePath() + "res/NewUI", true);
+    fileUtils->addSearchPath(fileUtils->getWritablePath() + "res/NewUI/NewRes", true);
     fileUtils->addSearchPath(fileUtils->getWritablePath() + "prog", true);
 
  //    int nRet;

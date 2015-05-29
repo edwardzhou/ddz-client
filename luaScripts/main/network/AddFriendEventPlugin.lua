@@ -7,7 +7,7 @@ local utils = require('utils.utils')
 
 function AddFriendEventPlugin.bind (theClass)
 
-  function theClass:confirmAddFriend(friend_userId, accept)
+  function theClass:confirmAddFriend(friend_userId, accept, callback)
     local this = self
 
     local params = {
@@ -17,6 +17,7 @@ function AddFriendEventPlugin.bind (theClass)
 
     this:request('ddz.friendshipHandler.confirmAddFriend', params, function(data)
         dump(data, '[ddz.friendshipHandler.confirmAddFriend] response => ')
+        utils.invokeCallback(callback, data)
       end)
   end
 
@@ -39,7 +40,9 @@ function AddFriendEventPlugin.bind (theClass)
       buttonType = 'ok | cancel',
       grayBackground = true,
       onOk = function()
-          this:confirmAddFriend(userInfo.userId, true)
+          this:confirmAddFriend(userInfo.userId, true, function(data) 
+            utils.invokeCallback(runningScene.onReplyFriend, runningScene, data)
+          end)
         end,
       onCancel = function()
           this:confirmAddFriend(userInfo.userId, false)
@@ -75,6 +78,7 @@ function AddFriendEventPlugin.bind (theClass)
     }
 
     showMessageBox(runningScene, params)
+    ddz.needReloadFriendList = true
 
     utils.invokeCallback(runningScene.onReplyFriend, runningScene, data)
   end
