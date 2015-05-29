@@ -56,6 +56,14 @@ function HallScene2:on_enterTransitionFinish()
   end
 
   this.gameConnection:getAppointPlays()
+
+  if ddz.needReloadFriendList then
+    ddz.needReloadFriendList = false
+    self.reloadFriendData = true
+    if self.CheckBoxFriends:isSelected() then
+      self:loadFriendsList()
+    end
+  end
 end
 
 function HallScene2:enterAppointPlay()
@@ -138,6 +146,10 @@ function HallScene2:init()
   self.CheckBoxPlayed:setSelected(true)
 
   self.AppointPlaysTip:setVisible(false)
+  self.MailBoxTip:setVisible(false)
+  self.TasksTip:setVisible(false)
+
+  self:getMyMsgBox()
   -- self:loadPlayedList()
 
   -- for i=1, 5 do
@@ -399,6 +411,14 @@ function HallScene2:addFriend(userInfo)
   }
   this.gameConnection:request('ddz.friendshipHandler.addFriend', params, function(data) 
       dump(data, '[ddz.friendshipHandler.addFriend] data => ', 5)
+      local msgBoxParams = {
+        msg = '好友申请已送到, 等待对方确认!'
+        , grayBackground = true
+        , closeOnClickOutside = true
+        , autoClose = 3
+        , buttonType = 'ok | close'
+      }
+      showMessageBox(self, msgBoxParams)
     end)
 end
 
@@ -685,6 +705,11 @@ function HallScene2:ButtonBack_onClicked(sender, eventType)
   -- body
 end
 
+function HallScene2:ButtonMsg_onClicked(sender, eventType)
+  local scene = require('mailbox.MailBoxScene')()
+  cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
+end
+
 function HallScene2:ButtonStore_onClicked(sender, eventType)
   local scene = require('shop.ShopScene')()
   cc.Director:getInstance():pushScene(cc.TransitionMoveInR:create(0.25, scene))
@@ -735,6 +760,7 @@ function HallScene2:CheckBoxFriends_onEvent(sender, eventType)
   end
 end
 
+
 function HallScene2:onReplyFriend(data)
   self.reloadFriendData = true
   if self.CheckBoxFriends:isSelected() then
@@ -758,36 +784,41 @@ function HallScene2:backToHallForAppointPlay()
   self:enterAppointPlay()
 end
 
+function HallScene2:startTips(tipObj)
+  if tipObj:isVisible() then
+    return
+  end
+
+  tipObj:setVisible(true)
+  tipObj:stopAllActions()
+  tipObj:runAction(cc.RepeatForever:create(
+      cc.Sequence:create(
+          cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.2), 0.2),
+          cc.DelayTime:create(0.1),
+          cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.15), 0.2),
+          cc.DelayTime:create(0.1)
+        )
+    ))
+end
+
+function HallScene2:stopTips(tipObj)
+  if not tipObj:isVisible() then
+    return 
+  end
+  tipObj:stopAllActions()
+  tipObj:setVisible(false)
+end
+
 function HallScene2:onAppointPlaysUpdated()
   --dump(ddz.appointPlays, '[HallScene2:onAppointPlaysUpdated] appointPlays =>')
   local this = self
 
   if ddz.appointPlays and #ddz.appointPlays > 0 then
-
-    if self.AppointPlaysTip:isVisible() then
-      return
-    end
-
-    self.AppointPlaysTip:setVisible(true)
-    self.AppointPlaysTip:stopAllActions()
-    self.AppointPlaysTip:runAction(cc.RepeatForever:create(
-        cc.Sequence:create(
-            cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.2), 0.2),
-            cc.DelayTime:create(0.1),
-            cc.EaseElasticInOut:create(cc.ScaleTo:create(0.5, 0.15), 0.2),
-            cc.DelayTime:create(0.1)
-          )
-      ))
+    this:startTips(this.AppointPlaysTip)
   else
-    if not self.AppointPlaysTip:isVisible() then
-      return 
-    end
-    self.AppointPlaysTip:setVisible(false)
-    self.AppointPlaysTip:stopAllActions()
+    this:stopTips(this.AppointPlaysTip)
   end
-
 end
-
 
 function HallScene2:startAppointPlaysUpdater()
   local this = self
@@ -804,10 +835,7 @@ function HallScene2:startAppointPlaysUpdater()
 
   local function checkAppointPlays()
     if ddz.appointPlays == nil or #ddz.appointPlays == 0 then
-      if this.AppointPlaysTip:isVisible() then
-        this.AppointPlaysTip:stopAllActions()
-        this.AppointPlaysTip:setVisible(true)
-      end
+      this:stopTips(this.AppointPlaysTip)
       return
     end
 
@@ -833,14 +861,35 @@ function HallScene2:startAppointPlaysUpdater()
     end
   end
 
+  local function checkMailBox()
+    if ddz.myMsgBox == nil or ddz.myMsgBox.addFriendMsgs == nil or #ddz.myMsgBox.addFriendMsgs == 0 then
+      this:stopTips(this.MailBoxTip)
+      return
+    end
+
+    if #ddz.myMsgBox.addFriendMsgs > 0 then
+      this:startTips(this.MailBoxTip)
+    end
+  end
+
   self:runAction(cc.RepeatForever:create(
       cc.Sequence:create(
           cc.DelayTime:create(1),
           cc.CallFunc:create(function() 
               checkAppointPlays()
+              checkMailBox()
             end)
         )
     )) 
+end
+
+function HallScene2:getMyMsgBox()
+  self.gameConnection:request('ddz.friendshipHandler.getMyMessageBoxes', {}, function(data) 
+    dump(data, '[ddz.friendshipHandler.getMyMessageBoxes] response => ', 5)
+    if data.result then
+      ddz.myMsgBox = data.myMsgBox
+    end
+  end)
 end
 
 function HallScene2:showUserInfo(userInfo)
