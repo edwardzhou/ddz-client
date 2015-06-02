@@ -223,9 +223,13 @@ function MailBoxScene:loadChatMsgs()
   end
 
   listView:removeAllItems()
-  addItems(ddz.myMsgBox.chatMsgs)
+  local msgCount = 0
+  if ddz.myMsgBox and ddz.myMsgBox.chatMsgs and #ddz.myMsgBox.chatMsgs > 0 then
+    addItems(ddz.myMsgBox.chatMsgs)
+    msgCount = #ddz.myMsgBox.chatMsgs
+  end
 
-  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.chatMsgs))
+  this.MsgCount:setString(string.format('共 %d 条消息', msgCount))
 
 end
 
@@ -259,9 +263,14 @@ function MailBoxScene:loadMsgBoxItem()
       end, {}, 0.1)
   end
   
+  local msgCount = 0
   listView:removeAllItems()
-  addAddFriendMsgItems(ddz.myMsgBox.addFriendMsgs)
-  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.addFriendMsgs))
+  if ddz.myMsgBox and ddz.myMsgBox.addFriendMsgs and #ddz.myMsgBox.addFriendMsgs > 0 then
+    addAddFriendMsgItems(ddz.myMsgBox.addFriendMsgs)
+    msgCount = #ddz.myMsgBox.chatMsgs
+  end
+
+  this.MsgCount:setString(string.format('共 %d 条消息', msgCount))
 end
 
 function MailBoxScene:initKeypadHandler()
