@@ -369,6 +369,13 @@ function HallScene2:loadFriendsList(refresh)
       button:addClickEventListener(function(sender) 
           this:showUserInfo(sender.userInfo)
         end)
+
+      button = item:getChildByName('ButtonChat')
+      button.userInfo = userInfo
+      button:addClickEventListener(function(sender)
+          local chatLayer = require('chat.TextChatLayer').new(this.gameConnection, sender.userInfo.userId)
+          this:addChild(chatLayer)
+        end)
     end
     this.friendsListLoaded = true
   end
@@ -863,6 +870,18 @@ function HallScene2:startAppointPlaysUpdater()
 
   local function checkMailBox()
     if ddz.myMsgBox == nil or ddz.myMsgBox.addFriendMsgs == nil or #ddz.myMsgBox.addFriendMsgs == 0 then
+      this:stopTips(this.MailBoxTip)
+      return
+    end
+
+    for index=#ddz.myMsgBox.addFriendMsgs, 1, -1 do
+      local msg = ddz.myMsgBox.addFriendMsgs[index]
+      if msg.status ~= 0 then
+        table.remove(ddz.myMsgBox.addFriendMsgs, index)
+      end
+    end
+
+    if #ddz.myMsgBox.addFriendMsgs == 0 then
       this:stopTips(this.MailBoxTip)
       return
     end

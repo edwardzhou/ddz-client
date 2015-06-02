@@ -53,69 +53,188 @@ function MailBoxScene:init()
   self:initKeypadHandler()
   self.SysMsgItemModel:setVisible(false)
   self.AddFriendItemModel:setVisible(false)
+  self.ChatMsgItemModel:setVisible(false)
 
   self:updateUserInfo()
+
+  -- local scrollSize = self.MsgHolder:getContentSize()
+
+  -- local label = cc.Label:create()
+  -- label:setAlignment(cc.TEXT_ALIGNMENT_LEFT)
+  -- label:setDimensions(scrollSize.width, scrollSize.height)
+  -- local text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你可以与其它开发者自由交流，分享心得，互帮互助，欢迎在本社区讨论和提问，官方技术支持人员提供解答。'
+  -- text = text .. text
+  -- --text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你'
+  -- label:setString(text)
+  -- label:setSystemFontSize(20)
+  -- label:setMaxLineWidth(scrollSize.width)
+  -- label:setHeight(0)
+  -- label:setLineBreakWithoutSpace(true)
+  -- label:setAnchorPoint(cc.p(0, 0))
+  -- label:setPosition(cc.p(0, 0))
+  -- label:setTextColor(cc.c4b(0xB7, 0x9C, 0x58, 255))
+
+  -- local labelSize = label:getContentSize()
+
+  -- if labelSize.height < scrollSize.height then
+  --   label:setPosition(cc.p(0, scrollSize.height - labelSize.height))
+  -- else
+  --   self.MsgHolder:setInnerContainerSize(cc.size(0, labelSize.height))
+  -- end
+
+  -- self.MsgHolder:addChild(label)
+
 end
 
 
 function MailBoxScene:on_enterTransitionFinish()
   local this = self
 
-  self:loadMsgBoxItem()
+  this:SysMsg_onClicked(this.SysMsg)
+  --self:loadMsgBoxItem()
 end
 
 function MailBoxScene:on_exit()
+end
+
+function MailBoxScene:addChatMsgItem(listView, itemData, pos)
+  local this = self
+
+  --local itemData = items[index]
+  local itemModel = this.ChatMsgItemModel:clone()
+  itemModel.itemData = itemData
+  itemModel:setVisible(true)
+  local uiObj = ccui.Helper:seekWidgetByName(itemModel, 'UserNickName')
+  uiObj:setString(string.format('%s (%d)', itemData.userInfo.nickName, itemData.userInfo.userId))
+  uiObj = ccui.Helper:seekWidgetByName(itemModel, 'sentTime')
+  uiObj:setString(ddz.tranlateTimeLapsed(itemData.date, true).cn)
+
+  local iconIndex = itemData.userInfo.headIcon or 1
+  uiObj = ccui.Helper:seekWidgetByName(itemModel, 'ImageHeadIcon')
+  uiObj:loadTexture(
+      string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+      ccui.TextureResType.localType
+    )
+
+  uiObj = ccui.Helper:seekWidgetByName(itemModel, 'MsgHolder')
+
+  local scrollSize = uiObj:getContentSize()
+  local label = cc.Label:create()
+  label:setAlignment(cc.TEXT_ALIGNMENT_LEFT)
+  label:setDimensions(scrollSize.width, scrollSize.height)
+  local text = itemData.chatMsg
+  --text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你'
+  label:setString(text)
+  label:setSystemFontSize(20)
+  label:setMaxLineWidth(scrollSize.width)
+  label:setHeight(0)
+  label:setLineBreakWithoutSpace(true)
+  label:setAnchorPoint(cc.p(0, 0))
+  label:setPosition(cc.p(0, 0))
+  label:setTextColor(cc.c4b(0xB7, 0x9C, 0x58, 255))
+
+  local labelSize = label:getContentSize()
+
+  if labelSize.height < scrollSize.height then
+    label:setPosition(cc.p(0, scrollSize.height - labelSize.height))
+  else
+    uiObj:setInnerContainerSize(cc.size(0, labelSize.height))
+  end
+  uiObj:addChild(label)
+
+  local button = ccui.Helper:seekWidgetByName(itemModel, 'ButtonReply')
+  button.userInfo = itemData.userInfo
+  button:addClickEventListener(function(sender)
+      local chatServer = require('network.GameConnection')
+      local chatLayer = require('chat.TextChatLayer').new(chatServer, sender.userInfo.userId)
+      this:addChild(chatLayer)
+    end)
+
+  if pos == nil then
+    listView:pushBackCustomItem(itemModel)
+  else
+    listView:insertCustomItem(itemModel, pos - 1)
+  end
+end
+
+function MailBoxScene:loadChatMsgs()
+  local this = self
+  local listView = self.ChatMsgList
+
+  local function addItems(items)
+    for index=1, #items do
+      this:addChatMsgItem(listView, items[index])
+      -- local itemData = items[index]
+      -- local itemModel = this.ChatMsgItemModel:clone()
+      -- itemModel.itemData = itemData
+      -- itemModel:setVisible(true)
+      -- local uiObj = ccui.Helper:seekWidgetByName(itemModel, 'UserNickName')
+      -- uiObj:setString(string.format('%s (%d)', itemData.userInfo.nickName, itemData.userInfo.userId))
+      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'sentTime')
+      -- uiObj:setString(ddz.tranlateTimeLapsed(itemData.date, true).cn)
+
+      -- local iconIndex = itemData.userInfo.headIcon or 1
+      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'ImageHeadIcon')
+      -- uiObj:loadTexture(
+      --     string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+      --     ccui.TextureResType.localType
+      --   )
+
+      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'MsgHolder')
+
+      -- local scrollSize = uiObj:getContentSize()
+      -- local label = cc.Label:create()
+      -- label:setAlignment(cc.TEXT_ALIGNMENT_LEFT)
+      -- label:setDimensions(scrollSize.width, scrollSize.height)
+      -- local text = itemData.chatMsg
+      -- --text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你'
+      -- label:setString(text)
+      -- label:setSystemFontSize(20)
+      -- label:setMaxLineWidth(scrollSize.width)
+      -- label:setHeight(0)
+      -- label:setLineBreakWithoutSpace(true)
+      -- label:setAnchorPoint(cc.p(0, 0))
+      -- label:setPosition(cc.p(0, 0))
+      -- label:setTextColor(cc.c4b(0xB7, 0x9C, 0x58, 255))
+
+      -- local labelSize = label:getContentSize()
+
+      -- if labelSize.height < scrollSize.height then
+      --   label:setPosition(cc.p(0, scrollSize.height - labelSize.height))
+      -- else
+      --   uiObj:setInnerContainerSize(cc.size(0, labelSize.height))
+      -- end
+      -- uiObj:addChild(label)
+
+      -- local button = ccui.Helper:seekWidgetByName(itemModel, 'ButtonReply')
+      -- button.userInfo = itemData.userInfo
+      -- button:addClickEventListener(function(sender)
+      --     local chatServer = require('network.GameConnection')
+      --     local chatLayer = require('chat.TextChatLayer').new(chatServer, sender.userInfo.userId)
+      --     this:addChild(chatLayer)
+      --   end)
+
+      -- listView:pushBackCustomItem(itemModel)
+    end
+
+    setTimeout(function()
+        listView:jumpToTop()
+      end, {}, 0.1)
+  end
+
+  listView:removeAllItems()
+  addItems(ddz.myMsgBox.chatMsgs)
+
+  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.chatMsgs))
+
 end
 
 function MailBoxScene:loadMsgBoxItem()
   local this = self
   local listView = self.MsgList
 
-
-  local function addListItem(pkg, index)
-    -- this.ShopItemList:pushBackDefaultItem()
-    -- local item = this.ShopItemList:getItem(index-1)
-    -- local label, imgIcon, price, button
-    -- price = pkg.price or 0.0
-    -- label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgName'), 'ccui.Text')
-    -- label:setString(pkg.packageName)
-    -- label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPkgDesc'), 'ccui.Text')
-    -- --label:ignoreContentAdaptWithSize(true)
-    -- label:setContentSize(cc.size(370, 60))
-    -- label:setPosition(96, 10)
-    -- label:setString(pkg.packageDesc)
-    -- -- label = tolua.cast(ccui.Helper:seekWidgetByName(item, 'LabelPrice'), 'ccui.Text')
-    -- -- label:setString(string.format('￥%0.2f 元', price/100))
-
-    -- imgIcon = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ImagePkgIcon'), 'ccui.ImageView')
-    -- if pkg.packageIcon then
-    --   local imgFilename = 'images/' .. pkg.packageIcon
-    --   print('packageIcon => ', imgFilename)
-    --   --imgIcon:loadTexture(imgFilename, ccui.TextureResType.localType)
-    -- end
-
-    -- button = tolua.cast(ccui.Helper:seekWidgetByName(item, 'ButtonBuy'), 'ccui.Button')
-    -- button.package = pkg
-    -- button:setTitleText(string.format('￥%0.2f', price/100))
-    -- button:addTouchEventListener(this._onButtonBuyClicked)
-    -- -- item:setOpacity(0)
-    -- -- item:runAction(cc.FadeIn:create(0.8))
-  end
-
   local function addAddFriendMsgItems(items)
-    -- local actions = {}
-    -- for i=1, #items do
-    --   local pkg = items[i]
-    --   table.insert(actions, cc.DelayTime:create(0.05))
-    --   table.insert(actions, cc.CallFunc:create(__bind(__bind(addListItem, pkg), i)))
-    -- end
-    -- table.insert(actions, cc.DelayTime:create(0.01))
-    -- table.insert(actions, cc.CallFunc:create(function() 
-    --     this.ShopItemList:jumpToTop()
-    --     this.ImageThumb:setPosition(3, 300)
-    --   end))
-    -- this:runAction(cc.Sequence:create(unpack(actions)))
-
+ 
     for index=1, #items do
       local itemData = items[index]
       local itemModel = this.AddFriendItemModel:clone()
@@ -134,10 +253,15 @@ function MailBoxScene:loadMsgBoxItem()
         end)
 
     end
+
+    setTimeout(function()
+        listView:jumpToTop()
+      end, {}, 0.1)
   end
   
   listView:removeAllItems()
   addAddFriendMsgItems(ddz.myMsgBox.addFriendMsgs)
+  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.addFriendMsgs))
 end
 
 function MailBoxScene:initKeypadHandler()
@@ -256,6 +380,63 @@ function MailBoxScene:ListView_onScrollViewEvent(sender, evenType)
 
 end
 
+function MailBoxScene:FriendsMsg_onClicked(sender, eventType)
+  local this = self
+
+  if self.isChatMsgShow then
+    return
+  end
+
+  self.isSysMsgShow = false
+  self.isChatMsgShow = true
+
+  self.FriendsMsg:loadTexture(
+      'NewRes/bg/bg_tab_focus_activity.png',
+      ccui.TextureResType.localType
+    )
+
+  self.SysMsg:loadTexture(
+      'NewRes/bg/bg_tab_blur_activity.png',
+      ccui.TextureResType.localType
+    )
+
+  self.ChatMsgList:setVisible(true)
+  self.MsgList:setVisible(false)
+
+  self:loadChatMsgs()
+end
+
+function MailBoxScene:SysMsg_onClicked(sender, eventType)
+  local this = self
+
+  if self.isSysMsgShow then
+    return
+  end
+
+  self.isSysMsgShow = true
+  self.isChatMsgShow = false
+
+  self.SysMsg:loadTexture(
+      'NewRes/bg/bg_tab_focus_activity.png',
+      ccui.TextureResType.localType
+    )
+
+  self.FriendsMsg:loadTexture(
+      'NewRes/bg/bg_tab_blur_activity.png',
+      ccui.TextureResType.localType
+    )
+
+  self.ChatMsgList:setVisible(false)
+  self.MsgList:setVisible(true)
+
+  self:loadMsgBoxItem()
+end
+
+function MailBoxScene:onServerChatMsg(data)
+  if self.isChatMsgShow then
+    self:addChatMsgItem(self.ChatMsgList, data, 1)
+  end
+end
 
 local function createScene()
   local scene = cc.Scene:create()
