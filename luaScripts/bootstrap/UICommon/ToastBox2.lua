@@ -54,7 +54,7 @@ function ToastBox2:doShow(params)
   local this = self
 
   self.LabelMsg:setString(params.msg)
-  local showingLoading = false
+  local showLoading = true
   local grayBackground = false
   local closeOnTouch = true
   local showingTime = params.showingTime or 3

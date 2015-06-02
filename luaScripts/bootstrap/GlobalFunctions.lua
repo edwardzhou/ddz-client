@@ -457,6 +457,7 @@ function ddz.tranlateTimeLapsed(dt, isMs)
   if isMs then
     dt = math.floor(dt / 1000)
   end
+  
   local now = os.time()
   local diff = now - dt
   local result = {}

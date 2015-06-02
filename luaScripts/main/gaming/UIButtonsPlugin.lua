@@ -230,7 +230,7 @@ function UIButtonsPlugin.bind( theClass )
     if this.nextPlayerInfo then
       table.insert(userIds, this.nextPlayerInfo.userId)
     end
-    local dialog = require('chat.TextChatLayer').new(self.gameConnection, userIds)
+    local dialog = require('chat.GamingTextChatLayer').new(self.gameConnection, userIds)
     self:addChild(dialog)
   end
 
