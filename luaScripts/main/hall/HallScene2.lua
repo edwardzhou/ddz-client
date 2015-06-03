@@ -869,26 +869,39 @@ function HallScene2:startAppointPlaysUpdater()
   end
 
   local function checkMailBox()
-    if ddz.myMsgBox == nil or ddz.myMsgBox.addFriendMsgs == nil or #ddz.myMsgBox.addFriendMsgs == 0 then
-      this:stopTips(this.MailBoxTip)
-      return
-    end
+    local showMailBoxTips = false
+    -- if ddz.myMsgBox == nil or ddz.myMsgBox.addFriendMsgs == nil or #ddz.myMsgBox.addFriendMsgs == 0 then
+    --   this:stopTips(this.MailBoxTip)
+    --   return
+    -- end
 
-    for index=#ddz.myMsgBox.addFriendMsgs, 1, -1 do
-      local msg = ddz.myMsgBox.addFriendMsgs[index]
-      if msg.status ~= 0 then
-        table.remove(ddz.myMsgBox.addFriendMsgs, index)
+    if ddz.myMsgBox and ddz.myMsgBox.addFriendMsgs then
+      for index=#ddz.myMsgBox.addFriendMsgs, 1, -1 do
+        local msg = ddz.myMsgBox.addFriendMsgs[index]
+        if msg.status ~= 0 then
+          table.remove(ddz.myMsgBox.addFriendMsgs, index)
+        end
+      end
+      if #ddz.myMsgBox.addFriendMsgs > 0 then
+        showMailBoxTips = true
       end
     end
 
-    if #ddz.myMsgBox.addFriendMsgs == 0 then
-      this:stopTips(this.MailBoxTip)
-      return
+    if ddz.myMsgBox and ddz.myMsgBox.chatMsgs then
+      if #ddz.myMsgBox.chatMsgs > 0 then
+        showMailBoxTips = true
+      end
     end
 
-    if #ddz.myMsgBox.addFriendMsgs > 0 then
+    if not showMailBoxTips then
+      stopTips(this.MailBoxTip)
+    else
       this:startTips(this.MailBoxTip)
     end
+
+    -- if #ddz.myMsgBox.addFriendMsgs > 0 then
+    --   this:startTips(this.MailBoxTip)
+    -- end
   end
 
   self:runAction(cc.RepeatForever:create(

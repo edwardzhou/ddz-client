@@ -150,11 +150,12 @@ function MailBoxScene:addChatMsgItem(listView, itemData, pos)
       this:addChild(chatLayer)
     end)
 
-  if pos == nil then
-    listView:pushBackCustomItem(itemModel)
-  else
-    listView:insertCustomItem(itemModel, pos - 1)
-  end
+  listView:pushBackCustomItem(itemModel)
+  -- if pos == nil then
+  --   listView:pushBackCustomItem(itemModel)
+  -- else
+  --   listView:insertCustomItem(itemModel, pos - 1)
+  -- end
 end
 
 function MailBoxScene:loadChatMsgs()
