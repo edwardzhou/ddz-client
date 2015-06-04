@@ -23,11 +23,13 @@ function GamingChatPlugin.bind(theClass)
   end
 
   function theClass:onServerChatMsg(data)
+    local this = self
     local scene = display.getRunningScene()
     dump(data, '[theClass:onServerChatMsg] data =>')
     if ddz.myMsgBox and ddz.myMsgBox.chatMsgs then
-      table.insert(ddz.myMsgBox.chatMsgs, 1, data)
+      table.insert(ddz.myMsgBox.chatMsgs, data)
       utils.invokeCallback(scene.onServerChatMsg, scene, data)
+      this:notify('ddz.messageHandler.ackMessage', {msgId = data.msgId})
     end
   end
 

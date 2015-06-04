@@ -10,9 +10,9 @@ local TextChatLayer = class('TextChatLayer', function()
 end)
 
 
-function TextChatLayer:ctor(chatServer, toUserId)
+function TextChatLayer:ctor(chatServer, toUser)
   self.chatServer = chatServer
-  self.toUserId = toUserId
+  self.toUser = toUser
   self:init()
 end
 
@@ -22,8 +22,14 @@ function TextChatLayer:init()
   local uiRoot = cc.CSLoader:createNode('TextChatLayer.csb')
   self:addChild(uiRoot)
   require('utils.UIVariableBinding').bind(uiRoot, self, self)
-  self:initTouch()
   self:initKeypadHandler()
+
+  local iconIndex = self.toUser.headIcon or 1
+  self.NickName:setString(string.format('%s (%d)', self.toUser.nickName, self.toUser.userId))
+  self.ImageHeadIcon:loadTexture(
+      string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
+      ccui.TextureResType.localType
+    )
 
 end
 
@@ -32,7 +38,7 @@ function TextChatLayer:sendTextMessage(msg)
   local currentUser = AccountInfo.getCurrentUser()
   local params = {
     chatText = msg,
-    toUserId = self.toUserId
+    toUserId = self.toUser.userId
   }
 
   self.chatServer:sendTextChat(params, function(data)

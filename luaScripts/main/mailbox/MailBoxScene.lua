@@ -101,15 +101,16 @@ function MailBoxScene:addChatMsgItem(listView, itemData, pos)
   local this = self
 
   --local itemData = items[index]
+  local msgData = itemData.msgData
   local itemModel = this.ChatMsgItemModel:clone()
   itemModel.itemData = itemData
   itemModel:setVisible(true)
   local uiObj = ccui.Helper:seekWidgetByName(itemModel, 'UserNickName')
-  uiObj:setString(string.format('%s (%d)', itemData.userInfo.nickName, itemData.userInfo.userId))
+  uiObj:setString(string.format('%s (%d)', msgData.userInfo.nickName, msgData.userInfo.userId))
   uiObj = ccui.Helper:seekWidgetByName(itemModel, 'sentTime')
-  uiObj:setString(ddz.tranlateTimeLapsed(itemData.date, true).cn)
+  uiObj:setString(ddz.tranlateTimeLapsed(itemData.updated_at, true).cn)
 
-  local iconIndex = itemData.userInfo.headIcon or 1
+  local iconIndex = msgData.userInfo.headIcon or 1
   uiObj = ccui.Helper:seekWidgetByName(itemModel, 'ImageHeadIcon')
   uiObj:loadTexture(
       string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
@@ -122,7 +123,7 @@ function MailBoxScene:addChatMsgItem(listView, itemData, pos)
   local label = cc.Label:create()
   label:setAlignment(cc.TEXT_ALIGNMENT_LEFT)
   label:setDimensions(scrollSize.width, scrollSize.height)
-  local text = itemData.chatMsg
+  local text = msgData.chatText
   --text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你'
   label:setString(text)
   label:setSystemFontSize(20)
@@ -143,18 +144,14 @@ function MailBoxScene:addChatMsgItem(listView, itemData, pos)
   uiObj:addChild(label)
 
   local button = ccui.Helper:seekWidgetByName(itemModel, 'ButtonReply')
-  button.userInfo = itemData.userInfo
+  button.userInfo = msgData.userInfo
   button:addClickEventListener(function(sender)
       local chatServer = require('network.GameConnection')
-      local chatLayer = require('chat.TextChatLayer').new(chatServer, sender.userInfo.userId)
+      local chatLayer = require('chat.TextChatLayer').new(chatServer, sender.userInfo)
       this:addChild(chatLayer)
     end)
 
-  if pos == nil then
-    listView:pushBackCustomItem(itemModel)
-  else
-    listView:insertCustomItem(itemModel, pos - 1)
-  end
+  listView:pushBackCustomItem(itemModel)
 end
 
 function MailBoxScene:loadChatMsgs()
@@ -164,68 +161,21 @@ function MailBoxScene:loadChatMsgs()
   local function addItems(items)
     for index=1, #items do
       this:addChatMsgItem(listView, items[index])
-      -- local itemData = items[index]
-      -- local itemModel = this.ChatMsgItemModel:clone()
-      -- itemModel.itemData = itemData
-      -- itemModel:setVisible(true)
-      -- local uiObj = ccui.Helper:seekWidgetByName(itemModel, 'UserNickName')
-      -- uiObj:setString(string.format('%s (%d)', itemData.userInfo.nickName, itemData.userInfo.userId))
-      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'sentTime')
-      -- uiObj:setString(ddz.tranlateTimeLapsed(itemData.date, true).cn)
-
-      -- local iconIndex = itemData.userInfo.headIcon or 1
-      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'ImageHeadIcon')
-      -- uiObj:loadTexture(
-      --     string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
-      --     ccui.TextureResType.localType
-      --   )
-
-      -- uiObj = ccui.Helper:seekWidgetByName(itemModel, 'MsgHolder')
-
-      -- local scrollSize = uiObj:getContentSize()
-      -- local label = cc.Label:create()
-      -- label:setAlignment(cc.TEXT_ALIGNMENT_LEFT)
-      -- label:setDimensions(scrollSize.width, scrollSize.height)
-      -- local text = itemData.chatMsg
-      -- --text = 'Cocos2d-x是全球知名的开源跨平台游戏引擎, 在这里你'
-      -- label:setString(text)
-      -- label:setSystemFontSize(20)
-      -- label:setMaxLineWidth(scrollSize.width)
-      -- label:setHeight(0)
-      -- label:setLineBreakWithoutSpace(true)
-      -- label:setAnchorPoint(cc.p(0, 0))
-      -- label:setPosition(cc.p(0, 0))
-      -- label:setTextColor(cc.c4b(0xB7, 0x9C, 0x58, 255))
-
-      -- local labelSize = label:getContentSize()
-
-      -- if labelSize.height < scrollSize.height then
-      --   label:setPosition(cc.p(0, scrollSize.height - labelSize.height))
-      -- else
-      --   uiObj:setInnerContainerSize(cc.size(0, labelSize.height))
-      -- end
-      -- uiObj:addChild(label)
-
-      -- local button = ccui.Helper:seekWidgetByName(itemModel, 'ButtonReply')
-      -- button.userInfo = itemData.userInfo
-      -- button:addClickEventListener(function(sender)
-      --     local chatServer = require('network.GameConnection')
-      --     local chatLayer = require('chat.TextChatLayer').new(chatServer, sender.userInfo.userId)
-      --     this:addChild(chatLayer)
-      --   end)
-
-      -- listView:pushBackCustomItem(itemModel)
     end
 
     setTimeout(function()
-        listView:jumpToTop()
+        listView:jumpToBottom()
       end, {}, 0.1)
   end
 
   listView:removeAllItems()
-  addItems(ddz.myMsgBox.chatMsgs)
+  local msgCount = 0
+  if ddz.myMsgBox and ddz.myMsgBox.chatMsgs and #ddz.myMsgBox.chatMsgs > 0 then
+    addItems(ddz.myMsgBox.chatMsgs)
+    msgCount = #ddz.myMsgBox.chatMsgs
+  end
 
-  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.chatMsgs))
+  this.MsgCount:setString(string.format('共 %d 条消息', msgCount))
 
 end
 
@@ -237,10 +187,11 @@ function MailBoxScene:loadMsgBoxItem()
  
     for index=1, #items do
       local itemData = items[index]
+      local msgData = itemData.msgData
       local itemModel = this.AddFriendItemModel:clone()
       itemModel:setVisible(true)
       itemModel:getChildByName('RequesterNickName'):setString(
-        string.format('%s (%d)', itemData.userInfo.nickName, itemData.userInfo.userId))
+        string.format('%s (%d)', msgData.userInfo.nickName, msgData.userInfo.userId))
       itemModel.itemData = itemData
       listView:pushBackCustomItem(itemModel)
 
@@ -255,13 +206,18 @@ function MailBoxScene:loadMsgBoxItem()
     end
 
     setTimeout(function()
-        listView:jumpToTop()
+        listView:jumpToBottom()
       end, {}, 0.1)
   end
   
+  local msgCount = 0
   listView:removeAllItems()
-  addAddFriendMsgItems(ddz.myMsgBox.addFriendMsgs)
-  this.MsgCount:setString(string.format('共 %d 条消息', #ddz.myMsgBox.addFriendMsgs))
+  if ddz.myMsgBox and ddz.myMsgBox.addFriendMsgs and #ddz.myMsgBox.addFriendMsgs > 0 then
+    addAddFriendMsgItems(ddz.myMsgBox.addFriendMsgs)
+    msgCount = #ddz.myMsgBox.chatMsgs
+  end
+
+  this.MsgCount:setString(string.format('共 %d 条消息', msgCount))
 end
 
 function MailBoxScene:initKeypadHandler()
@@ -293,10 +249,9 @@ end
 
 function MailBoxScene:rejectAddFriend(itemModel, itemData)
   local this = self
-  local userId = itemData.userInfo.userId
 
-  this.gameConnection:confirmAddFriend(userId, false, function(data)
-      itemData.status = 2
+  this.gameConnection:confirmAddFriend(itemData, false, function(data)
+      itemData.msgData.status = 2
       local itemIndex = this.MsgList:getIndex(itemModel)
       this.MsgList:removeItem(itemIndex)
     end)
@@ -304,10 +259,9 @@ end
 
 function MailBoxScene:acceptAddFriend(itemModel, itemData)
   local this = self
-  local userId = itemData.userInfo.userId
 
-  this.gameConnection:confirmAddFriend(userId, true, function(data)
-      itemData.status = 2
+  this.gameConnection:confirmAddFriend(itemData, true, function(data)
+      itemData.msgData.status = 2
       local itemIndex = this.MsgList:getIndex(itemModel)
       this.MsgList:removeItem(itemIndex)
 
