@@ -373,7 +373,7 @@ function HallScene2:loadFriendsList(refresh)
       button = item:getChildByName('ButtonChat')
       button.userInfo = userInfo
       button:addClickEventListener(function(sender)
-          local chatLayer = require('chat.TextChatLayer').new(this.gameConnection, sender.userInfo.userId)
+          local chatLayer = require('chat.TextChatLayer').new(this.gameConnection, sender.userInfo)
           this:addChild(chatLayer)
         end)
     end
@@ -878,7 +878,7 @@ function HallScene2:startAppointPlaysUpdater()
     if ddz.myMsgBox and ddz.myMsgBox.addFriendMsgs then
       for index=#ddz.myMsgBox.addFriendMsgs, 1, -1 do
         local msg = ddz.myMsgBox.addFriendMsgs[index]
-        if msg.status ~= 0 then
+        if msg.msgData.status ~= 0 then
           table.remove(ddz.myMsgBox.addFriendMsgs, index)
         end
       end
@@ -894,7 +894,7 @@ function HallScene2:startAppointPlaysUpdater()
     end
 
     if not showMailBoxTips then
-      stopTips(this.MailBoxTip)
+      this:stopTips(this.MailBoxTip)
     else
       this:startTips(this.MailBoxTip)
     end
@@ -916,10 +916,19 @@ function HallScene2:startAppointPlaysUpdater()
 end
 
 function HallScene2:getMyMsgBox()
-  self.gameConnection:request('ddz.friendshipHandler.getMyMessageBoxes', {}, function(data) 
-    dump(data, '[ddz.friendshipHandler.getMyMessageBoxes] response => ', 5)
+  self.gameConnection:request('ddz.messageHandler.getMyMessageBox', {}, function(data) 
+    dump(data, '[ddz.messageHandler.getMyMessageBox] response => ', 5)
     if data.result then
-      ddz.myMsgBox = data.myMsgBox
+      --ddz.myMsgBox = data.myMsgBox
+      ddz.myMsgBox = {}
+      ddz.myMsgBox["addFriendMsgs"] = table.select(data.myMsgBox, function(item)
+          return item.msgType == 2
+        end)
+      ddz.myMsgBox.chatMsgs = table.select(data.myMsgBox, function(item)
+           return item.msgType == 3
+         end)
+
+      dump(ddz.myMsgBox, '[HallScene2:getMyMsgBox] myMsgBox', 6)
     end
   end)
 end

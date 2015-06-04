@@ -7,11 +7,12 @@ local utils = require('utils.utils')
 
 function AddFriendEventPlugin.bind (theClass)
 
-  function theClass:confirmAddFriend(friend_userId, accept, callback)
+  function theClass:confirmAddFriend(data, accept, callback)
     local this = self
 
     local params = {
-      friend_userId = friend_userId,
+      friend_userId = data.msgUserId,
+      msgId = data.id,
       accept = accept
     }
 
@@ -30,7 +31,9 @@ function AddFriendEventPlugin.bind (theClass)
       return
     end
 
-    local userInfo = data.userInfo;
+    this:notify('ddz.messageHandler.ackMessage', {msgId = data.id})
+
+    local userInfo = data.msgData.userInfo;
 
     local params = {
       msg = string.format('%s (%s) 加您为好友, 是否同意?', 
@@ -40,12 +43,12 @@ function AddFriendEventPlugin.bind (theClass)
       buttonType = 'ok | cancel',
       grayBackground = true,
       onOk = function()
-          this:confirmAddFriend(userInfo.userId, true, function(data) 
+          this:confirmAddFriend(data, true, function(data) 
             utils.invokeCallback(runningScene.onReplyFriend, runningScene, data)
           end)
         end,
       onCancel = function()
-          this:confirmAddFriend(userInfo.userId, false)
+          this:confirmAddFriend(data, false)
         end,
     }
 
@@ -66,7 +69,6 @@ function AddFriendEventPlugin.bind (theClass)
       msgFormat = '%s (%s) 同意加为好友.'
       msgTitle = '好友申请通过'
     end
-
 
     local params = {
       msg = string.format(msgFormat, 

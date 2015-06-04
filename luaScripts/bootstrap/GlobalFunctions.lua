@@ -103,13 +103,14 @@ end
 
 table.shuffle = shuffleArray
 
-function table.filter(src, fn)
+function table.select(src, fn)
   local result = {}
   for _,v in pairs(src) do
     if fn(v) then
       table.insert(result, v)
     end
   end
+  dump(result, 'table.filter ', 6)
   return result
 end
 
