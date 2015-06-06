@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local codec = require("pomelo.protobuf.codec")
 local util = require('pomelo.protobuf.util')
 

@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local HelpLayer = class('HelpLayer')
 local utils = require('utils.utils')
 local AccountInfo = require('AccountInfo')

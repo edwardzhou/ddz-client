@@ -1,3 +1,6 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
 
 local AssetsScene2 = class('AssetsScene2', function()
     return cc.Scene:create()

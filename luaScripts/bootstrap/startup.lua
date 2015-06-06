@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 CC_USE_DEPRECATED_API = false
 require "cocos.init"
 require('extern')

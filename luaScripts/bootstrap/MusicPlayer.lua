@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local _bgMusicId = cc.AUDIO_INVAILD_ID
 
 local bgMusicFile = 'sounds/bg1.mp3'

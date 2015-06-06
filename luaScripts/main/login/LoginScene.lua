@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local LoginScene = class('LoginScene')
 local SignInType = require('consts').SignInType
 local AccountInfo = require('AccountInfo')

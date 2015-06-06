@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local Protocol = require('pomelo.protocol.protocol')
 local ProtobufFactory = require('pomelo.protobuf.protobuf')
 local Emitter = require('pomelo.emitter')

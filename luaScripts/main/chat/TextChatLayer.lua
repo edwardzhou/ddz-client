@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local UIVarBinding = require('utils.UIVariableBinding')
 local utils = require('utils.utils')
 local showToastBox = require('UICommon.ToastBox2').showToastBox

@@ -5,11 +5,14 @@
 #include <android/log.h>
 // #include "MobClickJniHelper.h"
 #include "TDGAJniHelper.h"
+#include "../../../../runtime-src/proj.android/protocols/android/PluginJniHelper.h"
+
 
 #define  LOG_TAG    "main"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 
 using namespace cocos2d;
+using namespace anysdk::framework;
 
 void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     LOGD("cocos_android_app_init");
@@ -23,6 +26,7 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     TDGAJniHelper::setJavaVM(vm);
 
     AppDelegate *pAppDelegate = new AppDelegate();
+    PluginJniHelper::setJavaVM(vm);
     //PluginJniHelper::setJavaVM(vm);
 }
 

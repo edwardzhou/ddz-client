@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 
 local PasswordScene = class('PasswordScene')
 local AccountInfo = require('AccountInfo')

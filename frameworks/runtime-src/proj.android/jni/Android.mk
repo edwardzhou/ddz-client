@@ -1,4 +1,5 @@
 LOCAL_PATH := $(call my-dir)
+$(call import-add-path,$(LOCAL_PATH)/../)
 
 include $(CLEAR_VARS)
 
@@ -28,6 +29,8 @@ LOCAL_SRC_FILES := hellolua/main.cpp \
                    ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAItem_auto.cpp \
                    ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAMission_auto.cpp \
                    ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAVirtualCurrency_auto.cpp \
+                   ../../Classes/anysdkbindings.cpp \
+                   ../../Classes/anysdk_manual_bindings.cpp \
 
 #                   ../../Classes/lua-binding/auto/lua_cocos2dx_umeng_auto.cpp \
 #                   ../../Classes/lua-binding/manual/lua_cocos2dx_umeng_manual.cpp \
@@ -51,9 +54,11 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
 LOCAL_STATIC_LIBRARIES := cocos2d_lua_static
 #LOCAL_WHOLE_STATIC_LIBRARIES += cocos_curl_static
 LOCAL_WHOLE_STATIC_LIBRARIES += mobclickcpp_static
+LOCAL_WHOLE_STATIC_LIBRARIES += PluginProtocolStatic
 
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module, scripting/lua-bindings/proj.android)
 #$(call import-module, curl/prebuilt/android)
 #$(call import-module, libMobClickCpp)
+$(call import-module, protocols/android)

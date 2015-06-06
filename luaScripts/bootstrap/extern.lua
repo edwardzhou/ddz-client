@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 function clone(object)
     local lookup_table = {}
     local function _copy(object)

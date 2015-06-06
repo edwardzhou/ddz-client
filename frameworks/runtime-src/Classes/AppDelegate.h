@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015 深圳市辉游科技有限公司.
+ */
+
 #ifndef __APP_DELEGATE_H__
 #define __APP_DELEGATE_H__
 

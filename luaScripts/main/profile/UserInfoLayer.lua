@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local UserInfoLayer = class('UserInfoLayer')
 local utils = require('utils.utils')
 local AccountInfo = require('AccountInfo')

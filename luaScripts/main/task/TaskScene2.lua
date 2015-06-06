@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 
 local TaskScene2 = class('TaskScene2', function()
     return cc.Scene:create()
