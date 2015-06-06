@@ -110,7 +110,7 @@ function table.select(src, fn)
       table.insert(result, v)
     end
   end
-  dump(result, 'table.filter ', 6)
+  -- dump(result, 'table.select ', 6)
   return result
 end
 

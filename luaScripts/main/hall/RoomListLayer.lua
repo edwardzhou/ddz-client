@@ -33,6 +33,12 @@ function RoomListLayer:init()
     focused:setVisible(roomInfo.roomId == self.curRoomId)
     local grey = ccui.Helper:seekWidgetByName(item, 'PanelGrey')
     grey:setVisible(roomInfo.roomId ~= self.curRoomId)
+    label = ccui.Helper:seekWidgetByName(item, 'LabelEnterLimit')
+    label:setString(roomInfo.criteriaText)
+    label = ccui.Helper:seekWidgetByName(item, 'LabelAnte')
+    label:setString(roomInfo.ante)
+    label = ccui.Helper:seekWidgetByName(item, 'LabelRake')
+    label:setString(string.format('佣金: %d' , roomInfo.rake))
   end
 
 end
