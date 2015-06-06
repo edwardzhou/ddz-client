@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 g_shared_cards = {}
 
 g_pokecards_node = nil

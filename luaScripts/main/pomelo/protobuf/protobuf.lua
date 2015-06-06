@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local encoderFactory = require('pomelo.protobuf.encoder')
 local decoderFactory = require('pomelo.protobuf.decoder')
 local codec = require('pomelo.protobuf.codec')

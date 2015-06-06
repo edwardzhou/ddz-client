@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 local PokecardAI = class('PokecardAI')
 local scheduler = require('framework.scheduler')
 

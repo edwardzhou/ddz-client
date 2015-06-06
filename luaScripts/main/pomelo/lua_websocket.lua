@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 require('framework.functions')
 local Protocol = require('pomelo.protocol.protocol')
 DefaultLuaWebSocket = class('DefaultLuaWebSocket')

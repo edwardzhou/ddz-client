@@ -1,3 +1,7 @@
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
+
 require('cocos.cocosdenshion.AudioEngine')
 require('PokeCard')
 local Res = require('Resources')
