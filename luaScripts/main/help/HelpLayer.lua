@@ -52,6 +52,8 @@ function HelpLayer:init()
     utils.invokeCallback(this["on_" .. event], this)
   end)
 
+  self.LabelVersion:setString('v'  .. require('version'))
+
 end
 
 function HelpLayer:on_enter()
