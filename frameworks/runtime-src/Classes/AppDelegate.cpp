@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015 深圳市辉游科技有限公司.
+ */
+
 #include "AppDelegate.h"
 #include "CCLuaEngine.h"
 #include "SimpleAudioEngine.h"
@@ -15,6 +19,10 @@
 //#include "auto/lua_cocos2dx_plugin_auto.hpp"
 #include "lua_app_signature_manual.hpp"
 #include "md5/MD5pp.h"
+
+#include "anysdkbindings.h"
+#include "anysdk_manual_bindings.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -320,6 +328,15 @@ bool AppDelegate::applicationDidFinishLaunching()
     // register_all_cocos2dx_umeng_manual(luaState);
     luaopen_cjson_extensions(luaState);
     luaopen_struct(luaState);
+
+
+    //for anysdk
+    LuaStack* stack = engine->getLuaStack();
+    lua_getglobal(stack->getLuaState(), "_G");
+    tolua_anysdk_open(stack->getLuaState());
+    tolua_anysdk_manual_open(stack->getLuaState());
+    lua_pop(stack->getLuaState(), 1);
+
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     register_all_cocos2dx_TalkingDataGA(luaState); 

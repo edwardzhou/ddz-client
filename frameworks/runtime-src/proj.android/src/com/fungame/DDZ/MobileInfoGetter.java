@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015 深圳市辉游科技有限公司.
+ */
+
 package com.fungame.DDZ;
 
 import java.util.HashMap;

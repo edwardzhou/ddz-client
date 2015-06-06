@@ -1,4 +1,6 @@
-
+--[[
+Copyright (c) 2015 深圳市辉游科技有限公司.
+--]]
 
 local ToastBox = class('ToastBox')
 local utils = require('utils.utils')

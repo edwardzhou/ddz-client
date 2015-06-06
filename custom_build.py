@@ -296,3 +296,7 @@ def handle_event(event, tp, args):
     talkingDataJarPath = os.path.normpath(os.path.join(platform_proj_dir, "..", "3rdLibs", "TalkingData", "proj.android", "libs"))
     talkingDataJarFile = "Game_Analytics_SDK_Android_3.0.64.jar"
     shutil.copy( os.path.join(talkingDataJarPath, talkingDataJarFile) , os.path.join(platform_proj_dir, "libs", talkingDataJarFile))
+
+    anySdkJarPath = os.path.normpath(os.path.join(platform_proj_dir, "protocols", "android"))
+    anySdkJarFile = "libPluginProtocol.jar"
+    shutil.copy( os.path.join(anySdkJarPath, anySdkJarFile) , os.path.join(platform_proj_dir, "libs", anySdkJarFile))
