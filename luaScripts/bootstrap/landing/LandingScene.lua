@@ -225,25 +225,25 @@ function LandingScene:init()
   end
 
   this:runAction(cc.CallFunc:create( function()
-      this:startToLogin(function(succ, respData, extra) 
-          if not succ then
-            nextStep = function() onLoginFailed(respData) end
-          else
-            nextStep = connectToServerAfterUpdate
-          end
+    this:startToLogin(function(succ, respData, extra) 
+      if not succ then
+        nextStep = function() onLoginFailed(respData) end
+      else
+        nextStep = connectToServerAfterUpdate
+      end
 
-          print("respData.forceUpdateRes: ", respData.forceUpdateRes)
-          print("respData.updateVersionUrl: ", respData.updateVersionUrl)
-          if respData.forceUpdateRes or respData.updateVersionUrl then
-            print(string.format('got UpdateUrl[%s], need to update', respData.updateVersionUrl))
-            local updateManager = require('update.UpdateManager').new()
-            updateManager:startCheckUpdate(onUpdateEvent)
-          else
-            loadMain()
-          end
+      print("respData.forceUpdateRes: ", respData.forceUpdateRes)
+      print("respData.updateVersionUrl: ", respData.updateVersionUrl)
+      if respData.forceUpdateRes or respData.updateVersionUrl then
+        print(string.format('got UpdateUrl[%s], need to update', respData.updateVersionUrl))
+        local updateManager = require('update.UpdateManager').new()
+        updateManager:startCheckUpdate(onUpdateEvent)
+      else
+        loadMain()
+      end
 
-        end)
-    end))
+    end)
+  end))
 end
 
 function LandingScene:updateLoadingProgress()
@@ -270,6 +270,8 @@ function LandingScene:on_enterTransitionFinish()
   -- body
   print('[LandingScene:on_enterTransitionFinish]')
   self:initKeypadHandler()
+
+
 end
 
 function LandingScene:startToLogin(cb)
@@ -278,7 +280,8 @@ function LandingScene:startToLogin(cb)
   local AccountInfo = require('AccountInfo')
   local EntryService = require('EntryService')
 
-  local sendLogin, onLoginResult, onFailure
+  local sendLogin, onLoginResult, onFailure , onPluginLoginResult
+  local userInfo = {}
 
   onLoginResult = function(succ, respData, extra)
     dump(respData, '[LandingScene:startToLogin] onLoginResult: respData', 5)
@@ -293,10 +296,49 @@ function LandingScene:startToLogin(cb)
 
   sendLogin = function()
     local loginService = EntryService.new({showProgress=false})
-    loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, AccountInfo.getCurrentUser(), 5, onLoginResult)
+    loginService:requestSignInUp(__appUrl, ddz.GlobalSettings.handsetInfo, userInfo, 5, onLoginResult)
   end
 
-  sendLogin()
+  onPluginLoginResult = function(success, plugin, code, msg) 
+
+    print('plugin_channel login result: ', success, ', code: ', code)
+    dump(msg, '[plugin_channel:login] resp')
+    local sdk_msg, error = cjson.decode(msg)
+    if error then
+      print('[plugin_channel:login] cjson decode error: ', error)
+      sdk_msg = {}
+    end
+
+      if success then
+        userInfo = {}
+        userInfo.anySDK = {
+          user_sdk = sdk_msg.user_sdk,
+          uid = sdk_msg.uid,
+          channel = sdk_msg.channel,
+          access_token = sdk_msg.access_token
+        }
+        if sdk_msg.userId and sdk_msg.authToken then
+          userInfo.userId = sdk_msg.userId
+          userInfo.authToken =  sdk_msg.authToken
+        end
+
+        setTimeout(sendLogin, {}, 0.1)
+
+        --sendLogin()
+      else
+        ddz.endApplication()
+      end
+
+    end
+
+
+  plugin_channel:login(function(success, plugin, code, msg)
+      setTimeout(function() 
+          onPluginLoginResult(success, plugin, code, msg)
+        end, {}, 0.15)
+    end)
+
+  --sendLogin()
 end
 
 function LandingScene:on_exit()

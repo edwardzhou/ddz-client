@@ -20,6 +20,13 @@ end
 
 function EntryService:prepareParams(handsetInfo, userInfo)
   local params = {}
+  params.anySDK = {}
+  if userInfo and userInfo.anySDK then
+    params.anySDK.user_sdk = userInfo.anySDK.user_sdk
+    params.anySDK.uid = userInfo.anySDK.uid
+    params.anySDK.channel = userInfo.anySDK.channel
+    params.anySDK.access_token = userInfo.anySDK.access_token
+  end
   params.appPkgName = __appPkgName
   params.appVersionName = __appVersionName
   params.appVersionCode = __appVersionCode

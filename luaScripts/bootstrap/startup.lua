@@ -8,6 +8,9 @@ require('extern')
 require 'GlobalSettings'
 require 'DebugSetting'
 
+require "anysdkConst"
+require "PluginChannel"
+
 
 cc.KeyCode.KEY_BACKSPACE    = 0x0006
 cc.KeyCode.KEY_MENU         = 0x000F
@@ -100,14 +103,23 @@ local function startup()
 
   local function onEventComeToForeground()
     print("[onEventComeToForeground] ...")
-    cc.Director:getInstance():getRunningScene():runAction(cc.CallFunc:create(function() 
+    AppInForground = true
+    setTimeout(function()
         ccexp.AudioEngine:resumeAll()
+      end, {}, 0.01)
+    cc.Director:getInstance():getRunningScene():runAction(cc.CallFunc:create(function() 
+        --ccexp.AudioEngine:resumeAll()
       end))
   end
   local function onEventComeToBackground()
     print("[onEventComeToBackground] ...")
+    AppInForground = false
     ccexp.AudioEngine:pauseAll()
   end
+
+  plugin_channel = PluginChannel.new()
+
+  AppInForground = true
 
   local listener3 = cc.EventListenerCustom:create("event_come_to_background", onEventComeToBackground)
   eventDispatcher:addEventListenerWithFixedPriority(listener3, 3)
@@ -139,6 +151,7 @@ local function startup()
   print('======= deviceId: ', deviceId)
   -- TalkingDataGA:onKill()
   -- run
+
   local createLoginScene = require('landing.LandingScene')
   local sceneGame = createLoginScene()
   director:runWithScene(sceneGame)  

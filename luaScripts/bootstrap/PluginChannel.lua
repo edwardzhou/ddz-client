@@ -2,12 +2,14 @@
 Copyright (c) 2015 深圳市辉游科技有限公司.
 --]]
 
-require "ClassBase"
+--require "ClassBase"
+
+local utils = require('utils.utils')
 
 local user_plugin = nil
 local iap_plugin_maps = nil
 
-local function onUserResult( plugin, code, msg )
+local function onUserResult(pluginChannel, plugin, code, msg )
     print("on user action listener.")
     print("code:"..code..",msg:"..msg)
     if code == UserActionResultCode.kInitSuccess then
@@ -16,14 +18,17 @@ local function onUserResult( plugin, code, msg )
         --do
     elseif code == UserActionResultCode.kLoginSuccess then
         --do
+        utils.invokeCallback(pluginChannel.loginCallback, true, plugin, code, msg)
     elseif code == UserActionResultCode.kLoginNetworkError then
         --do
     elseif code == UserActionResultCode.kLoginNoNeed then
         --do
     elseif code == UserActionResultCode.kLoginFail then
         --do
+        utils.invokeCallback(pluginChannel.loginCallback, false, plugin, code, msg)
     elseif code == UserActionResultCode.kLoginCancel then
         --do
+        utils.invokeCallback(pluginChannel.loginCallback, false, plugin, code, msg)
     elseif code == UserActionResultCode.kLogoutSuccess then
         --do
     elseif code == UserActionResultCode.kLogoutFail then
@@ -47,6 +52,8 @@ local function onUserResult( plugin, code, msg )
     elseif code == UserActionResultCode.kOpenShop then
         --do
     end
+
+    utils.invokeCallback(pluginChannel.onUserResultCallback, plugin, code, msg)
 end
 
 local function onPayResult( code, msg, info )
@@ -74,8 +81,9 @@ local function onPayResult( code, msg, info )
 end
 
 PluginChannel = class()
-function PluginChannel:ctor()
+function PluginChannel:ctor(cbUserResult)
     --for anysdk
+    local this = self
     local agent = AgentManager:getInstance()
     --init
     --anysdk
@@ -83,7 +91,10 @@ function PluginChannel:ctor()
     local appSecret = "4f6d3197bf1b615e89c696e873e17ef2";
     local privateKey = "33E89023E2E2F36C664A499A327E6A4A";
 
-    local oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
+
+    this.onUserResultCallback = cbUserResult
+
+    local oauthLoginServer = "http://login.ucdev.lordgame.cn:4001/anysdk";
     agent:init(appKey,appSecret,privateKey,oauthLoginServer)
     --load
     agent:loadAllPlugins()
@@ -91,7 +102,9 @@ function PluginChannel:ctor()
     -- get user plugin
     user_plugin = agent:getUserPlugin()
     if user_plugin ~= nil then
-        user_plugin:setActionListener(onUserResult)
+        user_plugin:setActionListener(function(plugin, code, msg)
+                onUserResult(this, plugin, code, msg)
+            end )
     end
 
     iap_plugin_maps = agent:getIAPPlugin()
@@ -104,10 +117,12 @@ function PluginChannel:ctor()
     agent:setIsAnaylticsEnabled(true)
 end
 
-function PluginChannel:login()
-	if user_plugin ~= nil then
-	    user_plugin:login()
-	end
+function PluginChannel:login(cb)
+    local this = self
+    this.loginCallback = cb
+    if user_plugin ~= nil then
+        user_plugin:login()
+    end
 end
 
 function PluginChannel:logout()
