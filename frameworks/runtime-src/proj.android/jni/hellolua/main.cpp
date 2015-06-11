@@ -4,7 +4,7 @@
 #include <jni.h>
 #include <android/log.h>
 // #include "MobClickJniHelper.h"
-#include "TDGAJniHelper.h"
+// #include "TDGAJniHelper.h"
 #include "../../../../runtime-src/proj.android/protocols/android/PluginJniHelper.h"
 
 
@@ -23,7 +23,7 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     JavaVM* vm;
     env->GetJavaVM(&vm);
     // umeng::MobClickJniHelper::setJavaVM(vm);
-    TDGAJniHelper::setJavaVM(vm);
+    // TDGAJniHelper::setJavaVM(vm);
 
     AppDelegate *pAppDelegate = new AppDelegate();
     PluginJniHelper::setJavaVM(vm);

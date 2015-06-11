@@ -5,6 +5,9 @@ Copyright (c) 2015 深圳市辉游科技有限公司.
 local HelpLayer = class('HelpLayer')
 local utils = require('utils.utils')
 local AccountInfo = require('AccountInfo')
+local showMessageBox = require('UICommon.MsgBox').showMessageBox
+local showToastBox = require('UICommon.ToastBox2').showToastBox
+local hideToastBox = require('UICommon.ToastBox2').hideToastBox
 
 
 function HelpLayer.extend(target, ...)
@@ -50,6 +53,11 @@ function HelpLayer:init()
 
   this.MsgPanel:setVisible(true)
   this.MsgPanel:setScale(0.001)
+
+  this.PanelRule:setVisible(false)
+  this.PanelFeedback:setVisible(true)
+
+  this:ButtonAbout_onClicked(this.ButtonAbout)
 
   self:registerScriptHandler(function(event)
     --print('event => ', event)
@@ -164,19 +172,58 @@ function HelpLayer:RootBox_onClicked(sender, eventType)
 end
 
 function HelpLayer:ButtonAbout_onClicked(sender)
-  if self.PageView:getCurPageIndex() ~= 0 then
+  if not self.PanelRule:isVisible() then
     self.TabFeedback:setClippingEnabled(true)
     self.TabAbout:setClippingEnabled(false)
-    self.PageView:scrollToPage(0)
+    self.PanelRule:setVisible(true)
+    self.PanelFeedback:setVisible(false)
   end
+  -- if self.PageView:getCurPageIndex() ~= 0 then
+  --   self.TabFeedback:setClippingEnabled(true)
+  --   self.TabAbout:setClippingEnabled(false)
+  --   self.PageView:scrollToPage(0)
+  -- end
 end
 
 function HelpLayer:ButtonFeedback_onClicked(sender)
-  if self.PageView:getCurPageIndex() ~= 1 then
-    self.TabFeedback:setClippingEnabled(false)
+  if not self.PanelFeedback:isVisible() then
     self.TabAbout:setClippingEnabled(true)
-    self.PageView:scrollToPage(1)
+    self.TabFeedback:setClippingEnabled(false)
+    self.PanelFeedback:setVisible(true)
+    self.PanelRule:setVisible(false)
   end
+end
+
+function HelpLayer:ButtonSubmitFeedback_onClicked(sender)
+  local this = self
+  local feedback = self.Feedback:getString()
+  feedback = string.trim(feedback)
+  if #feedback < 10 then
+    local msgParam = {
+      msg = '请输入至少10文字的反馈意见'
+      , grayBackground = true
+      , closeOnClickOutside = true
+      , buttonType = 'ok|close'
+      , closeAsCancel = true
+    }
+    showMessageBox(this, msgParam)
+    return
+  end
+
+  self.Feedback:setString('')
+
+  local toastParams = {
+    zorder = 1099,
+    showLoading = false, 
+    grayBackground = false,
+    closeOnTouch = true,
+    closeOnBack = true,
+    showingTime = 2,
+    msg = '您的反馈已提交，非常感谢您宝贵的意见。'
+  }
+
+  showToastBox(this, toastParams)
+
 end
 
 local function showHelp(container)

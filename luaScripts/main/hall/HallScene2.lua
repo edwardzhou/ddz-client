@@ -105,7 +105,12 @@ function HallScene2:init()
   rootLayer:addChild(ui)
   require('utils.UIVariableBinding').bind(ui, self, self)
 
-  TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
+  -- TalkingDataGA:onEvent(ddz.TDEventType.VIEW_EVENT, {
+  --     action = ddz.ViewAction.ACTION_ENTER_VIEW,
+  --     view = ddz.ViewName.HALL
+  --   })
+
+  _analytics:logEvent(ddz.TDEventType.VIEW_EVENT, {
       action = ddz.ViewAction.ACTION_ENTER_VIEW,
       view = ddz.ViewName.HALL
     })
@@ -448,7 +453,8 @@ function HallScene2:tryEnterRoom(gameRoom)
     roomId = gameRoom.roomId,
     roomName = gameRoom.roomName
   } 
-  TalkingDataGA:onEvent("尝试进入房间", eventData) 
+  -- TalkingDataGA:onEvent("尝试进入房间", eventData) 
+  _analytics:logEvent("尝试进入房间", eventData) 
 
   local toastParams = {
     id = 'enteringRoom',

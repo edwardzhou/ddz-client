@@ -27,8 +27,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.tendcloud.tenddata.TalkingDataGA;
-
 import android.content.Intent;
 import com.anysdk.framework.PluginWrapper;
 
@@ -165,7 +163,7 @@ public class AppActivity extends Cocos2dxActivity {
 	public void onResume() {
 		PluginWrapper.onResume();
 		super.onResume();
-		TalkingDataUtils.onResume(this);
+		// TalkingDataUtils.onResume(this);
 		// MobclickAgent.onResume(this);
 	}
 
@@ -173,7 +171,7 @@ public class AppActivity extends Cocos2dxActivity {
 	public void onPause() {
 		PluginWrapper.onPause();
 		super.onPause();
-		TalkingDataUtils.onPause(this);
+		// TalkingDataUtils.onPause(this);
 		// MobclickAgent.onPause(this);
 	}
 

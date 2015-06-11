@@ -309,7 +309,7 @@ function LandingScene:startToLogin(cb)
       sdk_msg = {}
     end
 
-      if success then
+      if success then        
         userInfo = {}
         userInfo.anySDK = {
           user_sdk = sdk_msg.user_sdk,

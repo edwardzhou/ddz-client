@@ -93,15 +93,17 @@ function AccountInfo.setCurrentUser(session)
 
   AccountInfo.save()
 
-  TDGAAccount:setAccount(_info.currentUser.userId)
-  TDGAAccount:setAccountName(_info.currentUser.nickName)
-  TDGAAccount:setAccountType(TDGAAccount.kAccountRegistered)
-  --TDGAAccount:setLevel(2) 
-  if _info.currentUser.gender == '男' then
-    TDGAAccount:setGender(TDGAAccount.kGenderMale)
-  else
-    TDGAAccount:setGender(TDGAAccount.kGenderFemale)
-  end
+  _analytics:setAccount(_info.currentUser)
+
+  -- TDGAAccount:setAccount(_info.currentUser.userId)
+  -- TDGAAccount:setAccountName(_info.currentUser.nickName)
+  -- TDGAAccount:setAccountType(TDGAAccount.kAccountRegistered)
+  -- --TDGAAccount:setLevel(2) 
+  -- if _info.currentUser.gender == '男' then
+  --   TDGAAccount:setGender(TDGAAccount.kGenderMale)
+  -- else
+  --   TDGAAccount:setGender(TDGAAccount.kGenderFemale)
+  -- end
   --TDGAAccount:setAge(29)
   --TDGAAccount:setGameServer("国服 2")
 

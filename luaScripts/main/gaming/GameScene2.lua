@@ -104,6 +104,8 @@ function GameScene2:init()
   -- umeng.MobClickCpp:pay(20, 1, "count_card", 1, 20)
   print('[GameScene2:init]')
 
+  _analytics:logEvent('entetGaming')
+
   local this = self
   self:initKeypadHandler()
 
@@ -324,6 +326,8 @@ function GameScene2:initPlayers()
 end
 
 function GameScene2:doServerGameStart(pokeGame, pokeIdChars, nextUserId, timing, data)
+  _analytics:logEvent('开始新牌局', pokeGame)
+
   local this = self
   self:hideSelfPokecards()
   self:stopWaitingEffect()

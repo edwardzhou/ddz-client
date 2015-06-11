@@ -117,7 +117,11 @@ local function startup()
     ccexp.AudioEngine:pauseAll()
   end
 
+  require('Analytics')
+
+
   plugin_channel = PluginChannel.new()
+  _analytics = Analytics.new()
 
   AppInForground = true
 
@@ -135,26 +139,29 @@ local function startup()
   --fileUtils:writeToFile({appkey = 'D4DB1295EA1B3298DD256AF4BEBCFC0C', channel = 'official'}, '/sdcard/fungame/DDZ/td.plist')
   local tdInitParams = {talkingDataInfo.appkey, talkingDataInfo.channel}
 
-  local luaj = require('cocos.cocos2d.luaj')
-  local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/TalkingDataUtils", "init", tdInitParams, "(Ljava/lang/String;Ljava/lang/String;)V")
-  TalkingDataGA:onStart(talkingDataInfo.appkey, talkingDataInfo.channel)
+  -- local luaj = require('cocos.cocos2d.luaj')
+  -- local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/TalkingDataUtils", "init", tdInitParams, "(Ljava/lang/String;Ljava/lang/String;)V")
+  -- TalkingDataGA:onStart(talkingDataInfo.appkey, talkingDataInfo.channel)
 
   ddz.onEnd(function() 
       print('==== call TalkingDataGA:onKill()')
-      TalkingDataGA:onKill()
+      -- TalkingDataGA:onKill()
+      _analytics:stopSession()
     end)
 
   -- local eventData = {key1="value1", key2="value2", key3="value3"} 
   -- TalkingDataGA:onEvent("event1", eventData) 
   -- TalkingDataGA:setLocation(39.9497, 116.4137)
-  local deviceId = TalkingDataGA:getDeviceId() 
-  print('======= deviceId: ', deviceId)
+  -- local deviceId = TalkingDataGA:getDeviceId() 
+  -- print('======= deviceId: ', deviceId)
   -- TalkingDataGA:onKill()
   -- run
+  _analytics:startSession()
+  _analytics:setCaptureUncaughtException(true)
 
   local createLoginScene = require('landing.LandingScene')
   local sceneGame = createLoginScene()
-  director:runWithScene(sceneGame)  
+  director:runWithScene(sceneGame)
 end
 
 return startup
