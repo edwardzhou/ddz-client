@@ -4,8 +4,10 @@
 #include <jni.h>
 #include <android/log.h>
 // #include "MobClickJniHelper.h"
-#include "TDGAJniHelper.h"
+//#include "TDGAJniHelper.h"
 #include "../../../../runtime-src/proj.android/protocols/android/PluginJniHelper.h"
+#include "ide-support/SimpleConfigParser.h"
+#include "ide-support/CodeIDESupport.h"
 
 
 #define  LOG_TAG    "main"
@@ -23,7 +25,7 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
     JavaVM* vm;
     env->GetJavaVM(&vm);
     // umeng::MobClickJniHelper::setJavaVM(vm);
-    TDGAJniHelper::setJavaVM(vm);
+    // TDGAJniHelper::setJavaVM(vm);
 
     AppDelegate *pAppDelegate = new AppDelegate();
     PluginJniHelper::setJavaVM(vm);
@@ -49,5 +51,21 @@ void Java_com_fungame_DDZ_NetworkListener_messageCpp(JNIEnv* env, jobject thiz,
 
 	CCLOG("[Java_cn_com_m123_DDZ_DDZJniHelper_test] return.");
 }
+
+
+    bool Java_org_cocos2dx_lua_AppActivity_nativeIsLandScape(JNIEnv *env, jobject thisz)
+    {
+        return SimpleConfigParser::getInstance()->isLanscape();
+    }
+
+    bool Java_org_cocos2dx_lua_AppActivity_nativeIsDebug(JNIEnv *env, jobject thisz)
+    {
+#if (COCOS2D_DEBUG > 0) && (CC_CODE_IDE_DEBUG_SUPPORT > 0)
+        return true;
+#else
+        return false;
+#endif
+    }
+
 }
 

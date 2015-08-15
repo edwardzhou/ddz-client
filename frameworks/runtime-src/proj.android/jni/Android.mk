@@ -18,20 +18,23 @@ LOCAL_SRC_FILES := hellolua/main.cpp \
                    ../../Classes/crypto/xxtea/xxtea.c \
                    ../../Classes/md5/MD5pp.cpp \
                    ../../Classes/lua-binding/manual/lua_app_signature_manual.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDCCAccount.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDCCItem.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDCCMIssion.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDCCTalkingDataGA.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDCCVirtualCurrency.cpp \
-                   ../../3rdLibs/TalkingData/platform/android/TDGAJniHelper.cpp \
-                   ../../Classes/lua-binding/auto/lua_cocos2dx_TalkingDataGA_auto.cpp \
-                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAAccount_auto.cpp \
-                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAItem_auto.cpp \
-                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAMission_auto.cpp \
-                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAVirtualCurrency_auto.cpp \
                    ../../Classes/anysdkbindings.cpp \
                    ../../Classes/anysdk_manual_bindings.cpp \
+                   ../../Classes/ide-support/SimpleConfigParser.cpp \
+                   ../../Classes/ide-support/RuntimeLuaImpl.cpp \
+                   ../../Classes/ide-support/lua_debugger.c \
 
+#                   ../../3rdLibs/TalkingData/platform/android/TDCCAccount.cpp \
+#                   ../../3rdLibs/TalkingData/platform/android/TDCCItem.cpp \
+#                   ../../3rdLibs/TalkingData/platform/android/TDCCMIssion.cpp \
+#                   ../../3rdLibs/TalkingData/platform/android/TDCCTalkingDataGA.cpp \
+#                   ../../3rdLibs/TalkingData/platform/android/TDCCVirtualCurrency.cpp \
+#                   ../../3rdLibs/TalkingData/platform/android/TDGAJniHelper.cpp \
+#                   ../../Classes/lua-binding/auto/lua_cocos2dx_TalkingDataGA_auto.cpp \
+#                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAAccount_auto.cpp \
+#                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAItem_auto.cpp \
+#                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAMission_auto.cpp \
+#                   ../../Classes/lua-binding/auto/lua_cocos2dx_TDGAVirtualCurrency_auto.cpp \
 #                   ../../Classes/lua-binding/auto/lua_cocos2dx_umeng_auto.cpp \
 #                   ../../Classes/lua-binding/manual/lua_cocos2dx_umeng_manual.cpp \
 
@@ -45,16 +48,21 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
                     $(LOCAL_PATH)/../../Classes/crypto \
                     $(LOCAL_PATH)/../../Classes/lua-binding/auto \
                     $(LOCAL_PATH)/../../Classes/lua-binding/manual \
-                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/include \
-                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/platform/android \
+$(LOCAL_PATH)/../../../cocos2d-x/external \
+$(LOCAL_PATH)/../../../cocos2d-x/tools/simulator/libsimulator/lib \
+$(LOCAL_PATH)/../../../cocos2d-x/tools/simulator/libsimulator/lib/protobuf-lite
+
+#                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/include \
+#                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/platform/android \
 
 #                    $(LOCAL_PATH)/../../3rdLibs/umeng/android/libMobClickCpp/include \
 
           
 LOCAL_STATIC_LIBRARIES := cocos2d_lua_static
 #LOCAL_WHOLE_STATIC_LIBRARIES += cocos_curl_static
-LOCAL_WHOLE_STATIC_LIBRARIES += mobclickcpp_static
+#LOCAL_WHOLE_STATIC_LIBRARIES += mobclickcpp_static
 LOCAL_WHOLE_STATIC_LIBRARIES += PluginProtocolStatic
+LOCAL_STATIC_LIBRARIES += cocos2d_simulator_static
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -62,3 +70,5 @@ $(call import-module, scripting/lua-bindings/proj.android)
 #$(call import-module, curl/prebuilt/android)
 #$(call import-module, libMobClickCpp)
 $(call import-module, protocols/android)
+$(call import-module,tools/simulator/libsimulator/proj.android)
+

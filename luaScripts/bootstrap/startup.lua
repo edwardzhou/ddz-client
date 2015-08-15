@@ -125,17 +125,17 @@ local function startup()
 
   local luaj = require('cocos.cocos2d.luaj')
   local ok, ret = luaj.callStaticMethod("com/fungame/DDZ/TalkingDataUtils", "init", tdInitParams, "(Ljava/lang/String;Ljava/lang/String;)V")
-  TalkingDataGA:onStart(talkingDataInfo.appkey, talkingDataInfo.channel)
+  -- TalkingDataGA:onStart(talkingDataInfo.appkey, talkingDataInfo.channel)
 
   ddz.onEnd(function() 
       print('==== call TalkingDataGA:onKill()')
-      TalkingDataGA:onKill()
+      -- TalkingDataGA:onKill()
     end)
 
   -- local eventData = {key1="value1", key2="value2", key3="value3"} 
   -- TalkingDataGA:onEvent("event1", eventData) 
   -- TalkingDataGA:setLocation(39.9497, 116.4137)
-  local deviceId = TalkingDataGA:getDeviceId() 
+  -- local deviceId = TalkingDataGA:getDeviceId() 
   print('======= deviceId: ', deviceId)
   -- TalkingDataGA:onKill()
   -- run

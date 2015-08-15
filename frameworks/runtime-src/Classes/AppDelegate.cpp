@@ -338,13 +338,13 @@ bool AppDelegate::applicationDidFinishLaunching()
     lua_pop(stack->getLuaState(), 1);
 
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    register_all_cocos2dx_TalkingDataGA(luaState); 
-    register_all_cocos2dx_TDGAAccount(luaState); 
-    register_all_cocos2dx_TDGAMission(luaState); 
-    register_all_cocos2dx_TDGAVirtualCurrency(luaState); 
-    register_all_cocos2dx_TDGAItem(luaState);
-#endif    
+// #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+//     register_all_cocos2dx_TalkingDataGA(luaState); 
+//     register_all_cocos2dx_TDGAAccount(luaState); 
+//     register_all_cocos2dx_TDGAMission(luaState); 
+//     register_all_cocos2dx_TDGAVirtualCurrency(luaState); 
+//     register_all_cocos2dx_TDGAItem(luaState);
+// #endif    
 
     register_all_app_signiture(luaState);
 
