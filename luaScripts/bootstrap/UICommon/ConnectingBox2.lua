@@ -282,7 +282,7 @@ end
 
 function ConnectingBox2:ButtonNetworkSetup_onClicked(sender, event)
   local luaj = require('cocos.cocos2d.luaj')
-  local ok = luaj.callStaticMethod("com/fungame/DDZ/Utils", "wifiSetting", {}, "()V")
+  local ok = luaj.callStaticMethod("cn/HuiYou/DDZ/Utils", "wifiSetting", {}, "()V")
 end
 
 function ConnectingBox2:ButtonQuit_onClicked(sender, event)

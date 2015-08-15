@@ -32,12 +32,12 @@ void cocos_android_app_init (JNIEnv* env, jobject thiz) {
 
 
 extern "C" {
-void Java_com_fungame_DDZ_NetworkListener_messageCpp(JNIEnv* env, jobject thiz,
+void Java_cn_HuiYou_DDZ_NetworkListener_messageCpp(JNIEnv* env, jobject thiz,
 		jstring text, jstring data) {
 
 	auto dispatcher = Director::getInstance()->getEventDispatcher();
 
-	CCLOG("[Java_cn_com_m123_DDZ_DDZJniHelper_test] enter.");
+	CCLOG("[Java_cn_HuiYou_DDZ_NetworkListener_messageCpp] enter.");
 
 	std::string myText = JniHelper::jstring2string(text);
 	std::string myData = JniHelper::jstring2string(data);
@@ -45,9 +45,9 @@ void Java_com_fungame_DDZ_NetworkListener_messageCpp(JNIEnv* env, jobject thiz,
 	EventCustom event(myText);
 	dispatcher->dispatchEvent(&event);
 
-	CCLOG("[Java_cn_com_m123_DDZ_DDZJniHelper_test] pText: %s.", myText.c_str());
+	CCLOG("[Java_cn_HuiYou_DDZ_NetworkListener_messageCpp] pText: %s.", myText.c_str());
 
-	CCLOG("[Java_cn_com_m123_DDZ_DDZJniHelper_test] return.");
+	CCLOG("[Java_cn_HuiYou_DDZ_NetworkListener_messageCpp] return.");
 }
 }
 
