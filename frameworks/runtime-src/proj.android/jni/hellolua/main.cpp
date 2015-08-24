@@ -14,7 +14,7 @@
 using namespace cocos2d;
 using namespace anysdk::framework;
 
-void cocos_android_app_init (JNIEnv* env, jobject thiz) {
+void cocos_android_app_init (JNIEnv* env /*, jobject thiz*/) {
     LOGD("cocos_android_app_init");
     // JniMethodInfo getActivity;
     // JniHelper::getStaticMethodInfo(getActivity, "org.cocos2dx.lib.Cocos2dxHelper", "getActivity", "()Landroid/app/Activity;");

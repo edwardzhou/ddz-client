@@ -141,13 +141,13 @@ function HallScene2:init()
   listview:setItemModel(model)
   listview:setVisible(true)
 
-  model = self.PanelAppointItemModel:clone()
-  self.PanelAppointItemModel:setVisible(false)
-  model:setVisible(true)
-  listview = self.ListViewAppointUser
-  listview:setItemModel(model)
+  -- model = self.PanelAppointItemModel:clone()
+  -- self.PanelAppointItemModel:setVisible(false)
+  -- model:setVisible(true)
+  -- listview = self.ListViewAppointUser
+  -- listview:setItemModel(model)
 
-  self.PanelAppointPlay:setVisible(false)
+  -- self.PanelAppointPlay:setVisible(false)
 
   local gameRooms = ddz.GlobalSettings.rooms
 
@@ -159,7 +159,7 @@ function HallScene2:init()
   self.TasksTip:setVisible(false)
 
   self:getMyMsgBox()
-  -- self:loadPlayedList()
+  self:loadPlayedList()
 
   -- for i=1, 5 do
   --   listview:pushBackDefaultItem()
@@ -231,7 +231,7 @@ function HallScene2:loadPlayedList(refresh)
         iconIndex = os.time() % 8 + 1
       end
       userInfo.headIcon = iconIndex
-      item:getChildByName('ImageHeadIcon'):loadTexture(
+      ccui.Helper:seekWidgetByName(item, 'ImageHeadIcon'):loadTexture(
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
@@ -361,7 +361,7 @@ function HallScene2:loadFriendsList(refresh)
         iconIndex = math.floor(math.random() * 10000000) % 8 + 1
       end
       userInfo.headIcon = iconIndex
-      item:getChildByName('ImageHeadIcon'):loadTexture(
+      ccui.Helper:seekWidgetByName(item, 'ImageHeadIcon'):loadTexture(
           string.format('NewRes/idImg/idImg_head_%02d.jpg', iconIndex),
           ccui.TextureResType.localType
         )
