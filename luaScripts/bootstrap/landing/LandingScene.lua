@@ -8,8 +8,9 @@ local utils = require('utils.utils')
 local cjson = require('cjson.safe')
 
 local _audioInfo = ddz.GlobalSettings.audioInfo
-local LandingScene = class('LandingScene')
 local display = require('cocos.framework.display')
+
+local LandingScene = class("LandingScene")
 
 function LandingScene.extend(target, ...)
   local t = tolua.getpeer(target)
@@ -149,6 +150,9 @@ function LandingScene:init()
 
   local function onPokeCardTextureReady()
     --this:connectToServer()
+    require('PokeCard')
+    -- dump(g_shared_cards, "")
+    dump(g_shared_cards, '[LandingScene:onPokeCardTextureReady] g_shared_cards', 3)
     nextStep()
   end
 
@@ -332,13 +336,13 @@ function LandingScene:startToLogin(cb)
     end
 
 
-  plugin_channel:login(function(success, plugin, code, msg)
-      setTimeout(function() 
-          onPluginLoginResult(success, plugin, code, msg)
-        end, {}, 0.15)
-    end)
+  -- plugin_channel:login(function(success, plugin, code, msg)
+  --     setTimeout(function() 
+  --         onPluginLoginResult(success, plugin, code, msg)
+  --       end, {}, 0.15)
+  --   end)
 
-  --sendLogin()
+  sendLogin()
 end
 
 function LandingScene:on_exit()
@@ -368,6 +372,10 @@ end
 
 local function createScene()
   local scene = cc.Scene:create()
+  print('[LandingScene] createScene: scene = ' , scene)
+  print('[LandingScene] LandingScene ', LandingScene)
+  print('[LandingScene] LandingScene.init ', LandingScene.init)
+  print('[LandingScene] LandingScene.extend ', LandingScene.extend)
   return LandingScene.extend(scene)
 end
 

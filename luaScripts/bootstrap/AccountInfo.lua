@@ -93,7 +93,7 @@ function AccountInfo.setCurrentUser(session)
 
   AccountInfo.save()
 
-  _analytics:setAccount(_info.currentUser)
+  -- _analytics:setAccount(_info.currentUser)
 
   -- TDGAAccount:setAccount(_info.currentUser.userId)
   -- TDGAAccount:setAccountName(_info.currentUser.nickName)

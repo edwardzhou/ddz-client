@@ -78,7 +78,7 @@ function EveryDayLoginDialog:ButtonGet_onClicked(sender, eventType)
         if scene.updateUserInfo then
           scene:updateUserInfo()
         end
-        TDGAVirtualCurrency:onReward(data.coins, "每日登录奖励")
+        -- TDGAVirtualCurrency:onReward(data.coins, "每日登录奖励")
     	end
     end)
 end

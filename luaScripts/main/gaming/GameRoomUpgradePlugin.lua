@@ -40,7 +40,7 @@ function GameRoomUpgradePlugin.bind(theClass)
         this.waitingOrderId = purchaseOrder.orderId
 
         print('[GameRoomUpgradePlugin:doBuyPkg] tdOrderId: ', tdOrderId, ', pkgId: ', pkgId)
-        TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
+        -- TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
         return true
       end)
   end

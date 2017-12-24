@@ -110,10 +110,10 @@ function HallScene2:init()
   --     view = ddz.ViewName.HALL
   --   })
 
-  _analytics:logEvent(ddz.TDEventType.VIEW_EVENT, {
-      action = ddz.ViewAction.ACTION_ENTER_VIEW,
-      view = ddz.ViewName.HALL
-    })
+  -- _analytics:logEvent(ddz.TDEventType.VIEW_EVENT, {
+  --     action = ddz.ViewAction.ACTION_ENTER_VIEW,
+  --     view = ddz.ViewName.HALL
+  --   })
 
   local user = AccountInfo.getCurrentUser();
   local idNickName = string.format("%s (%d)", user.nickName, user.userId)
@@ -454,7 +454,7 @@ function HallScene2:tryEnterRoom(gameRoom)
     roomName = gameRoom.roomName
   } 
   -- TalkingDataGA:onEvent("尝试进入房间", eventData) 
-  _analytics:logEvent("尝试进入房间", eventData) 
+  -- _analytics:logEvent("尝试进入房间", eventData) 
 
   local toastParams = {
     id = 'enteringRoom',

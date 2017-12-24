@@ -4,12 +4,13 @@ Copyright (c) 2015 深圳市辉游科技有限公司.
 
 CC_USE_DEPRECATED_API = false
 require "cocos.init"
-require('extern')
+require 'extern'
+-- require 'ClassBase'
 require 'GlobalSettings'
 require 'DebugSetting'
 
-require "anysdkConst"
-require "PluginChannel"
+-- require "anysdkConst"
+-- require "PluginChannel"
 
 
 cc.KeyCode.KEY_BACKSPACE    = 0x0006
@@ -117,11 +118,11 @@ local function startup()
     ccexp.AudioEngine:pauseAll()
   end
 
-  require('Analytics')
+  -- require('Analytics')
 
 
-  plugin_channel = PluginChannel.new()
-  _analytics = Analytics.new()
+  -- plugin_channel = PluginChannel.new()
+  -- _analytics = Analytics.new()
 
   AppInForground = true
 
@@ -146,7 +147,7 @@ local function startup()
   ddz.onEnd(function() 
       print('==== call TalkingDataGA:onKill()')
       -- TalkingDataGA:onKill()
-      _analytics:stopSession()
+      -- _analytics:stopSession()
     end)
 
   -- local eventData = {key1="value1", key2="value2", key3="value3"} 
@@ -156,8 +157,8 @@ local function startup()
   -- print('======= deviceId: ', deviceId)
   -- TalkingDataGA:onKill()
   -- run
-  _analytics:startSession()
-  _analytics:setCaptureUncaughtException(true)
+  -- _analytics:startSession()
+  -- _analytics:setCaptureUncaughtException(true)
 
   local createLoginScene = require('landing.LandingScene')
   local sceneGame = createLoginScene()

@@ -229,7 +229,7 @@ function ShopScene:buyPackage(pkg)
       end
 
       print('[ShopScene:buyPackage] tdOrderId: ', tdOrderId, ', pkgId: ', pkgId)
-      TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
+      -- TDGAVirtualCurrency:onChargeRequest(tdOrderId, pkgId, paidPrice, 'CNY', pkgCoins, paymentMethodId)
       return true
     end)
 end

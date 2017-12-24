@@ -14,8 +14,12 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
+import android.content.res.Configuration;
+
+
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxHelper;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -43,7 +47,9 @@ public class AppActivity extends Cocos2dxActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		PluginWrapper.init(this); // for plugins
+		// PluginWrapper.init(this); // for plugins
+		// PluginWrapper.setGLSurfaceView(Cocos2dxGLSurfaceView.getInstance());
+		// PluginWrapper.loadAllPlugins();
 
 		activity = this;
 
@@ -150,7 +156,7 @@ public class AppActivity extends Cocos2dxActivity {
 	// }
 	// return null;
 	// }
-
+/*
 	@Override
 	protected void onDestroy() {
 		PluginWrapper.onDestroy();
@@ -198,6 +204,37 @@ public class AppActivity extends Cocos2dxActivity {
 		PluginWrapper.onRestart();
 		super.onRestart();
 	}
+
+	@Override
+	public void onBackPressed() {
+	    PluginWrapper.onBackPressed();
+	    super.onBackPressed();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    PluginWrapper.onConfigurationChanged(newConfig);
+	    super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	    PluginWrapper.onRestoreInstanceState(savedInstanceState);
+	    super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    PluginWrapper.onSaveInstanceState(outState);
+	    super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onStart() {
+	    PluginWrapper.onStart();
+	    super.onStart();
+	}
+*/
 
 	public static void enterBackground() {
 		activity.appInForeground = false;

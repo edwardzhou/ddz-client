@@ -16,7 +16,7 @@ function ChargeChargeEventPlugin.bind (theClass)
       local currentUser = AccountInfo.getCurrentUser()
       table.merge(currentUser, data.user)
       --AccountInfo.getCurrentUser(data.userInfo)
-      TDGAVirtualCurrency:onChargeSuccess(currentUser.userId .. '-' .. data.purchaseOrderId)
+      -- TDGAVirtualCurrency:onChargeSuccess(currentUser.userId .. '-' .. data.purchaseOrderId)
     end
 
     if runningScene.updateUserInfo then

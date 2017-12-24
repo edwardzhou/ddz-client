@@ -45,11 +45,13 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
                     $(LOCAL_PATH)/../../Classes/crypto \
                     $(LOCAL_PATH)/../../Classes/lua-binding/auto \
                     $(LOCAL_PATH)/../../Classes/lua-binding/manual \
- 
+
 #                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/include \
 #                    $(LOCAL_PATH)/../../3rdLibs/TalkingData/platform/android \
 #                    $(LOCAL_PATH)/../../3rdLibs/umeng/android/libMobClickCpp/include \
 
+LOCAL_C_INCLUDES += ../protocols/android \
+                    ../protocols/include 
           
 LOCAL_STATIC_LIBRARIES := cocos2d_lua_static
 #LOCAL_WHOLE_STATIC_LIBRARIES += cocos_curl_static

@@ -26,8 +26,8 @@ void cocos_android_app_init (JNIEnv* env /*, jobject thiz*/) {
     // TDGAJniHelper::setJavaVM(vm);
 
     AppDelegate *pAppDelegate = new AppDelegate();
-    PluginJniHelper::setJavaVM(vm);
-    //PluginJniHelper::setJavaVM(vm);
+    // PluginJniHelper::setJavaVM(vm);
+    // PluginJniHelper::setJavaVM(vm);
 }
 
 

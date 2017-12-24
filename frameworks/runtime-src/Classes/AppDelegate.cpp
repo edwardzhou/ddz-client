@@ -145,6 +145,9 @@ std::string getApkSign() {
     std::string packageName;
     std::string apkSign;
 
+    // apkSign = "";
+    // return apkSign;
+
     JNIEnv* env = JniHelper::getEnv();
 
     JniMethodInfo _mi_getContext;
@@ -169,7 +172,8 @@ std::string getApkSign() {
     JniHelper::getStaticMethodInfo(_mi_CertFactory_getInstance, "java.security.cert.CertificateFactory", "getInstance", "(Ljava/lang/String;)Ljava/security/cert/CertificateFactory;");
     JniHelper::getMethodInfo(_mi_CertFactory_generateCertificate, "java.security.cert.CertificateFactory", "generateCertificate", "(Ljava/io/InputStream;)Ljava/security/cert/Certificate;");
     JniHelper::getMethodInfo(_mi_X509Certificate_getSubjectX500Principal, "java.security.cert.X509Certificate", "getSubjectX500Principal", "()Ljavax/security/auth/x500/X500Principal;");
-    JniHelper::getMethodInfo(_mi_X509Certificate_toString, "java.security.cert.X509Certificate", "toString", "()Ljava/lang/String;");
+    // JniHelper::getMethodInfo(_mi_X509Certificate_toString, "java.security.cert.X509Certificate", "toString", "()Ljava/lang/String;");
+    JniHelper::getMethodInfo(_mi_X509Certificate_toString, "javax.security.auth.x500.X500Principal", "toString", "()Ljava/lang/String;");
     JniHelper::getMethodInfo(_mi_ByteArrayInputStreamContructor, "java.io.ByteArrayInputStream", "<init>", "([B)V");
 
     JniHelper::getMethodInfo(_mi_getPackageName, "android.content.Context", "getPackageName", "()Ljava/lang/String;");
@@ -196,13 +200,15 @@ std::string getApkSign() {
     j_packageName = (jstring) objPkgName;
     packageName = JniHelper::jstring2string(j_packageName);
     CCLOG("[getApkInfo] packageName => %s", packageName.c_str());
-    env->DeleteLocalRef(objPkgName);
-    AppInfo::_app_pkg_name = packageName;
-
+    // env->DeleteLocalRef(objPkgName);
+    AppInfo::_app_pkg_name = packageName.c_str();
+    CCLOG("[getApkInfo] AppInfo::_app_pkg_name => %s", AppInfo::_app_pkg_name.c_str());
 
     j_packageManager = env->CallObjectMethod(j_context, _mi_getPackageManager.methodID);
     j_packageInfo = env->CallObjectMethod(j_packageManager, _mi_getPackageInfo.methodID, j_packageName, 64);
+    CCLOG("[getApkInfo] to called PackageManager.getPackageInfo: %p", j_packageInfo);
     j_pkgVersionName = env->GetObjectField(j_packageInfo, _fi_versionName.fieldID);
+    CCLOG("[getApkInfo] to called packageInfo.versionName: %p", j_pkgVersionName);
     AppInfo::_app_pkg_version = JniHelper::jstring2string((jstring)j_pkgVersionName);
     env->DeleteLocalRef(j_pkgVersionName);
     CCLOG("[getApkInfo] packageVersion => %s", AppInfo::_app_pkg_version.c_str());
@@ -216,7 +222,7 @@ std::string getApkSign() {
 
     jstring j_x509_string = env->NewStringUTF("X509");
     jobject j_certFactory = env->CallStaticObjectMethod(_mi_CertFactory_getInstance.classID, _mi_CertFactory_getInstance.methodID, j_x509_string);
-    env->DeleteLocalRef(j_x509_string);
+    // env->DeleteLocalRef(j_x509_string);
 
     jsize length = env->GetArrayLength(j_signatures);
     for (jsize index=0; index < std::min(length, 1); index++) {
@@ -305,7 +311,7 @@ void AppDelegate::initGLContextAttrs()
     //red,green,blue,alpha,depth,stencil
     CCLOG("AppDelegate::initGLContextAttrs");
     GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
-    //GLContextAttrs glContextAttrs = {5, 6, 5, 0, 16, 8};
+    // GLContextAttrs glContextAttrs = {5, 6, 5, 0, 16, 8};
 
     GLView::setGLContextAttrs(glContextAttrs);
 }
@@ -331,11 +337,11 @@ bool AppDelegate::applicationDidFinishLaunching()
 
 
     //for anysdk
-    LuaStack* stack = engine->getLuaStack();
-    lua_getglobal(stack->getLuaState(), "_G");
-    tolua_anysdk_open(stack->getLuaState());
-    tolua_anysdk_manual_open(stack->getLuaState());
-    lua_pop(stack->getLuaState(), 1);
+    // LuaStack* stack = engine->getLuaStack();
+    // lua_getglobal(stack->getLuaState(), "_G");
+    // tolua_anysdk_open(stack->getLuaState());
+    // tolua_anysdk_manual_open(stack->getLuaState());
+    // lua_pop(stack->getLuaState(), 1);
 
 
 // #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)

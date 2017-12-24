@@ -142,7 +142,14 @@ public:
         CALL_BASERET_JAVA_FUNC(bool, "()Z", Boolean, false)
     }
 
+    static void callJavaFunctionWithName_string_map(PluginProtocol* thiz, const char* funcName, const char* keyParam, std::map<std::string, std::string>* paramMap);
+
     static void outputLog(int type, const char* logTag, const char* pFormat, ...);
+    static void output(int type, const char* logTag, const char* contents);
+
+    static void resetLogLevel();
+private:
+    static std::string _logLevel;
 };
 
 }} // namespace anysdk { namespace framework {

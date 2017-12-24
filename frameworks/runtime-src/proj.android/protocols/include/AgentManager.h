@@ -13,18 +13,26 @@
 #include "ProtocolSocial.h"
 #include "ProtocolUser.h"
 #include "ProtocolPush.h"
+#include "ProtocolCrash.h"
+#include "ProtocolREC.h"
+#include "ProtocolCustom.h"
+#include "ProtocolAdTracking.h"
 #include <map>
 #include <string>
 namespace anysdk { namespace framework {
 /** @brief Plugin_type enum, with inline docs */
 typedef enum {
-    kPluginAds = 16,/**< enum value kPluginAds. */
-    kPluginAnalytics = 1,/**< enum value kPluginAnalytics. */
-    kPluginIAP = 8,/**< enum value kPluginIAP. */
-    kPluginShare = 2,/**< enum value kPluginShare. */
-    kPluginUser = 32,/**< enum value kPluginUser. */
-    kPluginSocial = 4,/**< enum value kPluginSocial. */
-    kPluginPush = 64,/**< enum value kPluginPush. */
+    kPluginAds = 16,/**< enum value is  the type of Ads. */
+    kPluginAnalytics = 1,/**< enum value is  the type of Analytics. */
+    kPluginIAP = 8,/**< enum value is  the type of IAP. */
+    kPluginShare = 2,/**< enum value is  the type of Share. */
+    kPluginUser = 32,/**< enum value is  the type of User. */
+    kPluginSocial = 4,/**< enum value is  the type of Social. */
+    kPluginPush = 64,/**< enum value is  the type of Push. */
+    kPluginCrash = 128,/**< enum value is  the type of Crash. */
+    kPluginCustom = 256,/**< enum value is  the type of Custom. */
+    kPluginREC = 512,/**< enum value is  the type of REC. */
+    kPluginAdTracking = 1024,/**< enum value is  the type of AdTracking. */
 }Plugin_type;
 /**   
  *  @class  AgentManager  
@@ -49,7 +57,7 @@ public:
     @param the appSecret of anysdk
     @param the privateKey of anysdk
     @param the url of oauthLoginServer
-    @warning Must invoke this interface before loadALLPlugin
+    @warning Must invoke this interface before loadAllPlugins
     */
     void init(std::string appKey,std::string appSecret,std::string privateKey,std::string oauthLoginServer);
 
@@ -122,6 +130,35 @@ public:
     ProtocolPush* getPushPlugin(){return _pPush;};
 
     /**
+     @brief Get Crash plugin
+     @return  if Crash plugin exist ,return value is Crash plugin.
+         	 else return value is null pointer.
+     */
+    ProtocolCrash* getCrashPlugin(){return _pCrash;};
+
+    /**
+     @brief Get Custom plugin
+     @return  if Crash plugin exist ,return value is Custom plugin.
+            else return value is null pointer.
+     */
+    ProtocolCustom* getCustomPlugin(){return _pCustom;};
+
+
+    /**
+     @brief Get REC plugin
+     @return  if REC plugin exist ,return value is REC plugin.
+             else return value is null pointer.
+    */
+    ProtocolREC* getRECPlugin(){return _pREC;};
+    
+    /**
+     @brief Get AdTracking plugin
+     @return  if AdTracking plugin exist ,return value is AdTracking plugin.
+     else return value is null pointer.
+     */
+    ProtocolAdTracking* getAdTrackingPlugin(){return _pAdTracking;};
+
+    /**
      @brief Get channel ID
      @return  return value is channel ID.
      */
@@ -153,41 +190,51 @@ public:
     @return boolean
     */
     bool isAnaylticsEnabled(){return bIsAnaylticsEnabled;};
-
-
-
-
-
+    
+    
+    void loadPlugin(const char* nodeName,int type);
 protected:
     void setDebugMode(bool flag);
     std::string getSupportPlugin();
-    void loadPlugin(const char* nodeName,int type);
+    void release();
     
 
 private:
     AgentManager(void);
     
-    // Analytics plugins
+    // Analytics plugin
     ProtocolAnalytics* _pAnalytics;
 
-    // user plugins
+    // user plugin
     ProtocolUser* _pUser;
 
     // IAP plugins
     //    ProtocolIAP* _pIAP;
     std::map<std::string , ProtocolIAP*> _pluginsIAPMap;
 
-    // Share plugins
+    // Share plugin
     ProtocolShare* _pShare;
 
-    // Social plugins
+    // Social plugin
     ProtocolSocial* _pSocial;
 
-    // Ads plugins
+    // Ads plugin
     ProtocolAds* _pAds;
     
-    // Push plugins
+    // Push plugin
     ProtocolPush* _pPush;
+
+    // Crash plugin
+    ProtocolCrash* _pCrash;
+
+    // Custom plugin
+    ProtocolCustom* _pCustom;
+
+    // REC plugin
+    ProtocolREC* _pREC;
+    
+    // AdTracking plugin
+    ProtocolAdTracking* _pAdTracking;
 
     bool bIsAnaylticsEnabled;
 

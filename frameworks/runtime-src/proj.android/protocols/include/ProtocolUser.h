@@ -32,6 +32,8 @@ typedef enum
     kAccountSwitchSuccess,/**< enum value is callback of succeeding in switching account. */
     kAccountSwitchFail,/**< enum value is callback of failing to switch account. */
     kOpenShop,/**< enum value is callback of open the shop. */
+    kAccountSwitchCancel,/**< enum value is callback of canceling to switch account. */
+    kGameExitPage,/**< enum value is callback of no channel exit page. */
     kUserExtension = 50000 /**< enum value is  extension code . */
 
 
@@ -84,8 +86,16 @@ public:
      @param server_id
      @param oauthLoginServer
     */
-     virtual  void login(std::string server_id, std::string oauthLoginServer = "") = 0 ;
 
+    CC_DEPRECATED_ATTRIBUTE virtual  void login(std::string server_id, std::string oauthLoginServer = "") = 0 ;
+
+    /**
+      @brief User login
+         	 	if the process of logining need to know  the parameters ,
+         	 	you can use the function
+      @param the parameters
+        */
+     virtual  void login(std::map<std::string, std::string> info) = 0 ;
 
     /**
      @brief Check whether the user logined or not
@@ -112,18 +122,10 @@ public:
     virtual  UserActionListener* getActionListener() = 0 ;
 
     /**
-     @brief Check function the plugin support or not
-     @param the name of plugin
-     @return if the function support ,return true
-     	 	 else retur false
-     */
-    virtual bool isFunctionSupported(std::string functionName) = 0 ;
-    /**
      @brief get plugin id
      @return the plugin id
      */
 	virtual std::string getPluginId() = 0 ;
-
 
 
 };
