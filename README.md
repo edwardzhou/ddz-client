@@ -9,12 +9,18 @@
 开发工具： 
 
   Cocos2dx-3.7.1 Lua
+  http://www.cocos2d-x.org/filedown/cocos2d-x-3.7.1.zip
   
   CocoStudio 2.x
   
+  
+  
   Android NDK r10e
+  https://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip
   
   Android SDK R22
+  http://mirrors.neusoft.edu.cn/android/repository/android-22_r02.zip
+  
   
   Apache Ant 1.10.1
   
