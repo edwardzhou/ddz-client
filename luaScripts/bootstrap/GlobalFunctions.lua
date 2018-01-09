@@ -316,13 +316,19 @@ ddz.mkdir = function (dirPath, hasFilename)
 end
 
 ddz.getDataStorePath = function()
-  if ddz.GlobalSettings.dataStorePath == nil then
+  if ddz.GlobalSettings.dataStorePath == nil or #ddz.GlobalSettings.dataStorePath == 0 then
     if ddz.GlobalSettings.mode == 'dev' then
       ddz.GlobalSettings.dataStorePath = ddz.GlobalSettings.ddzSDPath
     else
       ddz.GlobalSettings.dataStorePath = ddz.GlobalSettings.appPrivatePath
     end
   end
+
+  if ddz.GlobalSettings.dataStorePath == nil or #ddz.GlobalSettings.dataStorePath == 0 then
+    ddz.GlobalSettings.dataStorePath = ddz.GlobalSettings.appPrivatePath
+  end
+
+  print('ddz.GlobalSettings.dataStorePath => ', ddz.GlobalSettings.dataStorePath)
 
   return ddz.GlobalSettings.dataStorePath
 end
@@ -401,6 +407,7 @@ ddz.updateUserSession = function(respData)
 end
 
 ddz.writeToFile = function(filename, data)
+  local sdpath = 1
   local filepath = ddz.getDataStorePath() .. '/' .. filename
   ddz.mkdir(filepath, true)
   local file = io.open(filepath, 'w+')

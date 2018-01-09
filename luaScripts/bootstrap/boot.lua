@@ -54,6 +54,10 @@ local function main()
     local searchPaths = fileUtils:getSearchPaths()
     local sdpath = ddz.getSDCardPath()
     local privatePath = fileUtils:getWritablePath()
+    if sdpath == nil or #sdpath == 0 then
+        sdpath = privatePath
+    end
+
     fileUtils:addSearchPath(sdpath .. '/fungame')
     sdpath = sdpath .. '/fungame/DDZ'
     ddz.mkdir(sdpath)

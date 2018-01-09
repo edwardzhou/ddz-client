@@ -168,7 +168,8 @@ def zip_lua(proj_path, lua_dir, assets_dir):
   os.system('cd %s && zip -r ../../../main.zip *' %(os.path.join(lua_dir, 'main')))
   shutil.copy(os.path.join(proj_path, 'bootstrap.zip'), os.path.join(assets_dir, 'bootstrap.zip'))
   shutil.copy(os.path.join(proj_path, 'main.zip'), os.path.join(assets_dir, 'main.zip'))
-  shutil.copy(os.path.join(lua_dir, 'version.luac'), os.path.join(assets_dir, 'version.luac'))
+#  shutil.copy(os.path.join(lua_dir, 'version.luac'), os.path.join(assets_dir, 'version.luac'))
+  shutil.copy(os.path.join(lua_dir, 'version.lua'), os.path.join(assets_dir, 'version.lua'))
 
 def make_update_resources(proj_path, update_pkg_path):
   global versionInfo
@@ -177,7 +178,8 @@ def make_update_resources(proj_path, update_pkg_path):
   os.makedirs(prog_path)
   shutil.copy(os.path.join(proj_path, 'bootstrap.zip'), prog_path)
   shutil.copy(os.path.join(proj_path, 'main.zip'), prog_path)
-  shutil.copy(os.path.join(proj_path, 'temp', 'luaScripts', 'version.luac'), prog_path)
+  shutil.copy(os.path.join(proj_path, 'temp', 'luaScripts', 'version.lua'), prog_path)
+#  shutil.copy(os.path.join(proj_path, 'temp', 'luaScripts', 'version.luac'), prog_path)
   shutil.copytree(os.path.join(proj_path, 'Resources'), os.path.join(update_pkg_path, 'res'))
 
   versionInfo_file = io.open(os.path.join(update_pkg_path, 'versionInfo.json'), 'wb')
@@ -277,14 +279,15 @@ def handle_event(event, tp, args):
     print('lua_src_dir: ' , lua_src_dir)
     print('lua_dst_dir: ' , lua_dst_dir)
     shutil.rmtree(lua_dst_dir, True)
-    os.makedirs(lua_dst_dir)
+    shutil.copytree(lua_src_dir, lua_dst_dir)
+    # os.makedirs(lua_dst_dir)
     assets_dir = args['assets-dir']
     #compile_resources(lua_src_dir, assets_dir)
     if os.access(zip_file, os.F_OK):
       os.remove(os.path.join(proj_path, "luaScripts.zip"))
     print('to compile resources')
     generate_app_version(platform_proj_dir, lua_src_dir)
-    compile_resources(lua_src_dir, lua_dst_dir)
+    #compile_resources(lua_src_dir, lua_dst_dir)
     zip_lua(proj_path, lua_dst_dir, assets_dir)
     make_update_resources(proj_path, os.path.join(proj_path, 'temp', 'upd_pkg'))
     # shutil.copy( os.path.join(proj_path, 'Resources', 'project.manifest') , os.path.join(assets_dir, 'project.manifest'))

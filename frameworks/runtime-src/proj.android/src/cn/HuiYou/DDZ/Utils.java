@@ -15,6 +15,8 @@ import java.util.List;
 import android.content.Intent;
 import android.provider.Settings;
 import android.util.Log;
+import org.cocos2dx.lib.Cocos2dxHelper;
+
 
 public class Utils {
 	
@@ -94,7 +96,8 @@ public class Utils {
 			sdcards = getStorageList();
 		
 		if (sdcards.size() == 0)
-			return "";
+			return Cocos2dxHelper.getCocos2dxWritablePath();
+			//return "";
 		
 		return sdcards.get(0);
 //		File dir = Environment.getExternalStorageDirectory();

@@ -238,13 +238,13 @@ function LandingScene:init()
 
       print("respData.forceUpdateRes: ", respData.forceUpdateRes)
       print("respData.updateVersionUrl: ", respData.updateVersionUrl)
-      if respData.forceUpdateRes or respData.updateVersionUrl then
-        print(string.format('got UpdateUrl[%s], need to update', respData.updateVersionUrl))
-        local updateManager = require('update.UpdateManager').new()
-        updateManager:startCheckUpdate(onUpdateEvent)
-      else
+      -- if respData.forceUpdateRes or respData.updateVersionUrl then
+      --   print(string.format('got UpdateUrl[%s], need to update', respData.updateVersionUrl))
+      --   local updateManager = require('update.UpdateManager').new()
+      --   updateManager:startCheckUpdate(onUpdateEvent)
+      -- else
         loadMain()
-      end
+      -- end
 
     end)
   end))

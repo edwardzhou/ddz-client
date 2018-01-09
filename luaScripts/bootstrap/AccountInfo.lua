@@ -16,7 +16,8 @@ function AccountInfo.create()
   local fu = cc.FileUtils:getInstance()
   local cjson = require('cjson.safe')
   local sessionInfo = nil
-  local filepath = ddz.getDataStorePath() .. '/userinfo.json'
+  local filepath = '/data/data/cn.HuiYou.DDZ' .. '/userinfo.json'
+  -- local filepath = ddz.getDataStorePath() .. '/userinfo.json'
   print('filepath => ', filepath)
   local userinfoString = fu:getStringFromFile(filepath)
   dump(userinfoString, 'userinfoString')
@@ -33,7 +34,8 @@ end
 
 function AccountInfo.save(filename)
   filename = filename or 'userinfo.json'
-  local filepath = ddz.getDataStorePath() .. '/' .. filename
+  -- local filepath = ddz.getDataStorePath() .. '/' .. filename
+  local filepath = '/data/data/cn.HuiYou.DDZ' .. '/userinfo.json'
   print('filepath => ', filepath)
   local file = io.open(filepath, 'w+')
   file:write(cjson.encode(_info))
