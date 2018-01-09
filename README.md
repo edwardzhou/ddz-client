@@ -8,6 +8,8 @@
 
 开发工具： 
 
+  全部下载到 ~/Downloads 目录
+
   Cocos2dx-3.7.1 Lua
   http://www.cocos2d-x.org/filedown/cocos2d-x-3.7.1.zip
   
@@ -19,12 +21,14 @@
   https://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip
   
   Android SDK R22
-  http://mirrors.neusoft.edu.cn/android/repository/android-22_r02.zip
-  
+  http://dl.google.com/android/android-sdk_r22-macosx.zip  
   
   Apache Ant 1.10.1
+  http://mirrors.shuosc.org/apache//ant/binaries/apache-ant-1.10.1-bin.zip
   
-  
+  JDK 1.8
+  http://java.oracle.com/
+  
 后台服务器采用 Nodejs Pomelo 开发， https://github.com/edwardzhou/ddz-server
   
 编译环境配置:
@@ -63,6 +67,7 @@ export ANT_ROOT=$ANT_HOME/bin
 export M2_HOME=$HOME/develop/maven
 export GRADLE_HOME=$HOME/develop/gradle
 
+# 此处需要设置与安装到jdk版本一致到目录
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
 export PATH=$HOME/bin:$SDK_ROOT/platform-tools:$SDK_ROOT/tools:$ANT_HOME/bin:$PATH
 ```
