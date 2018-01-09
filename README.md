@@ -7,11 +7,17 @@
 目前只有安卓版，其他平台的版本，可以自己按照cocos2dx的规则修改编译。
 
 开发工具： 
+
   Cocos2dx-3.7.1 Lua
+  
   CocoStudio 2.x
+  
   Android NDK r10e
+  
   Android SDK R22
+  
   Apache Ant 1.10.1
+  
   
 后台服务器采用 Nodejs Pomelo 开发， https://github.com/edwardzhou/ddz-server
   
