@@ -1,0 +1,19 @@
+info face="?|???????????" size=40 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2
+common lineHeight=40 base=40 scaleW=128 scaleH=128 pages=1 packed=0
+page id=0 file="poke_num_big.png"
+chars count=15
+char id=32     x=95    y=71    width=0     height=0     xoffset=0     yoffset=34    xadvance=13    page=0 chnl=0 letter="space"
+char id=48     x=2     y=41    width=19    height=28    xoffset=2     yoffset=6     xadvance=20    page=0 chnl=0 letter="0"
+char id=49     x=42    y=71    width=17    height=28    xoffset=3     yoffset=6     xadvance=20    page=0 chnl=0 letter="1"
+char id=50     x=86    y=41    width=19    height=28    xoffset=1     yoffset=6     xadvance=20    page=0 chnl=0 letter="2"
+char id=51     x=2     y=71    width=18    height=28    xoffset=1     yoffset=6     xadvance=20    page=0 chnl=0 letter="3"
+char id=52     x=92    y=2     width=20    height=28    xoffset=1     yoffset=6     xadvance=20    page=0 chnl=0 letter="4"
+char id=53     x=22    y=71    width=18    height=28    xoffset=2     yoffset=6     xadvance=20    page=0 chnl=0 letter="5"
+char id=54     x=44    y=41    width=19    height=28    xoffset=2     yoffset=6     xadvance=20    page=0 chnl=0 letter="6"
+char id=55     x=107   y=41    width=19    height=28    xoffset=1     yoffset=6     xadvance=20    page=0 chnl=0 letter="7"
+char id=56     x=65    y=41    width=19    height=28    xoffset=2     yoffset=6     xadvance=20    page=0 chnl=0 letter="8"
+char id=57     x=23    y=41    width=19    height=28    xoffset=2     yoffset=6     xadvance=20    page=0 chnl=0 letter="9"
+char id=65     x=59    y=2     width=31    height=28    xoffset=0     yoffset=6     xadvance=30    page=0 chnl=0 letter="A"
+char id=74     x=37    y=2     width=20    height=36    xoffset=-5    yoffset=7     xadvance=14    page=0 chnl=0 letter="J"
+char id=75     x=61    y=71    width=32    height=27    xoffset=1     yoffset=7     xadvance=30    page=0 chnl=0 letter="K"
+char id=81     x=2     y=2     width=33    height=37    xoffset=2     yoffset=6     xadvance=34    page=0 chnl=0 letter="Q"
