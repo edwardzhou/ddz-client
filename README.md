@@ -12,7 +12,7 @@
   http://www.cocos2d-x.org/filedown/cocos2d-x-3.7.1.zip
   
   CocoStudio 2.x
-  
+  http://cocostudio.download.appget.cn/CocostudioMac/Download/v2.3.3/CocosForMac-v2.3.3.dmg
   
   
   Android NDK r10e
